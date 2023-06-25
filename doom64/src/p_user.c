@@ -4,27 +4,77 @@
 #include "p_local.h"
 #include "st_main.h"
 
-#define MAXMOCKTIME     1800
+#define MAXMOCKTIME     900 // [Immorpher] Reduced this by half for the fun!
 int deathmocktics; // 800A56A0
 
-#define MK_TXT01	"HAHAHAHA!"
-#define MK_TXT02	"YOU SHOULDN'T HAVE DONE THAT."
-#define MK_TXT03	"TRY AN EASIER LEVEL..."
-#define MK_TXT04	"WOW! LOOK AT THOSE DEMON FEET."
-#define MK_TXT05	"I PLAY DOOM AND I CAN'T GET UP."
-#define MK_TXT06	"OUCH! THAT HAD TO HURT."
-#define MK_TXT07	"LOOK AT ME! I'M FLAT!"
-#define MK_TXT08	"THANKS FOR PLAYING!"
-#define MK_TXT09	"YOU LAZY @&$#!"
-#define MK_TXT10	"HAVE YOU HAD ENOUGH?"
-#define MK_TXT11	"THE DEMONS GAVE YOU THE BOOT!"
-#define MK_TXT12	"THE LEAD DEMON VANQUISHED YOU!"
+// Bonus mock texts from the Doom 64 community!
+#define MK_TXT01t1	"MOTHER DEMON: HAHAHAHA!"
+#define MK_TXT02t1	"MOTHER DEMON: YOU SHOULDN'T HAVE\nDONE THAT."
+#define MK_TXT03t1	"MIDWAY: TRY AN EASIER LEVEL..."
+#define MK_TXT04t1	"MIDWAY: WOW! LOOK AT THOSE DEMON\nFEET."
+#define MK_TXT05t1	"MIDWAY: I PLAY DOOM AND I CAN'T GET\nUP."
+#define MK_TXT06t1	"DEMON: OUCH! THAT HAD TO HURT."
+#define MK_TXT07t1	"DEMON: LOOK AT ME! I'M FLAT!"
+#define MK_TXT08t1	"MIDWAY: THANKS FOR PLAYING!"
+#define MK_TXT09t1	"MOTHER DEMON: YOU LAZY @&$#!"
+#define MK_TXT10t1	"MOTHER DEMON: HAVE YOU HAD ENOUGH?"
+#define MK_TXT11t1	"MIDWAY: THE DEMONS GAVE YOU THE\nBOOT!"
+#define MK_TXT12t1	"MIDWAY: THE LEAD DEMON VANQUISHED\nYOU!"
+#define MK_TXT13t1	"IMMORPHER: WELCOME TO THE IQ64\nCLUB! MIGHT AS WELL JOIN THE GOOFS\nON THE DOOM 64 DISCORD SERVER!"
+#define MK_TXT14t1	"IRL RANDOM HAJILE: HMMM, THAT'S ONE\nDOOMED SPACE MARINE."
+#define MK_TXT15t1	"RETROTOUR: NO RUSH. JUST RESTART\nWHEN YOU'RE READY."
+#define MK_TXT16t1	"SCD: GO BACK TO QUAKE, YA MORON!"
+#define MK_TXT17t1	"WHINNY: I BET YOU STILL SLEEP WITH\nYOUR NIGHT LIGHT, WAAAAH!!!"
+#define MK_TXT18t1	"UMLAUT: IF YOU'D LIKE TO JOIN US,\nYOU'RE ALWAYS WELCOME, DEAD OR\nALIVE. MUAHAHAHA..."
+#define MK_TXT19t1	"TAUFAN99: NOW YOU KNOW THIS IS NO\nSUPERHERO SHOW."
+#define MK_TXT20t1	"QUASIOTTER: EVERY TIME YOU DIE,\nA PUPPY IS BORN. THE DEMONS ARE\nJUST TRYING TO MAKE MORE PUPPIES."
+#define MK_TXT21t1	"GEC: HOT OR COLD, WHICH SIDE DO YOU\nWANT TO BE ON?"
+#define MK_TXT22t1	"WOLF MCBEARD: IT'S OK, I WON'T TELL\nANYONE YOU CALL ME DADDY."
+#define MK_TXT23t1	"POOPSTER: NO MORE SEQUELS FOR\nYOU.... YET."
+#define MK_TXT24t1	"WHYBMONOTACRAB: IF ONLY YOU COULD\nTALK TO THESE DEMONS, THEN PERHAPS\nYOU COULD TRY AND MAKE FRIENDS WITH\nTHEM, FORM ALLIANCES..."
+#define MK_TXT25t1	"CAPTAIN CALEB: YOU'VE HAD OVER\nTWENTY YEARS, AND YOU STILL SUCK\nAT THIS GAME?"
+#define MK_TXT26t1	"DUKE: WHAT ARE YOU WAITING FOR,\nCHRISTMAS?"
+#define MK_TXT27t1	"COLLECTONIAN: UGH, YOU FORGOT\nAGAIN!? LAST TIME: ROCKETS ARE\nFOR KILLING DEMONS, NOT YOURSELF!"
+#define MK_TXT28t1	"NEVANDER: THAT LOOKED LIKE IT HURT.\nWELL, WHAT ARE YOU WAITING FOR?\nTRY AGAIN AND KICK THEIR ASSES!"
+#define MK_TXT29t1	"SCWIBA: YO IMMORPHER, I SAID NO\nMORE DOOM 64! WHY AM I EVEN IN\nTHIS MOD?!"
+#define MK_TXT30t1	"GRAV: YOU KNOW YOU CAN BEAT THIS\nGAME IN 30 MINUTES RIGHT? WHAT'S\nTAKING SO LONG?"
+#define MK_TXT31t1	"HARDCORE_GAMER: THIS IS WHAT\nHAPPENS WHEN YOU'VE HAD TOO\nMANY CORONAS."
+#define MK_TXT32t1	"ISANN KEKET: ON YOUR FEET, MARINE.\nSLAYERS NEVER SLEEP!"
+#define MK_TXT33t1	"AMUSED BRIAN: WELL THAT DIDN'T GO\nACCORDING TO PLAN..."
+#define MK_TXT34t1	"SECTOR666: IF YOU HIDE ON THE FLOOR\nFOREVER AT LEAST YOU WON'T DIE...\nWHOOPS, TOO LATE..."
+#define MK_TXT35t1	"DEXIAZ: IT'S OFFICIAL! YOU SUCK AT\nPLAYING MAPS!"
+#define MK_TXT36t1	"Z0K: IF YOU DROPPED SOME WEAPONS,\nYOU COULD HAVE DODGED, FATSO!"
+#define MK_TXT37t1	"PUZZLEWELL: THEY'LL BURY YOU IN A\nLUNCHBOX (WAIT WRONG GAME...)."
+#define MK_TXT38t1	"KMXEXII: I CAN ONLY HOPE THAT THIS\nDEATH WAS IN SOME WAY LOST SOUL OR\nPAIN ELEMENTAL RELATED."
+#define MK_TXT39t1	"ENDLESS: ENDLESSLY DYING IS NOT\nA GOOD STRATEGY."
+#define MK_TXT40t1	"ERROR: BACK TO THE DRAWING BOARD...\nTOO BAD YOU CAN'T DRAW."
+#define MK_TXT41t1	"BLUETHUNDER: SO... YOU'RE GONNA DIE\nNOW... SERIOUSLY?!!"
+#define MK_TXT42t1	"HYACSHO: MAYBE YOU SHOULD PLAY\nDOOM 1993 INSTEAD?"
+#define MK_TXT43t1	"NOWANDTHEN64: OF ALL THE ATTEMPTS\nTHAT HAVE BEEN MADE AT THIS GAME,\nTHAT WAS CERTAINLY ONE OF THEM."
+#define MK_TXT44t1	"SIXHUNDREDSIXTEEN: SURE LET THEM\nKILL YOU! WHAT A %#$@ING DISASTER..."
+#define MK_TXT45t1	"MIKE_C: DON'T BLAME THE CONTROLLER,\nYOU BIG WUSS!"
+#define MK_TXT46t1	"GLENN PLANT: THE RISING SUN WILL\nEVENTUALLY SET, A NEWBORN'S LIFE\nWILL FADE. FROM SUN TO MOON, MOON\nTO SUN. GIVE PEACEFUL REST TO THE\nLIVING DEAD."
+#define MK_TXT47t1	"MOTHERLOAD: YOUR GREAT GRANDFATHER\nWAS IN A REAL WAR AND YOU'RE TOO\nMUCH OF A $#@&! TO BEAT THIS LEVEL."
+#define MK_TXT48t1	"GERARDO: WHAT?? FEELING SLEEPY NOW?\nYOU CONSIDER YOURSELF SLAYER AND\nYOU WANT TO REST? SHAME ON YOU!"
+#define MK_TXT49t1	"HEADSHOT: YOU'VE HUMOURED THE\nDEMONS GREATLY WITH YOUR\nARROGANCE AND CONTEMPT..."
+#define MK_TXT50t1	"ZELLLOOO: WE HAVE PINKY,\nBUT WHERE'S THE BRAIN?"
+#define MK_TXT51t1	"PEACHES: THIS ACTION TO DEFY THE\nEVIL ONE IS NOT WITHOUT RISK.\nCONFRONTATION IS OFTEN BEST\nAVOIDED..."
 
-char *mockstrings[] =   // 8005A290
+char *mockstrings1[] =   // 8005A290
 {
-    MK_TXT01, MK_TXT02, MK_TXT03, MK_TXT04,
-	MK_TXT05, MK_TXT06, MK_TXT07, MK_TXT08,
-	MK_TXT09, MK_TXT10, MK_TXT11, MK_TXT12,
+    MK_TXT01t1, MK_TXT02t1, MK_TXT03t1, MK_TXT04t1,
+	MK_TXT05t1, MK_TXT06t1, MK_TXT07t1, MK_TXT08t1,
+	MK_TXT09t1, MK_TXT10t1, MK_TXT11t1, MK_TXT12t1,
+	MK_TXT13t1, MK_TXT14t1, MK_TXT15t1, MK_TXT16t1,
+	MK_TXT17t1, MK_TXT18t1, MK_TXT19t1, MK_TXT20t1,
+	MK_TXT21t1, MK_TXT22t1, MK_TXT23t1, MK_TXT24t1,
+	MK_TXT25t1, MK_TXT26t1, MK_TXT27t1, MK_TXT28t1,
+	MK_TXT29t1, MK_TXT30t1, MK_TXT31t1, MK_TXT32t1,
+	MK_TXT33t1, MK_TXT34t1, MK_TXT35t1, MK_TXT36t1,
+	MK_TXT37t1, MK_TXT38t1, MK_TXT39t1, MK_TXT40t1,
+	MK_TXT41t1, MK_TXT42t1, MK_TXT43t1, MK_TXT44t1,
+	MK_TXT45t1, MK_TXT46t1, MK_TXT47t1, MK_TXT48t1,
+	MK_TXT49t1, MK_TXT50t1, MK_TXT51t1,
 };
 
 fixed_t 		forwardmove[2] = {0xE000, 0x16000}; // 8005B060
@@ -123,8 +173,8 @@ void P_PlayerXYMovement (mobj_t *mo) // 80021E20
     /* */
 	/* try to slide along a blocked move */
 	/* */
-	if (!P_TryMove(mo, mo->x + mo->momx, mo->y + mo->momy))
-		P_SlideMove(mo);
+        if (!P_TryMove(mo, mo->x + mo->momx, mo->y + mo->momy))
+            P_SlideMove(mo);
 
 	/* */
 	/* slow down */
@@ -276,25 +326,11 @@ void P_BuildMove (player_t *player) // 80022154
 	oldbuttons = oldticbuttons[0];
 
     player->forwardmove = player->sidemove = player->angleturn = 0;
-
-	if (!demoplayback)
-	{
-		switch (Autorun)
-		{
-			case 2:
-				speed = player->speedtoggle == 1;
-				break;
-			case 1:
-				speed = (buttons & cbutton->BT_SPEED) < 1;
-				break;
-			case 0:
-			default:
-				speed = (buttons & cbutton->BT_SPEED) > 0;
-				break;
-		}
+	
+	if(Autorun == true && demoplayback == false) { // [Immorpher] New autorun option
+		speed = (buttons & cbutton->BT_SPEED) < 1;	
 	}
-	else
-	{
+	else {
 		speed = (buttons & cbutton->BT_SPEED) > 0;
 	}
 	sensitivity = 0;
@@ -417,8 +453,6 @@ void P_BuildMove (player_t *player) // 80022154
 ===============================================================================
 */
 
-#define MAXBOB			0x100000		/* 16 pixels of bob */
-
 /*
 ==================
 =
@@ -432,8 +466,8 @@ void P_BuildMove (player_t *player) // 80022154
 void P_Thrust (player_t *player, angle_t angle, fixed_t move) // 800225BC
 {
     angle >>= ANGLETOFINESHIFT;
-	player->mo->momx += FixedMul(vblsinframe[0] * move, finecosine[angle]);
-	player->mo->momy += FixedMul(vblsinframe[0] * move, finesine[angle]);
+	player->mo->momx += FixedMul(vblsinframe[0] * move, finecosine(angle));
+	player->mo->momy += FixedMul(vblsinframe[0] * move, finesine(angle));
 }
 
 
@@ -465,9 +499,9 @@ void P_CalcHeight (player_t *player) // 80022670
 	player->bob += FixedMul(val, val);
 
 	player->bob >>= 2;
-	if (player->bob > MAXBOB)
+	if (player->bob > MotionBob)
 	{
-		player->bob = MAXBOB;
+		player->bob = MotionBob;
 	}
 
 	if (!player->onground)
@@ -479,10 +513,10 @@ void P_CalcHeight (player_t *player) // 80022670
 	}
 
 	angle = (FINEANGLES/40*ticon)&(FINEANGLES-1);
-	bob = FixedMul((player->bob / 2), finesine[angle]);
+	bob = FixedMul((player->bob / 2), finesine(angle));
 
-	//ST_DebugPrint("bob %x",FixedMul((player->bob / 2), finesine[angle]));
-	//ST_DebugPrint("bob2 %x",FixedMul2((player->bob / 2), finesine[angle]));
+	//ST_DebugPrint("bob %x",FixedMul((player->bob / 2), finesine(angle)));
+	//ST_DebugPrint("bob2 %x",FixedMul2((player->bob / 2), finesine(angle)));
 
 	//ST_DebugPrint("bobdiv %x",FixedDiv2(0x49003, 0x2));
 	//ST_DebugPrint("bobdiv2 %x",FixedMul3(0x49003, 0x2));
@@ -553,6 +587,7 @@ void P_MovePlayer (player_t *player) // 8002282C
 void P_DeathThink (player_t *player) // 80022914
 {
 	angle_t		angle, delta;
+	int mockrandom; // [Immorpher] store mock text randomizer
 
 	P_MovePsprites (player);
 
@@ -585,8 +620,13 @@ void P_DeathThink (player_t *player) // 80022914
 	/* mocking text */
     if ((ticon - deathmocktics) > MAXMOCKTIME)
     {
-        player->messagetic[MSG_LOW] = MSGTICS;
-        player->message[MSG_LOW] = mockstrings[P_Random() % 12];
+		do { // [Immorpher] Prevent mock string from repeating twice
+			mockrandom = (I_Random()+ticon) % 51; // Updated randomizer for more fun
+		} while(player->message1 == mockstrings1[mockrandom]);
+		
+        player->messagetic = 2*MSGTICS; // [Immorpher] Doubled message time to read them!
+        player->message = mockstrings1[mockrandom];
+		player->messagecolor = 0xff200000;
         deathmocktics = ticon;
     }
 
@@ -632,8 +672,9 @@ void P_PlayerInSpecialSector (player_t *player, sector_t *sec) // 80022B1C
     if(sec->flags & MS_SECRET)
     {
         player->secretcount++;
-        player->message[MSG_MID] = "You found a secret area!";
-        player->messagetic[MSG_MID] = MSGTICS;
+        player->message = "You found a secret area!";
+        player->messagetic = MSGTICS;
+		player->messagecolor = 0x00ffff00;
         sec->flags &= ~MS_SECRET;
     }
 
@@ -719,26 +760,19 @@ void P_PlayerThink (player_t *player) // 80022D60
 		if (weapon == wp_nochange)
 			weapon = player->readyweapon;
 
-		if ((buttons & cbutton->BT_WEAPONBACKWARD) && !(oldbuttons & cbutton->BT_WEAPONBACKWARD))
+		if ((buttons & cbutton->BT_WEAPONBACKWARD) && !(oldbuttons & cbutton->BT_WEAPONBACKWARD)) // [Immorpher] Change weapon decriment for easier chainsaw access
 		{
-            if (weapon == wp_chainsaw)
-            {
-                player->pendingweapon = wp_fist;
-            }
-            else
-            {
-                if((int)(weapon-1) >= wp_chainsaw)
-                {
-                    while(--weapon >= wp_chainsaw && !player->weaponowned[weapon]);
-                }
-
-                if((int)weapon >= wp_chainsaw)
-                    player->pendingweapon = weapon;
-            }
+			if((int)(weapon) >= wp_chainsaw)
+			{
+				while(--weapon >= wp_chainsaw && !player->weaponowned[weapon]);
+			}
+			
+			if((int)weapon >= wp_chainsaw)
+				player->pendingweapon = weapon;
 		}
 		else if ((buttons & cbutton->BT_WEAPONFORWARD) && !(oldbuttons & cbutton->BT_WEAPONFORWARD))
 		{
-		    if((int)(weapon+1) < NUMWEAPONS)
+		    if((int)(weapon) < NUMWEAPONS)
             {
                 while(++weapon < NUMWEAPONS && !player->weaponowned[weapon]);
             }
@@ -812,21 +846,6 @@ void P_PlayerThink (player_t *player) // 80022D60
         {
 			player->attackdown = 0;
         }
-
-		if (buttons & cbutton->BT_SPEED)
-		{
-			if (!demoplayback && Autorun == 2 && player->speeddown == false)
-			{
-				player->speedtoggle = !player->speedtoggle;
-				player->message[MSG_LOW] = player->speedtoggle ? "Autorun: ON" : "Autorun: OFF";
-				player->messagetic[MSG_LOW] = MSGTICS;
-				player->speeddown = true;
-			}
-		}
-		else
-		{
-			player->speeddown = false;
-		}
 
 		/* */
 		/* cycle psprites */

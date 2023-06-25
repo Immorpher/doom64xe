@@ -343,7 +343,7 @@ int EV_BuildStairs(line_t *line, stair_e type) // 80013DB0
 	int		ok;
 	int		rtn;
 	fixed_t	stairsize = 0;
-	fixed_t	speed = 0;
+    fixed_t	speed = 0;
 	sector_t	*sec, *tsec;
 	floormove_t	*floor;
 
@@ -430,7 +430,6 @@ int EV_BuildStairs(line_t *line, stair_e type) // 80013DB0
 				break;
 			}
 		} while(ok);
-		secnum = -1;
 	}
 	return rtn;
 }

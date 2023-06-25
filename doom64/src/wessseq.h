@@ -11,7 +11,7 @@ extern unsigned char	master_mus_volume;
 extern unsigned char	pan_status;
 extern int	            enabledecay;
 
-extern unsigned char *Read_Vlq(unsigned char *pstart, void *deltatime);
+extern char *Read_Vlq(char *pstart, void *deltatime);
 extern char *Write_Vlq(char *dest, unsigned int value);
 extern int Len_Vlq(unsigned int value);
 

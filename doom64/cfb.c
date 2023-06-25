@@ -8,7 +8,7 @@
 #include <ultra64.h>
 #include "i_main.h"
 
-u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
+u16 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 
 
 

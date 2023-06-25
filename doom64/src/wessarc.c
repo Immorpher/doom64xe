@@ -6,9 +6,6 @@
 extern void SeqEngine(void);
 extern void process_function_queue(void);
 
-extern void __ll_mul(s32 a, u32 b, s32 c, u32 d);
-extern void __ull_div(s32 a, u32 b, s32 c, u32 d);
-
 #ifndef NOUSEWESSCODE
 extern void(*DrvFunctions[36])(track_status *);
 extern void(*drv_cmds[19])(track_status *);
@@ -74,7 +71,7 @@ void wess_set_decomp_callback(WessDecompCallbackProc decompcall) // 800352C8
 int wess_decomp(unsigned char decomp_type,
 	char          *fileref,
 	unsigned long file_offset,
-	unsigned char          *ramdest,
+	char          *ramdest,
 	unsigned long uncompressed_size) // 800352D4
 {
 	if (wessdecomp != 0)
@@ -141,22 +138,25 @@ short GetIntsPerSec(void) // 800353DC
 
 unsigned long CalcPartsPerInt(short ips, short ppq, short qpm) // 800353E4
 {
-	register unsigned long arg0 = 0;
-	register unsigned long ppi = 0;
+#if 0
+	register unsigned long arg0;
+	register unsigned long ppi;
 
     __ll_mul((s32) qpm >> 31, qpm, 0, (1<<16));
-    asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
+    asm("move	%0,$2":"=r"(arg0) : );
+	asm("move	%0,$3":"=r"(ppi) : );
     __ll_mul(arg0, (u32) ppi, (s32) ppq >> 31, ppq);
-    asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
+    asm("move	%0,$2":"=r"(arg0) : );
+	asm("move	%0,$3":"=r"(ppi) : );
     __ull_div(arg0, (u32) ppi, 0, 60);
-    asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
+    asm("move	%0,$2":"=r"(arg0) : );
+	asm("move	%0,$3":"=r"(ppi) : );
 	__ull_div(arg0, (u32) ppi, (s32) ips >> 31, ips);
-	asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
+	asm("move	%0,$2":"=r"(arg0) : );
+	asm("move	%0,$3":"=r"(ppi) : );
     return (u32) ppi;
+#endif
+	return (u32) ((s32)qpm  * (s32)ppq * 1092) / (u32)ips;
 }
 
 long WessInterruptHandler(void) // 80035458
@@ -280,7 +280,7 @@ char *get_sequence_table(void) // 80035600
 						sequence_table[i] = '0';
 
 					i++;
-				} while ((sequences & 3) != i);
+				} while (sequences & 3 != i);
 			}
 		}
 
@@ -347,7 +347,7 @@ char *get_tracks_table(void) // 800357A0
 						tracks_table[i] = '0';
 
 					i++;
-				} while ((tracks & 3) != i);
+				} while (tracks & 3 != i);
 			}
 		}
 
@@ -429,7 +429,7 @@ char *get_voices_active_table(void) // L80035988
 						voices_active_table[i] = '0';
 
 					i++;
-				} while ((voices & 3) != i);
+				} while (voices & 3 != i);
 			}
 		}
 
@@ -497,7 +497,7 @@ char *get_voices_handle_table(void) // 80035B24
 						voices_handle_table[i] = '0';
 
 					i++;
-				} while ((voices & 3) != i);
+				} while (voices & 3 != i);
 			}
 		}
 

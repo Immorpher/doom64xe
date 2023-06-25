@@ -9,10 +9,32 @@ extern void P_CheckCheats (void);
 
 #define T_NULL	        ""
 
-#define C_END1_TXT01	"you cackle as the"
+// [Immorpher] New introduction text adapted from Doom 64 reloaded!
+#define C_INTRO_TXT01	"Surviving the poison of evil has"
+#define C_INTRO_TXT02	"pushed sanity to an edge. The"
+#define C_INTRO_TXT03	"doctors' treatments are of little"
+#define C_INTRO_TXT04	"help. Nightmares of so many demons"
+#define C_INTRO_TXT05	"pouring through will not stop."
+#define C_INTRO_TXT06	" "
+#define C_INTRO_TXT07	"The outpost at Phobos was left dead"
+#define C_INTRO_TXT08	"in a nuclear haze. However, hell"
+#define C_INTRO_TXT09	"has reached back in. Something has"
+#define C_INTRO_TXT10	"distorted reality and resurrected"
+#define C_INTRO_TXT11	"decaying carnage back into hideous"
+#define C_INTRO_TXT12	"living tissue."
+#define C_INTRO_TXT13	" "
+#define C_INTRO_TXT14	"The mutations are devastating. The"
+#define C_INTRO_TXT15	"Demons have returned even stronger"
+#define C_INTRO_TXT16	"and more vicious than before. As"
+#define C_INTRO_TXT17	"the only one who has survived the"
+#define C_INTRO_TXT18	"horror, the mission is clear..."
+#define C_INTRO_TXT19	" "
+#define C_INTRO_TXT20	"MERCILESS EXTERMINATION!"
+
+#define C_END1_TXT01	"You cackle as the"
 #define C_END1_TXT02	"familiarity of the"
 #define C_END1_TXT03	"situation occurs to you."
-#define C_END1_TXT04	"The gateway to the Demons"
+#define C_END1_TXT04	"The gateway to the demons"
 #define C_END1_TXT05	"domain was too accessible."
 #define C_END1_TXT06	"You realize the demons mock"
 #define C_END1_TXT07	"you with their invitation."
@@ -42,7 +64,7 @@ extern void P_CheckCheats (void);
 #define C_END3_TXT03	"What strange place have"
 #define C_END3_TXT04	"you stumbled upon?"
 #define C_END3_TXT05	" "
-#define C_END3_TXT06	"The Demons did not expect"
+#define C_END3_TXT06	"The demons did not expect"
 #define C_END3_TXT07	"you to survive this far."
 #define C_END3_TXT08	"You feel their demonic"
 #define C_END3_TXT09	"presence waiting for you..."
@@ -52,7 +74,7 @@ extern void P_CheckCheats (void);
 #define C_END4_TXT01	"You wretch as a strange"
 #define C_END4_TXT02	"acrid odor assaults you."
 #define C_END4_TXT03	" "
-#define C_END4_TXT04	"Death and Demon carcass!"
+#define C_END4_TXT04	"Death and demon carcass!"
 #define C_END4_TXT05	" "
 #define C_END4_TXT06	"No nightmare could have"
 #define C_END4_TXT07	"prepared you for this."
@@ -85,20 +107,30 @@ extern void P_CheckCheats (void);
 #define C_END6_TXT14	" "
 #define C_END6_TXT15	"The End."
 
-#define C_END7_TXT01    "You had not expected to be"
-#define C_END7_TXT02	"torn from Hell so soon after"
-#define C_END7_TXT03	"your fateful decision."
-#define C_END7_TXT04	"Getting back there was your"
-#define C_END7_TXT05	"only concern. The plans of"
-#define C_END7_TXT06	"the Sister Ressurector to"
-#define C_END7_TXT07	"exterminate you have failed."
-#define C_END7_TXT08	" "
-#define C_END7_TXT09	"A grim vision takes hold of"
-#define C_END7_TXT10	"your mind as the demon"
-#define C_END7_TXT11	"carcasses steam in your wake."
-#define C_END7_TXT12	"Stretched before you is a"
-#define C_END7_TXT13	"path of perpetual torment..."
-#define C_END7_TXT14	"A path through DOOM..."
+char *introcluster[] =   // [Immorpher] new intro text adapted from Doom 64 Manual and Doom 64 Reloaded
+{
+    C_INTRO_TXT01,
+	C_INTRO_TXT02,
+	C_INTRO_TXT03,
+	C_INTRO_TXT04,
+	C_INTRO_TXT05,
+	C_INTRO_TXT06,
+	C_INTRO_TXT07,
+	C_INTRO_TXT08,
+	C_INTRO_TXT09,
+	C_INTRO_TXT10,
+	C_INTRO_TXT11,
+	C_INTRO_TXT12,
+	C_INTRO_TXT13,
+	C_INTRO_TXT14,
+	C_INTRO_TXT15,
+	C_INTRO_TXT16,
+	C_INTRO_TXT17,
+	C_INTRO_TXT18,
+	C_INTRO_TXT19,
+	C_INTRO_TXT20,
+	T_NULL
+};
 
 char *endcluster1[] =   // 8005A2C0
 {
@@ -200,25 +232,6 @@ char *endcluster6[] =   // 8005A3B0
 	T_NULL
 };
 
-char *endcluster7[] =
-{
-    C_END7_TXT01,
-    C_END7_TXT02,
-    C_END7_TXT03,
-    C_END7_TXT04,
-    C_END7_TXT05,
-    C_END7_TXT06,
-    C_END7_TXT07,
-    C_END7_TXT08,
-    C_END7_TXT09,
-    C_END7_TXT10,
-    C_END7_TXT11,
-    C_END7_TXT12,
-    C_END7_TXT13,
-    C_END7_TXT14,
-    T_NULL
-};
-
 //
 // Character cast strings F_FINALE.C
 //
@@ -227,7 +240,7 @@ char *endcluster7[] =
 //#define CC_HEAVY	"Heavy Weapon Dude" // Enemy Removed
 #define CC_IMP		"Imp"
 #define CC_NIMP		"Nightmare Imp" // New Enemy on Doom64
-#define CC_DEMON	"Demon"
+#define CC_DEMON	"Bull Demon"
 #define CC_SPECT	"Spectre"   // New Enemy on Doom64
 #define CC_LOST		"Lost Soul"
 #define CC_CACO		"Cacodemon"
@@ -240,6 +253,7 @@ char *endcluster7[] =
 //#define CC_ARCH	"Arch-Vile" // Enemy Removed
 //#define CC_SPIDER	"The Spider Mastermind" // Enemy Removed
 #define CC_CYBER	"The Cyberdemon"
+#define CC_MOTHER	"Mother Demon"
 #define CC_HERO		"Our Hero"
 
 //
@@ -273,6 +287,7 @@ static castinfo_t	castorder[] = // 8005A3F0
 	//{ CC_ARCH, MT_VILE },
 	//{ CC_SPIDER, MT_SPIDER },
 	{ CC_CYBER, MT_CYBORG },// MT_CYBORG
+	{ CC_MOTHER, MT_RESURRECTOR },// MT_CYBORG
 	{ CC_HERO, MT_PLAYER },// MT_PLAYER
 	{ NULL, 0 }
 };
@@ -291,8 +306,6 @@ static int textline;			// 800631F4
 static char **text;			    // 800631F8
 static int textalpha;			// 800631FC
 
-static boolean speed = false;
-
 /*
 =================
 =
@@ -303,7 +316,12 @@ static boolean speed = false;
 
 void F_StartIntermission(void) // 80002CD0
 {
-    if ((gamemap == 8) && (nextmap == 9))
+    if (nextmap == 1)
+    {
+        text = introcluster;
+        textypos = 20;
+    }
+    else if ((gamemap == 8) && (nextmap == 9))
     {
         text = endcluster1;
         textypos = 15;
@@ -332,7 +350,8 @@ void F_StartIntermission(void) // 80002CD0
     DrawerStatus = 2;
     textline = 0;
     textalpha = 0;
-    speed = false;
+	
+	S_StartMusic(116); // [Immorpher] Play menu music for intermission
 }
 
 /*
@@ -345,6 +364,7 @@ void F_StartIntermission(void) // 80002CD0
 
 void F_StopIntermission(void) // 80002E14
 {
+	S_StopMusic(); // [Immorpher] stop intermission music
     gamepaused = false;
     DrawerStatus = 0;
     I_WIPE_FadeOutScreen();
@@ -373,14 +393,9 @@ int F_TickerIntermission(void) // 80002E44
 
 	    exit = ga_nothing;
 
-        if ((buttons != oldbuttons) && (buttons & ALL_BUTTONS))
-        {
-            speed = true;
-        }
-
         if(*text[textline])
         {
-            textalpha += !speed ? 8 : 16;
+            textalpha += 8;
             if (textalpha > 255)
             {
                 textalpha = 0;
@@ -390,6 +405,12 @@ int F_TickerIntermission(void) // 80002E44
         else if ((buttons != oldbuttons) && (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B)))
         {
             exit = ga_exit;
+        }
+		
+		 // [Immorpher] Speed up text intermission by pressing buttons
+		if (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B))
+        {
+            textalpha += 256;
         }
 	}
 
@@ -412,7 +433,7 @@ void F_DrawerIntermission(void) // 80002F14
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_FILL);
     gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
-    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
     // Fill borders with black
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
@@ -422,11 +443,20 @@ void F_DrawerIntermission(void) // 80002F14
     ypos = textypos;
     for(i = 0; i < textline; i++)
     {
-        ST_DrawString(-1, ypos, text[i], 0xc0c0c0ff);
-        ypos += 14;
+		if(runintroduction) {
+			ST_Message(20, ypos, text[i], 0xc0c0c0ff);
+			ypos += 10;
+		} else {
+			ST_DrawString(-1, ypos, text[i], 0xc0c0c0ff);
+			ypos += 14;
+		}
     }
 
-    ST_DrawString(-1, ypos, text[i], textalpha | 0xc0c0c000);
+	if(runintroduction) {
+		ST_Message(20, ypos, text[i], textalpha | PACKRGBA(192, 192*textalpha/255, 192*textalpha/255, 0));
+	} else {
+		ST_DrawString(-1, ypos, text[i], textalpha | PACKRGBA(192, 192*textalpha/255, 192*textalpha/255, 0));
+	}
 
     if (MenuCall)
     {
@@ -472,7 +502,6 @@ void F_Start(void) // 8000313C
 	castonmelee = 0;
 	castrotation = 0;
 	castfadein = 0;
-    speed = false;
 
 	S_StartMusic(113);
 }
@@ -517,11 +546,6 @@ int F_Ticker(void) // 80003258
 		return gameaction;
 	}
 
-    if ((buttons != oldbuttons) && (buttons & ALL_BUTTONS))
-    {
-        speed = true;
-    }
-
     switch(finalestage)
     {
         case F_STAGE_FADEIN_BACKGROUD:
@@ -534,9 +558,9 @@ int F_Ticker(void) // 80003258
             break;
 
         case F_STAGE_DRAWTEXT:
-            if (gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
+            if (*endcluster6[textline])
             {
-                textalpha += !speed ? 8 : 16;
+                textalpha += 8;
                 if (textalpha > 255)
                 {
                     textalpha = 0;
@@ -795,7 +819,7 @@ void F_Drawer(void) // 800039DC
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_FILL);
     gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
-    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
     // Fill borders with black
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
@@ -814,11 +838,11 @@ void F_Drawer(void) // 800039DC
             ypos = textypos;
             for(i = 0; i < textline; i++)
             {
-                ST_DrawString(-1, ypos, (gamemap == 39 ? endcluster7[i] : endcluster6[i]), 0xc0c0c0ff);
+                ST_DrawString(-1, ypos, endcluster6[i], 0xc0c0c0ff);
                 ypos += 14;
             }
 
-            ST_DrawString(-1, ypos, (gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xc0c0c000);
+            ST_DrawString(-1, ypos, endcluster6[i], textalpha | 0xc0c0c000);
             break;
 
         case F_STAGE_CAST:
@@ -925,8 +949,8 @@ void BufferedDrawSprite(int type, state_t *state, int rotframe, int color, int x
 
         if (((spriteN64_t*)data)->cmpsize & 1)
         {
-            paldata = (byte *)(W_CacheLumpNum(((mobjinfo[type].palette + lump) -
-                                    (((spriteN64_t*)data)->cmpsize >> 1)), PU_CACHE, dec_jag)) + 8;
+            paldata = W_CacheLumpNum(((mobjinfo[type].palette + lump) -
+                                    (((spriteN64_t*)data)->cmpsize >> 1)), PU_CACHE, dec_jag) + 8;
         }
         else
         {

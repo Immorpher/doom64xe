@@ -301,13 +301,13 @@ void R_RenderPSprites(void);
 /* to get a global angle from cartesian coordinates, the coordinates are */
 /* flipped until they are in the first octant of the coordinate system, then */
 /* the y (<=x) is scaled and divided by x to get a tangent (slope) value */
-/* which is looked up in the tantoangle[] table.  The +1 size is to handle */
+/* which is looked up in the tantoangle() table.  The +1 size is to handle */
 /* the case when x==y without additional checking. */
 #define	SLOPERANGE	2048
 #define	SLOPEBITS	11
 #define	DBITS		(FRACBITS-SLOPEBITS)
 
-extern	angle_t	tantoangle[SLOPERANGE+1];
+//extern	angle_t	tantoangle(SLOPERANGE+1);
 
 
 #define	VIEW_3D_H 200

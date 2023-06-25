@@ -24,20 +24,17 @@
 /* SYSTEM IO */
 /*-----------*/
 
-extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
+extern u16 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 
 /*============================================================================= */
 
 /* Fixes and Version Update Here*/
 
 // NEWS Updates
-//#define ENABLE_NIGHTMARE    1       // Originally Activated in the project [GEC] Master Edition.
+// Nightmare Mode Originally Activated in the project [GEC] Master Edition.
 
 // FIXES
 #define FIX_LINEDEFS_DELETION   1   // Fixes for the 'linedef deletion' bug. From PsyDoom
-
-//#define ENABLE_EXTRA_EPISODES	1
-//#define ENABLE_REMASTER_SPRITES	1
 
 /*============================================================================= */
 
@@ -61,16 +58,13 @@ extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 #define	NULL	0
 #endif
 
-extern u32 __osGetFpcCsr();
-extern u32 __osSetFpcCsr(u32 value);
-
 extern void R_RenderFilter(void);
 
 extern int D_vsprintf(char *string, const char *format, int *argptr);
 
 /* c_convert.c  */
-extern void LightGetHSV(int r,int g,int b,int *h,int *s,int *v); // 800020BC
-extern void LightGetRGB(int h,int s,int v,int *r,int *g,int *b); // 8000248C
+extern int LightGetHSV(int r,int g,int b); // 800020BC
+extern int LightGetRGB(int h,int s,int v); // 8000248C
 
 /*
 ===============================================================================
@@ -100,13 +94,73 @@ typedef unsigned angle_t;
 #define	FINEMASK			(FINEANGLES-1)
 #define	ANGLETOFINESHIFT	19	/* 0x100000000 to 0x2000 */
 
-extern	fixed_t		finesine[5*FINEANGLES/4];
-extern	fixed_t		*finecosine;
+//extern	fixed_t		finesine(5*FINEANGLES/4);
+//extern	fixed_t		*finecosine;
+/*
+extern fixed_t D_abs(fixed_t x);
+extern fixed_t finesine(int x);
+extern fixed_t finecosine(int x);
+extern angle_t tantoangle(int x);
+*/
+static inline fixed_t FixedDiv2(fixed_t a, fixed_t b)
+{
+    fixed_t flo;
+
+    asm volatile(
+    ".set noreorder\n\t"
+    ".set nomacro\n\t"
+    "dsll   %1, %1, 16\n\t"
+    "ddiv   $0, %1, %2\n\t"
+    "mflo   %0\n\t"
+    ".set macro\n\t"
+    ".set reorder"
+    : "=r" (flo)
+    : "r" (a), "r" (b)
+    );
+
+    return (fixed_t) flo;
+}
+
+static inline fixed_t FixedMul(fixed_t a, fixed_t b)
+{
+    fixed_t flo;
+
+    asm volatile(
+    ".set noreorder\n\t"
+    ".set nomacro\n\t"
+    "dmult   %1, %2\n\t"
+    "mflo    %0\n\t"
+    "dsra    %0, %0, 16\n\t"
+    ".set macro\n\t"
+    ".set reorder"
+    : "=r" (flo)
+    : "r" (a), "r" (b)
+    );
+
+    return (fixed_t) flo;
+}
 
 static inline fixed_t D_abs(fixed_t x)
 {
     fixed_t _s = x >> 31;
     return (x ^ _s) - _s;
+}
+
+static inline fixed_t finesine(int x)
+{
+    x = x << 19;
+    if ((x ^ (x << 1)) < 0)
+        x = (1 << 31) - x;
+    x = x >> 17;
+    return x * (98304 - ((x * x) >> 11)) >> 13;
+}
+
+static inline fixed_t finecosine(int x) {
+    return finesine(x + 2048);
+}
+
+static inline angle_t tantoangle(int x) {
+    return ((angle_t)((-47*((x)*(x))) + (359628*(x)) - 3150270));
 }
 
 typedef enum
@@ -133,12 +187,9 @@ typedef enum
 	ga_exit
 } gameaction_t;
 
-#if ENABLE_EXTRA_EPISODES == 1
-#define LASTLEVEL 41
-#else
 #define LASTLEVEL 34
-#endif
-#define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 40))
+#define TOTALMAPS 33
+
 
 /* */
 /* library replacements */
@@ -299,7 +350,6 @@ typedef struct laser_s
 /* Doom 64 New Flags */
 #define	MF_COUNTSECRET  0x8000000   /* [d64] Count as secret when picked up (for intermissions) */
 #define	MF_RENDERLASER  0x10000000  /* [d64] Exclusive to MT_LASERMARKER only */
-#define	MF_NIGHTMARE    0x20000000  /* [kex] Enables nightmare mode */
 #define	MF_SHADOW       0x40000000  /* temporary player invisibility powerup. */
 #define	MF_NOINFIGHTING 0x80000000  /* [d64] Do not switch targets */
 
@@ -384,7 +434,7 @@ typedef enum
 {
 	am_clip,		/* pistol / chaingun */
 	am_shell,		/* shotgun */
-	am_cell,		/* BFG */
+	am_cell,		/* BFG / plasma / #$&%*/
 	am_misl,		/* missile launcher */
 	NUMAMMO,
 	am_noammo		/* chainsaw / fist */
@@ -428,16 +478,6 @@ typedef enum
 
 #define	MSGTICS		    (5*30)
 
-enum MSG_LEVELS
-{
-	MSG_HIGH,
-	MSG_MID,
-	MSG_LOW,
-	NUMMESSAGES
-};
-
-extern int messagecolors[NUMMESSAGES];
-
 /*
 ================
 =
@@ -480,8 +520,18 @@ typedef struct player_s
 	int			refire;					/* refired shots are less accurate */
 
 	int			killcount, itemcount, secretcount;		/* for intermission */
-	char		*message[NUMMESSAGES];				/* hint messages */
-	int         messagetic[NUMMESSAGES];             /* messages tic countdown*/
+	char		*message;				/* hint messages */
+	char		*message1;				// [Immorpher] additional message levels
+	char		*message2;				// [Immorpher] additional message levels
+	char		*message3;				// [Immorpher] additional message levels
+	int         messagetic;             /* messages tic countdown*/
+	int         messagetic1;            // [Immorpher] message tic buffer
+	int         messagetic2;            // [Immorpher] message tic buffer
+	int         messagetic3;            // [Immorpher] message tic buffer
+	unsigned int		messagecolor;			// [Immorpher] message color
+	unsigned int		messagecolor1;			// [Immorpher] message color 1
+	unsigned int		messagecolor2;			// [Immorpher] message color 2
+	unsigned int		messagecolor3;			// [Immorpher] message color 3
 	int			damagecount, bonuscount;/* for screen flashing */
 	int			bfgcount;               /* for bfg screen flashing */
 	mobj_t		*attacker;				/* who did damage (NULL for floors) */
@@ -494,9 +544,6 @@ typedef struct player_s
 
 	int			turnheld;				/* for accelerative turning */
 	int         onground;               /* [d64] */
-
-	boolean		speedtoggle;			/* toggle autorun */
-	boolean		speeddown;				/* true if button down last tic */
 } player_t;
 
 #define CF_NOCLIP       1       // no use
@@ -514,6 +561,7 @@ typedef struct player_s
 
 #define CF_NOCOLORS     0x20000    // [GEC] NEW CHEAT CODE
 #define CF_FULLBRIGHT   0x40000    // [GEC] NEW CHEAT CODE
+#define CF_GAMMA		0x80000    // [Immorpher] NEW CHEAT CODE
 
 #define	AF_LINES		1				/* automap active on lines mode */
 #define	AF_SUBSEC		2               /* automap active on subsector mode */
@@ -743,6 +791,7 @@ extern	boolean	demoplayback, demorecording;
 extern	int		*demo_p, *demobuffer;
 
 void G_InitNew (skill_t skill, int map, gametype_t gametype);
+void G_InitSkill(skill_t skill); // [Immorpher] skill initialize
 void G_CompleteLevel (void);
 void G_RecordDemo (void);
 int G_PlayDemoPtr (int skill, int map);
@@ -792,7 +841,6 @@ typedef struct
 
 extern menudata_t MenuData[8];      // 800A54F0
 extern menuitem_t Menu_Game[5];     // 8005AAA4
-extern menuitem_t Menu_GameNoSave[4];
 extern int MenuAnimationTic;        // 800a5570
 extern int cursorpos;               // 800A5574
 extern int m_vframe1;               // 800A5578
@@ -818,16 +866,25 @@ extern int ConfgNumb;               // 8005A7AC
 extern int Display_X;               // 8005A7B0
 extern int Display_Y;               // 8005A7B4
 extern boolean enable_messages;     // 8005A7B8
-extern boolean enable_statusbar;    // 8005A7BC
+extern int HUDopacity;    			// [Immorpher] HUD 0pacity options
 extern int SfxVolume;               // 8005A7C0
 extern int MusVolume;               // 8005A7C4
 extern int brightness;              // 8005A7C8
 extern int M_SENSITIVITY;           // 8005A7CC
 extern boolean FeaturesUnlocked;    // 8005A7D0
-extern int TextureFilter;
-extern int Autorun;
-extern boolean GreenBlood;
-extern boolean BlueCross;
+extern int MotionBob;				// [Immorpher] Motion Bob
+extern int VideoFilter;				// [GEC & Immorpher] VideoFilter
+extern boolean antialiasing;     	// [Immorpher] Anti-aliasing
+extern boolean interlacing;     	// [Immorpher] Interlacing
+extern boolean DitherFilter;     	// [Immorpher] Dither Filter
+extern int ColorDither;     		// [Immorpher] Color Dither
+extern int FlashBrightness;     	// [Immorpher] Strobe brightness adjustment
+extern boolean Autorun;     		// [Immorpher] Autorun
+extern boolean runintroduction; 	// [Immorpher] New introduction text
+extern boolean StoryText; 			// [Immorpher] Enable story text
+extern boolean MapStats; 			// [Immorpher] Enable automap statistics
+extern int HUDmargin; 				// [Immorpher] HUD margin options
+extern boolean ColoredHUD;     		// [Immorpher] Colored hud
 
 int M_RunTitle(void); // 80007630
 
@@ -849,8 +906,12 @@ void M_MenuClearCall(void); // 80008E6C
 void M_MenuTitleDrawer(void); // 80008E7C
 void M_FeaturesDrawer(void); // 800091C0
 void M_VolumeDrawer(void); // 800095B4
-void M_ControlStickDrawer(void); // 80009738
-void M_DisplayDrawer(void); // 80009884
+void M_MovementDrawer(void); // 80009738
+void M_VideoDrawer(void); // 80009884
+void M_DisplayDrawer(void); // [Immorpher] new menu
+void M_StatusHUDDrawer(void); // [Immorpher] new menu
+void M_DefaultsDrawer(void); // [Immorpher] new menu
+void M_CreditsDrawer(void); // [Immorpher] new menu
 
 void M_DrawBackground(int x, int y, int color, char *name); // 80009A68
 void M_DrawOverlay(int x, int y, int w, int h, int color); // 80009F58
@@ -927,7 +988,6 @@ int D_LegalTicker(void);        // 8002B5F8
 void D_DrawLegal(void);         // 8002B644
 int D_NoPakTicker(void);        // 8002B7A0
 void D_DrawNoPak(void);         // 8002B7F4
-void D_DrawNoMemory(void);
 void D_SplashScreen(void);      // 8002B988
 int D_Credits(void);            // 8002BA34
 int D_CreditTicker(void);       // 8002BA88
@@ -957,6 +1017,7 @@ extern mapinfo_t MapInfo[];
 extern unsigned char rndtable[256];
 int M_Random (void);
 int P_Random (void);
+int I_Random (void); // [Immorpher] new random table
 void M_ClearRandom (void);
 void M_ClearBox (fixed_t *box);
 void M_AddToBox (fixed_t *box, fixed_t x, fixed_t y);
@@ -980,8 +1041,6 @@ void S_StopAll(void);
 int S_SoundStatus(int seqnum);
 void S_StartSound(mobj_t *origin, int sound_id);
 int S_AdjustSoundParams(mobj_t *listener, mobj_t *origin, int* vol, int* pan);
-
-void S_StartSoundTest(int origin, int sound_id);
 
 /*--------*/
 /* I_MAIN */
@@ -1094,13 +1153,6 @@ void I_WIPE_FadeOutScreen(void); // 80006D34
 #define	G_RM_XLU_SURF_CLAMP			RM_XLU_SURF_CLAMP(1)
 #define	G_RM_XLU_SURF2_CLAMP		RM_XLU_SURF_CLAMP(2)
 
-
-#define	RM_XLU_SURF_ADD(clk)					\
-	IM_RD | CVG_DST_SAVE | FORCE_BL | ZMODE_OPA |		\
-	GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1)
-
-#define	G_RM_XLU_SURF_ADD		RM_XLU_SURF_ADD(1)
-#define	G_RM_XLU_SURF2_ADD		RM_XLU_SURF_ADD(2)
 
 #define	gDPSetPrimColorD64(pkt, m, l, rgba)				\
 {									\

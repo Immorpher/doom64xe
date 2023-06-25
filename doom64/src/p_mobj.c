@@ -75,8 +75,8 @@ mobj_t *P_SpawnMobj (fixed_t x, fixed_t y, fixed_t z, mobjtype_t type) // 80018a
 	if((mobj->flags & MF_COUNTKILL) != 0)
         totalkills++;
 
-	if((mobj->flags & MF_COUNTITEM) != 0)
-		totalitems++;
+        if((mobj->flags & MF_COUNTITEM) != 0)
+        totalitems++;
 
 	return mobj;
 }
@@ -100,8 +100,7 @@ extern boolean PB_CheckPosition(void);
 
 mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
 {
-	int			i;
-	int			bit = 0;
+	int			i, bit;
 	mobj_t		*mobj;
 	fixed_t		x,y,z;
 	mobj_t		tmp_mobj;
@@ -112,22 +111,12 @@ mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
 		return NULL;
 	}
 
-	#if ENABLE_NIGHTMARE == 1
-	if (gameskill == sk_baby)
-		bit = 1;
-	else if (gameskill == sk_nightmare)
-		bit = 4;
-	else
-		bit = 1<<(gameskill-1);
-	#else
 	if (gameskill == sk_baby || gameskill == sk_easy)
 		bit = 1;
 	else if (gameskill == sk_medium)
 		bit = 2;
-	else if (gameskill == sk_hard)
+	else if (gameskill >= sk_hard)
 		bit = 4;
-
-	#endif // ENABLE_NIGHTMARE
 
 	if (!(mthing->options & bit) )
 		return NULL;
@@ -141,8 +130,7 @@ mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
 
 	if (i==NUMMOBJTYPES)
     {
-		//I_Error ("P_SpawnMapThing: Unknown type %d at (%d, %d)",mthing->type , mthing->x, mthing->y);
-		return NULL;
+		I_Error ("P_SpawnMapThing: Unknown type %d at (%d, %d)",mthing->type , mthing->x, mthing->y);
     }
 
     //
@@ -195,18 +183,13 @@ mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
     if (mthing->options & MTF_ONDEATH)
 		mobj->flags |= MF_TRIGDEATH;
 
-	if (mthing->options & MTF_NIGHTMARE) {
-		mobj->health *= 2;
-		mobj->flags |= MF_NIGHTMARE;
-	}
-
     if (mthing->options & MTF_SECRET)
     {
 		mobj->flags |= MF_COUNTSECRET;
 		totalsecret++;
     }
 
-    if (mthing->options & MTF_NOINFIGHTING)
+    if (mthing->options & MTF_NOINFIGHTING || gameskill == sk_nightmare) // [Immorpher] No infighting on merciless difficulty!
 		mobj->flags |= MF_NOINFIGHTING;
 
     return mobj;
@@ -227,7 +210,6 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 	player_t	*p;
 	fixed_t		x,y,z;
 	mobj_t		*mobj;
-	int	i;
 	int levelnum;
 	int skill;
 
@@ -259,11 +241,14 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 	p->mo = mobj;
 	p->playerstate = PST_LIVE;
 	p->refire = 0;
-	for (i = 0; i < NUMMESSAGES; i++)
-	{
-		p->message[i] = NULL;
-		p->messagetic[i] = 0;
-	}
+	p->message = NULL;
+	p->message1 = NULL;  // [Immorpher] reset messages
+	p->message2 = NULL;  // [Immorpher] reset messages
+	p->message3 = NULL;  // [Immorpher] reset messages
+	p->messagetic = 0;
+	p->messagetic1 = 0;  // [Immorpher] reset messages
+	p->messagetic2 = 0;  // [Immorpher] reset messages
+	p->messagetic2 = 0;  // [Immorpher] reset messages
 	p->damagecount = 0;
 	p->bonuscount = 0;
 	p->extralight = 0;
@@ -403,29 +388,10 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage) // 800192B8
         th->tics -= P_Random()&1;
         if (th->tics<1)
             th->tics = 1;
-		#if ENABLE_REMASTER_SPRITES == 1
         if (damage <= 12 && damage >= 9)
-		{
-            P_SetMobjState (th, GreenBlood ? S_798 : S_495);
-		}
-        else if (damage < 9)
-		{
-            P_SetMobjState (th, GreenBlood ? S_799 : S_496);
-		}
-		else if (GreenBlood)
-		{
-			P_SetMobjState (th, S_797);
-		}
-		#else
-		if (damage <= 12 && damage >= 9)
-		{
             P_SetMobjState (th, S_495);
-		}
         else if (damage < 9)
-		{
             P_SetMobjState (th, S_496);
-		}
-		#endif
     }
 }
 
@@ -445,41 +411,46 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
 	int			speed;
 	fixed_t     x, y, z;
 	int         rnd1, rnd2;
+	int			vertspread; // [Immorpher] Vertical spread for merciless
 
 	x = source->x + xoffs;
     y = source->y + yoffs;
     z = source->z + heightoffs;
+	vertspread = 1; // Set to default 1 which is center of destination height
 
 	th = P_SpawnMobj (x, y, z, type);
 	if (th->info->seesound)
 		S_StartSound (source, th->info->seesound);
 	th->target = source;		/* where it came from */
 
-	if ((type == MT_PROJ_BABY) || (type == MT_PROJ_DART)) /* no aim projectile */
-		an = source->angle;
-	else if (dest)
-		an = R_PointToAngle2(x, y, dest->x, dest->y);
+        if ((type == MT_PROJ_BABY) || (type == MT_PROJ_DART)) /* no aim projectile */
+            an = source->angle;
+        else if (dest)
+            an = R_PointToAngle2(x, y, dest->x, dest->y);
 
 	if (dest && (dest->flags & MF_SHADOW))
-	{
+        {
         rnd1 = P_Random();
         rnd2 = P_Random();
 		an += ((rnd2 - rnd1) << 20);
+        }
+	
+	if (gameskill >= sk_nightmare && type != MT_PROJ_DART) { // [Immorpher] randomize projectiles a bit for merciless
+		
+		vertspread = I_Random() % 3; // [Immorpher] Randomize vertical
+		
+		if (P_Random() <= 96) { // [Immorpher] Randomize horizontal
+			rnd1 = I_Random();
+			rnd2 = P_Random();
+			an += (3*(rnd2 - rnd1)/2 << 20);
+		}
 	}
-
 
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
     speed = th->info->speed;
-
-	if (source && source->flags & MF_NIGHTMARE)
-	{
-        th->flags |= MF_NIGHTMARE;
-        speed *= 2;
-    }
-
-    th->momx = speed * finecosine[an];
-    th->momy = speed * finesine[an];
+    th->momx = speed * finecosine(an);
+    th->momy = speed * finesine(an);
 
     if (dest)
     {
@@ -487,10 +458,10 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
         dist = dist / (th->info->speed << FRACBITS);
         if (dist < 1)
             dist = 1;
-        th->momz = ((dest->z + (dest->height >> 1)) - z) / dist;
+        th->momz = ((dest->z + (dest->height >> vertspread)) - z) / dist;
     }
 
-	if (!P_TryMove(th, th->x, th->y))
+	if (!P_CheckPosition (th, th->x, th->y))
 		P_ExplodeMissile (th);
 
 	return th;
@@ -572,12 +543,12 @@ void P_SpawnPlayerMissile (mobj_t *source, mobjtype_t type) // 80019668
 
 	speed = th->info->speed;
 
-	th->momx = speed * finecosine[an>>ANGLETOFINESHIFT];
-	th->momy = speed * finesine[an>>ANGLETOFINESHIFT];
+	th->momx = speed * finecosine(an>>ANGLETOFINESHIFT);
+	th->momy = speed * finesine(an>>ANGLETOFINESHIFT);
 	th->momz = speed * slope;
 
-	x = source->x + (offset * finecosine[an>>ANGLETOFINESHIFT]);
-    y = source->y + (offset * finesine[an>>ANGLETOFINESHIFT]);
+	x = source->x + (offset * finecosine(an>>ANGLETOFINESHIFT));
+    y = source->y + (offset * finesine(an>>ANGLETOFINESHIFT));
 
 	// [d64]: checking against very close lines?
     if((shotline && aimfrac <= 0xC80) || !P_TryMove(th, x, y))
@@ -595,8 +566,8 @@ void P_SpawnPlayerMissile (mobj_t *source, mobjtype_t type) // 80019668
 
 void P_ExplodeMissile (mobj_t *mo) // 800198B8
 {
-	if(!P_SetMobjState(mo, mobjinfo[mo->type].deathstate))
-		return;
+        if(!P_SetMobjState(mo, mobjinfo[mo->type].deathstate))
+            return;
 
 	mo->momx = mo->momy = mo->momz = 0;
 

@@ -114,6 +114,7 @@ unsigned char rndtable[256] = { // 8005A190
 
 int	rndindex = 0;   // 8005A18C
 int prndindex = 0;  // 8005A188
+int irndindex = 0;  // [Immorpher] New random index
 
 int P_Random(void) // 80002928
 {
@@ -127,9 +128,15 @@ int M_Random(void) // 80002954
 	return rndtable[rndindex];
 }
 
+int I_Random(void) // [Immorpher] new randomizer
+{
+	irndindex = (irndindex + 1) & 0xff;
+	return rndtable[255-irndindex]; // [Immorpher] travels opposite direction!
+}
+
 void M_ClearRandom(void) // 80002980
 {
-	rndindex = prndindex = 0;
+	rndindex = prndindex = 0; // [Immorpher] new random index doesn't get reset
 }
 
 /*
@@ -139,7 +146,7 @@ void M_ClearRandom(void) // 80002980
 =
 ===============
 */
-
+u32 last_iter_count;
 int MiniLoop(void(*start)(void), void(*stop)(),
              int(*ticker)(void), void(*drawer)(void)) // 80002998
 {
@@ -163,6 +170,7 @@ int MiniLoop(void(*start)(void), void(*stop)(),
 
 	while (true)
 	{
+        u32 start_iter_count = osGetCount();
 		vblsinframe[0] = drawsync1;
 
 		// get buttons for next tic
@@ -215,6 +223,7 @@ int MiniLoop(void(*start)(void), void(*stop)(),
         }
 
 		gamevbls = gametic;
+        last_iter_count = ((osGetCount() - start_iter_count) + last_iter_count) / 2;
 	}
 
 	I_GetScreenGrab();

@@ -94,13 +94,13 @@ int load_sequence_data(int seqnum, void *memptr) // 8003980C
 	int seqseek;
 	int seekpos;
 	int numtracks, tracknum, readbytes, decomp_type;
-	unsigned char *pmem;
-	unsigned char *dmem;//data memory
+	char *pmem;
+	char *dmem;//data memory
 
 	//char *dat;
 	//int j;
 
-	pmem = (unsigned char *)memptr;
+	pmem = (char *)memptr;
 
 	if (seq_loader_enable)
 	{
@@ -193,7 +193,7 @@ int load_sequence_data(int seqnum, void *memptr) // 8003980C
 					ptrk_info->plabellist = (unsigned long *)dmem;
 					dmem += (ptrk_info->trk_hdr->labellist_count * sizeof(long));
 
-					ptrk_info->ptrk_data = dmem;
+					ptrk_info->ptrk_data = (char *)dmem;
 					dmem += (ptrk_info->trk_hdr->data_size);
 
 					tracknum++;
@@ -216,7 +216,7 @@ int load_sequence_data(int seqnum, void *memptr) // 8003980C
 					ptrk_info->plabellist = (unsigned long *)dmem;
 					dmem += (ptrk_info->trk_hdr->labellist_count * sizeof(long));
 
-					ptrk_info->ptrk_data = dmem;
+					ptrk_info->ptrk_data = (char *)dmem;
 					dmem += (ptrk_info->trk_hdr->data_size);
 
 					//------------
@@ -229,7 +229,7 @@ int load_sequence_data(int seqnum, void *memptr) // 8003980C
 					(ptrk_info + 1)->plabellist = (unsigned long *)dmem;
 					dmem += ((ptrk_info + 1)->trk_hdr->labellist_count * sizeof(long));
 
-					(ptrk_info + 1)->ptrk_data = dmem;
+					(ptrk_info + 1)->ptrk_data = (char *)dmem;
 					dmem += ((ptrk_info + 1)->trk_hdr->data_size);
 
 					//------------
@@ -243,7 +243,7 @@ int load_sequence_data(int seqnum, void *memptr) // 8003980C
 					(ptrk_info + 2)->plabellist = (unsigned long *)dmem;
 					dmem += ((ptrk_info + 2)->trk_hdr->labellist_count * sizeof(long));
 
-					(ptrk_info + 2)->ptrk_data = dmem;
+					(ptrk_info + 2)->ptrk_data = (char *)dmem;
 					dmem += ((ptrk_info + 2)->trk_hdr->data_size);
 
 					//------------
@@ -256,7 +256,7 @@ int load_sequence_data(int seqnum, void *memptr) // 8003980C
 					(ptrk_info + 3)->plabellist = (unsigned long *)dmem;
 					dmem += ((ptrk_info + 3)->trk_hdr->labellist_count * sizeof(long));
 
-					(ptrk_info + 3)->ptrk_data = dmem;
+					(ptrk_info + 3)->ptrk_data = (char *)dmem;
 					dmem += ((ptrk_info + 3)->trk_hdr->data_size);
 
 					tracknum += 4;
@@ -384,7 +384,7 @@ int wess_seq_loader_init(void *input_pm_stat, char *seqfile, enum OpenSeqHandleF
 		}
 		else
 		{
-			if (wess_decomp(decomp_type, loaderfile, sizeof(module_header), (unsigned char*)ref_pm_stat->pmod_info->pseq_info, readbytes) < 0)
+			if (wess_decomp(decomp_type, loaderfile, sizeof(module_header), (char*)ref_pm_stat->pmod_info->pseq_info, readbytes) < 0)
 				return(0);
 
 			seq_loader_offset = sfile_hdr.compress_size + sizeof(module_header);

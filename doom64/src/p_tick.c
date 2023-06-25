@@ -166,21 +166,13 @@ void P_CheckCheats (void) // 8002187C
             lastticon = ticon;
 
             MenuCall = M_MenuTitleDrawer;
+            MenuItem = Menu_Game;
             cursorpos = 0;
 
-            if (EnableExpPak)
-            {
-                MenuItem = Menu_Game;
+            if (FeaturesUnlocked == false)
                 itemlines = 4;
-            }
             else
-            {
-                MenuItem = Menu_GameNoSave;
-                itemlines = 3;
-            }
-
-            if (FeaturesUnlocked)
-                itemlines++;  // Enable cheat menu
+                itemlines = 5;  // Enable cheat menu
 
             MenuIdx = 0;
             text_alpha = 255;
@@ -326,14 +318,11 @@ void P_Start (void) // 80021C50
 
     DrawerStatus = 1;
 
-    if (gamemap == 33)  /* Add by default God Mode in player  */
-    {
-        players[0].cheats |= CF_GODMODE;
-    }
-    else if (gamemap == 32)  /* Remove by default God Mode in player  */
-    {
-        players[0].cheats &= ~CF_GODMODE;
-    }
+        if (gamemap == 33) {  /* Add by default God Mode in player  */
+             players[0].cheats |= CF_GODMODE;
+        }
+        else if (gamemap == 32)  /* Remove by default God Mode in player  */
+            players[0].cheats &= ~CF_GODMODE;
 
 	gamepaused = false;
 	validcount = 1;
@@ -377,18 +366,7 @@ void P_Stop (int exit) // 80021D58
         I_WIPE_FadeOutScreen();
     else
         I_WIPE_MeltScreen();
-    
-    if (gamemap == 33 && demoplayback && exit == ga_completed)
-    {
-        // wait until the music has finished playing.
-        // before, it relied on exact map timing (see two conditions above).
-        while (S_SoundStatus(MapInfo[gamemap].MusicSeq) == 1)
-        {
-            //ST_DebugPrint("Waiting %d", exit);
-        }
-        //ST_DebugPrint("Title Completed");
-    }
+
     S_StopAll();
-    //ST_DebugPrint("Stopped %d", exit);
 }
 

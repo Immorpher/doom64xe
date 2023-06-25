@@ -28,7 +28,7 @@ extern char _codeSegmentEnd[];
  */
 u64	bootStack[STACKSIZE/sizeof(u64)];
 
-extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
+extern u16 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 
 extern int globallump; // 800A68f8 r_local.h
 extern int globalcm;   // 800A68fC r_local.h
@@ -74,57 +74,47 @@ u64 gfx_yield_buff[SYS_YIELD_SIZE];     // 800919E0
 OSTask vid_rsptask[2] = // 8005A590
 {
     {
-        {
-            M_GFXTASK,                          /* task type */
-            NULL,                               /* task flags */
-            (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
-            0,                                  /* boot ucode size (fill in later) */
-            (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
-            SP_UCODE_SIZE,                      /* task ucode size */
-            (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
-            SP_UCODE_DATA_SIZE,                 /* task ucode data size */
-            &sys_rcp_stack[0],                  /* task dram stack pointer */
-            SP_DRAM_STACK_SIZE8,                /* task dram stack size */
-            &fifo_buff[0][0],                   /* task fifo buffer start ptr */
-            &fifo_buff[0][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
-            NULL,                               /* task data pointer (fill in later) */
-            0,                                  /* task data size (fill in later) */
-            &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
-            SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
-        }
+        M_GFXTASK,                          /* task type */
+        NULL,                               /* task flags */
+        (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
+        0,                                  /* boot ucode size (fill in later) */
+        (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
+        SP_UCODE_SIZE,                      /* task ucode size */
+        (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
+        SP_UCODE_DATA_SIZE,                 /* task ucode data size */
+        &sys_rcp_stack[0],                  /* task dram stack pointer */
+        SP_DRAM_STACK_SIZE8,                /* task dram stack size */
+        &fifo_buff[0][0],                   /* task fifo buffer start ptr */
+        &fifo_buff[0][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
+        NULL,                               /* task data pointer (fill in later) */
+        0,                                  /* task data size (fill in later) */
+        &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
+        SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
     },
     {
-        {
-            M_GFXTASK,                          /* task type */
-            NULL,                               /* task flags */
-            (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
-            0,                                  /* boot ucode size (fill in later) */
-            (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
-            SP_UCODE_SIZE,                      /* task ucode size */
-            (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
-            SP_UCODE_DATA_SIZE,                 /* task ucode data size */
-            &sys_rcp_stack[0],                  /* task dram stack pointer */
-            SP_DRAM_STACK_SIZE8,                /* task dram stack size */
-            &fifo_buff[1][0],                   /* task fifo buffer start ptr */
-            &fifo_buff[1][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
-            NULL,                               /* task data pointer (fill in later) */
-            0,                                  /* task data size (fill in later) */
-            &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
-            SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
-        }
+        M_GFXTASK,                          /* task type */
+        NULL,                               /* task flags */
+        (u64*) rspbootTextStart,            /* boot ucode pointer (fill in later) */
+        0,                                  /* boot ucode size (fill in later) */
+        (u64*) gspF3DEX2_NoN_fifoTextStart,  /* task ucode pointer (fill in later) */
+        SP_UCODE_SIZE,                      /* task ucode size */
+        (u64*) gspF3DEX2_NoN_fifoDataStart,  /* task ucode data pointer (fill in later) */
+        SP_UCODE_DATA_SIZE,                 /* task ucode data size */
+        &sys_rcp_stack[0],                  /* task dram stack pointer */
+        SP_DRAM_STACK_SIZE8,                /* task dram stack size */
+        &fifo_buff[1][0],                   /* task fifo buffer start ptr */
+        &fifo_buff[1][0]+SYS_FIFO_SIZE,     /* task fifo buffer end ptr */
+        NULL,                               /* task data pointer (fill in later) */
+        0,                                  /* task data size (fill in later) */
+        &gfx_yield_buff[0],                 /* task yield buffer ptr (not used here) */
+        SYS_YIELD_SIZE                      /* task yield buffer size (not used here) */
     }
 };
 
 Vp vid_viewport = // 8005A610
 {
-    {
-        {
-            SCREEN_WD*2, SCREEN_HT*2, G_MAXZ,   0 /* scale */
-        },
-        {
-            SCREEN_WD*2, SCREEN_HT*2,      0,   0 /* translate */
-        },
-    }
+    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ,   0,		/* scale */
+    SCREEN_WD*2, SCREEN_HT*2,      0,   0,		/* translate */
 };
 
 OSMesgQueue romcopy_msgque; // 800A4F70
@@ -526,7 +516,7 @@ extern void S_Init(void);
 void I_Init(void) // 80005C50
 {
     // assume NTSC
-    OSViMode *ViMode = &osViModeTable[OS_VI_NTSC_LPN2];
+    OSViMode *ViMode = &osViModeTable[OS_VI_NTSC_LPN1];
 
     vid_rsptask[0].t.ucode_boot_size = (int)rspbootTextEnd - (int)rspbootTextStart;	// set ucode size (waste but who cares)
     vid_rsptask[1].t.ucode_boot_size = (int)rspbootTextEnd - (int)rspbootTextStart;	// set ucode size (waste but who cares)
@@ -541,15 +531,15 @@ void I_Init(void) // 80005C50
 
     if(osTvType == OS_TV_PAL)
     {
-        ViMode = &osViModeTable[OS_VI_PAL_LPN2];
+        ViMode = &osViModeTable[OS_VI_PAL_LPN1];
     }
     else if(osTvType == OS_TV_NTSC)
     {
-        ViMode = &osViModeTable[OS_VI_NTSC_LPN2];
+        ViMode = &osViModeTable[OS_VI_NTSC_LPN1];
     }
     else if(osTvType == OS_TV_MPAL)
     {
-        ViMode = &osViModeTable[OS_VI_MPAL_LPN2];
+        ViMode = &osViModeTable[OS_VI_MPAL_LPN1];
     }
 
     video_hStart = ViMode->comRegs.hStart;
@@ -567,7 +557,7 @@ void I_Init(void) // 80005C50
     osViSetXScale(1.0);
     osViSetYScale(1.0);
 
-    D_memset(cfb, 0, ((SCREEN_WD*SCREEN_HT)*sizeof(u32))*2);
+    D_memset(cfb, 0, ((SCREEN_WD*SCREEN_HT)*sizeof(u16))*2);
     osViSwapBuffer(cfb);
 
     if (osViGetCurrentFramebuffer() != cfb) {
@@ -628,7 +618,7 @@ void I_Error(char *error, ...) // 80005F30
         gDPPipeSync(GFX1++);
         gDPSetCycleType(GFX1++, G_CYC_FILL);
         gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
-        gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+        gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
         gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
         gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
@@ -760,10 +750,10 @@ void I_ClearFrame(void) // 8000637C
 
     gMoveWd(GFX1++, G_MW_SEGMENT, G_MWO_SEGMENT_0, 0);
 
-    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
     gDPSetScissor(GFX1++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WD, SCREEN_HT);
 
-    gDPSetTextureFilter(GFX1++, TextureFilter == 0 ? G_TF_BILERP : G_TF_POINT);
+	R_RenderFilter();    // [GEC and Immorpher] New filter options
 
     gSPViewport(GFX1++, &vid_viewport);
 
@@ -841,22 +831,22 @@ void I_MoveDisplay(int x,int y) // 80006790
 
 void I_WIPE_MeltScreen(void) // 80006964
 {
-    u32 *fb;
+    u16 *fb;
     int y1;
     int tpos;
     int yscroll;
     int height;
 
-    fb = Z_Malloc((SCREEN_WD*SCREEN_HT)*sizeof(u32), PU_STATIC, NULL);
+    fb = Z_Malloc((SCREEN_WD*SCREEN_HT)*sizeof(u16), PU_STATIC, NULL);
 
     I_GetScreenGrab();
-    D_memcpy(&cfb[vid_side][0], &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
+    D_memcpy(&cfb[vid_side][0], &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u16));
 
     yscroll = 1;
     while( true )
     {
         y1 = 0;
-        D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
+        D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u16));
 
         I_ClearFrame();
 
@@ -875,8 +865,8 @@ void I_WIPE_MeltScreen(void) // 80006964
         {
             do
             {
-                gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b , SCREEN_WD, fb);
-                gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b,
+                gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , SCREEN_WD, fb);
+                gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b,
                            (SCREEN_WD >> 2), 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
 
                 gDPLoadSync(GFX1++);
@@ -885,7 +875,7 @@ void I_WIPE_MeltScreen(void) // 80006964
                             ((SCREEN_WD-1) << 2), (((tpos+3)-1) << 2));
 
                 gDPPipeSync(GFX1++);
-                gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b,
+                gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b,
                            (SCREEN_WD >> 2), 0, G_TX_RENDERTILE, 0, 0, 0, 0, 0, 0, 0);
 
                 gDPSetTileSize(GFX1++, G_TX_RENDERTILE,
@@ -921,7 +911,7 @@ void I_WIPE_FadeOutScreen(void) // 80006D34
     fb = Z_Malloc((SCREEN_WD*SCREEN_HT)*sizeof(u32), PU_STATIC, NULL);
 
     I_GetScreenGrab();
-    D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
+    D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u16));
 
     outcnt = 248;
     do
@@ -940,8 +930,8 @@ void I_WIPE_FadeOutScreen(void) // 80006D34
         y1 = 0;
         do
         {
-            gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b , SCREEN_WD, fb);
-            gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b,
+            gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , SCREEN_WD, fb);
+            gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b,
                        (SCREEN_WD >> 2), 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
 
             gDPLoadSync(GFX1++);
@@ -950,7 +940,7 @@ void I_WIPE_FadeOutScreen(void) // 80006D34
                         ((SCREEN_WD-1) << 2), (((tpos+3)-1) << 2));
 
             gDPPipeSync(GFX1++);
-            gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b,
+            gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b,
                        (SCREEN_WD >> 2), 0, G_TX_RENDERTILE, 0, 0, 0, 0, 0, 0, 0);
 
             gDPSetTileSize(GFX1++, G_TX_RENDERTILE,

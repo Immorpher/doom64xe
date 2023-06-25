@@ -151,8 +151,8 @@ int W_CheckNumForName(char *name, int hibit1, int hibit2) // 8002C0F4 removed un
 	lump_p = lumpinfo;
 	for(i = 0; i < numlumps; i++)
 	{
-		if ((*(int *)&name8[0] == (*(int *)&lump_p->name[0] & hibit1)) &&
-			(*(int *)&name8[4] == (*(int *)&lump_p->name[4] & hibit2)))
+		if (	(*(int *)&name8[0] == (*(int *)&lump_p->name[0] & hibit1)) &&
+			(*(int *)&name8[4] == (*(int *)&lump_p->name[4] & hibit2))	)
 		{
 			return i;
 		}
@@ -214,11 +214,13 @@ int W_LumpLength (int lump) // 8002C204
 =
 ====================
 */
+// 96 kb buffer to replace Z_Alloc in W_ReadLump
+static u64 input_w_readlump[16384]; 
+static byte *input = (byte*)input_w_readlump;
 
 void W_ReadLump (int lump, void *dest, decodetype dectype) // 8002C260
 {
     OSIoMesg romio_msgbuf;
-	byte *input;
 	lumpinfo_t *l;
 	int lumpsize;
 
@@ -231,7 +233,6 @@ void W_ReadLump (int lump, void *dest, decodetype dectype) // 8002C260
 		if ((l->name[0] & 0x80)) /* compressed */
 		{
 			lumpsize = l[1].filepos - (l->filepos);
-			input = Z_Alloc(lumpsize, PU_STATIC, NULL);
 
 			osInvalDCache((void *)input, lumpsize);
 
@@ -246,7 +247,6 @@ void W_ReadLump (int lump, void *dest, decodetype dectype) // 8002C260
 			else // dec_d64
 				DecodeD64((byte *)input, (byte *)dest);
 
-			Z_Free(input);
 			return;
 		}
 	}
@@ -453,13 +453,13 @@ int W_MapGetNumForName(char *name) // 8002C7D0
 	lump_p = maplump;
 	for(i = 0; i < mapnumlumps; i++)
 	{
-		if ((*(int *)&name8[0] == (*(int *)&lump_p->name[0] & 0x7fffffff)) &&
-			(*(int *)&name8[4] == (*(int *)&lump_p->name[4])))
+		if (	(*(int *)&name8[0] == (*(int *)&lump_p->name[0] & 0x7fffffff)) &&
+			(*(int *)&name8[4] == (*(int *)&lump_p->name[4]))	)
 		{
 			return i;
 		}
 
-		lump_p++;
+	        lump_p++;
 	}
 
 	return -1;

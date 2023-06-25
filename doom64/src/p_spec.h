@@ -618,6 +618,7 @@ void T_FadeInBrightness(fadebright_t *fb); // 8000f610
 int P_ModifyMobjFlags(int tid, int flags); // 8000F674
 int P_AlertTaggedMobj(int tid, mobj_t *activator); // 8000F6C4
 void T_MobjExplode(mobjexp_t *exp); // 8000F76C
+void P_RefreshVideo(void); // [Immorpher] Refresh video settings
 
 /*
 ===============================================================================

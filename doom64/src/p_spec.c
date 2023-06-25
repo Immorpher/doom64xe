@@ -840,8 +840,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {
             if(!player->cards[it_bluecard] && !player->cards[it_blueskull])
             {
-                player->message[MSG_LOW] = "You need a blue key.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message = "You need a blue key.";
+                player->messagetic = MSGTICS;
+				player->messagecolor = 0x0080ff00;
                 S_StartSound(thing, sfx_oof);
 
                 if (player == &players[0])
@@ -855,8 +856,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {
             if(!player->cards[it_yellowcard] && !player->cards[it_yellowskull])
             {
-                player->message[MSG_LOW] = "You need a yellow key.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message = "You need a yellow key.";
+                player->messagetic = MSGTICS;
+				player->messagecolor = 0xC4C40000;
                 S_StartSound(thing, sfx_oof);
 
                 if (player == &players[0])
@@ -870,8 +872,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {
             if(!player->cards[it_redcard] && !player->cards[it_redskull])
             {
-                player->message[MSG_LOW] = "You need a red key.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message = "You need a red key.";
+                player->messagetic = MSGTICS;
+				player->messagecolor = 0xff404000;
                 S_StartSound(thing, sfx_oof);   // ?? line missing on Doom64
 
                 if (player == &players[0])
@@ -886,17 +889,17 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
             actionType == 91 // ARTIFACT SWITCH 2
             actionType == 92 // ARTIFACT SWITCH 3
         */
-        if ((actionType == 90 || actionType == 91 || actionType == 92))
-        {   
-            if (!(player->artifacts & (1 << ((actionType + 6) & 0x1f))))
-            {
-                player->message[MSG_LOW] = "You lack the ability to activate it.";
-                player->messagetic[MSG_LOW] = MSGTICS;
-                S_StartSound(thing, sfx_oof);
+// weird condition the << specifically
+        if ((actionType == 90 || actionType == 91 || actionType == 92) &&
+           !((player->artifacts & 1) << ((actionType + 6) & 0x1f)))
+        {
+            player->message = "You lack the ability to activate it.";
+            player->messagetic = MSGTICS;
+            player->messagecolor = 0xC4C4C400;
+            S_StartSound(thing, sfx_oof);
 
-                return false;
-            }
-        }  
+            return false;
+        }
     }
 
     if(actionType >= 256)
@@ -1034,8 +1037,8 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         case 122:		/* PlatDownWaitUpStay */
 			ok = EV_DoPlat(line, upWaitDownStay, 0);
 			break;
-        case 123:		/* Blazing PlatUpWaitDownStay */
-			ok = EV_DoPlat(line, blazeUWDS, 0);
+        case 123:		/* Blazing PlatDownWaitUpStay */
+			ok = EV_DoPlat(line, blazeDWUS, 0);
 			break;
         case 124:		/* Secret EXIT */
 			P_SecretExitLevel(line->tag);//(G_SecretExitLevel)

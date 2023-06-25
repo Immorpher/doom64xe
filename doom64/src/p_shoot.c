@@ -330,8 +330,8 @@ fixed_t P_AimLineAttack (mobj_t *t1, angle_t angle, fixed_t zheight, fixed_t dis
 
     shootthing      = t1;
 
-    tx2 = t1->x + dist*finecosine[angle];
-    ty2 = t1->y + dist*finesine[angle];
+    tx2 = t1->x + dist*finecosine(angle);
+    ty2 = t1->y + dist*finesine(angle);
 
     // can't shoot outside view angles
     // [d64] use 120 instead of 100
@@ -385,8 +385,8 @@ void P_LineAttack (mobj_t *t1, angle_t angle, fixed_t zheight, fixed_t distance,
     shootthing      = t1;
     la_damage       = damage;
 
-    tx2             = t1->x + dist*finecosine[angle];
-    ty2             = t1->y + dist*finesine[angle];
+    tx2             = t1->x + dist*finecosine(angle);
+    ty2             = t1->y + dist*finesine(angle);
     linetarget      = NULL;
     shotline        = NULL;
 
@@ -499,8 +499,8 @@ void P_Shoot2(void)//L80024144()
 
 	shootdiv.x = t1->x;
 	shootdiv.y = t1->y;
-	shootx2 = t1->x + (attackrange>>FRACBITS)*finecosine[angle];
-	shooty2 = t1->y + (attackrange>>FRACBITS)*finesine[angle];
+	shootx2 = t1->x + (attackrange>>FRACBITS)*finecosine(angle);
+	shooty2 = t1->y + (attackrange>>FRACBITS)*finesine(angle);
 	shootdiv.dx = shootx2 - shootdiv.x;
 	shootdiv.dy = shooty2 - shootdiv.y;
 	shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;

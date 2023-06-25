@@ -18,9 +18,12 @@ void R_RenderLaser(mobj_t *thing);
 void R_RenderPSprites(void);
 //-----------------------------------//
 
+u32 last_phase3_count;
+
 void R_RenderAll(void) // 80026590
 {
     subsector_t *sub;
+    u32 start_phase3_count = osGetCount();
 
     while (endsubsector--, (endsubsector >= solidsubsectors))
     {
@@ -30,6 +33,8 @@ void R_RenderAll(void) // 80026590
 
         sub->drawindex = 0x7fff;
     }
+
+    last_phase3_count = ((osGetCount() - start_phase3_count) + last_phase3_count) / 2;
 }
 
 void R_RenderWorld(subsector_t *sub) // 80026638
@@ -518,9 +523,7 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
     vertex_t *v2;
     fixed_t x, y;
     fixed_t sin, cos;
-    int wshift = 5, hshift = 5;
-
-    if (texture <= 1) return;
+    int wshift, hshift;
 
     if (texture != globallump)
     {
@@ -589,8 +592,8 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
     x >>= 1;
     y >>= 1;
 
-    cos = finecosine[seg->angle >> ANGLETOFINESHIFT] << 1;
-    sin = finesine[seg->angle >> ANGLETOFINESHIFT] << 1;
+    cos = finecosine(seg->angle >> ANGLETOFINESHIFT) << 1;
+    sin = finesine(seg->angle >> ANGLETOFINESHIFT) << 1;
 
     // x coordinates
     VTX1[0].v.ob[0] = VTX1[3].v.ob[0] = ((x) - (cos << 3) + sin) >> 16;
@@ -606,11 +609,11 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
 
     // texture s coordinates
     VTX1[0].v.tc[0] = VTX1[3].v.tc[0] = (0 << 6);
-    VTX1[1].v.tc[0] = VTX1[2].v.tc[0] = ((1 << wshift) << 6);
+    VTX1[1].v.tc[0] = VTX1[2].v.tc[0] = (32 << 6);
 
     // texture t coordinates
     VTX1[0].v.tc[1] = VTX1[1].v.tc[1] = (0 << 6);
-    VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = ((1 << hshift) << 6);
+    VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = (32 << 6);
 
     // vertex color
     *(int*)VTX1[0].v.cn = *(int*)VTX1[1].v.cn = *(int*)VTX1[2].v.cn = *(int*)VTX1[3].v.cn = color;
@@ -872,12 +875,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
             lump = vissprite_p->lump;
             flip = vissprite_p->flip;
 
-            if (thing->flags & MF_NIGHTMARE)
-            {
-                color = PACKRGBA(64, 255, 0, 255);
-                gDPSetRenderMode(GFX1++, G_RM_XLU_SURF_CLAMP, G_RM_XLU_SURF2_ADD);
-            }
-            else if (thing->frame & FF_FULLBRIGHT)
+            if (thing->frame & FF_FULLBRIGHT)
             {
                 color = PACKRGBA(255, 255, 255, 255);//0xffffffff;
             }
@@ -887,7 +885,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
             }
 
             gDPSetPrimColorD64(GFX1++, 0, vissprite_p->sector->lightlevel, thing->alpha);
-            
+
             data = W_CacheLumpNum(lump, PU_CACHE, dec_jag);
 
             compressed = ((spriteN64_t*)data)->compressed;
@@ -933,8 +931,8 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
                 if (((spriteN64_t*)data)->cmpsize & 1)
                 {
-                    paldata = (byte *)(W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)) +
-                                             thing->info->palette, PU_CACHE, dec_jag)) + 8;
+                    paldata = W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)) +
+                                             thing->info->palette, PU_CACHE, dec_jag) + 8;
                 }
                 else
                 {
@@ -1070,11 +1068,6 @@ void R_RenderThings(subsector_t *sub) // 80028248
             }
 
             vissprite_p = vissprite_p->next;
-
-            if (thing->flags & MF_NIGHTMARE)
-            {
-                gDPSetRenderMode(GFX1++, G_RM_FOG_SHADE_A, G_RM_TEX_EDGE2);
-            }
         }
 
         globallump = -1;

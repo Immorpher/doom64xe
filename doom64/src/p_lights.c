@@ -61,6 +61,9 @@ void P_SpawnFireFlicker(sector_t *sector) // 800157B4
 
 void T_Glow(glow_t *g) // 80015820
 {
+	int MaximumLight = FlashBrightness*(g->maxlight)/32; // [Immorpher] Flash reduction
+	int MinimumLight = FlashBrightness*(g->minlight)/32; // [Immorpher] Flash reduction
+	
     if(--g->count)
         return;
 
@@ -76,9 +79,9 @@ void T_Glow(glow_t *g) // 80015820
 	{
 		case -1:		/* DOWN */
 			g->sector->lightlevel -= GLOWSPEED;
-			if (g->sector->lightlevel < g->minlight)
+			if (g->sector->lightlevel < MinimumLight)
 			{
-				g->sector->lightlevel = g->minlight;
+				g->sector->lightlevel = MinimumLight; 
 
 				if(g->type == PULSERANDOM)
                     g->maxlight = (P_Random() & 31) + 17;
@@ -88,9 +91,9 @@ void T_Glow(glow_t *g) // 80015820
 			break;
 		case 1:			/* UP */
 			g->sector->lightlevel += GLOWSPEED;
-			if (g->maxlight < g->sector->lightlevel)
+			if (MaximumLight < g->sector->lightlevel)
 			{
-				g->sector->lightlevel = g->maxlight;
+				g->sector->lightlevel = MaximumLight;
 
 				if(g->type == PULSERANDOM)
                     g->minlight = (P_Random() & 15);
@@ -152,14 +155,14 @@ void T_LightFlash (lightflash_t *flash) // 80015A14
         return;
     }
 
-	if (flash->sector->lightlevel == 32)
+	if (flash->sector->lightlevel == FlashBrightness)
 	{
 		flash->sector->lightlevel = 0;
 		flash->count = (P_Random()&7)+1;
 	}
 	else
 	{
-		flash->sector->lightlevel = 32;
+		flash->sector->lightlevel = FlashBrightness;
 		flash->count = (P_Random()&32)+1;
 	}
 }
@@ -211,7 +214,7 @@ void T_StrobeFlash (strobe_t *flash) // 80015B28
 
 	if (flash->sector->lightlevel == 0)
 	{
-		flash->sector->lightlevel = flash->maxlight;
+		flash->sector->lightlevel = FlashBrightness*(flash->maxlight)/32; // [Immorpher] Strobe reduction
 		flash->count = flash->brighttime;
 	}
 	else

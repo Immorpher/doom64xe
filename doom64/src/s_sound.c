@@ -256,7 +256,7 @@ int S_AdjustSoundParams(mobj_t *listener, mobj_t *origin, int* vol, int* pan) //
 		angle -= listener->angle;
 
 		/* stereo separation */
-		*pan = (128 - ((finesine[angle >> ANGLETOFINESHIFT] * S_STEREO_SWING) >> FRACBITS)) >> 1;
+		*pan = (128 - ((finesine(angle >> ANGLETOFINESHIFT) * S_STEREO_SWING) >> FRACBITS)) >> 1;
 	}
 	else
 	{

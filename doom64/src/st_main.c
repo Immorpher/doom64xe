@@ -13,8 +13,8 @@ byte *sfontlump;     // 800A81F8
 byte *statuslump;   // 800A81FC
 int sumbolslump;    // 800A8204
 
-int err_text_x;     // 800A8208
-int err_text_y;     // 800A820C
+int err_text_x = 20;     // 800A8208
+int err_text_y = 20;     // 800A820C
 
 symboldata_t symboldata[] = // 8005B260
 {
@@ -39,11 +39,11 @@ symboldata_t symboldata[] = // 8005B260
     { 28,  0,  13, 13}, // C
     { 42,  0,  14, 13}, // D
     { 57,  0,  14, 13}, // E
-    { 72,  0,  14, 13}, // F
+    { 72,  0,  10, 13}, // F
     { 87,  0,  15, 13}, // G
     {103,  0,  15, 13}, // H
     {119,  0,   6, 13}, // I
-    {126,  0,  13, 13}, // J
+    {122,  0,  13, 13}, // J
     {140,  0,  14, 13}, // K
     {155,  0,  11, 13}, // L
     {167,  0,  15, 13}, // M
@@ -118,13 +118,6 @@ symboldata_t symboldata[] = // 8005B260
     //{134, 96,   7, 13}, // Right arrow Missing On Doom 64
 };
 
-int messagecolors[NUMMESSAGES] =
-{
-    0xff000000,
-    0xffff0000,
-    0xffffff00
-};
-
 int card_x[6] = {(78 << 2), (89 << 2), (100 << 2), (78 << 2), (89 << 2), (100 << 2)};      // 8005b870
 
 void ST_Init(void) // 80029BA0
@@ -167,14 +160,16 @@ void ST_Ticker (void) // 80029C88
 {
 	player_t    *player;
 	int		    ind;
-    int         i;
 
 	player = &players[0];
 
     /* */
 	/* Countdown time for the message */
 	/* */
-    for (i = 0; i < NUMMESSAGES; i++) player->messagetic[i]--;
+    player->messagetic--;
+    player->messagetic1--; // [Immorpher] decriment message buffer
+    player->messagetic2--; // [Immorpher] decriment message buffer
+    player->messagetic3--; // [Immorpher] decriment message buffer
 
 	/* */
 	/* Tried to open a CARD or SKULL door? */
@@ -219,14 +214,19 @@ void ST_Ticker (void) // 80029C88
 =
 ====================
 */
-#if SHOWFPS == 1
-//extern int fps;
-#endif // _SHOWFPS
 
 static char buffer[16][256];
 static int debugX, debugY;//80077E5C|uGp00000a4c, 80077E68|uGp00000a58
 static int debugcnt = 0;
 static int debug = 0;
+
+extern memzone_t	*mainzone;
+extern int Z_FreeMemory (memzone_t *mainzone); // 8002D188
+
+extern u32 last_bsp_count;
+extern u32 last_phase3_count;
+extern u32 last_iter_count;
+
 
 void ST_Drawer (void) // 80029DC0
 {
@@ -234,37 +234,61 @@ void ST_Drawer (void) // 80029DC0
     player_t    *player;
     weapontype_t weapon;
 	int ammo, ind, ms_alpha;
-    int i, j;
-    int pos;
+	
 
     player = &players[0];
 
     /* */
 	/* Draw Text Message */
 	/* */
-    if (enable_messages)
-    {
-        pos = 20;
-        for (i = 0; i < NUMMESSAGES; i++)
-        {
-            ms_alpha = players[0].messagetic[i] << 3;
-            if (ms_alpha > 0)
-            {
-                if (ms_alpha >= 255)
-                    ms_alpha = 255;
-                
-                ST_Message(20, pos, players[0].message[i], ms_alpha | messagecolors[i]);
-                pos += 10;
-                for (j = 0; players[0].message[i][j] != '\0'; ++j)
-                {
-                    if (players[0].message[i][j] == '\n') pos += 10;
-                }
-            }
-        }
-    }
+	
+	if ((enable_messages) && players[0].messagetic > 0) // [Immorpher] only display messages and calculate if global tic is active
+	{
+		if (players[0].messagetic != players[0].messagetic1) // [Immorpher] new global tic indicates new message to add
+		{	// Sequentially shift messages to lower states
+			players[0].message3 = players[0].message2;
+			players[0].messagetic3 = players[0].messagetic2;
+			players[0].messagecolor3 = players[0].messagecolor2;
 
-    if (enable_statusbar)
-    {
+			players[0].message2 = players[0].message1;
+			players[0].messagetic2 = players[0].messagetic1;
+			players[0].messagecolor2 = players[0].messagecolor1;
+
+			players[0].message1 = players[0].message;
+			players[0].messagetic1 = players[0].messagetic;
+			players[0].messagecolor1 = players[0].messagecolor;
+		}
+		
+		if (players[0].messagetic1 > 0) // display message 1
+		{
+			ms_alpha = players[0].messagetic1 << 3; // set message alpha
+			if (ms_alpha >= 196)
+				ms_alpha = 196;
+			
+			ST_Message(2+HUDmargin, HUDmargin, players[0].message1, ms_alpha | players[0].messagecolor1); // display message
+		}
+		
+		if (players[0].messagetic2 > 0) // display message 2
+		{
+			ms_alpha = players[0].messagetic2 << 3; // set message alpha
+			if (ms_alpha >= 196)
+				ms_alpha = 196;
+			
+			ST_Message(2+HUDmargin, 10+HUDmargin, players[0].message2, ms_alpha | players[0].messagecolor2); // display message
+		}
+		
+		if (players[0].messagetic3 > 0) // display message 3
+		{
+			ms_alpha = players[0].messagetic3 << 3; // set message alpha
+			if (ms_alpha >= 196)
+				ms_alpha = 196;
+			
+			ST_Message(2+HUDmargin, 20+HUDmargin, players[0].message3, ms_alpha | players[0].messagecolor3); // display message
+		}
+	}
+
+
+    if (HUDopacity){
         I_CheckGFX();
 
         debug = 1;//
@@ -304,15 +328,15 @@ void ST_Drawer (void) // 80029DC0
         gDPPipeSync(GFX1++);
 
         /* */
-        /* Gray color with alpha 144 */
+        /* Gray color */
         /* */
-        gDPSetPrimColor(GFX1++, 0, 0, 104, 104, 104, 144);
+        gDPSetPrimColor(GFX1++, 0, 0, 128, 128, 128, HUDopacity);
 
         /* */
         /* Health */
         /* */
-        gSPTextureRectangle(GFX1++, (29 << 2), (203 << 2),
-                                    (69 << 2), (209 << 2),
+        gSPTextureRectangle(GFX1++, ((2+HUDmargin) << 2), ((218 - HUDmargin) << 2),
+                                    ((42 + HUDmargin) << 2), ((224 - HUDmargin)  << 2),
                                     G_TX_RENDERTILE,
                                     (0 << 5), (0 << 5),
                                     (1 << 10), (1 << 10));
@@ -320,16 +344,16 @@ void ST_Drawer (void) // 80029DC0
         /* */
         /* Armor */
         /* */
-        gSPTextureRectangle(GFX1++, (253 << 2), (203 << 2),
-                                    (289 << 2), (209 << 2),
+        gSPTextureRectangle(GFX1++, ((280-HUDmargin) << 2), ((218 - HUDmargin) << 2),
+                                    ((316-HUDmargin) << 2), ((224 - HUDmargin) << 2),
                                     G_TX_RENDERTILE,
                                     (40 << 5), (0 << 5),
                                     (1 << 10), (1 << 10));
 
         /* */
-        /* White color with alpha 128 */
+        /* White color */
         /* */
-        gDPSetPrimColor(GFX1++, 0, 0, 255, 255, 255, 128);
+        gDPSetPrimColor(GFX1++, 0, 0, 255, 255, 255, HUDopacity);
 
         /* */
         /* Cards & skulls */
@@ -341,8 +365,8 @@ void ST_Drawer (void) // 80029DC0
                 /* */
                 /* Draw Keys Graphics */
                 /* */
-                gSPTextureRectangle(GFX1++, card_x[ind], (216 << 2),
-                                            card_x[ind]+(9 << 2), (226 << 2),
+                gSPTextureRectangle(GFX1++, card_x[ind], ((230-HUDmargin) << 2),
+                                            card_x[ind]+(9 << 2), ((240-HUDmargin) << 2),
                                             G_TX_RENDERTILE,
                                             ((ind * 9) << 5), (6 << 5),
                                             (1 << 10), (1 << 10));
@@ -362,27 +386,47 @@ void ST_Drawer (void) // 80029DC0
             ammo = player->ammo[weaponinfo[weapon].ammo];
             if (ammo < 0)
                 ammo = 0;
+			
+            ammo = OS_CYCLES_TO_NSEC(last_iter_count) / 1000;//Z_FreeMemory(mainzone);
 
-            ST_DrawNumber(160, 215, ammo, 0, PACKRGBA(224,0,0,128)); // 0xe0000080
+			if (!ColoredHUD) { // skip the hud coloring
+				ST_DrawNumber(160, 227-HUDmargin, ammo, 0, PACKRGBA(224,0,0,HUDopacity)); // 0xe0000080
+			} else if (weaponinfo[weapon].ammo == am_clip) { // [Immorpher] clip ammo
+				ST_DrawNumber(160, 227-HUDmargin, ammo, 0, PACKRGBA(96,96,128,HUDopacity)); // [Immorpher] colored hud
+			} else if (weaponinfo[weapon].ammo == am_shell) { // [Immorpher] shell ammo
+				ST_DrawNumber(160, 227-HUDmargin, ammo, 0, PACKRGBA(196,32,0,HUDopacity)); // [Immorpher] colored hud
+			} else if (weaponinfo[weapon].ammo == am_cell) { // [Immorpher] cell ammo
+				ST_DrawNumber(160, 227-HUDmargin, ammo, 0, PACKRGBA(0,96,128,HUDopacity)); // [Immorpher] colored hud
+			} else { // [Immorpher] it must be rockets
+				ST_DrawNumber(160, 227-HUDmargin, ammo, 0, PACKRGBA(164,96,0,HUDopacity)); // [Immorpher] colored hud
+			}
         }
 
         /* */
         /* Health */
         /* */
-        ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(224,0,0,128)); // 0xe0000080
+        
+		if (!ColoredHUD) { // skip the hud coloring
+			ST_DrawNumber(22+HUDmargin, 227-HUDmargin, /*player->health*/OS_CYCLES_TO_NSEC(last_bsp_count)/1000, 0, PACKRGBA(224,0,0,HUDopacity));
+		} else if (player->health <= 67) { // [Immorpher] colored hud
+			ST_DrawNumber(22+HUDmargin, 227-HUDmargin, player->health, 0, PACKRGBA(224-96*player->health/67,128*player->health/67,0,HUDopacity));
+		} else if (player->health <= 133) { // [Immorpher] colored hud
+			ST_DrawNumber(22+HUDmargin, 227-HUDmargin, player->health, 0, PACKRGBA(256-256*player->health/133,128,64*player->health/133-32,HUDopacity));
+		} else { // [Immorpher] colored hud
+			ST_DrawNumber(22+HUDmargin, 227-HUDmargin, player->health, 0, PACKRGBA(0,256-192*player->health/200,288*player->health/200-160,HUDopacity));
+		}
 
         /* */
         /* Armor */
         /* */
-        ST_DrawNumber(271, 215, player->armorpoints, 0, PACKRGBA(224,0,0,128)); // 0xe0000080
+		if (!ColoredHUD || player->armorpoints == 0) { // [Immorpher] No armor
+			ST_DrawNumber(298-HUDmargin, 227-HUDmargin, /*player->armorpoints*/OS_CYCLES_TO_NSEC(last_phase3_count)/1000, 0, PACKRGBA(224,0,0,HUDopacity)); // 0xe0000080
+		} else if (player->armortype == 1) { // [Immorpher] Green armor
+			ST_DrawNumber(298-HUDmargin, 227-HUDmargin, player->armorpoints, 0, PACKRGBA(0,128,64,HUDopacity)); 
+		} else { // [Immorpher] Blue armor
+			ST_DrawNumber(298-HUDmargin, 227-HUDmargin, player->armorpoints, 0, PACKRGBA(0,64,128,HUDopacity)); 
+		}
     }
-
-    #if SHOWFPS == 1
-    //fps = (60-((fps)/60));
-    //fps = fps > 0? fps:0;
-    //D_DebugSetPrintPos(10, 10);
-    //D_DebugPrint("fps %d", fps);
-    #endif // SHOWFPS
 
     if(debug)
     {
@@ -738,7 +782,7 @@ void ST_UpdateFlash(void) // 8002AC30
         /* bonus flash (yellow) */
         else if (plyr->bonuscount)
         {
-            cnt = (plyr->bonuscount + 7) >> 3;
+            cnt = FlashBrightness*((plyr->bonuscount + 7) >> 3)/32;
 
             if (cnt > ST_MAXBONCOUNT)
                 cnt = ST_MAXBONCOUNT;

@@ -56,13 +56,12 @@ boolean P_GiveAmmo (player_t *player, ammotype_t ammo, int num) // 800143E0
         num = num/2;
     }
 
-    #if ENABLE_NIGHTMARE == 1 // Like PC Doom / Doom 64 EX
-    if (gameskill == sk_baby || gameskill == sk_nightmare)
-		num <<= 1;			/* give double ammo in trainer mode */
-    #else
-    if (gameskill == sk_baby)
-		num <<= 1;			/* give double ammo in trainer mode */
-    #endif // ENABLE_NIGHTMARE
+    // [GEC] Like PC Doom / Doom 64 EX
+    if (gameskill == sk_baby) {
+		num <<= 1;			// give double ammo in very easy mode
+	} else if (gameskill == sk_nightmare) {
+		num = 1.5*num; // [Immorpher] for nightmare give a boost but not a crazy one
+	}
 
 	oldammo = player->ammo[ammo];
 	player->ammo[ammo] += num;
@@ -272,8 +271,8 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 	fixed_t		delta;
 	int			sound;
 	char        *message;
+	char        *message2;
 	int         artflag;
-	int         messagelevel = MSG_LOW;
 
 	delta = special->z - toucher->z;
 	if (delta > toucher->height || delta < -8*FRACUNIT)
@@ -285,6 +284,7 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 		return;						/* can happen with a sliding player corpse */
 
     message = NULL;
+    message2 = NULL;
 
 	switch (special->type)
 	{
@@ -367,17 +367,12 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 	case MT_AMMO_SHELL:
 		if (!P_GiveAmmo (player, am_shell,1))
 			return;
-        #if ENABLE_NIGHTMARE == 1
-        if (gameskill == sk_baby || gameskill == sk_nightmare)
-            message = "Picked up 8 shotgun shells.";
-        else
-            message = "Picked up 4 shotgun shells.";
-        #else
         if (gameskill == sk_baby)
             message = "Picked up 8 shotgun shells.";
-        else
+        else if (gameskill == sk_nightmare) // [Immorpher and GEC] Nightmare ammo boost!
+            message = "Picked up 6 shotgun shells.";
+		else
             message = "Picked up 4 shotgun shells.";
-        #endif // ENABLE_NIGHTMARE
 		break;
 	case MT_AMMO_SHELLBOX:
 		if (!P_GiveAmmo (player, am_shell,5))
@@ -510,8 +505,10 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 	case MT_ITEM_MEDKIT:
 		if (!P_GiveBody(player, 25))
 			return;
-		if (player->health < 50)
-			message = "You pick up a medikit that you\nREALLY need!";
+		if (player->health < 50) { // [Immorpher] Fix! If your resultant health is below 50 then you really needed it!
+            message = "You pick up a medikit";
+            message2 = "that you REALLY need!";
+		}
 		else
 			message = "You pick up a medikit.";
 		break;
@@ -567,14 +564,17 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 
         player->artifacts |= artflag;
 
-        if (ArtifactLookupTable[player->artifacts] == 1) /* ART_FAST */
-            message = "You have a feeling that\nit wasn't to be touched...";
-        else if (ArtifactLookupTable[player->artifacts] == 2) /* ART_TRIPLE */
-            message = "Whatever it is, it doesn't\nbelong in this world...";
+        if (ArtifactLookupTable[player->artifacts] == 1) { /* ART_FAST */
+            message = "You have a feeling that it";
+            message2 = "wasn't to be touched...";
+		}
+        else if (ArtifactLookupTable[player->artifacts] == 2) { /* ART_TRIPLE */
+            message = "Whatever it is, it doesn't";
+            message2 = "belong in this world...";
+		}
         else /* ART_DOUBLE */
             message = "It must do something...";
-	
-        messagelevel = MSG_HIGH;
+
         sound = sfx_powerup;
 		break;
 
@@ -590,23 +590,45 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 		break;
 	}
 
-	if (special->flags & MF_COUNTSECRET)
-	{
-        player->message[MSG_MID] = "You found a secret item!";
-        player->messagetic[MSG_MID] = MSGTICS;
+	if (message2) { // [Immorpher] double message!
+		// Dump current message into third
+		player->message3 = player->message1;
+		player->messagetic3 = player->messagetic1;
+		player->messagecolor3 = player->messagecolor1;
+		
+		// Set messages
+		player->message1 = message;
+		player->message2 = message2;
+		
+		// Set tics and color
+		player->messagetic = MSGTICS; // [Immorpher] message time to activate messages
+		player->messagetic1 = MSGTICS; // [Immorpher]
+		player->messagetic2 = MSGTICS; // [Immorpher]
+		if (special->flags & MF_COUNTSECRET) {
+			player->messagecolor1 = 0x00ffff00; // [Immorpher]
+			player->messagecolor2 = 0x00ffff00; // [Immorpher]
+		} else {
+			player->messagecolor1 = 0xC4C4C400; // [Immorpher]
+			player->messagecolor2 = 0xC4C4C400; // [Immorpher]
+		}
+		
 	}
-
-    if (message)
+    else if (message)
     {
-        player->message[messagelevel] = message;
-        player->messagetic[messagelevel] = MSGTICS;
+        player->message = message;
+        player->messagetic = MSGTICS;
+		if (special->flags & MF_COUNTSECRET) {
+			player->messagecolor = 0x00ffff00;
+		} else {
+			player->messagecolor = 0xC4C4C400;
+		}
     }
 
 	if (special->flags & MF_COUNTITEM)
 		player->itemcount++;
-	
-	if (special->flags & MF_COUNTSECRET)
-		player->secretcount++;
+
+        if (special->flags & MF_COUNTSECRET)
+                player->secretcount++;
 
 	P_RemoveMobj (special);
 	player->bonuscount += BONUSADD;
@@ -778,8 +800,8 @@ void P_DamageMobj (mobj_t *target, mobj_t *inflictor, mobj_t *source, int damage
 
 		an = ang >> ANGLETOFINESHIFT;
 		thrust >>= 16;
-		target->momx += thrust * finecosine[an];
-		target->momy += thrust * finesine[an];
+		target->momx += thrust * finecosine(an);
+		target->momy += thrust * finesine(an);
 
 		// [psx/d64]: clamp thrust for players only
 		if (target->player)

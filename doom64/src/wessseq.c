@@ -9,7 +9,7 @@
 extern void (**CmdFuncArr[10])(track_status *);
 extern void(*DrvFunctions[36])(track_status *);
 
-unsigned char *Read_Vlq(unsigned char *pstart, void *deltatime);
+char *Read_Vlq(char *pstart, void *deltatime);
 char *Write_Vlq(char *dest, unsigned int value);
 int Len_Vlq(unsigned int value);
 
@@ -115,7 +115,7 @@ unsigned char CmdSort[44] = { // 8005DA14
 //extern unsigned int data01;    //L8007F024
 //extern unsigned char data02;    //L8007F028
 
-unsigned char *Read_Vlq(unsigned char *pstart, void *deltatime)//L80035F80()
+char *Read_Vlq(char *pstart, void *deltatime)//L80035F80()
 {
 	static int v;//800B6630
 	static char c;//800B6634
@@ -242,7 +242,7 @@ void Eng_DriverEntry3 (track_status *ptk_stat) // 80036114
 void Eng_TrkOff (track_status *ptk_stat) // 8003611C
 {
 	static sequence_status	*lpseq;	//800B6638
-	static unsigned char				*lpdest;//800B663C
+	static char				*lpdest;//800B663C
 	static unsigned long	lj;		//800B6640
 
 	//PRINTF_D2(WHITE,0,10,"Eng_TrkOff");
@@ -262,7 +262,7 @@ void Eng_TrkOff (track_status *ptk_stat) // 8003611C
 	if (!(ptk_stat->flags & TRK_HANDLED))
 	{
 		lj = pmsbase->max_trks_perseq;
-		lpdest = (unsigned char *)lpseq->ptrk_indxs;
+		lpdest = lpseq->ptrk_indxs;
 
 		while (lj--)
 		{
@@ -409,11 +409,11 @@ void Eng_StatusMark (track_status *ptk_stat) // 80036364
 void Eng_GateJump (track_status *ptk_stat) // 80036488
 {
 	static short lindex;	//800B6650
-	static unsigned char *laboff;	//800B6654
-	static unsigned char *pgate;		//800B6658
+	static char *laboff;	//800B6654
+	static char *pgate;		//800B6658
 
 	//PRINTF_D2(WHITE,0,10,"Eng_GateJump");
-	pgate = (unsigned char *)((pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1));
+	pgate = (pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1);
 
 	if (*pgate != 0)
 	{
@@ -440,11 +440,11 @@ void Eng_GateJump (track_status *ptk_stat) // 80036488
 void Eng_IterJump (track_status *ptk_stat) // 80036568
 {
 	static short lindex;	//800B665C
-	static unsigned char	*laboff;	//800B6660
-	static unsigned char	*piter;		//800B6664
+	static char	*laboff;	//800B6660
+	static char	*piter;		//800B6664
 
 	//PRINTF_D2(WHITE,0,10,"Eng_IterJump");
-	piter = (unsigned char *)((pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1));
+	piter = (pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1);
 
 	if (*piter != 0)
 	{
@@ -475,13 +475,13 @@ void Eng_IterJump (track_status *ptk_stat) // 80036568
 void Eng_ResetGates (track_status *ptk_stat) // 80036654
 {
 	static unsigned char	gi;		//800B6668
-	static unsigned char				*pgate;	//800B666C
+	static char				*pgate;	//800B666C
 
 	//PRINTF_D2(WHITE,0,10,"Eng_ResetGates");
 	if (*(ptk_stat->ppos + 1) == 0xff)
 	{
 		gi = wess_driver_gates;
-		pgate = (unsigned char *)((pssbase + ptk_stat->seq_owner)->pgates);
+		pgate = (pssbase + ptk_stat->seq_owner)->pgates;
 
 		while (gi--)
 		{
@@ -490,7 +490,7 @@ void Eng_ResetGates (track_status *ptk_stat) // 80036654
 	}
 	else
 	{
-		pgate = (unsigned char *)((pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1));
+		pgate = (pssbase + ptk_stat->seq_owner)->pgates + *(ptk_stat->ppos + 1);
 		*pgate = 0xff;
 	}
 }
@@ -498,13 +498,13 @@ void Eng_ResetGates (track_status *ptk_stat) // 80036654
 void Eng_ResetIters (track_status *ptk_stat) // 80036720
 {
 	static unsigned char	ii;		//800B6670
-	static unsigned char				*piter;	//800B6674
+	static char				*piter;	//800B6674
 
 	//PRINTF_D2(WHITE,0,10,"Eng_ResetIters");
 	if (*(ptk_stat->ppos + 1) == 0xff)
 	{
 		ii = wess_driver_iters;
-		piter = (unsigned char *)((pssbase + ptk_stat->seq_owner)->piters);
+		piter = (pssbase + ptk_stat->seq_owner)->piters;
 
 		while (ii--)
 		{
@@ -513,7 +513,7 @@ void Eng_ResetIters (track_status *ptk_stat) // 80036720
 	}
 	else
 	{
-		piter = (unsigned char *)((pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1));
+		piter = (pssbase + ptk_stat->seq_owner)->piters + *(ptk_stat->ppos + 1);
 		*piter = 0xff;
 	}
 }
@@ -560,7 +560,7 @@ void Eng_SeqGosub (track_status *ptk_stat) // 800369C8
 {
 	static short			lindex;			//800B668C
 	static unsigned short	ntracks;		//800B668E
-	static unsigned char				*laboff;		//800B6690
+	static char				*laboff;		//800B6690
 	static unsigned char	nactive;		//800B6694
 	static unsigned char	*ptindxs;		//800B6698
 	static track_status		*ptstemp;		//800B669C
@@ -601,7 +601,7 @@ void Eng_SeqJump (track_status *ptk_stat) // 80036B80
 {
 	static short			lindex;			//800B66A4
 	static unsigned short	ntracks;		//800B66A6
-	static unsigned char				*laboff;		//800B66A8
+	static char				*laboff;		//800B66A8
 	static unsigned char	nactive;		//800B66AC
 	static unsigned char	*ptindxs;		//800B66B0
 	static track_status		*ptstemp;		//800B66B4
@@ -729,11 +729,11 @@ void Eng_TrkTempo (track_status *ptk_stat) // 800370D8
 
 void Eng_TrkGosub (track_status *ptk_stat) // 8003713C
 {
-	int position;
+	unsigned int position;
 
 	//PRINTF_D2(WHITE,0,10,"Eng_TrkGosub");
 
-	position = (int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
+	position = (unsigned int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
 	if ((position >= 0) && (position < ptk_stat->labellist_count))
 	{
 		ptk_stat->psp = (unsigned char*)ptk_stat->ppos + CmdLength[26];
@@ -746,11 +746,11 @@ void Eng_TrkGosub (track_status *ptk_stat) // 8003713C
 
 void Eng_TrkJump (track_status *ptk_stat) // 800371C4
 {
-	int position;
+	unsigned int position;
 
 	//PRINTF_D2(WHITE,0,10,"Eng_TrkJump");
 
-	position = (int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
+	position = (unsigned int)(*(ptk_stat->ppos + 1) | (*(ptk_stat->ppos + 2) << 8));
 	if ((position >= 0) && (position < ptk_stat->labellist_count))
 	{
 		ptk_stat->ppos = ptk_stat->pstart + *(ptk_stat->plabellist + position);
@@ -812,8 +812,9 @@ void SeqEngine(void) // 800373AC
 	static track_status		*pts;	//800B66E0
 	static unsigned char	na;		//800B66E4
 	static unsigned int		ni;		//800B66E8
-	static unsigned char				*nn;	//800B66EC
+	static char				*nn;	//800B66EC
 
+	track_status *ptrkstattbl;
 	//PRINTF_D2(WHITE,0,9,"SeqEngine %d\n",SeqOn);
 
 	na = pmsbase->trks_active;

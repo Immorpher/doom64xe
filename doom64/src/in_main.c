@@ -42,13 +42,6 @@ extern int nextmap;
 #define MI_TXT31	"In The Void"
 #define MI_TXT32	"Hectic"
 #define MI_TXT33	"TITLE"
-#define MI_TXT34	"Plant Ops"
-#define MI_TXT35	"Evil Sacrifice"
-#define MI_TXT36	"Cold Grounds"
-#define MI_TXT37	"Wretched Vats"
-#define MI_TXT38	"Thy Glory"
-#define MI_TXT39	"Final Judgement"
-#define MI_TXT40	"Panic"
 
 mapinfo_t MapInfo[] = //8005A478
 {
@@ -86,13 +79,6 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT31 , 103},
     {MI_TXT32 , 104},
     {MI_TXT33 , 115},
-    {MI_TXT34 , 100},
-    {MI_TXT35 , 95},
-    {MI_TXT36 , 111},
-    {MI_TXT37 , 94},
-    {MI_TXT38 , 105},
-    {MI_TXT39 , 98},
-    {MI_TXT40 , 101},
     {T_NULL , 0}
 };
 
@@ -149,7 +135,7 @@ void IN_Start(void) // 80004AF0
 	last_ticon = 0;
 	text_alpha = 255;
 
-    if ((nextmap >= 0) && (nextmap < LASTLEVEL))
+    if ((nextmap >= 2) && (nextmap < LASTLEVEL))
 	{
 		M_EncodePassword(Passwordbuff);
         CurPasswordSlot = 16;
@@ -162,7 +148,7 @@ void IN_Stop(void) // 80004DB0
 {
 	S_StopMusic();
 
-    if ((nextmap >= 0) && (nextmap < LASTLEVEL))
+    if ((nextmap >= 2) && (nextmap < LASTLEVEL))
     {
         if (EnableExpPak) {
             MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_SavePakDrawer);
@@ -290,7 +276,7 @@ void IN_Drawer(void) // 80005164
 	gDPPipeSync(GFX1++);
 	gDPSetCycleType(GFX1++, G_CYC_FILL);
 	gDPSetRenderMode(GFX1++, G_RM_NOOP, G_RM_NOOP2);
-	gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+	gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
 	// Fill borders with black
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
@@ -328,7 +314,7 @@ void IN_Drawer(void) // 80005164
         ST_DrawString(210, 120, timetext, PACKRGBA(192, 0, 0, text_alpha));
     }
 
-	if ((nextstage > 4) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap))
+	if ((nextstage > 4) && (nextmap < LASTLEVEL))
 	{
         ST_DrawString(-1, 145, "Entering", PACKRGBA(255, 255, 255, text_alpha));
         ST_DrawString(-1, 161, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));

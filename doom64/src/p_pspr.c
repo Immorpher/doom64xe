@@ -345,13 +345,11 @@ void P_BringUpWeapon (player_t *player) // 8001B4BC
 	if (player->pendingweapon == wp_nochange)
 		player->pendingweapon = player->readyweapon;
 
-	if (player->pendingweapon == wp_chainsaw)
-	{
+	if (player->pendingweapon == wp_chainsaw) {
         S_StartSound(player->mo, sfx_sawup);
 	}
-	else if (player->pendingweapon == wp_plasma)
-	{
-		S_StartSound(player->mo, sfx_electric);
+    else if (player->pendingweapon == wp_plasma) {
+        S_StartSound(player->mo, sfx_electric);
 	}
 
 	new = weaponinfo[player->pendingweapon].upstate;
@@ -503,9 +501,9 @@ void A_WeaponReady (player_t *player, pspdef_t *psp) // 8001B83C
 	/* */
 	//angle = (64*gamevbls)&(FINEANGLES-1);
 	angle = (64*ticon)&(FINEANGLES-1); // PsxDoom/D64 use ticon no gamevbls
-	psp->sx = WEAPONX + FixedMul(player->bob, finecosine[angle]);
+	psp->sx = WEAPONX + FixedMul(player->bob, finecosine(angle));
 	angle &= FINEANGLES/2-1;
-	psp->sy = WEAPONTOP + FixedMul(player->bob, finesine[angle]);
+	psp->sy = WEAPONTOP + FixedMul(player->bob, finesine(angle));
 }
 
 
@@ -560,7 +558,14 @@ void A_CheckReload(player_t *player, pspdef_t *psp) // 8001B9A0
 
 void A_Lower (player_t *player, pspdef_t *psp) // 8001B9C0
 {
-	psp->sy += LOWERSPEED;
+	if (gameskill == sk_nightmare) // [Immorpher] double weapon lower speed on nightmare
+	{
+		psp->sy += 2*LOWERSPEED;
+	}
+	else
+	{
+		psp->sy += LOWERSPEED;
+	}
 	if (psp->sy < WEAPONBOTTOM )
 		return;
 
@@ -608,8 +613,15 @@ void A_Lower (player_t *player, pspdef_t *psp) // 8001B9C0
 void A_Raise (player_t *player, pspdef_t *psp) // 8001BA84
 {
 	statenum_t	new;
-
-	psp->sy -= RAISESPEED;
+	
+	if (gameskill == sk_nightmare) // [Immorpher] double weapon raise speed on nightmare
+	{
+		psp->sy -= 2*RAISESPEED;
+	}
+	else
+	{
+		psp->sy -= RAISESPEED;
+	}
 
 	if (psp->sy > WEAPONTOP )
 		return;
@@ -876,7 +888,6 @@ void P_GunShot (mobj_t *mo, boolean accurate) // 8001C024
 void A_FirePistol (player_t *player, pspdef_t *psp) // 8001C0B4
 {
 	S_StartSound (player->mo, sfx_pistol);
-
 	player->ammo[weaponinfo[player->readyweapon].ammo]--;
 	P_SetPsprite (player,ps_flashalpha,weaponinfo[player->readyweapon].flashstate);
 	P_BulletSlope(player->mo);
@@ -897,7 +908,6 @@ void A_FireShotgun (player_t *player, pspdef_t *psp) // 8001C138
 	int			i;
 
 	S_StartSound (player->mo, sfx_shotgun);
-
 	player->ammo[weaponinfo[player->readyweapon].ammo]--;
 	player->recoilpitch = RECOILPITCH;
 
@@ -1320,8 +1330,8 @@ void A_FireLaser(player_t *player, pspdef_t *psp) // 8001CAC0
         break;
     }
 
-    x1 = mobj->x + (finecosine[mobj->angle >> ANGLETOFINESHIFT] * LASERDISTANCE);
-    y1 = mobj->y + (finesine[mobj->angle >> ANGLETOFINESHIFT] * LASERDISTANCE);
+    x1 = mobj->x + (finecosine(mobj->angle >> ANGLETOFINESHIFT) * LASERDISTANCE);
+    y1 = mobj->y + (finesine(mobj->angle >> ANGLETOFINESHIFT) * LASERDISTANCE);
     z1 = mobj->z + LASERAIMHEIGHT;
 
     /* setup laser beams */
@@ -1334,8 +1344,8 @@ void A_FireLaser(player_t *player, pspdef_t *psp) // 8001CAC0
         else
             laserfrac = (2048*FRACUNIT);
 
-        slopex = finecosine[angleoffs >> ANGLETOFINESHIFT];
-        slopey = finesine[angleoffs >> ANGLETOFINESHIFT];
+        slopex = finecosine(angleoffs >> ANGLETOFINESHIFT);
+        slopey = finesine(angleoffs >> ANGLETOFINESHIFT);
 
         x2 = mobj->x + FixedMul(slopex, laserfrac);
         y2 = mobj->y + FixedMul(slopey, laserfrac);

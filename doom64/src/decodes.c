@@ -41,7 +41,8 @@ static short DecodeTable[2524]; // 800B22A8
 static short array01[1258];     // 800B3660
 
 static decoder_t decoder;       // 800B4034
-static byte *allocPtr;          // 800B4054
+static u64 allocBuf[8192];
+static byte *allocPtr = (byte*)allocBuf;          // 800B4054
 
 static int OVERFLOW_READ;       // 800B4058
 static int OVERFLOW_WRITE;      // 800B405C
@@ -663,7 +664,7 @@ void DecodeD64(unsigned char *input, unsigned char *output) // 8002DFA0
 	decoder.write = output;
 	decoder.writePos = output;
 
-	allocPtr = (byte *)Z_Alloc(tableVar01[13], PU_STATIC, NULL);
+//	allocPtr = (byte *)Z_Alloc(tableVar01[13], PU_STATIC, NULL);
 
     dec_byte = StartDecodeByte();
 
@@ -743,7 +744,7 @@ void DecodeD64(unsigned char *input, unsigned char *output) // 8002DFA0
         dec_byte = StartDecodeByte();
     }
 
-	Z_Free(allocPtr);
+//	Z_Free(allocPtr);
 
 	//PRINTF_D2(WHITE, 0, 21, "DecodeD64:End");
 }

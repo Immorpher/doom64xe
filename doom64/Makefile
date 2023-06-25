@@ -4,7 +4,7 @@ TARGET_STRING := doom64
 TARGET := $(TARGET_STRING)
 
 # Preprocessor definitions
-DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1 ENABLE_NIGHTMARE=1 ENABLE_EXTRA_EPISODES=1 ENABLE_REMASTER_SPRITES=1
+DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1
 
 SRC_DIRS :=
 
@@ -37,7 +37,6 @@ S_FILES           := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.s))
 # Object files
 O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
            $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
-		   $(WESS_OBJ) \
 		   $(BOOT_OBJ)
 
 # Automatic dependency files
@@ -55,15 +54,13 @@ AR        := mips-n64-ar
 OBJDUMP   := mips-n64-objdump
 OBJCOPY   := mips-n64-objcopy
 
-INCLUDE_SYSTEM_DIRS += /usr/include/n64 /usr/include/n64/PR
-INCLUDE_DIRS += include $(BUILD_DIR) $(BUILD_DIR)/include src
+INCLUDE_DIRS += /usr/include/n64 /usr/include/n64/PR include $(BUILD_DIR) $(BUILD_DIR)/include src
 
-C_INCLUDES := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(foreach i,$(INCLUDE_SYSTEM_DIRS),-isystem$(i))
 C_DEFINES := $(foreach d,$(DEFINES),-D$(d))
-DEF_INC_CFLAGS := $(C_INCLUDES) $(C_DEFINES)
+DEF_INC_CFLAGS := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(C_DEFINES)
 
-CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -O3 -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
-ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(C_INCLUDES)
+CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -O2 -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
+ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(foreach i,$(INCLUDE_DIRS),-I$(i))
 # $(foreach d,$(DEFINES),--defsym $(d))
 
 # C preprocessor flags

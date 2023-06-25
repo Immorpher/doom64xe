@@ -95,68 +95,9 @@ int wess_rom_copy(char *src, char *dest, int len) // 8002E334
 	return 0;
 }
 
-/*LEAF(milli_to_param)
-lui     $at, 0x447A
-mtc1    $a1, $f12
-mtc1    $at, $f8
-mtc1    $a0, $f4
-div.s   $f10, $f12, $f8
-cvt.s.w $f6, $f4
-mul.s   $f16, $f6, $f10
-cfc1    $t6, FCSR
-nop
-li      $at, $t6, 3
-xori    $at, $at, 2
-ctc1    $at, FCSR
-li      $at, 0xFFFFFFF8
-cvt.w.s $f18, $f16
-mfc1    $v0, $f18
-ctc1    $t6, FCSR
-and     $t7, $v0, $at
-jr      $ra
-move    $v0, $t7
-END(milli_to_param)*/
-
-s32 milli_to_param(register s32 paramvalue, register s32 rate) // 8002E3D0
+s32 milli_to_param(s32 paramvalue, s32 rate) // 8002E3D0
 {
-#ifdef N64ASM
-	register u32 fpstat, fpstatset, out;
-	asm("lui		$at, 	0x447A\n");
-	asm("mtc1		%0, 	$f12\n" ::"r"(rate));//mtc1    $a1, $f12
-	asm("mtc1		$at, 	$f8\n");
-	asm("mtc1		%0, 	$f4\n" ::"r"(paramvalue));//mtc1    $a0, $f4
-	asm("div.s		$f10, 	$f12, 	$f8\n");
-	asm("cvt.s.w 	$f6, 	$f4\n");
-	asm("mul.s   	$f16, 	$f6, 	$f10\n");
-	// fetch the current floating-point control/status register
-	asm("cfc1   	%0, 	$f31\n" :"=r"(fpstat));
-	asm("nop\n");
-	// enable round to negative infinity for floating point
-	//"li			$at, 	$t6, 3\n"
-	asm("ori      	$at, 	%0, 3\n" ::"r"(fpstat));//# fpstat |= FPCSR_RM_RM;
-	asm("xori   	$at, 	$at, 2\n");
-	asm("ctc1   	$at, 	$f31\n");
-	//asm("li      	$at, 	0xFFFFFFF8\n");
-	asm("cvt.w.s 	$f18, 	$f16\n");
-	asm("mfc1    	%0, 	$f18\n" :"=r"(out));
-	// _Disable_ unimplemented operation exception for floating point.
-	asm("ctc1   	%0, 	$f31\n" ::"r"(fpstat));
-
-	return (s32)(out &~0x7);
-#else
-	//No asm mode
-
-	/*
-	// fetch the current floating-point control/status register
-	fpstat = __osGetFpcCsr();
-	// enable round to negative infinity for floating point
-	fpstatset = (fpstat | FPCSR_RM_RM) ^ 2;
-	// _Disable_ unimplemented operation exception for floating point.
-	__osSetFpcCsr(fpstatset);
-	*/
-
-	return (s32)((f32)paramvalue * ((f32)rate / 1000.0f)) &~0x7;
-#endif
+	return (s32)((paramvalue * rate) / 1000) &~0x7;
 }
 
 void wess_init(WessConfig *wessconfig) // 8002E41C

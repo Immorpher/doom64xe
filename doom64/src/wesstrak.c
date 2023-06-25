@@ -68,7 +68,7 @@ ChorusMod 16
 }
 */
 
-extern unsigned char scratch_area[32];//800B41E0
+extern char scratch_area[32];//800B41E0
 
 extern void patch_chg_action(track_status *ptmp, int patch_num); // 800340E0
 extern void pitch_mod_action(track_status *ptmp, int pitch_cntr); // 80034144
@@ -123,7 +123,7 @@ void run_queue_wess_handle_noteon(void) // 80034708
 void queue_wess_handle_noteon(int handle, int track, char keynum, char velnum) // 80034768
 {
 	track_status *ptmp;
-	unsigned char *ppos;
+	char *ppos;
 
 	int _handle;
 	int _track;
@@ -286,6 +286,7 @@ void run_queue_wess_handle_parm_mod(void) // 80034C48
 void queue_wess_handle_parm_mod(int handle, int track, int value, WessAction function) // 80034CA8
 {
 	track_status *ptmp;
+	char *ppos;
 
 	int _handle;
 	int _track;

@@ -585,10 +585,10 @@ boolean PIT_CheckThing(mobj_t *thing) // 8001A560
 {
 	fixed_t blockdist;
 	fixed_t x, y;
-	fixed_t rx, ry;
+        fixed_t rx, ry;
 
-	if (thing == tmthing)
-		return true;        // don't clip against self
+        if (thing == tmthing)
+            return true;        // don't clip against self
 
 	if (!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE) ))
 		return true;

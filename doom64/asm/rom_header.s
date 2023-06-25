@@ -18,6 +18,6 @@
 .word  0x00000000               /* Unknown */
 /* Game ID (EXAMPLE: NSME) Begins here */
 .word  0x0000004E                /* Cartridge Type (N)*/
-.ascii "DM"                     /* Cartridge ID (SM)*/
+.ascii "PL"                     /* Cartridge ID (SM)*/
 .ascii "E"			/* Region (E)*/
-.byte  0x01			/* Version */
+.byte  0x00			/* Version */

@@ -91,9 +91,6 @@ int EV_SpawnTrapMissile(line_t *line, mobj_t *target, mobjtype_t type) // 8000E0
     mobj_t* th;
     int ok;
 
-    angle_t angle;
-    fixed_t x, y;
-
     ok = 0;
     for(mo = mobjhead.next; mo != &mobjhead; mo = mo->next)
     {
@@ -105,27 +102,16 @@ int EV_SpawnTrapMissile(line_t *line, mobj_t *target, mobjtype_t type) // 8000E0
 
         ok = 1;
 
-        angle = mo->angle;
-        angle >>= ANGLETOFINESHIFT;
-        x = finecosine[angle];
-        y = finesine[angle];
-
         if(type == MT_PROJ_TRACER)
         {
-            th = P_SpawnMissile(mo, target,
-                FixedMul(mo->radius, x),
-                FixedMul(mo->radius, y),
-                (32*FRACUNIT), MT_PROJ_TRACER);
+            th = P_SpawnMissile(mo, target, 0, 0, (32*FRACUNIT), MT_PROJ_TRACER);
             th->x = (th->x + th->momx);
             th->y = (th->y + th->momy);
             th->tracer = target;
         }
         else if(type == MT_PROJ_DART)
         {
-            th = P_SpawnMissile(mo, NULL, 
-                FixedMul(mo->radius, x), 
-                FixedMul(mo->radius, y), 
-                0, MT_PROJ_DART);
+            th = P_SpawnMissile(mo, NULL, 0, 0, 0, MT_PROJ_DART);
         }
     }
 
@@ -670,6 +656,93 @@ void P_SetMovingCamera(line_t *line) // 8000F2F8
         return;
     }
 }
+void P_RefreshVideo(void) // [Immorpher] video refresh
+{
+	// default to silence compiler
+	OSViMode *ViMode = OS_VI_NTSC_LPN1;
+
+	if(antialiasing==true && interlacing==true)
+	{
+		if(osTvType == OS_TV_PAL)
+		{
+			ViMode = &osViModeTable[OS_VI_PAL_LAF1];
+		}
+		else if(osTvType == OS_TV_NTSC)
+		{
+			ViMode = &osViModeTable[OS_VI_NTSC_LAF1];
+		}
+		else if(osTvType == OS_TV_MPAL)
+		{
+			ViMode = &osViModeTable[OS_VI_MPAL_LAF1];
+		}
+	}
+	else if(antialiasing==true)
+	{
+		if(osTvType == OS_TV_PAL)
+		{
+			ViMode = &osViModeTable[OS_VI_PAL_LAN1];
+		}
+		else if(osTvType == OS_TV_NTSC)
+		{
+			ViMode = &osViModeTable[OS_VI_NTSC_LAN1];
+		}
+		else if(osTvType == OS_TV_MPAL)
+		{
+			ViMode = &osViModeTable[OS_VI_MPAL_LAN1];
+		}
+	}
+	else if(interlacing==true)
+	{
+		if(osTvType == OS_TV_PAL)
+		{
+			ViMode = &osViModeTable[OS_VI_PAL_LPF1];
+		}
+		else if(osTvType == OS_TV_NTSC)
+		{
+			ViMode = &osViModeTable[OS_VI_NTSC_LPF1];
+		}
+		else if(osTvType == OS_TV_MPAL)
+		{
+			ViMode = &osViModeTable[OS_VI_MPAL_LPF1];
+		}
+	}
+	else
+	{
+		if(osTvType == OS_TV_PAL)
+		{
+			ViMode = &osViModeTable[OS_VI_PAL_LPN1];
+		}
+		else if(osTvType == OS_TV_NTSC)
+		{
+			ViMode = &osViModeTable[OS_VI_NTSC_LPN1];
+		}
+		else if(osTvType == OS_TV_MPAL)
+		{
+			ViMode = &osViModeTable[OS_VI_MPAL_LPN1];
+		}
+	}
+	
+    osViSetMode(ViMode);
+	
+	if(DitherFilter == true) // [Immorpher] Dither filter option
+	{
+		if (players[0].cheats & CF_GAMMA)
+        {
+            osViSetSpecialFeatures(OS_VI_GAMMA_ON|OS_VI_GAMMA_DITHER_OFF|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_ON);	
+        } else {
+			osViSetSpecialFeatures(OS_VI_GAMMA_OFF|OS_VI_GAMMA_DITHER_OFF|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_ON);	
+		}
+	}
+	else {
+		if (players[0].cheats & CF_GAMMA)
+        {
+            osViSetSpecialFeatures(OS_VI_GAMMA_ON|OS_VI_GAMMA_DITHER_OFF|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);	
+        } else {
+			osViSetSpecialFeatures(OS_VI_GAMMA_OFF|OS_VI_GAMMA_DITHER_OFF|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);	
+		}
+	}
+
+}
 
 void P_RefreshBrightness(void) // 8000f410
 {
@@ -687,16 +760,14 @@ extern maplights_t *maplights;     // 800A5EA4
 
 void P_SetLightFactor(int lightfactor) // 8000F458
 {
-    register u32 fpstat, fpstatset;
-
     int l_flt;
     light_t *light;
     maplights_t *maplight;
     int base_r, base_g, base_b;
-    int r, g, b;
     int h, s, v;
     int factor;
     int i;
+    int inframorph; // new test for infrared full bright
 
     maplight = maplights;
     light = lights;
@@ -704,7 +775,10 @@ void P_SetLightFactor(int lightfactor) // 8000F458
     {
         if (i > 255)
         {
-            LightGetHSV(maplight->r, maplight->g, maplight->b, &h, &s, &v);
+            int hsv = LightGetHSV(maplight->r, maplight->g, maplight->b);
+            h = (hsv >> 16) & 0xFF;
+            s = (hsv >>  8) & 0xFF;
+            v = (hsv      ) & 0xFF;
             maplight++;
             factor = v;
         }
@@ -713,43 +787,27 @@ void P_SetLightFactor(int lightfactor) // 8000F458
             factor = i;
         }
 
-        // fetch the current floating-point control/status register
-        fpstat = __osGetFpcCsr();
-        // enable round to negative infinity for floating point
-        fpstatset = (fpstat | FPCSR_RM_RM) ^ 2;
-        // _Disable_ unimplemented operation exception for floating point.
-        __osSetFpcCsr(fpstatset);
+        l_flt = (factor * lightfactor) / 100;
 
-        l_flt = (float)factor * ((float)lightfactor / 100.0);
-
-        v = (int)l_flt;
-        
+        v = l_flt;
         if (v > 255) {
             v = 255;
         }
 
         if (i > 255)
         {
-            LightGetRGB(h, s, v, &r, &g, &b);
-            base_r = r;
-            base_g = g;
-            base_b = b;
-            /*base_r = maplight->r;
-            base_g = maplight->g;
-            base_b = maplight->b;
-            maplight++;*/
+            int rgb = LightGetRGB(h, s, v);
+            base_r = (rgb >> 16) & 0xFF;
+            base_g = (rgb >>  8) & 0xFF;
+            base_b = (rgb      ) & 0xFF;
         }
         else
         {
             base_r = v;
             base_g = v;
             base_b = v;
-
-           /* base_r = i;
-            base_g = i;
-            base_b = i;*/
         }
-
+			
         // [GEC] New Cheat Codes
         if (players[0].cheats & CF_FULLBRIGHT)
         {
@@ -762,6 +820,28 @@ void P_SetLightFactor(int lightfactor) // 8000F458
             base_r = v & 255;
             base_g = v & 255;
             base_b = v & 255;
+        }
+
+        // new infrared, first find max
+        if (infraredFactor == 300)
+        {
+            if(base_r >= base_g && base_r >= base_b)
+            {
+                inframorph = base_r;
+            }
+            else if(base_g >= base_b && base_g >= base_r)
+            {
+                inframorph = base_g;
+            }
+            else
+            {
+                inframorph = base_b;
+            }
+
+            inframorph = (255 - inframorph)/15; // modulate amount of additional brightness
+            base_r = base_r + inframorph; // renormalize red
+            base_g = base_g + inframorph; // renormalize green
+            base_b = base_b + inframorph; // renormalize blue
         }
 
         light->rgba = PACKRGBA(base_r, base_g, base_b, 255);

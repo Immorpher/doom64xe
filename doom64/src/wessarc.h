@@ -139,7 +139,7 @@ typedef struct
 {
 	track_header	*trk_hdr;//*
 	unsigned long	*plabellist;//*4
-	unsigned char			*ptrk_data;//*8
+	char			*ptrk_data;//*8
 }track_data;
 
 typedef struct
@@ -194,7 +194,7 @@ typedef struct
 typedef struct
 {
 	patch_group_header pat_grp_hdr;		//*
-	unsigned char				*ppat_data;		//*24
+	char				*ppat_data;		//*24
 }patch_group_data;//size 84 bytes
 
 #define DriverInit      0
@@ -437,7 +437,7 @@ extern int module_seek(Wess_File_IO_Struct *fileptr, int seekpos, int seekmode);
 extern unsigned long module_tell(Wess_File_IO_Struct *fileptr);
 extern void module_close(Wess_File_IO_Struct *fileptr);
 
-extern int wess_decomp(unsigned char decomp_type, char *fileref, unsigned long file_offset, unsigned char *ramdest, unsigned long uncompressed_size);
+extern int wess_decomp(unsigned char decomp_type, char *fileref, unsigned long file_offset, char *ramdest, unsigned long uncompressed_size);
 extern void wess_enable(void);
 extern void wess_disable(void);
 

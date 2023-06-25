@@ -62,7 +62,7 @@ int wess_handle_create_edit_space(char *memory_pointer, int data_size, int memor
 	sequence_status *psq_stat;
 	track_status *ptk_stat;
 	char *pdest;
-	unsigned char *pmem;
+	char *pmem;
 	int ptrk_indxs_pos;
 	int set_psq_stat;
 
@@ -173,7 +173,7 @@ int wess_handle_create_edit_space(char *memory_pointer, int data_size, int memor
 			ptk_stat->labellist_max = max_edit_labels;
 
 			//----------------------
-			pmem = (unsigned char*) (edt_mem + (ptrk_indxs_pos * _data_size));
+			pmem = (edt_mem + (ptrk_indxs_pos * _data_size));
 			ptk_stat->plabellist = (unsigned long *)pmem;
 
 			for (k = 0; k < ptk_stat->labellist_max; k++)
@@ -182,8 +182,8 @@ int wess_handle_create_edit_space(char *memory_pointer, int data_size, int memor
 			}
 
 			//----------------------
-			pmem = (unsigned char*) (edt_mem + (max_edit_labels << 2) + (ptrk_indxs_pos * _data_size));
-			ptk_stat->pstart = pmem;
+			pmem = (edt_mem + (max_edit_labels << 2) + (ptrk_indxs_pos * _data_size));
+			ptk_stat->pstart = (char *)pmem;
 			pmem[0] = 0;
 			pmem[1] = TrkEnd;
 

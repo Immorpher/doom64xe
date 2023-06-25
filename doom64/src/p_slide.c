@@ -215,8 +215,8 @@ hitslideline:
     // of boosting the player's speed when wall running
     //
 
-    an1 = finecosine[ld->fineangle];
-    an2 = finesine[ld->fineangle];
+    an1 = finecosine(ld->fineangle);
+    an2 = finesine(ld->fineangle);
 
     if(P_PointOnLineSide(mo->x, mo->y, bestslideline))
     {
@@ -620,8 +620,8 @@ findfrac:
 	p2x = ld->v2->x;
 	p2y = ld->v2->y;
 
-	nvx = finesine[ld->fineangle];
-	nvy = -finecosine[ld->fineangle];
+	nvx = finesine(ld->fineangle);
+	nvy = -finecosine(ld->fineangle);
 
 	side1 = SL_PointOnSide (slidex, slidey);
 	if (side1 == SIDE_ON)

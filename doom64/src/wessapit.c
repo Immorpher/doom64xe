@@ -49,8 +49,8 @@ void wess_seq_trigger_type_special(int seq_num, unsigned long seq_type, TriggerP
 void updatetrackstat(track_status *ptk_stat, TriggerPlayAttr *attr) // 800321FC
 {
 	int tempmask;
-	unsigned char *temp;
-	unsigned char tmpppos[4];
+	char *temp;
+	char tmpppos[4];
 
 	if ((attr == NULL) || (!attr->mask))
 		return;
@@ -166,7 +166,7 @@ void queue_wess_seq_update_type_special(unsigned long seq_type, TriggerPlayAttr 
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	unsigned char *lpdest;
+	char *lpdest;
 	int li, lj;
 
 	unsigned long _seq_type;
@@ -197,7 +197,7 @@ void queue_wess_seq_update_type_special(unsigned long seq_type, TriggerPlayAttr 
 					li = psq_stat->tracks_active;
 					lj = pm_stat->max_trks_perseq;
 					/* *lpdest refers to an active track if not 0xFF */
-					lpdest = (unsigned char *)psq_stat->ptrk_indxs;
+					lpdest = psq_stat->ptrk_indxs;
 					while (lj--)
 					{
 						if (*lpdest != 0xFF)
@@ -363,9 +363,9 @@ void queue_wess_seq_stoptype(unsigned long sequence_type, enum MuteRelease mrele
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	unsigned char *lpdest;
+	char *lpdest;
 	int li, lj;
-	int get_millisec = 0;
+	int get_millisec;
 
 	unsigned long _sequence_type;
 	enum MuteRelease _mrelease;
@@ -408,7 +408,7 @@ void queue_wess_seq_stoptype(unsigned long sequence_type, enum MuteRelease mrele
 						li = psq_stat->tracks_active;
 						lj = pm_stat->max_trks_perseq;
 						/* *lpdest refers to an active track if not 0xFF */
-						lpdest = (unsigned char *)psq_stat->ptrk_indxs;
+						lpdest = psq_stat->ptrk_indxs;
 						while (lj--)
 						{
 							if (*lpdest != 0xFF)

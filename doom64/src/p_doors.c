@@ -194,16 +194,18 @@ int EV_DoDoor (line_t *line, vldoor_e  type) // 80010750
 				door->topheight = P_FindLowestCeilingSurrounding(sec);
 				door->topheight -= 4 * FRACUNIT;
 				door->speed = VDOORSPEED * 4;
-				if (door->topheight != sec->ceilingheight)
+				if (door->topheight != sec->ceilingheight) {
 					S_StartSound((mobj_t *)&door->sector->soundorg, 79/*sfx_bdopn*/);
+				}
 				break;
 			case Normal:
 			case DoorOpen:
 				door->direction = 1;
 				door->topheight = P_FindLowestCeilingSurrounding(sec);
 				door->topheight -= 4*FRACUNIT;
-				if (door->topheight != sec->ceilingheight)
+				if (door->topheight != sec->ceilingheight){
 					S_StartSound((mobj_t *)&door->sector->soundorg,17/*sfx_doropn*/);
+				}
 				break;
 			default:
 				break;

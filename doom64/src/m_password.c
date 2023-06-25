@@ -18,14 +18,8 @@ int PassInvalidTic;     // 800A55C4
 boolean doPassword = false; // 8005A7A0
 int CurPasswordSlot = 0;    // 8005ACBC
 
-char *passFeatures[3] = 
-{
-    "3n4bl3f34tvr3s??", // New Pass Code By [GEC]
-    "???03?15?1983???",
-    "k41s3r?w4s?h3r3?"
-};
+char *passFeatures = "3n4bl3f34tvr3s??"; // New Pass Code By [GEC]
 
-#define MAPUP       0x20
 // [GEC] NEW FLAGS
 #define NIGHTMARE	0x40
 
@@ -39,22 +33,17 @@ void M_EncodePassword(byte *buff) // 8000BC10
     int xbit1, xbit2, xbit3;
     int maxclip, maxshell, maxcell, maxmisl;
     player_t* player;
-
-    #if ENABLE_NIGHTMARE == 1
-	int skillnightmare;
-	#endif // ENABLE_NIGHTMARE
+	int skillnightmare; // [GEC] new nightmare skill
 
     player = &players[0];
     D_memset(encode, 0, sizeof(encode));
 
-    #if ENABLE_NIGHTMARE == 1
 	//Check the nightmare difficulty
 	skillnightmare = 0;
 	if(gameskill == sk_nightmare)
     {
         skillnightmare = sk_nightmare;
     }
-    #endif // ENABLE_NIGHTMARE
 
     //
     // Map and Skill
@@ -151,16 +140,11 @@ void M_EncodePassword(byte *buff) // 8000BC10
     //
     encode[5] |= (player->artifacts << 2);
 
-    #if ENABLE_NIGHTMARE == 1
-	//I used the ArmorType space to add the 0x40 flag to identify that the difficulty is nightmare
+	// [GEC] I used the ArmorType space to add the 0x40 flag to identify that the difficulty is nightmare
 	if(skillnightmare != 0) {
         encode[5] |= NIGHTMARE;
     }
-    #endif // ENABLE_NIGHTMARE
-    if (nextmap >= 64)
-    {
-        encode[5] |= MAPUP;
-    }
+
     decodebit[0] = (*(short*)&encode[0]);
     decodebit[1] = (*(short*)&encode[2]);
     decodebit[2] = (*(short*)&encode[4]);
@@ -326,16 +310,10 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
     //
     *levelnum = (decode[0] >> 2);
 
-    if (decode[5] & MAPUP)
-    {
-        decode[5] &= ~MAPUP;
-        *levelnum |= 64;
-    }
-
     //
     // Verify Map
     //
-    if ((*levelnum == 0) || (*levelnum >= LASTLEVEL))
+    if ((*levelnum == 0) || (*levelnum >= TOTALMAPS))
     {
         return false;
     }
@@ -345,14 +323,12 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
     //
     *skill = (decode[0] & 3);
 
-    #if ENABLE_NIGHTMARE == 1
     //Check that the flag is 0x40, add the nightmare difficulty and remove the flag 0x80
     if (decode[5] & NIGHTMARE)
     {
         decode[5] &= ~NIGHTMARE;
         *skill = sk_nightmare;
     }
-    #endif // ENABLE_NIGHTMARE
 
     //
     // Verify Skill
@@ -522,7 +498,6 @@ int M_PasswordTicker(void) // 8000C774
     int exit;
     int skill;
     int levelnum;
-    int i;
 
     if (last_ticon)
     {
@@ -650,22 +625,19 @@ int M_PasswordTicker(void) // 8000C774
                     }
 
                     // [GEC] New Password Code Enable Features Menu.
-                    for (i = 0; i < 3; i++)
+                    fpassbuf = passFeatures;
+                    passbuf = Passwordbuff;
+                    do
                     {
-                        fpassbuf = passFeatures[i];
-                        passbuf = Passwordbuff;
-                        do
-                        {
-                            if (passwordChar[*passbuf++] != *fpassbuf++)
-                                break;
+                        if (passwordChar[*passbuf++] != *fpassbuf++)
+                            break;
 
-                        } while (fpassbuf != (passFeatures[i] + 16));
+                    } while (fpassbuf != (passFeatures + 16));
 
-                        if ((passFeatures[i] + 15) < fpassbuf)
-                        {
-                            FeaturesUnlocked = true;
-                            return ga_exit;
-                        }
+                    if ((passFeatures + 15) < fpassbuf)
+                    {
+                        FeaturesUnlocked = true;
+                        return ga_exit;
                     }
 
                     if (M_DecodePassword(Passwordbuff, &levelnum, &skill, NULL) == 0)

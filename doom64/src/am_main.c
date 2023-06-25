@@ -124,8 +124,8 @@ void AM_Control (player_t *player) // 800004F4
 
         angle = (ANG90 - player->mo->angle) >> ANGLETOFINESHIFT;
 
-        fs = finesine[angle];
-        fc = finecosine[angle];
+        fs = finesine(angle);
+        fc = finecosine(angle);
 
         for(i = 0; i < 8; i+=2)
         {
@@ -220,7 +220,6 @@ void AM_Control (player_t *player) // 800004F4
 
 void AM_Drawer (void) // 800009AC
 {
-	int			i;
 	player_t	*p;
 	mobj_t		*mo;
 	mobj_t		*next;
@@ -233,16 +232,15 @@ void AM_Drawer (void) // 800009AC
 	int			scale;
 	int         artflag;
 	char        map_name[48];
-
-	boolean     msgticking = false;
-	int         msgpos;
-	int         j;
+	char		killcount[20]; // [Immorpher] Automap kill count
+	char		itemcount[20]; // [Immorpher] Automap item count
+	char		secretcount[20]; // [Immorpher] Automap secret count
 
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_FILL);
     gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
 
-    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
 
     /* Fill borders with black */
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0));
@@ -266,14 +264,14 @@ void AM_Drawer (void) // 800009AC
         angle = (p->mo->angle + ANG270) >> ANGLETOFINESHIFT;
         ox = (p->automapx - xpos) >> 16;
         oy = (p->automapy - ypos) >> 16;
-        xpos += ((ox * finecosine[angle]) - (oy * finesine[angle]));
-        ypos += ((ox * finesine[angle]) + (oy * finecosine[angle]));
+        xpos += ((ox * finecosine(angle)) - (oy * finesine(angle)));
+        ypos += ((ox * finesine(angle)));
     }
 
     angle = p->mo->angle >> ANGLETOFINESHIFT;
 
-    s = finesine[angle];
-    c = finecosine[angle];
+    s = finesine(angle);
+    c = finecosine(angle);
 
     gSPMatrix(GFX1++, OS_K0_TO_PHYSICAL(MTX1), G_MTX_MODELVIEW| G_MTX_LOAD | G_MTX_NOPUSH);
     MTX1->m[0][0] = 0x10000;
@@ -357,15 +355,11 @@ void AM_Drawer (void) // 800009AC
             if (mo->flags & (MF_NOSECTOR|MF_RENDERLASER))
                 continue;
 
-            if ((players->artifacts & 1) != 0 && mo->type == MT_ITEM_ARTIFACT1) continue;
-            if ((players->artifacts & 2) != 0 && mo->type == MT_ITEM_ARTIFACT2) continue;
-            if ((players->artifacts & 4) != 0 && mo->type == MT_ITEM_ARTIFACT3) continue;
-
             if (mo->flags & (MF_SHOOTABLE|MF_MISSILE))
                 color = COLOR_RED;
             else
                 color = COLOR_AQUA;
-            
+
             AM_DrawThings(mo->x, mo->y, mo->angle, color);
 
             if (p->automapflags & AF_LINES)
@@ -398,30 +392,32 @@ void AM_Drawer (void) // 800009AC
         gSP1Triangle(GFX1++, 0, 1, 2, 0 /*flag*/);
     }
 
+
     if (enable_messages)
     {
-        msgpos = 20;
-        for (i = 0; i < NUMMESSAGES; i++)
-        {
-            if (p->messagetic[i] > 0)
-            {
-                ST_Message(20, msgpos, p->message[i], 255 | messagecolors[i]);
-                msgpos += 10;
-                for (j = 0; p->message[i][j] != '\0'; ++j)
-                {
-                    if (p->message[i][j] == '\n') msgpos += 10;
-                }
-                msgticking = true;
-            }
-        }
-        if (!msgticking)
+        if (p->messagetic <= 0)
         {
             sprintf(map_name, "LEVEL %d: %s", gamemap, MapInfo[gamemap].name);
-            ST_Message(20, 20, map_name, 0xffffffff);
+            ST_Message(2+HUDmargin,HUDmargin, map_name, 196 | 0xffffff00);
+        }
+        else
+        {
+            ST_Message(2+HUDmargin,HUDmargin, p->message, 196 | p->messagecolor);
         }
     }
+	
 
-    xpos = 280;
+	// [Immorpher] kill count
+	if(MapStats) {
+		sprintf(killcount, "KILLS: %d/%d", players[0].killcount, totalkills);
+		ST_Message(2+HUDmargin, 212-HUDmargin, killcount, 196 | 0xffffff00);
+		sprintf(itemcount, "ITEMS: %d/%d", players[0].itemcount, totalitems);
+		ST_Message(2+HUDmargin, 222-HUDmargin, itemcount, 196| 0xffffff00);
+		sprintf(secretcount, "SECRETS: %d/%d", players[0].secretcount, totalsecret);
+		ST_Message(2+HUDmargin, 232-HUDmargin, secretcount, 196 | 0xffffff00);
+	}
+
+    xpos = 297-HUDmargin;
     artflag = 4;
     do
     {
@@ -429,15 +425,15 @@ void AM_Drawer (void) // 800009AC
         {
             if (artflag == 4)
             {
-                BufferedDrawSprite(MT_ITEM_ARTIFACT3, &states[S_559], 0, 0xffffff80, xpos, 255);
+                BufferedDrawSprite(MT_ITEM_ARTIFACT3, &states[S_559], 0, 0xffffff80, xpos, 266-HUDmargin);
             }
             else if (artflag == 2)
             {
-                BufferedDrawSprite(MT_ITEM_ARTIFACT2, &states[S_551], 0, 0xffffff80, xpos, 255);
+                BufferedDrawSprite(MT_ITEM_ARTIFACT2, &states[S_551], 0, 0xffffff80, xpos, 266-HUDmargin);
             }
             else if (artflag == 1)
             {
-                BufferedDrawSprite(MT_ITEM_ARTIFACT1, &states[S_543], 0, 0xffffff80, xpos, 255);
+                BufferedDrawSprite(MT_ITEM_ARTIFACT1, &states[S_543], 0, 0xffffff80, xpos, 266-HUDmargin);
             }
 
             xpos -= 40;
@@ -514,7 +510,7 @@ void AM_DrawLine(player_t *player) // 800014C8
     gDPSetTextureLUT(GFX1++, G_TT_RGBA16);
     gDPSetTexturePersp(GFX1++, G_TP_PERSP);
 
-    gDPSetTextureFilter(GFX1++, TextureFilter == 0 ? G_TF_BILERP : G_TF_POINT);
+    R_RenderFilter();    // [GEC and Immorpher] New filter options
 
     gDPSetRenderMode(GFX1++,G_RM_AA_XLU_LINE,G_RM_AA_XLU_LINE2);
     gDPSetCombineMode(GFX1++, G_CC_D64COMB02, G_CC_D64COMB02);
@@ -581,16 +577,16 @@ void AM_DrawThings(fixed_t x, fixed_t y, angle_t angle, int color) // 80001834
     gSPVertex(GFX1++, (VTX1), 3, 0);
 
     ang = (angle) >> ANGLETOFINESHIFT;
-    VTX1[0].v.ob[0] = ((finecosine[ang] << 5) + x) >> FRACBITS;
-    VTX1[0].v.ob[2] =-((finesine[ang] << 5) + y) >> FRACBITS;
+    VTX1[0].v.ob[0] = ((finecosine(ang) << 5) + x) >> FRACBITS;
+    VTX1[0].v.ob[2] =-((finesine(ang) << 5) + y) >> FRACBITS;
 
     ang = (angle + 0xA0000000) >> ANGLETOFINESHIFT;
-    VTX1[1].v.ob[0] = ((finecosine[ang] << 5) + x) >> FRACBITS;
-    VTX1[1].v.ob[2] =-((finesine[ang] << 5) + y) >> FRACBITS;
+    VTX1[1].v.ob[0] = ((finecosine(ang) << 5) + x) >> FRACBITS;
+    VTX1[1].v.ob[2] =-((finesine(ang) << 5) + y) >> FRACBITS;
 
     ang = (angle + 0x60000000) >> ANGLETOFINESHIFT;
-    VTX1[2].v.ob[0] = ((finecosine[ang] << 5) + x) >> FRACBITS;
-    VTX1[2].v.ob[2] =-((finesine[ang] << 5) + y) >> FRACBITS;
+    VTX1[2].v.ob[0] = ((finecosine(ang) << 5) + x) >> FRACBITS;
+    VTX1[2].v.ob[2] =-((finesine(ang) << 5) + y) >> FRACBITS;
 
     VTX1[0].v.ob[1] = VTX1[1].v.ob[1] = VTX1[2].v.ob[1] = 0;
 

@@ -250,7 +250,7 @@ int wess_size_module(char *wmd_filename) // 8002F770
 	module_close(fp_wmd_file);
 
 	size = 8;//start Align 8
-	pm_stat->ppat_info->ppat_data = (unsigned char *)size;
+	pm_stat->ppat_info->ppat_data = (char *)size;
 	size += pm_stat->pmod_info->mod_hdr.data_size;
 
 	pm_stat->pseqstattbl = (sequence_status *)size;
@@ -316,10 +316,15 @@ int wess_load_module(char *wmd_filename,
 	int   memory_allowance/*,
 	int **settings_tag_lists*/) // 8002FA3C
 {
-	int i, j;
+	int i, j, k, n, z, types, num, indx, loadit;
+	int tracks_toload;
 	int readrequest, readresult;
-	unsigned char *pdest;
+	char max_tracks_inseq, max_voices_intrk, max_substack_intrk;
+	char *pdest;
 	char *pmem;
+	unsigned long patfpos, trkinfosize;
+	char *tempwmd;
+	int setting, flag, flag2;
 	int decomp_type;
 
 	//PRINTF_D(WHITE, "WMD::module_loaded %d", module_loaded);
@@ -477,7 +482,7 @@ int wess_load_module(char *wmd_filename,
 	and update the pm_stat->ppat_info pointer.
 	*/
 
-	pm_stat->ppat_info->ppat_data = (unsigned char*)(patch_group_data *)pmem;
+	pm_stat->ppat_info->ppat_data = (char*)(patch_group_data *)pmem;
 	pmem += pm_stat->pmod_info->mod_hdr.data_size;
 
 	if (pm_stat->pmod_info->mod_hdr.decomp_type)
@@ -593,8 +598,7 @@ int wess_load_module(char *wmd_filename,
 #endif
 
 		j = pm_stat->max_trks_perseq;
-		(pm_stat->pseqstattbl + i)->ptrk_indxs = (char *)pmem;
-		pdest = (unsigned char *) pmem;
+		pdest = (pm_stat->pseqstattbl + i)->ptrk_indxs = (char *)pmem;
 		pmem += sizeof(char) * j;
 #if _ALIGN4_ == 1
 		//force align to word boundary because previous pmem adjust
@@ -1007,6 +1011,8 @@ void __wess_seq_stop(int sequence_number, enum MuteRelease mrelease, int millise
 
 	char nt, na;
 	sequence_status *psq_stat;
+	track_status *ptmp;
+	int li, lj;
 
 	int _sequence_number;
 	enum MuteRelease _mrelease;
@@ -1093,7 +1099,7 @@ void queue_wess_seq_stop(int sequence_number, enum MuteRelease mrelease, int mil
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	unsigned char *lpdest;
+	char *lpdest;
 	int li, lj;
 	int get_millisec = 0;
 
@@ -1138,7 +1144,7 @@ void queue_wess_seq_stop(int sequence_number, enum MuteRelease mrelease, int mil
 						li = psq_stat->tracks_active;
 						lj = pm_stat->max_trks_perseq;
 						/* *lpdest refers to an active track if not 0xFF */
-						lpdest = (unsigned char *)psq_stat->ptrk_indxs;
+						lpdest = psq_stat->ptrk_indxs;
 						while (lj--)
 						{
 							if (*lpdest != 0xFF)
@@ -1171,6 +1177,8 @@ void __wess_seq_stopall(enum MuteRelease mrelease, int millisec) // 80030B78
 
 	char nt, na;
 	sequence_status *psq_stat;
+	track_status *ptmp;
+	int li, lj;
 
 	enum MuteRelease _mrelease;
 	int _millisec;
@@ -1245,7 +1253,7 @@ void queue_wess_seq_stopall(enum MuteRelease mrelease, int millisec) // 80030D04
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	unsigned char *lpdest;
+	char *lpdest;
 	int li, lj;
 	int get_millisec;
 
@@ -1286,7 +1294,7 @@ void queue_wess_seq_stopall(enum MuteRelease mrelease, int millisec) // 80030D04
 					li = psq_stat->tracks_active;
 					lj = pm_stat->max_trks_perseq;
 					/* *lpdest refers to an active track if not 0xFF */
-					lpdest = (unsigned char *)psq_stat->ptrk_indxs;
+					lpdest = psq_stat->ptrk_indxs;
 					while (lj--)
 					{
 						if (*lpdest != 0xFF)

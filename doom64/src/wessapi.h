@@ -86,7 +86,7 @@ extern void wess_set_error_callback( WessErrorCallbackProc errcall );
 typedef int (*WessDecompCallbackProc)( unsigned char decomp_type,
 				       char          *fileref,
 				       unsigned long file_offset,
-				       unsigned char          *ramdest,
+				       char          *ramdest,
 				       unsigned long uncompressed_size );
 
 extern void wess_set_decomp_callback( WessDecompCallbackProc decompcall );

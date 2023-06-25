@@ -6,7 +6,7 @@
 // text for debug
 #include "graph.h"
 
-extern void P_SpawnPlayer();
+extern void P_SpawnPlayer(/*mapthing_t *mthing*/);
 
 int			numvertexes;	//80077E44|uGp00000a34
 vertex_t	*vertexes;		//8007800C|puGp00000bfc
@@ -303,8 +303,8 @@ void P_LoadThings (void) // 8001D864
 		mt->tid = LITTLESHORT(mt->tid);
 		P_SpawnMapThing (mt);
 
-		//if (mt->type >= 4096)
-		//	I_Error("P_LoadThings: doomednum:%d >= 4096", mt->type);
+		if (mt->type >= 4096)
+			I_Error("P_LoadThings: doomednum:%d >= 4096", mt->type);
 	}
 }
 
@@ -778,37 +778,6 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 	mobjhead.next = mobjhead.prev = &mobjhead;
 
 	spawncount = 0;
-
-	#if ENABLE_NIGHTMARE == 1
-	if (skill == sk_nightmare)
-	{
-		states[S_054].tics = 4; // S_SARG_ATK1
-		states[S_055].tics = 4; // S_SARG_ATK2
-		states[S_056].tics = 4; // S_SARG_ATK3
-		mobjinfo[MT_DEMON1].speed = 17; // MT_SERGEANT
-		mobjinfo[MT_DEMON2].speed = 17; // MT_SERGEANT2
-
-		mobjinfo[MT_PROJ_BRUISER1].speed = 20; // MT_BRUISERSHOT
-		mobjinfo[MT_PROJ_BRUISER2].speed = 20; // MT_BRUISERSHOT2
-		mobjinfo[MT_PROJ_HEAD].speed = 30; // MT_HEADSHOT value like Doom 64 Ex
-		mobjinfo[MT_PROJ_IMP1].speed = 20; // MT_TROOPSHOT
-		mobjinfo[MT_PROJ_IMP2].speed = 35; // MT_TROOPSHOT2 value like Doom 64 Ex
-	}
-	else
-	{
-		states[S_054].tics = 8; // S_SARG_ATK1
-		states[S_055].tics = 8; // S_SARG_ATK2
-		states[S_056].tics = 8; // S_SARG_ATK3
-		mobjinfo[MT_DEMON1].speed = 12; // MT_SERGEANT
-		mobjinfo[MT_DEMON2].speed = 12; // MT_SERGEANT2
-
-		mobjinfo[MT_PROJ_BRUISER1].speed = 15; // MT_BRUISERSHOT
-		mobjinfo[MT_PROJ_BRUISER2].speed = 15; // MT_BRUISERSHOT2
-		mobjinfo[MT_PROJ_HEAD].speed = 20; // MT_HEADSHOT
-		mobjinfo[MT_PROJ_IMP1].speed = 10; // MT_TROOPSHOT
-		mobjinfo[MT_PROJ_IMP2].speed = 20; // MT_TROOPSHOT2
-	}
-	#endif // ENABLE_NIGHTMARE
 
 	W_OpenMapWad(map);
 

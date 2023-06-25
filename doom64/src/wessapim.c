@@ -66,10 +66,10 @@ void queue_wess_master_sfx_vol_set(char volume) // 800311FC
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	unsigned char *lpdest;
-	unsigned char *ppos;
+	char *lpdest;
+	char *ppos;
 	int li, lj;
-	unsigned char tmpppos[16];
+	char tmpppos[16];
 
 	char _volume;
 
@@ -98,7 +98,7 @@ void queue_wess_master_sfx_vol_set(char volume) // 800311FC
 				li = psq_stat->tracks_active;
 				lj = pm_stat->max_trks_perseq;
 				/* *lpdest refers to an active track if not 0xFF */
-				lpdest = (unsigned char *)psq_stat->ptrk_indxs;
+				lpdest = psq_stat->ptrk_indxs;
 				while (lj--)
 				{
 					if (*lpdest != 0xFF)
@@ -163,10 +163,10 @@ void queue_wess_master_mus_vol_set(char volume) // 80031448
 	char nt, na;
 	sequence_status *psq_stat;
 	track_status *ptmp;
-	unsigned char *lpdest;
-	unsigned char *ppos;
+	char *lpdest;
+	char *ppos;
 	int li, lj;
-	unsigned char tmpppos[16];
+	char tmpppos[16];
 
 	char _volume;
 
@@ -195,7 +195,7 @@ void queue_wess_master_mus_vol_set(char volume) // 80031448
 				li = psq_stat->tracks_active;
 				lj = pm_stat->max_trks_perseq;
 				/* *lpdest refers to an active track if not 0xFF */
-				lpdest = (unsigned char *)psq_stat->ptrk_indxs;
+				lpdest = psq_stat->ptrk_indxs;
 				while (lj--)
 				{
 					if (*lpdest != 0xFF)

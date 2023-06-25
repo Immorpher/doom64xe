@@ -26,16 +26,46 @@ void	R_Subsector(int num);
 void	R_AddLine(seg_t *line);
 void    R_AddSprite(subsector_t *sub);
 void    R_RenderBSPNodeNoClip(int bspnum);
+void	R_RenderFilter(void); // [Immorpher] Rendering function to set filter
 
-//
+// [GEC and Immorpher] Set texture render options
+void R_RenderFilter(void)
+{
+	// Texture Filtering
+	if (VideoFilter == 0) {
+        gDPSetTextureFilter(GFX1++, G_TF_BILERP); // <- Linear Texture Filtering
+    }
+    else {
+        gDPSetTextureFilter(GFX1++, G_TF_POINT); // <- Nearest Texture Filtering
+    }
+	
+	// Color Dithering
+	if (ColorDither == 0) {
+		gDPSetColorDither(GFX1++, G_CD_DISABLE);
+	}
+	else if (ColorDither == 1) {
+		gDPSetColorDither(GFX1++, G_CD_MAGICSQ);
+	}
+	else if (ColorDither == 2) {
+		gDPSetColorDither(GFX1++, G_CD_BAYER);
+	}
+	else {
+		gDPSetColorDither(GFX1++, G_CD_NOISE);
+	}
+}
+
 // Kick off the rendering process by initializing the solidsubsectors array and then
 // starting the BSP traversal.
 //
+
+u32 last_bsp_count;
 
 void R_BSP(void) // 80023F30
 {
     int count;
     subsector_t **sub;
+
+    u32 start_bsp_count = osGetCount();
 
     validcount++;
     rendersky = false;
@@ -66,22 +96,103 @@ void R_BSP(void) // 80023F30
         sub++;				/* Inc the sprite pointer */
         count--;
     }
+
+    last_bsp_count = ((osGetCount() - start_bsp_count) + last_bsp_count) / 2;
 }
 
 //
 // Recursively descend through the BSP, classifying nodes according to the
 // player's point of view, and render subsectors in view.
 //
+static boolean R_RenderBspSubsector(int bspnum)
+{
+	if(bspnum & NF_SUBSECTOR)
+	{
+	    if(bspnum == -1)
+			R_Subsector(0);
+		else
+			R_Subsector(bspnum & (~NF_SUBSECTOR));
+		
+		return true;
+	}
+    return false;	
+}
+
+#define MAX_BSP_DEPTH 128
+//
+// RenderBSPNode
+// Renders all subsectors below a given node,
+//  traversing subtree recursively.
+// Just call with BSP root.
+static int bspstack[MAX_BSP_DEPTH];
 
 void R_RenderBSPNode(int bspnum) // 80024020
 {
+	int sp = 0;
 	node_t *bsp;
 	int     side;
 	fixed_t	dx, dy;
 	fixed_t	left, right;
 
 	//printf("R_RenderBSPNode\n");
+	while(true)
+	{
+		while (!R_RenderBspSubsector(bspnum))
+		{
+			if(sp == MAX_BSP_DEPTH)
+				break;
+			
+			bsp = &nodes[bspnum];
+//			side = R_PointOnSide(viewx,viewy,bsp);
+        dx = (viewx - bsp->line.x);
+        dy = (viewy - bsp->line.y);
 
+        left = (bsp->line.dy >> 16) * (dx >> 16);
+        right = (dy >> 16) * (bsp->line.dx >> 16);
+
+        if (right < left)
+            side = 0;		/* front side */
+        else
+            side = 1;		/* back side */
+			
+			bspstack[sp++] = bspnum;
+			bspstack[sp++] = side;
+			
+			bspnum = bsp->children[side];
+			
+		}
+        if(sp == 0)
+        {
+            //back at root node and not visible. All done!
+            return;
+        }
+
+        //Back sides.
+        side = bspstack[--sp];
+        bspnum = bspstack[--sp];
+        bsp = &nodes[bspnum];
+
+        // Possibly divide back space.
+        //Walk back up the tree until we find
+        //a node that has a visible backspace.
+        while(!R_CheckBBox (bsp->bbox[side^1]))
+        {
+            if(sp == 0)
+            {
+                //back at root node and not visible. All done!
+                return;
+            }
+
+            //Back side next.
+            side = bspstack[--sp];
+            bspnum = bspstack[--sp];
+
+            bsp = &nodes[bspnum];
+        }
+
+        bspnum = bsp->children[side^1];		
+	}
+#if 0	
     while(!(bspnum & NF_SUBSECTOR))
     {
         bsp = &nodes[bspnum];
@@ -120,12 +231,16 @@ void R_RenderBSPNode(int bspnum) // 80024020
         bspnum = 0;
 
     R_Subsector(bspnum & ~NF_SUBSECTOR);
+#endif
 }
 
 //
 // Checks BSP node/subtree bounding box. Returns true if some part of the bbox
 // might be visible.
 //
+
+
+
 
 boolean R_CheckBBox(fixed_t bspcoord[4]) // 80024170
 {
@@ -401,10 +516,6 @@ void R_AddSprite(subsector_t *sub) // 80024A98
 	fixed_t         tx, tz;
 	fixed_t         x, y;
 
-    #if ENABLE_REMASTER_SPRITES == 1
-    state_t         *newState;
-    #endif
-
     sub->vissprite = NULL;
 
     for (thing = sub->sector->thinglist; thing; thing = thing->snext)
@@ -440,28 +551,7 @@ void R_AddSprite(subsector_t *sub) // 80024A98
             // too far off the side?
             if (tx > (tz << 1) || tx < -(tz << 1))
                 continue;
-            
-            #if ENABLE_REMASTER_SPRITES == 1
-            if (thing->type == MT_ITEM_STIMPACK && thing->state == &states[thing->info->spawnstate])
-            {
-                newState = &states[BlueCross ? S_801 : thing->info->spawnstate];
-                thing->sprite = newState->sprite;
-                thing->frame = newState->frame;
-            }
-            else if (thing->type == MT_ITEM_MEDKIT && thing->state == &states[thing->info->spawnstate])
-            {
-                newState = &states[BlueCross ? S_802 : thing->info->spawnstate];
-                thing->sprite = newState->sprite;
-                thing->frame = newState->frame;
-            }
-            else if (thing->type == MT_ITEM_BERSERK && thing->state == &states[thing->info->spawnstate])
-            {
-                newState = &states[BlueCross ? S_803 : thing->info->spawnstate];
-                thing->sprite = newState->sprite;
-                thing->frame = newState->frame;
-            }
-            #endif
-            
+
             sprdef = &sprites[thing->sprite];
             sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];
 
@@ -526,13 +616,10 @@ void R_AddSprite(subsector_t *sub) // 80024A98
             }
 
             if (VisSrpNew)
-            {
                 VisSrpNew->next = visspritehead;
-            }
             else
-            {
                 CurSub->vissprite = visspritehead;
-            }
+
             visspritehead->next = VisSrpCur;
 
             numdrawvissprites++;

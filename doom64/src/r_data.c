@@ -34,14 +34,14 @@ void R_InitSprites(void);
 
 void R_InitData (void) // 80023180
 {
-    int i;
-    int val = 0;
+/*    int i;
+    int val;
 
     for(i = 0; i < (5*FINEANGLES/4); i++)
     {
-        finesine[i] = (fixed_t) (sinf((((f64) val * (f64) PI_VAL) / 8192.0)) * 65536.0);
+        finesine(i) = (fixed_t) (sinf((((f64) val * (f64) PI_VAL) / 8192.0)) * 65536.0);
         val += 2;
-    }
+    }*/
 
 	R_InitTextures();
     R_InitSprites();

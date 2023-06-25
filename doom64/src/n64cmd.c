@@ -336,7 +336,7 @@ void N64_DriverInit (track_status *ptk_stat) // 80037DA8
 {
 	static int vt; //800B699C
 
-	unsigned char *pmem;
+	char *pmem;
 	patchinfo_header *sample;
 	master_status_structure *pm_stat;
 
