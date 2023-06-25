@@ -103,6 +103,44 @@ typedef unsigned angle_t;
 extern	fixed_t		finesine[5*FINEANGLES/4];
 extern	fixed_t		*finecosine;
 
+static inline fixed_t FixedDiv2(fixed_t a, fixed_t b)
+{
+    fixed_t flo;
+
+    asm volatile(
+    ".set noreorder\n\t"
+    ".set nomacro\n\t"
+    "dsll   %1, %1, 16\n\t"
+    "ddiv   $0, %1, %2\n\t"
+    "mflo   %0\n\t"
+    ".set macro\n\t"
+    ".set reorder"
+    : "=r" (flo)
+    : "r" (a), "r" (b)
+    );
+
+    return (fixed_t) flo;
+}
+
+static inline fixed_t FixedMul(fixed_t a, fixed_t b)
+{
+    fixed_t flo;
+
+    asm volatile(
+    ".set noreorder\n\t"
+    ".set nomacro\n\t"
+    "dmult   %1, %2\n\t"
+    "mflo    %0\n\t"
+    "dsra    %0, %0, 16\n\t"
+    ".set macro\n\t"
+    ".set reorder"
+    : "=r" (flo)
+    : "r" (a), "r" (b)
+    );
+
+    return (fixed_t) flo;
+}
+
 static inline fixed_t D_abs(fixed_t x)
 {
     fixed_t _s = x >> 31;
