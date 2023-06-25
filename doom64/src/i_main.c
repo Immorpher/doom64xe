@@ -117,14 +117,8 @@ OSTask vid_rsptask[2] = // 8005A590
 
 Vp vid_viewport = // 8005A610
 {
-    {
-        {
-            SCREEN_WD*2, SCREEN_HT*2, G_MAXZ,   0 /* scale */
-        },
-        {
-            SCREEN_WD*2, SCREEN_HT*2,      0,   0 /* translate */
-        },
-    }
+    SCREEN_WD*2, SCREEN_HT*2, G_MAXZ,   0,		/* scale */
+    SCREEN_WD*2, SCREEN_HT*2,      0,   0,		/* translate */
 };
 
 OSMesgQueue romcopy_msgque; // 800A4F70
