@@ -860,6 +860,7 @@ int M_ScreenTicker(void); // 8000A0F8
 void M_ControllerPakDrawer(void); // 8000A3E4
 
 void M_SavePakStart(void); // 8000A6E8
+void M_SavePakSilentStop(void);
 void M_SavePakStop(void); // 8000A7B4
 int M_SavePakTicker(void); // 8000A804
 void M_SavePakDrawer(void); // 8000AB44

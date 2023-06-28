@@ -2554,15 +2554,19 @@ void M_SavePakStart(void) // 8000A6E8
     }
 }
 
-void M_SavePakStop(void) // 8000A7B4
+void M_SavePakSilentStop(void) // 8000A7B4
 {
-    S_StartSound(NULL, sfx_pistol);
-
     if (Pak_Data)
     {
         Z_Free(Pak_Data);
         Pak_Data = NULL;
     }
+}
+
+void M_SavePakStop(void) // 8000A7B4
+{
+    S_StartSound(NULL, sfx_pistol);
+    M_SavePakSilentStop();
 }
 
 int M_SavePakTicker(void) // 8000A804
