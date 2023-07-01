@@ -12,7 +12,7 @@ The focus of this project is to combine the features of the aforementioned repos
 
 ### Preparation
 
-Before compiling, the data of the original Doom 64 is required. The Tools folder contains an extractor utility that can be run against the [Doom 64 USA 1.0 ROM](https://datomatic.no-intro.org/index.php?page=show_record&s=24&n=0179). Version 1.1 is not supported. The extractor will produce four files: `DOOM64.WAD`, `DOOM64.WMD`, `DOOM64.WSD` and `DOOM64.WDD` that have to be placed into the doom64/data folder.
+Before compiling, the data of the original Doom 64 is required. The Tools folder contains an extractor utility that can be run against any version of DOOM 64. The extractor will produce four files: `DOOM64.WAD`, `DOOM64.WMD`, `DOOM64.WSD` and `DOOM64.WDD` that have to be placed into the doom64/data folder.
 
 **This rom hack requires resources that are only present in Nightdive's 2020 release.** For this reason, a BPS patch is included in the Data folder (`DOOM64.BPS`). The Tools folder includes Floating BPS, a tool that can be used to open it. With it, you must patch the `DOOM64.WAD` found in your 2020 release installation directory (MD5 `0AABA212339C72250F8A53A0A2B6189E`). Then, copy the newly created `DOOM64.WAD` into the Data folder, replacing the one in the previous step.
 
