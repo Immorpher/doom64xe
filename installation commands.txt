@@ -1,0 +1,21 @@
+sudo apt update
+
+sudo apt-get install build-essential make dpkg-dev
+
+wget https://github.com/ModernN64SDK/n64sdkmod/archive/refs/heads/master.zip
+
+unzip master.zip
+
+cd n64sdkmod-master/
+
+make
+
+cd debs
+
+sudo apt install binutils-mips-n64 gcc-mips-n64 newlib-mips-n64
+
+sudo apt-get install ./n64sdk-common.deb 
+
+sudo apt-get install ./n64sdk.deb 
+
+sudo apt-get install ./makemask.deb 
