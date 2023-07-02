@@ -46,7 +46,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT10 "Resume"
 #define M_TXT11 "Options"
 #define M_TXT12 "Default"
-#define M_TXT13 "Default"
+#define M_TXT13 "Default" // Default Display
 #define M_TXT14 "New Game"
 #define M_TXT15 "Be Gentle!"
 #define M_TXT16 "Bring it on!"
@@ -65,7 +65,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT29 "DEBUG"
 #define M_TXT30 "TEXTURE TEST"
 #define M_TXT31 "WALL BLOCKING"
-#define M_TXT32 "Center Display"
+#define M_TXT32 "Center Video"
 #define M_TXT33 "Messages:"
 #define M_TXT34 "Status Bar:"
 #define M_TXT35 "LOCK MONSTERS"
@@ -95,6 +95,10 @@ char *ControlText[] =   //8007517C
 #define M_TXT56 "Blood Color:"
 #define M_TXT57 "Cross Color:"
 
+// [Immorpher] Additional XE options
+#define M_TXT58 "Video"
+#define M_TXT59 "Default" // Default video
+
 char *MenuText[] =   // 8005ABA0
 {
     M_TXT00, M_TXT01, M_TXT02, M_TXT03, M_TXT04,
@@ -109,7 +113,7 @@ char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47,
     M_TXT48, M_TXT49, M_TXT50,  // [GEC] NEW
     M_TXT51, M_TXT52, M_TXT53, M_TXT54,
-    M_TXT55, M_TXT56, M_TXT57
+    M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59
 };
 
 menuitem_t Menu_Title[3] = // 8005A978
@@ -147,14 +151,15 @@ menuitem_t Menu_Episode[2] =
     { 52, 112, 100},    // The Lost Levels
 };
 
-menuitem_t Menu_Options[6] = // 8005A9C0
+menuitem_t Menu_Options[7] = // 8005A9C0
 {
     {  0, 102, 60 },    // Control Pad
     { 41, 102, 80 },    // Control Stick
     {  1, 102, 100},    // Volume
-    {  2, 102, 120},    // Display
-    {  3, 102, 140},    // Password
-    {  6, 102, 160},    // Return
+    {  58, 102, 120},    // Video
+    {  2, 102, 140},    // Display
+    {  3, 102, 160},    // Password
+    {  6, 102, 180},    // Return
 };
 
 menuitem_t Menu_Volume[4] = // 8005AA08
@@ -172,30 +177,33 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
     {  6, 102, 150},    // Return
 };
 
+menuitem_t Menu_Video[5] =
+{
+    {  9, 102, 60 },    // Brightness
+    { 32, 102, 100 },    // Center Display
+    { 50, 102, 120},    // Filtering
+    { 59, 102, 140},    // Default Video
+    {  6, 102, 160},    // Return
+};
+
 #if ENABLE_REMASTER_SPRITES == 1
-menuitem_t Menu_Display[9] = // 8005AA5C
+menuitem_t Menu_Display[6] = // 8005AA5C
 #else
-menuitem_t Menu_Display[7] = // 8005AA5C
+menuitem_t Menu_Display[4] = // 8005AA5C
 #endif
 {
     #if ENABLE_REMASTER_SPRITES == 1
-    {  9, 102, 40 },    // Brightness
-    { 32, 102, 80 },    // Center Display
-    { 33, 102, 100},    // Messages
-    { 34, 102, 120},    // Status Bar
-    { 50, 102, 140},    // Filtering
-    { 56, 102, 160},    // Blood Color
-    { 57, 102, 180},    // Cross Color
-    { 13, 102, 200},    // Default Display
-    {  6, 102, 220},    // Return
+    { 33, 102, 60},    // Messages
+    { 34, 102, 80},    // Status Bar
+    { 56, 102, 100},    // Blood Color
+    { 57, 102, 120},    // Cross Color
+    { 13, 102, 140},    // Default Display
+    {  6, 102, 160},    // Return
     #else
-    {  9, 102, 60 },    // Brightness
-    { 32, 102, 100 },   // Center Display
-    { 33, 102, 120},    // Messages
-    { 34, 102, 140},    // Status Bar
-    { 50, 102, 160},    // Filtering
-    { 13, 102, 180},    // Default Display
-    {  6, 102, 200},    // Return
+    { 33, 102, 60},    // Messages
+    { 34, 102, 80},    // Status Bar
+    { 13, 102, 100},    // Default Display
+    {  6, 102, 120},    // Return
     #endif
 };
 
@@ -1017,9 +1025,9 @@ int M_MenuTicker(void) // 80007E0C
 
                         MenuItem = Menu_Display;
                         #if ENABLE_REMASTER_SPRITES == 1
-                        itemlines = 9;
+                        itemlines = 6;
                         #else
-                        itemlines = 7;
+                        itemlines = 4;
                         #endif
                         MenuCall = M_DisplayDrawer;
                         cursorpos = 0;
@@ -1217,7 +1225,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Options;
-                        itemlines = 6;
+                        itemlines = 7;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 0;
 
@@ -1251,17 +1259,9 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         S_StartSound(NULL, sfx_switch2);
 
-                        Display_X = 0;
-                        Display_Y = 0;
-
                         enable_messages = true;
                         enable_statusbar = true;
 
-                        brightness = 100;
-                        I_MoveDisplay(0,0);
-                        P_RefreshBrightness();
-
-                        TextureFilter = 0;
                         GreenBlood = 0;
                         BlueCross = 0;
                         return ga_nothing;
@@ -1897,9 +1897,43 @@ int M_MenuTicker(void) // 80007E0C
                         EnableExpPak = (M_ControllerPak() == 0);
                         return exit;
                     }
-                    break;
-                }
+					break;
+					
+				case 58: // Video
+					if (truebuttons)
+					{
+						S_StartSound(NULL, sfx_pistol);
+						M_SaveMenuData();
+                        MenuItem = Menu_Video;
+						itemlines = 5;
+						MenuCall = M_VideoDrawer;
+						cursorpos = 0;
 
+						MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+						M_RestoreMenuData(true);
+						return ga_nothing;
+					}
+					break;
+									
+				case 59: // Default Video
+                    if (truebuttons)
+                    {
+                        S_StartSound(NULL, sfx_switch2);
+
+                        Display_X = 0;
+                        Display_Y = 0;
+
+                        brightness = 100;
+                        I_MoveDisplay(0,0);
+                        P_RefreshBrightness();
+
+                        TextureFilter = 0;
+
+                        return ga_nothing;
+                    }
+                    break;
+				
+                }
             exit = ga_nothing;
         }
     }
@@ -2125,6 +2159,56 @@ void M_ControlStickDrawer(void) // 80009738
     ST_DrawSymbol(M_SENSITIVITY + 103, 110, 69, text_alpha | 0xffffff00);
 }
 
+void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
+{
+    char *text;
+    menuitem_t *item;
+    int i, casepos;
+
+    ST_DrawString(-1, 20, "Video", text_alpha | 0xc0000000);
+
+    item = Menu_Video;
+
+    for(i = 0; i < 5; i++)
+    {
+        casepos = item->casepos;
+
+        if (casepos == 50)
+        {
+            switch (TextureFilter)
+            {
+                case 2:
+                    text = "Sky";
+                    break;
+                case 1:
+                    text = "Off";
+                    break;
+                case 0:
+                default:
+                    text = "On";
+                    break;
+            }
+        }
+
+        else
+        {
+            text = NULL;
+        }
+
+        if (text)
+            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xc0000000);
+
+        ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xc0000000);
+
+        item++;
+    }
+
+    ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
+    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
+
+    ST_DrawSymbol(Menu_Video[0].x - 37, Menu_Video[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
+}
+
 void M_DisplayDrawer(void) // 80009884
 {
     char *text;
@@ -2136,9 +2220,9 @@ void M_DisplayDrawer(void) // 80009884
     item = Menu_Display;
 
     #if ENABLE_REMASTER_SPRITES == 1
-    for(i = 0; i < 9; i++)
+    for(i = 0; i < 6; i++)
     #else
-    for(i = 0; i < 7; i++)
+    for(i = 0; i < 4; i++)
     #endif
     {
         casepos = item->casepos;
@@ -2157,22 +2241,6 @@ void M_DisplayDrawer(void) // 80009884
             else
                 text = "Off";
         }
-        else if (casepos == 50)
-        {
-            switch (TextureFilter)
-            {
-                case 2:
-                    text = "Sky";
-                    break;
-                case 1:
-                    text = "Off";
-                    break;
-                case 0:
-                default:
-                    text = "On";
-                    break;
-            }
-        }
         else if (casepos == 56) // BloodColor
         {
             if (GreenBlood)
@@ -2180,7 +2248,7 @@ void M_DisplayDrawer(void) // 80009884
             else
                 text = "Red";
         }
-        else if (casepos == 57) // BloodColor
+        else if (casepos == 57) // Medikit Color
         {
             if (BlueCross)
                 text = "Blue";
@@ -2199,14 +2267,6 @@ void M_DisplayDrawer(void) // 80009884
 
         item++;
     }
-
-    #if ENABLE_REMASTER_SPRITES == 1
-    ST_DrawSymbol(102, 60, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness + 103, 60, 69, text_alpha | 0xffffff00);
-    #else
-    ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
-    #endif
 
     ST_DrawSymbol(Menu_Display[0].x - 37, Menu_Display[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
@@ -2554,19 +2614,15 @@ void M_SavePakStart(void) // 8000A6E8
     }
 }
 
-void M_SavePakSilentStop(void) // 8000A7B4
+void M_SavePakStop(void) // 8000A7B4
 {
+    S_StartSound(NULL, sfx_pistol);
+
     if (Pak_Data)
     {
         Z_Free(Pak_Data);
         Pak_Data = NULL;
     }
-}
-
-void M_SavePakStop(void) // 8000A7B4
-{
-    S_StartSound(NULL, sfx_pistol);
-    M_SavePakSilentStop();
 }
 
 int M_SavePakTicker(void) // 8000A804

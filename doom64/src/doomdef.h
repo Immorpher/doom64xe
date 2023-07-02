@@ -888,6 +888,7 @@ void M_MenuTitleDrawer(void); // 80008E7C
 void M_FeaturesDrawer(void); // 800091C0
 void M_VolumeDrawer(void); // 800095B4
 void M_ControlStickDrawer(void); // 80009738
+void M_VideoDrawer(void); // [Immorpher] new menu for extra video options
 void M_DisplayDrawer(void); // 80009884
 
 void M_DrawBackground(int x, int y, int color, char *name); // 80009A68
@@ -898,7 +899,6 @@ int M_ScreenTicker(void); // 8000A0F8
 void M_ControllerPakDrawer(void); // 8000A3E4
 
 void M_SavePakStart(void); // 8000A6E8
-void M_SavePakSilentStop(void);
 void M_SavePakStop(void); // 8000A7B4
 int M_SavePakTicker(void); // 8000A804
 void M_SavePakDrawer(void); // 8000AB44
