@@ -216,7 +216,8 @@ void G_RunGame (void) // 80004794
 		{
 			M_EncodePassword(Passwordbuff);
         	CurPasswordSlot = 16;
-            MiniLoop(M_SavePakStart,M_SavePakSilentStop,M_SavePakTicker,M_SavePakDrawer);
+            MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_SavePakDrawer);
+			I_WIPE_FadeOutScreen();
         }
 
         if(((gamemap ==  8) && (nextmap ==  9)) ||

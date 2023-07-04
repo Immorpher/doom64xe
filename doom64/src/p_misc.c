@@ -673,12 +673,30 @@ void P_SetMovingCamera(line_t *line) // 8000F2F8
 
 void P_RefreshBrightness(void) // 8000f410
 {
-    int factor;
+    int factor, i;
+	float j, curve;
+	float light = LightBoost;
 
     factor = brightness + 100;
     if (factor < infraredFactor) {
         factor = infraredFactor;
     }
+	
+	if (LightBoost > 0) { // [Immorpher] If light boost is enabled generate light curve via iterative cubic
+		for (i = 1; i < 255; i++) {
+			j = (float)i; // store as float
+			curve = j*(100-light)/100 + (light/100)*(j + j*j/255 - j*(j/255)*(j/255)); // Generate initial light curve
+			curve = curve*(100-light)/100 + (light/100)*(curve + curve*curve/255 - curve*(curve/255)*(curve/255)); // First iteration
+			curve = curve*(100-light)/100 + (light/100)*(curve + curve*curve/255 - curve*(curve/255)*(curve/255)); // Last iteration
+			lightcurve[i] = (char)curve;
+		}
+		
+	}
+	else { // [Immorpher] Otherwise might lightcurve linear
+		for (i = 1; i < 255; i++) {
+			lightcurve[i] = i;
+		}
+	}
 
     P_SetLightFactor(factor);
 }
@@ -727,6 +745,8 @@ void P_SetLightFactor(int lightfactor) // 8000F458
         if (v > 255) {
             v = 255;
         }
+		
+		v = lightcurve[v]; // [Immorpher] - Non-linearly boost brightness
 
         if (i > 255)
         {

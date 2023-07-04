@@ -238,6 +238,10 @@ void AM_Drawer (void) // 800009AC
 	int         msgpos;
 	int         j;
 
+	char        kills[20];
+	char        items[20];
+	char        secrets[20];
+
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_FILL);
     gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
@@ -419,6 +423,17 @@ void AM_Drawer (void) // 800009AC
             sprintf(map_name, "LEVEL %d: %s", gamemap, MapInfo[gamemap].name);
             ST_Message(20, 20, map_name, 0xffffffff);
         }
+    }
+
+    if (ShowStats)
+    {
+        sprintf(kills, "K: %d/%d", players[0].killcount, totalkills);
+        sprintf(items, "I: %d/%d", players[0].itemcount, totalitems);
+        sprintf(secrets, "S: %d/%d", players[0].secretcount, totalsecret);
+
+        ST_Message(20, 200, kills, 0xffffffff);		
+		ST_Message(20, 210, items, 0xffffffff);
+		ST_Message(20, 220, secrets, 0xffffffff);
     }
 
     xpos = 280;

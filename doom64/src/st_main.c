@@ -306,7 +306,7 @@ void ST_Drawer (void) // 80029DC0
         /* */
         /* Gray color with alpha 144 */
         /* */
-        gDPSetPrimColor(GFX1++, 0, 0, 104, 104, 104, 144);
+        gDPSetPrimColor(GFX1++, 0, 0, 127, 127, 127, 144);
 
         /* */
         /* Health */
@@ -363,18 +363,18 @@ void ST_Drawer (void) // 80029DC0
             if (ammo < 0)
                 ammo = 0;
 
-            ST_DrawNumber(160, 215, ammo, 0, PACKRGBA(224,0,0,128)); // 0xe0000080
+            ST_DrawNumber(160, 215, ammo, 0, PACKRGBA(255,0,0,128)); // 0xe0000080
         }
 
         /* */
         /* Health */
         /* */
-        ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(224,0,0,128)); // 0xe0000080
+        ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(255,0,0,128)); // 0xe0000080
 
         /* */
         /* Armor */
         /* */
-        ST_DrawNumber(271, 215, player->armorpoints, 0, PACKRGBA(224,0,0,128)); // 0xe0000080
+        ST_DrawNumber(271, 215, player->armorpoints, 0, PACKRGBA(255,0,0,128)); // 0xe0000080
     }
 
     #if SHOWFPS == 1

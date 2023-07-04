@@ -82,22 +82,28 @@ char *ControlText[] =   //8007517C
 #define M_TXT46 "Try again"
 #define M_TXT47 "Create game note"
 
+// Doom 64 RE options
+
 #define M_TXT48 "COLORS"     // [GEC] NEW CHEAT CODE
 #define M_TXT49 "FULL BRIGHT"   // [GEC] NEW CHEAT CODE
 #define M_TXT50 "Filtering:"   // [GEC] NEW CHEAT CODE
 
 #define M_TXT51 "DOOM 64"
-#define M_TXT52 "The Lost Levels"
 
+// Early CE Options
+
+#define M_TXT52 "The Lost Levels"
 #define M_TXT53 "Artifacts"
 #define M_TXT54 "Skill"
 #define M_TXT55 "Load Game"
 #define M_TXT56 "Blood Color:"
 #define M_TXT57 "Cross Color:"
 
-// [Immorpher] Additional XE options
+// [Immorpher] Additional options
 #define M_TXT58 "Video"
 #define M_TXT59 "Default" // Default video
+#define M_TXT60 "Map Stats:" // Automap stats
+#define M_TXT61 "Light Boost" // Additional light boost
 
 char *MenuText[] =   // 8005ABA0
 {
@@ -110,10 +116,10 @@ char *MenuText[] =   // 8005ABA0
     M_TXT30, M_TXT31, M_TXT32, M_TXT33, M_TXT34,
     M_TXT35, M_TXT36, M_TXT37, M_TXT38, M_TXT39,
     M_TXT40, M_TXT41, M_TXT42, M_TXT43, M_TXT44,
-    M_TXT45, M_TXT46, M_TXT47,
-    M_TXT48, M_TXT49, M_TXT50,  // [GEC] NEW
-    M_TXT51, M_TXT52, M_TXT53, M_TXT54,
-    M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59
+    M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
+	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
+    M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
+	M_TXT60, M_TXT61
 };
 
 menuitem_t Menu_Title[3] = // 8005A978
@@ -177,31 +183,35 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
     {  6, 102, 150},    // Return
 };
 
-menuitem_t Menu_Video[5] =
+menuitem_t Menu_Video[6] =
 {
     {  9, 102, 60 },    // Brightness
-    { 32, 102, 100 },    // Center Display
-    { 50, 102, 120},    // Filtering
-    { 59, 102, 140},    // Default Video
-    {  6, 102, 160},    // Return
+    { 61, 102, 100 },    // Light Boost
+    { 32, 102, 140 },    // Center Display
+    { 50, 102, 160},    // Filtering
+    { 59, 102, 180},    // Default Video
+    {  6, 102, 200},    // Return
 };
 
 #if ENABLE_REMASTER_SPRITES == 1
-menuitem_t Menu_Display[6] = // 8005AA5C
+menuitem_t Menu_Display[7] = // 8005AA5C
 #else
-menuitem_t Menu_Display[4] = // 8005AA5C
+menuitem_t Menu_Display[5] = // 8005AA5C
 #endif
 {
     #if ENABLE_REMASTER_SPRITES == 1
     { 33, 102, 60},    // Messages
     { 34, 102, 80},    // Status Bar
-    { 56, 102, 100},    // Blood Color
-    { 57, 102, 120},    // Cross Color
-    { 13, 102, 140},    // Default Display
-    {  6, 102, 160},    // Return
+	{ 60, 102, 100},    // Map Stats
+    { 56, 102, 120},    // Blood Color
+    { 57, 102, 140},    // Cross Color
+    { 13, 102, 160},    // Default Display
+    {  6, 102, 180},    // Return
+
     #else
     { 33, 102, 60},    // Messages
     { 34, 102, 80},    // Status Bar
+	{ 60, 102, 100},    // Map Stats
     { 13, 102, 100},    // Default Display
     {  6, 102, 120},    // Return
     #endif
@@ -256,8 +266,6 @@ menuitem_t Menu_CreateNote[3] = // 8005AB40
     { 44, 110, 130},    // Manage Pak
 };
 
-//#define MAXFEATURES 5
-//#define MAXFEATURES 9
 #define MAXFEATURES 13
 menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 {
@@ -278,17 +286,6 @@ menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
     { 48, 40, 160},      // COLORS [GEC] NEW CHEAT CODE
     { 49, 40, 170},      // FULL BRIGHT [GEC] NEW CHEAT CODE
 
-    // no usados
-//#define M_TXT26 "SECURITY KEYS"
-//#define M_TXT28 "Exit"
-//#define M_TXT29 "DEBUG"
-//#define M_TXT30 "TEXTURE TEST"
-//#define M_TXT31 "WALL BLOCKING"
-//#define M_TXT35 "LOCK MONSTERS"
-//#define M_TXT36 "SCREENSHOT"
-//#define M_TXT38 "MACRO PEEK"
-//#define M_TXT39 "MUSIC TEST"
-//#define M_TXT40 "WARP TO FUN"
 
 };
 
@@ -322,13 +319,15 @@ boolean enable_statusbar = true;// 8005A7BC
 int SfxVolume = 80;             // 8005A7C0
 int MusVolume = 80;             // 8005A7C4
 int brightness = 100;             // 8005A7C8
+int LightBoost = 0;               // [Immorpher] New light boost option
 int M_SENSITIVITY = 0;          // 8005A7CC
 boolean FeaturesUnlocked = false; // 8005A7D0
 int TextureFilter = 0;
 int Autorun = 0;
-byte SavedConfig[13];
+byte SavedConfig[16];
 boolean GreenBlood;
 boolean BlueCross;
+boolean ShowStats;
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -345,7 +344,7 @@ int ActualConfiguration[13] = // 8005A840
     PAD_L_TRIG, PAD_R_TRIG, PAD_A, PAD_B
 };
 
-int DefaultConfiguration[5][13] = // 8005A840
+int DefaultConfiguration[6][13] = // 8005A840
 {
     // Default 1
     {
@@ -392,7 +391,15 @@ int DefaultConfiguration[5][13] = // 8005A840
         PAD_A, PAD_RIGHT_C, PAD_UP_C, PAD_DOWN_C,
         PAD_Z_TRIG, PAD_L_TRIG, PAD_R_TRIG,
         PAD_B, PAD_LEFT_C
-    }
+    },
+	
+    // Modern Controller
+    {
+        PAD_RIGHT, PAD_LEFT, PAD_UP_C, PAD_DOWN_C,
+        PAD_Z_TRIG,
+        PAD_B, PAD_A, PAD_UP, PAD_DOWN,
+        PAD_LEFT_C, PAD_RIGHT_C, PAD_L_TRIG, PAD_R_TRIG
+	}
 };
 
 //-----------------------------------------
@@ -402,20 +409,23 @@ void M_EncodeConfig(void)
     int i;
     int controlKey[13];
 
-    SavedConfig[0] = FeaturesUnlocked & 0x1;
-    SavedConfig[0] += (enable_messages & 0x1) << 1;
-    SavedConfig[0] += (enable_statusbar & 0x1) << 2;
-    SavedConfig[0] += (ConfgNumb & 0x7) << 3; //0-4
-    SavedConfig[0] += (GreenBlood & 0x1) << 6;
-    SavedConfig[0] += (BlueCross & 0x1) << 7;
+	SavedConfig[2] = LightBoost & 0x7F; // [Immorpher] - New light boost option
+	
+    SavedConfig[3] = FeaturesUnlocked & 0x1;
+    SavedConfig[3] += (enable_messages & 0x1) << 1;
+    SavedConfig[3] += (enable_statusbar & 0x1) << 2;
+	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5
+    SavedConfig[3] += (GreenBlood & 0x1) << 6;
+    SavedConfig[3] += (BlueCross & 0x1) << 7;
 
-    SavedConfig[1] = MusVolume;
+    SavedConfig[4] = MusVolume & 0x7F; //0-100
     
-    SavedConfig[2] = SfxVolume;
+    SavedConfig[5] = SfxVolume & 0x7F; //0-100
 
-    SavedConfig[3] = brightness;
+    SavedConfig[6] = brightness & 0x7F; //0-100
 
-    SavedConfig[4] = M_SENSITIVITY;
+    SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-100
+	SavedConfig[7] += (ShowStats & 0x1) << 7;
 
     for (i = 0; i < 13; i++)
     {
@@ -477,29 +487,29 @@ void M_EncodeConfig(void)
         }
     }
 
-    SavedConfig[5] = controlKey[0] & 0xF;
-    SavedConfig[5] += (controlKey[1] & 0xF) << 4;
+    SavedConfig[8] = controlKey[0] & 0xF;
+    SavedConfig[8] += (controlKey[1] & 0xF) << 4;
 
-    SavedConfig[6] = controlKey[2] & 0xF;
-    SavedConfig[6] += (controlKey[3] & 0xF) << 4;
+    SavedConfig[9] = controlKey[2] & 0xF;
+    SavedConfig[9] += (controlKey[3] & 0xF) << 4;
 
-    SavedConfig[7] = controlKey[4] & 0xF;
-    SavedConfig[7] += (controlKey[5] & 0xF) << 4;
+    SavedConfig[10] = controlKey[4] & 0xF;
+    SavedConfig[10] += (controlKey[5] & 0xF) << 4;
 
-    SavedConfig[8] = controlKey[6] & 0xF;
-    SavedConfig[8] += (controlKey[7] & 0xF) << 4;
+    SavedConfig[11] = controlKey[6] & 0xF;
+    SavedConfig[11] += (controlKey[7] & 0xF) << 4;
 
-    SavedConfig[9] = controlKey[8] & 0xF;
-    SavedConfig[9] += (controlKey[9] & 0xF) << 4;
+    SavedConfig[12] = controlKey[8] & 0xF;
+    SavedConfig[12] += (controlKey[9] & 0xF) << 4;
 
-    SavedConfig[10] = controlKey[10] & 0xF;
-    SavedConfig[10] += (controlKey[11] & 0xF) << 4;
+    SavedConfig[13] = controlKey[10] & 0xF;
+    SavedConfig[13] += (controlKey[11] & 0xF) << 4;
 
-    SavedConfig[11] = controlKey[12] & 0xF;
-    SavedConfig[11] += (TextureFilter & 0x3) << 4; //0-2
-    SavedConfig[11] += (Autorun & 0x3) << 6; //0-2
+    SavedConfig[14] = controlKey[12] & 0xF;
+    SavedConfig[14] += (TextureFilter & 0x3) << 4; //0-2
+    SavedConfig[14] += (Autorun & 0x3) << 6; //0-2
     
-    SavedConfig[12] = 0xCE; //valid save id
+    SavedConfig[15] = 0xCE; //valid save id
 }
 
 void M_DecodeConfig()
@@ -507,42 +517,45 @@ void M_DecodeConfig()
     int i;
     int controlKey[13];
 
-    if (SavedConfig[12] != 0xCE) return;
+    if (SavedConfig[15] != 0xCE) return;
 
-    FeaturesUnlocked = SavedConfig[0] & 0x1;
-    enable_messages = (SavedConfig[0] >> 1) & 0x1;
-    enable_statusbar = (SavedConfig[0] >> 2) & 0x1;
-    ConfgNumb = (SavedConfig[0] >> 3) & 0x7;
-    GreenBlood = (SavedConfig[0] >> 6) & 0x1;
-    BlueCross = (SavedConfig[0] >> 7) & 0x1;
+	LightBoost = SavedConfig[2] & 0x7F; // [Immorpher] - New light boost option
+	
+    FeaturesUnlocked = SavedConfig[3] & 0x1;
+    enable_messages = (SavedConfig[3] >> 1) & 0x1;
+    enable_statusbar = (SavedConfig[3] >> 2) & 0x1;
+    ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
+    GreenBlood = (SavedConfig[3] >> 6) & 0x1;
+    BlueCross = (SavedConfig[3] >> 7) & 0x1;
 
-    MusVolume = SavedConfig[1];
+    MusVolume = SavedConfig[4] & 0x7F;
 
-    SfxVolume = SavedConfig[2];
+    SfxVolume = SavedConfig[5] & 0x7F;
 
-    brightness = SavedConfig[3];
+    brightness = SavedConfig[6] & 0x7F;
 
-    M_SENSITIVITY = SavedConfig[4];
+    M_SENSITIVITY = SavedConfig[7] & 0x7F;
+	ShowStats = (SavedConfig[7] >> 7) & 0x1;
 
-    controlKey[0] = SavedConfig[5] & 0xF;
-    controlKey[1] = (SavedConfig[5] >> 4) & 0xF;
+    controlKey[0] = SavedConfig[8] & 0xF;
+    controlKey[1] = (SavedConfig[8] >> 4) & 0xF;
     
-    controlKey[2] = SavedConfig[6] & 0xF;
-    controlKey[3] = (SavedConfig[6] >> 4) & 0xF;
+    controlKey[2] = SavedConfig[9] & 0xF;
+    controlKey[3] = (SavedConfig[9] >> 4) & 0xF;
 
-    controlKey[4] = SavedConfig[7] & 0xF;
-    controlKey[5] = (SavedConfig[7] >> 4) & 0xF;
+    controlKey[4] = SavedConfig[10] & 0xF;
+    controlKey[5] = (SavedConfig[10] >> 4) & 0xF;
 
-    controlKey[6] = SavedConfig[8] & 0xF;
-    controlKey[7] = (SavedConfig[8] >> 4) & 0xF;
+    controlKey[6] = SavedConfig[11] & 0xF;
+    controlKey[7] = (SavedConfig[11] >> 4) & 0xF;
 
-    controlKey[8] = SavedConfig[9] & 0xF;
-    controlKey[9] = (SavedConfig[9] >> 4) & 0xF;
+    controlKey[8] = SavedConfig[12] & 0xF;
+    controlKey[9] = (SavedConfig[12] >> 4) & 0xF;
 
-    controlKey[10] = SavedConfig[10] & 0xF;
-    controlKey[11] = (SavedConfig[10] >> 4) & 0xF;
+    controlKey[10] = SavedConfig[13] & 0xF;
+    controlKey[11] = (SavedConfig[13] >> 4) & 0xF;
 
-    controlKey[12] = SavedConfig[11] & 0xF;
+    controlKey[12] = SavedConfig[14] & 0xF;
 
     for (i = 0; i < 13; i++)
     {
@@ -604,8 +617,8 @@ void M_DecodeConfig()
         }
     }
 
-    TextureFilter = (SavedConfig[11] >> 4) & 0x3;
-    Autorun = (SavedConfig[11] >> 6) & 0x3;
+    TextureFilter = (SavedConfig[14] >> 4) & 0x3;
+    Autorun = (SavedConfig[14] >> 6) & 0x3;
 
     S_SetMusicVolume(MusVolume);
 	S_SetSoundVolume(SfxVolume);
@@ -1025,9 +1038,9 @@ int M_MenuTicker(void) // 80007E0C
 
                         MenuItem = Menu_Display;
                         #if ENABLE_REMASTER_SPRITES == 1
-                        itemlines = 6;
+                        itemlines = 7;
                         #else
-                        itemlines = 4;
+                        itemlines = 5;
                         #endif
                         MenuCall = M_DisplayDrawer;
                         cursorpos = 0;
@@ -1264,6 +1277,7 @@ int M_MenuTicker(void) // 80007E0C
 
                         GreenBlood = 0;
                         BlueCross = 0;
+						ShowStats = 0;
                         return ga_nothing;
                     }
                     break;
@@ -1603,6 +1617,7 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         S_StartSound(NULL, sfx_switch2);
                         enable_messages ^= true;
+						return ga_nothing;
                     }
                     break;
 
@@ -1611,6 +1626,7 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         S_StartSound(NULL, sfx_switch2);
                         enable_statusbar ^= true;
+						return ga_nothing;
                     }
                     break;
 
@@ -1619,6 +1635,7 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         S_StartSound(NULL, sfx_switch2);
                         GreenBlood ^= true;
+						return ga_nothing;
                     }
                     break;
 
@@ -1627,6 +1644,7 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         S_StartSound(NULL, sfx_switch2);
                         BlueCross ^= true;
+						return ga_nothing;
                     }
                     break;
 
@@ -1905,7 +1923,7 @@ int M_MenuTicker(void) // 80007E0C
 						S_StartSound(NULL, sfx_pistol);
 						M_SaveMenuData();
                         MenuItem = Menu_Video;
-						itemlines = 5;
+						itemlines = 6;
 						MenuCall = M_VideoDrawer;
 						cursorpos = 0;
 
@@ -1922,6 +1940,7 @@ int M_MenuTicker(void) // 80007E0C
 
                         Display_X = 0;
                         Display_Y = 0;
+						LightBoost = 0;
 
                         brightness = 100;
                         I_MoveDisplay(0,0);
@@ -1932,7 +1951,54 @@ int M_MenuTicker(void) // 80007E0C
                         return ga_nothing;
                     }
                     break;
-				
+
+				case 60: // Show Stats
+					if (truebuttons)
+					{
+						S_StartSound(NULL, sfx_switch2);
+						ShowStats ^= true;
+						
+						return ga_nothing;
+					}
+					break;
+					
+                case 61: // Light Boost
+                    if (buttons & PAD_RIGHT)
+                    {
+                        LightBoost += 1;
+                        if (LightBoost<= 100)
+                        {
+                            P_RefreshBrightness();
+                            if (LightBoost & 1)
+                            {
+                                S_StartSound(NULL, sfx_secmove);
+                                return ga_nothing;
+                            }
+                        }
+                        else
+                        {
+                            LightBoost = 100;
+                        }
+                    }
+                    else if (buttons & PAD_LEFT)
+                    {
+                        LightBoost -= 1;
+                        if (LightBoost < 0)
+                        {
+                            LightBoost = 0;
+                        }
+                        else
+                        {
+                            P_RefreshBrightness();
+                            if (LightBoost & 1)
+                            {
+                                S_StartSound(NULL, sfx_secmove);
+                                return ga_nothing;
+                            }
+                        }
+                    }
+                    break;
+
                 }
             exit = ga_nothing;
         }
@@ -1953,46 +2019,46 @@ void M_MenuTitleDrawer(void) // 80008E7C
 
     if (MenuItem == Menu_Game || MenuItem == Menu_GameNoSave)
     {
-        ST_DrawString(-1, 20, "Pause", text_alpha | 0xc0000000);
+        ST_DrawString(-1, 20, "Pause", text_alpha | 0xff000000);
             ST_DrawString(-1, 200, "press \x8d to resume", text_alpha | 0xffffff00);
         }
         else if (MenuItem == Menu_Skill)
         {
-            ST_DrawString(-1, 20, "Choose Your Skill...", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Choose Your Skill...", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_Episode)
         {
-            ST_DrawString(-1, 20, "Choose Campaign", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Choose Campaign", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_Options)
         {
-            ST_DrawString(-1, 20, "Options", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Options", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_Quit)
         {
-            ST_DrawString(-1, 20, "Quit Game?", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Quit Game?", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_DeleteNote)
         {
-            ST_DrawString(-1, 20, "Delete Game Note?", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Delete Game Note?", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_ControllerPakBad)
         {
-            ST_DrawString(-1, 20, "Controller Pak Bad", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Controller Pak Bad", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_ControllerPakFull)
         {
-            ST_DrawString(-1, 20, "Controller Pak Full", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Controller Pak Full", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_CreateNote)
         {
-            ST_DrawString(-1, 20, "Create Game Note?", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 20, "Create Game Note?", text_alpha | 0xff000000);
         }
 
         item = MenuItem;
         for(i = 0; i < itemlines; i++)
     {
-        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xc0000000);
+        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }
 
@@ -2005,7 +2071,7 @@ void M_FeaturesDrawer(void) // 800091C0
     menuitem_t *item;
     int i;
 
-    ST_DrawString(-1, 20, "Features", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Features", text_alpha | 0xff000000);
     item = MenuItem;
 
     for(i = 0; i < itemlines; i++)
@@ -2120,12 +2186,12 @@ void M_VolumeDrawer(void) // 800095B4
     menuitem_t *item;
     int i;
 
-    ST_DrawString(-1, 20, "Volume", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Volume", text_alpha | 0xff000000);
     item = Menu_Volume;
 
     for(i = 0; i < itemlines; i++)
     {
-        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xc0000000);
+        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }
 
@@ -2143,13 +2209,13 @@ void M_ControlStickDrawer(void) // 80009738
     menuitem_t *item;
     int i;
 
-    ST_DrawString(-1, 20, "Control Stick", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Control Stick", text_alpha | 0xff000000);
 
     item = Menu_ControlStick;
 
     for(i = 0; i < itemlines; i++)
     {
-        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xc0000000);
+        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }
 
@@ -2165,11 +2231,11 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
     menuitem_t *item;
     int i, casepos;
 
-    ST_DrawString(-1, 20, "Video", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Video", text_alpha | 0xff000000);
 
     item = Menu_Video;
 
-    for(i = 0; i < 5; i++)
+    for(i = 0; i < 6; i++)
     {
         casepos = item->casepos;
 
@@ -2196,15 +2262,21 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
         }
 
         if (text)
-            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xc0000000);
+            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xff000000);
 
-        ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xc0000000);
+        ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xff000000);
 
         item++;
     }
 
+	// Brightness slider
     ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
     ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
+	
+	
+	// Light boost slider
+    ST_DrawSymbol(102, 120, 68, text_alpha | 0xffffff00);
+    ST_DrawSymbol(LightBoost + 103, 120, 69, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(Menu_Video[0].x - 37, Menu_Video[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
@@ -2215,45 +2287,37 @@ void M_DisplayDrawer(void) // 80009884
     menuitem_t *item;
     int i, casepos;
 
-    ST_DrawString(-1, 20, "Display", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Display", text_alpha | 0xff000000);
 
     item = Menu_Display;
 
     #if ENABLE_REMASTER_SPRITES == 1
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < 7; i++)
     #else
-    for(i = 0; i < 4; i++)
+    for(i = 0; i < 5; i++)
     #endif
     {
         casepos = item->casepos;
 
         if (casepos == 33) // Messages:
         {
-            if (enable_messages)
-                text = "On";
-            else
-                text = "Off";
+            text = enable_messages ? "On" : "Off";
         }
         else if (casepos == 34) // Status Bar:
         {
-            if (enable_statusbar)
-                text = "On";
-            else
-                text = "Off";
+            text = enable_statusbar ? "On" : "Off";
+        }
+		else if (casepos == 60) // Show automap stats
+        {
+            text = ShowStats ? "On" : "Off";
         }
         else if (casepos == 56) // BloodColor
         {
-            if (GreenBlood)
-                text = "Green";
-            else
-                text = "Red";
+            text = GreenBlood ? "Green" : "Red";
         }
         else if (casepos == 57) // Medikit Color
         {
-            if (BlueCross)
-                text = "Blue";
-            else
-                text = "Red";
+            text = BlueCross ? "Blue" : "Red";
         }
         else
         {
@@ -2261,9 +2325,9 @@ void M_DisplayDrawer(void) // 80009884
         }
 
         if (text)
-            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xc0000000);
+            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xff000000);
 
-        ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xc0000000);
+        ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xff000000);
 
         item++;
     }
@@ -2499,12 +2563,12 @@ void M_ControllerPakDrawer(void) // 8000A3E4
     char buffer [32];
     char *tmpbuf;
 
-    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xff000000);
 
     if (FilesUsed == -1)
     {
         if ((MenuAnimationTic & 2) != 0)
-            ST_DrawString(-1, 114, "Controller Pak removed!", text_alpha | 0xc0000000);
+            ST_DrawString(-1, 114, "Controller Pak removed!", text_alpha | 0xff000000);
 
         ST_DrawString(-1, 210, "press \x8d to exit", text_alpha | 0xffffff00);
     }
@@ -2543,7 +2607,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
                 *tmpbuf = '\0';
             }
 
-            ST_DrawString(60, (i - linepos) * 15 + 60, buffer, text_alpha | 0xc0000000);
+            ST_DrawString(60, (i - linepos) * 15 + 60, buffer, text_alpha | 0xff000000);
 
             fState++;
         }
@@ -2560,7 +2624,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
 
         sprintf(buffer, "pages used: %d   free: %d", FileState[cursorpos].file_size >> 8, Pak_Memory);
 
-        ST_DrawString(-1, 170, buffer, text_alpha | 0xc0000000);
+        ST_DrawString(-1, 170, buffer, text_alpha | 0xff000000);
         ST_DrawSymbol(23, (cursorpos - linepos) * 15 + 51, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
         ST_DrawString(-1, 200, "press \x8d to exit", text_alpha | 0xffffff00);
@@ -2702,11 +2766,11 @@ int M_SavePakTicker(void) // 8000A804
     {
         if ((buttons != oldbuttons) && (buttons == (PAD_RIGHT_C|PAD_LEFT_C)))
         {
-            // save label data
-            sprintf((char *)&Pak_Data[cursorpos * 32], "%2.2d%.1d", nextmap, gameskill);
+
             // save configuration
             M_EncodeConfig();
-            D_memcpy(&Pak_Data[(cursorpos * 32) + 3], &SavedConfig, 13);
+            D_memcpy(&Pak_Data[cursorpos * 32], &SavedConfig, 16);
+			
             // save the next password data in text format
             D_memcpy(&Pak_Data[(cursorpos * 32) + 16], &Passwordbuff, 16);
 
@@ -2736,7 +2800,8 @@ void M_SavePakDrawer(void) // 8000AB44
 {
     int i;
     char buffer[36];
-    char savedata[3];
+    byte savedata[16];
+    int leveltxt, skilltxt;
 
     I_ClearFrame();
 
@@ -2750,7 +2815,7 @@ void M_SavePakDrawer(void) // 8000AB44
 
     M_DrawBackground(63, 25, 128, "EVIL");
 
-    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xff000000);
 
     if (FilesUsed == -1)
     {
@@ -2766,37 +2831,39 @@ void M_SavePakDrawer(void) // 8000AB44
     {
         for(i = linepos; i < (linepos + 6); i++)
         {
-            if (Pak_Data[i * 32] == 0) {
+            if (Pak_Data[(i * 32) + 16] == 0) {
                 D_memmove(buffer, "empty");
             }
             else {
-                D_memmove(savedata, &Pak_Data[i * 32]);
-                switch ((int)(savedata[2] - '0'))
+				D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
+                leveltxt = skilltxt = 0;
+                M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
+                switch (skilltxt)
                 {
                     #if ENABLE_NIGHTMARE == 1
                     case 4:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT19);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
                         break;
                     #endif
                     case 3:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT18);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
                         break;
                     case 2:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT17);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
                         break;
                     case 1:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT16);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
                         break;
                     case 0:
-                        sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT15);
+                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
                         break;
                     default:
-                        sprintf(buffer, "Level: %c%c Skill: %c", savedata[0], savedata[1], savedata[2]);
+                        sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
                         break;
                 }
             }
 
-            ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xc0000000);
+            ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xff000000);
         }
 
         if (linepos != 0) {
@@ -2924,15 +2991,16 @@ int M_LoadPakTicker(void) // 8000AFE4
     if (!(buttons ^ oldbuttons) || !(buttons & PAD_START))
     {
         if (!(buttons ^ oldbuttons) || buttons != (PAD_RIGHT_C|PAD_LEFT_C) ||
-            (Pak_Data[cursorpos * 32] == 0))
+            (Pak_Data[(cursorpos * 32) + 16] == 0))
         {
             exit = ga_nothing;
         }
         else
         {
             // load configuration
-            D_memcpy(&SavedConfig, &Pak_Data[((cursorpos * 32) + 3)], 13);
+            D_memcpy(&SavedConfig, &Pak_Data[cursorpos * 32], 16);
             M_DecodeConfig();
+			P_RefreshBrightness(); // [Immorpher] - refresh brightness for new video options
             // load the password data in text format
             D_memcpy(&Passwordbuff, &Pak_Data[((cursorpos * 32) + 16)], 16);
 
@@ -2965,46 +3033,49 @@ void M_LoadPakDrawer(void) // 8000B270
 {
     int i;
     char buffer[32];
-    char savedata[3];
+    byte savedata[16];
+    int leveltxt, skilltxt;
 
-    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xff000000);
 
     for(i = linepos; i < (linepos + 6); i++)
     {
         if (FilesUsed == -1) {
             D_memmove(buffer, "-");
         }
-        else if (Pak_Data[i * 32] == 0) {
+        else if (Pak_Data[(i * 32) + 16] == 0) {
             D_memmove(buffer, "no save");
         }
         else {
-            D_memmove(savedata, &Pak_Data[i * 32]);
-            switch ((int)(savedata[2] - '0'))
+            D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
+            leveltxt = skilltxt = 0;
+            M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
+            switch (skilltxt)
             {
                 #if ENABLE_NIGHTMARE == 1
                 case 4:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT19);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
                     break;
                 #endif
                 case 3:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT18);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
                     break;
                 case 2:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT17);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
                     break;
                 case 1:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT16);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
                     break;
                 case 0:
-                    sprintf(buffer, "Level: %c%c Skill: %s", savedata[0], savedata[1], M_TXT15);
+                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
                     break;
                 default:
-                    sprintf(buffer, "Level: %c%c Skill: %c", savedata[0], savedata[1], savedata[2]);
+                    sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
                     break;
             }
         }
 
-        ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xc0000000);
+        ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xff000000);
     }
 
     if (linepos != 0) {
@@ -3073,7 +3144,7 @@ int M_CenterDisplayTicker(void) // 8000B4C4
 
 void M_CenterDisplayDrawer(void) // 8000B604
 {
-    ST_DrawString(-1, 20, "Center Display", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Center Display", text_alpha | 0xff000000);
     ST_DrawString(-1, 114, "use control pad to adjust", text_alpha | 0xffffff00);
     ST_DrawString(-1, 210, "press \x8d to exit", text_alpha | 0xffffff00);
 }
@@ -3172,7 +3243,7 @@ int M_ControlPadTicker(void) // 8000B694
                     if (buttons & (PAD_DOWN|PAD_RIGHT|ALL_BUTTONS))
                     {
                         ConfgNumb += 1;
-                        if(ConfgNumb > 4)
+                        if(ConfgNumb > 5)
                             ConfgNumb = 0;
                     }
                 }
@@ -3180,7 +3251,7 @@ int M_ControlPadTicker(void) // 8000B694
                 {
                     ConfgNumb -= 1;
                     if (ConfgNumb < 0)
-                        ConfgNumb = 4;
+                        ConfgNumb = 5;
                 }
 
                 if ((buttons & (ALL_BUTTONS|ALL_JPAD)) != 0)
@@ -3214,7 +3285,7 @@ void M_ControlPadDrawer(void) // 8000B988
     char **text;
     char buffer [44];
 
-    ST_DrawString(-1, 20, "Control Pad", text_alpha | 0xc0000000);
+    ST_DrawString(-1, 20, "Control Pad", text_alpha | 0xff000000);
 
     if (linepos < (linepos + 6))
     {
@@ -3257,7 +3328,7 @@ void M_ControlPadDrawer(void) // 8000B988
                 sprintf(buffer, *text, ConfgNumb + 1);
             }
 
-            ST_DrawString(80, ((lpos - linepos) * 18) + 59, buffer, text_alpha | 0xc0000000);
+            ST_DrawString(80, ((lpos - linepos) * 18) + 59, buffer, text_alpha | 0xff000000);
 
             lpos += 1;
             text += 1;
