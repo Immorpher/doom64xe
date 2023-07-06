@@ -673,30 +673,37 @@ void P_SetMovingCamera(line_t *line) // 8000F2F8
 
 void P_RefreshBrightness(void) // 8000f410
 {
-    int factor, i;
+    int factor = brightness;
+	int i;
 	float j, curve;
 	float light = brightness-100;
 
-    factor = brightness + 100;
-    if (factor < infraredFactor) {
-        factor = infraredFactor;
-    }
+ 
 	
 	if (brightness > 100) { // [Immorpher] If brightness is over 100 blend in maximum light curve
 		for (i = 1; i < 255; i++) {
 			j = (float)i; // store as float
 			curve = j *(100-light)/100 +  (float)lightmax[i]*light/100;
 			lightcurve[i] = (char)curve;
-		}
-		
+		}	
 	}
 	else { // [Immorpher] Otherwise might lightcurve linear
 		for (i = 1; i < 255; i++) {
 			lightcurve[i] = i;
 		}
 	}
-
+	
+	factor = brightness; // set factor to brightness
+	if (factor > 100) { // dont let initial factor exceed vanilla limits
+        factor = 100;
+    }
+	
+	factor = factor + 100;
+    if (factor < infraredFactor) {
+        factor = infraredFactor;
+    }
     P_SetLightFactor(factor);
+	
 }
 
 extern maplights_t *maplights;     // 800A5EA4
@@ -789,10 +796,15 @@ void P_SetLightFactor(int lightfactor) // 8000F458
 
 void T_FadeInBrightness(fadebright_t *fb) // 8000f610
 {
+	int lightlevel = brightness; // dont exceed vanilla limits
+	if (lightlevel > 100) {
+		lightlevel = 100;
+	}
+	
     fb->factor += 2;
-    if (fb->factor >= (brightness + 100))
+    if (fb->factor >= (lightlevel + 100))
     {
-        fb->factor = (brightness + 100);
+        fb->factor = (lightlevel + 100);
         P_RemoveThinker(&fb->thinker);
     }
 
