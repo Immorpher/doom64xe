@@ -675,19 +675,17 @@ void P_RefreshBrightness(void) // 8000f410
 {
     int factor, i;
 	float j, curve;
-	float light = LightBoost;
+	float light = brightness-100;
 
     factor = brightness + 100;
     if (factor < infraredFactor) {
         factor = infraredFactor;
     }
 	
-	if (LightBoost > 0) { // [Immorpher] If light boost is enabled generate light curve via iterative cubic
+	if (brightness > 100) { // [Immorpher] If brightness is over 100 blend in maximum light curve
 		for (i = 1; i < 255; i++) {
 			j = (float)i; // store as float
-			curve = j*(100-light)/100 + (light/100)*(j + j*j/255 - j*(j/255)*(j/255)); // Generate initial light curve
-			curve = curve*(100-light)/100 + (light/100)*(curve + curve*curve/255 - curve*(curve/255)*(curve/255)); // First iteration
-			curve = curve*(100-light)/100 + (light/100)*(curve + curve*curve/255 - curve*(curve/255)*(curve/255)); // Last iteration
+			curve = j *(100-light)/100 +  (float)lightmax[i]*light/100;
 			lightcurve[i] = (char)curve;
 		}
 		

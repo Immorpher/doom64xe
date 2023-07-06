@@ -860,7 +860,6 @@ extern boolean enable_statusbar;    // 8005A7BC
 extern int SfxVolume;               // 8005A7C0
 extern int MusVolume;               // 8005A7C4
 extern int brightness;              // 8005A7C8
-extern int LightBoost;               // [Immorpher] New light boost option
 extern int M_SENSITIVITY;           // 8005A7CC
 extern boolean FeaturesUnlocked;    // 8005A7D0
 extern int TextureFilter;
@@ -1003,6 +1002,7 @@ void M_ClearBox (fixed_t *box);
 void M_AddToBox (fixed_t *box, fixed_t x, fixed_t y);
 
 extern unsigned char lightcurve[256]; // [Immorpher] - brightness table
+extern unsigned char lightmax[256]; // [Immorpher] - maximum brightness curve
 
 /*---------*/
 /* S_SOUND */

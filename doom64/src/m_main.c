@@ -103,7 +103,6 @@ char *ControlText[] =   //8007517C
 #define M_TXT58 "Video"
 #define M_TXT59 "Default" // Default video
 #define M_TXT60 "Map Stats:" // Automap stats
-#define M_TXT61 "Light Boost" // Additional light boost
 
 char *MenuText[] =   // 8005ABA0
 {
@@ -119,7 +118,7 @@ char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
-	M_TXT60, M_TXT61
+	M_TXT60
 };
 
 menuitem_t Menu_Title[3] = // 8005A978
@@ -183,14 +182,13 @@ menuitem_t Menu_ControlStick[3] = // 8005AA38
     {  6, 102, 150},    // Return
 };
 
-menuitem_t Menu_Video[6] =
+menuitem_t Menu_Video[5] =
 {
     {  9, 102, 60 },    // Brightness
-    { 61, 102, 100 },    // Light Boost
-    { 32, 102, 140 },    // Center Display
-    { 50, 102, 160},    // Filtering
-    { 59, 102, 180},    // Default Video
-    {  6, 102, 200},    // Return
+    { 32, 102, 100 },    // Center Display
+    { 50, 102, 120},    // Filtering
+    { 59, 102, 140},    // Default Video
+    {  6, 102, 160},    // Return
 };
 
 #if ENABLE_REMASTER_SPRITES == 1
@@ -319,7 +317,6 @@ boolean enable_statusbar = true;// 8005A7BC
 int SfxVolume = 80;             // 8005A7C0
 int MusVolume = 80;             // 8005A7C4
 int brightness = 100;             // 8005A7C8
-int LightBoost = 0;               // [Immorpher] New light boost option
 int M_SENSITIVITY = 0;          // 8005A7CC
 boolean FeaturesUnlocked = false; // 8005A7D0
 int TextureFilter = 0;
@@ -409,7 +406,6 @@ void M_EncodeConfig(void)
     int i;
     int controlKey[13];
 
-	SavedConfig[2] = LightBoost & 0x7F; // [Immorpher] - New light boost option
 	
     SavedConfig[3] = FeaturesUnlocked & 0x1;
     SavedConfig[3] += (enable_messages & 0x1) << 1;
@@ -422,7 +418,7 @@ void M_EncodeConfig(void)
     
     SavedConfig[5] = SfxVolume & 0x7F; //0-100
 
-    SavedConfig[6] = brightness & 0x7F; //0-100
+    SavedConfig[6] = (brightness/2) & 0x7F; //0-100
 
     SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-100
 	SavedConfig[7] += (ShowStats & 0x1) << 7;
@@ -518,8 +514,6 @@ void M_DecodeConfig()
     int controlKey[13];
 
     if (SavedConfig[15] != 0xCE) return;
-
-	LightBoost = SavedConfig[2] & 0x7F; // [Immorpher] - New light boost option
 	
     FeaturesUnlocked = SavedConfig[3] & 0x1;
     enable_messages = (SavedConfig[3] >> 1) & 0x1;
@@ -532,7 +526,7 @@ void M_DecodeConfig()
 
     SfxVolume = SavedConfig[5] & 0x7F;
 
-    brightness = SavedConfig[6] & 0x7F;
+    brightness = 2*(SavedConfig[6] & 0x7F);
 
     M_SENSITIVITY = SavedConfig[7] & 0x7F;
 	ShowStats = (SavedConfig[7] >> 7) & 0x1;
@@ -1197,11 +1191,11 @@ int M_MenuTicker(void) // 80007E0C
                 case 9: // Brightness
                     if (buttons & PAD_RIGHT)
                     {
-                        brightness += 1;
-                        if (brightness <= 100)
+                        brightness += 2;
+                        if (brightness <= 200)
                         {
                             P_RefreshBrightness();
-                            if (brightness & 1)
+                            if (brightness & 2)
                             {
                                 S_StartSound(NULL, sfx_secmove);
                                 return ga_nothing;
@@ -1209,12 +1203,12 @@ int M_MenuTicker(void) // 80007E0C
                         }
                         else
                         {
-                            brightness = 100;
+                            brightness = 200;
                         }
                     }
                     else if (buttons & PAD_LEFT)
                     {
-                        brightness -= 1;
+                        brightness -= 2;
                         if (brightness < 0)
                         {
                             brightness = 0;
@@ -1222,7 +1216,7 @@ int M_MenuTicker(void) // 80007E0C
                         else
                         {
                             P_RefreshBrightness();
-                            if (brightness & 1)
+                            if (brightness & 2)
                             {
                                 S_StartSound(NULL, sfx_secmove);
                                 return ga_nothing;
@@ -1923,7 +1917,7 @@ int M_MenuTicker(void) // 80007E0C
 						S_StartSound(NULL, sfx_pistol);
 						M_SaveMenuData();
                         MenuItem = Menu_Video;
-						itemlines = 6;
+						itemlines = 5;
 						MenuCall = M_VideoDrawer;
 						cursorpos = 0;
 
@@ -1940,7 +1934,6 @@ int M_MenuTicker(void) // 80007E0C
 
                         Display_X = 0;
                         Display_Y = 0;
-						LightBoost = 0;
 
                         brightness = 100;
                         I_MoveDisplay(0,0);
@@ -1961,43 +1954,6 @@ int M_MenuTicker(void) // 80007E0C
 						return ga_nothing;
 					}
 					break;
-					
-                case 61: // Light Boost
-                    if (buttons & PAD_RIGHT)
-                    {
-                        LightBoost += 1;
-                        if (LightBoost<= 100)
-                        {
-                            P_RefreshBrightness();
-                            if (LightBoost & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                        else
-                        {
-                            LightBoost = 100;
-                        }
-                    }
-                    else if (buttons & PAD_LEFT)
-                    {
-                        LightBoost -= 1;
-                        if (LightBoost < 0)
-                        {
-                            LightBoost = 0;
-                        }
-                        else
-                        {
-                            P_RefreshBrightness();
-                            if (LightBoost & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                    }
-                    break;
 
                 }
             exit = ga_nothing;
@@ -2235,7 +2191,7 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 
     item = Menu_Video;
 
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < 5; i++)
     {
         casepos = item->casepos;
 
@@ -2271,12 +2227,7 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 
 	// Brightness slider
     ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
-	
-	
-	// Light boost slider
-    ST_DrawSymbol(102, 120, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(LightBoost + 103, 120, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(brightness/2 + 103, 80, 69, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(Menu_Video[0].x - 37, Menu_Video[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
