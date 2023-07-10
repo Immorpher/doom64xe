@@ -62,7 +62,7 @@ C_INCLUDES := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(foreach i,$(INCLUDE_SYSTEM_D
 C_DEFINES := $(foreach d,$(DEFINES),-D$(d))
 DEF_INC_CFLAGS := $(C_INCLUDES) $(C_DEFINES)
 
-CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -O3 -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
+CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -Os -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
 ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(C_INCLUDES)
 # $(foreach d,$(DEFINES),--defsym $(d))
 
