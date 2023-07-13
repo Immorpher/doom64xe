@@ -5,7 +5,7 @@ Doom 64 XE (eXpanded Edition) is an interation of the Doom 64 Reverse Engineerin
 Erick194's complete reverse engineering of Doom 64: [DOOM 64 RE](https://github.com/Erick194/DOOM64-RE/)\
 Molecicco's enhancements, additions, and bug fixes: [DOOM 64 CE](https://github.com/azamorapl/doom64-complete-edition)\
 JNMartin's update to modern SDK and optimizations: [DOOM 64 Merciless Edition](https://github.com/jnmartin84/Doom-64-Merciless-Edition/tree/modern)\
-Nova's Doom 64 Ultra: [DOOM 64 Ultra](https://github.com/9nova/doom64ultra/)
+Nova's expanded options and updates: [DOOM 64 Ultra](https://github.com/9nova/doom64ultra/)
 
 The focus of this project is to combine the features of the aforementioned repositories to create a demo-compatible, modding-friendly, port with quality of life features.
 
