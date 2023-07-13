@@ -100,8 +100,8 @@ typedef unsigned angle_t;
 #define	FINEMASK			(FINEANGLES-1)
 #define	ANGLETOFINESHIFT	19	/* 0x100000000 to 0x2000 */
 
-extern	fixed_t		finesine[5*FINEANGLES/4];
-extern	fixed_t		*finecosine;
+extern fixed_t		finesine[5*FINEANGLES/4];
+extern fixed_t		*finecosine;
 
 static inline fixed_t FixedDiv2(fixed_t a, fixed_t b)
 {
@@ -182,11 +182,11 @@ typedef enum
 /* library replacements */
 /* */
 
-void D_memmove(void *dest, void *src);
+void D_memmove(void *dest, const void *src);
 void D_memset (void *dest, int val, int count);
-void D_memcpy (void *dest, void *src, int count);
-void D_strncpy (char *dest, char *src, int maxcount);
-int D_strncasecmp (char *s1, char *s2, int len);
+void D_memcpy (void *dest, const void *src, int count);
+void D_strncpy (char *dest, const char *src, int maxcount);
+int D_strncasecmp (const char *s1, const char *s2, int len);
 void D_strupr(char *s);
 int D_strlen(char *s);
 
@@ -822,19 +822,19 @@ typedef struct
 
 typedef struct
 {
-	menuitem_t *menu_item;
+	const menuitem_t *menu_item;
 	int item_lines;
 	menufunc_t menu_call;
 	int cursor_pos;
 } menudata_t;
 
 extern menudata_t MenuData[8];      // 800A54F0
-extern menuitem_t Menu_Game[5];     // 8005AAA4
-extern menuitem_t Menu_GameNoSave[4];
+extern const menuitem_t Menu_Game[5];     // 8005AAA4
+extern const menuitem_t Menu_GameNoSave[4];
 extern int MenuAnimationTic;        // 800a5570
 extern int cursorpos;               // 800A5574
 extern int m_vframe1;               // 800A5578
-extern menuitem_t *MenuItem;        // 800A5578
+extern const menuitem_t *MenuItem;        // 800A5578
 extern int itemlines;               // 800A5580
 extern menufunc_t MenuCall;         // 800A5584
 
@@ -994,7 +994,7 @@ typedef struct
 
 extern mapinfo_t MapInfo[];
 
-extern unsigned char rndtable[256];
+extern unsigned const char rndtable[256];
 int M_Random (void);
 int P_Random (void);
 void M_ClearRandom (void);

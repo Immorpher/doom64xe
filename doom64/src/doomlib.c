@@ -12,7 +12,7 @@
 ====================
 */
 
-void D_memmove(void *dest, void *src) // 800019F0
+void D_memmove(void *dest, const void *src) // 800019F0
 {
     byte p;
     byte *p1;
@@ -78,7 +78,7 @@ void D_memset(void *dest, int val, int count) // 80001A20
 ====================
 */
 
-void D_memcpy(void *dest, void *src, int count) // 80001ACC
+void D_memcpy(void *dest, const void *src, int count) // 80001ACC
 {
 	byte	*d, *s;
 	int		*ld, *ls;
@@ -140,7 +140,7 @@ void D_memcpy(void *dest, void *src, int count) // 80001ACC
 ====================
 */
 
-void D_strncpy(char *dest, char *src, int maxcount) // 8000lBB0
+void D_strncpy(char *dest, const char *src, int maxcount) // 8000lBB0
 {
 	byte	*p1, *p2;
 	p1 = (byte *)dest;
@@ -158,7 +158,7 @@ void D_strncpy(char *dest, char *src, int maxcount) // 8000lBB0
 ====================
 */
 
-int D_strncasecmp(char *s1, char *s2, int len) // 80001BEC
+int D_strncasecmp(const char *s1, const char *s2, int len) // 80001BEC
 {
 	while (*s1 && *s2)
 	{

@@ -104,7 +104,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT59 "Default" // Default video
 #define M_TXT60 "Map Stats:" // Automap stats
 
-char *MenuText[] =   // 8005ABA0
+const char *MenuText[] =   // 8005ABA0
 {
     M_TXT00, M_TXT01, M_TXT02, M_TXT03, M_TXT04,
     M_TXT05, M_TXT06, M_TXT07, M_TXT08, M_TXT09,
@@ -121,23 +121,23 @@ char *MenuText[] =   // 8005ABA0
 	M_TXT60
 };
 
-menuitem_t Menu_Title[3] = // 8005A978
+const menuitem_t Menu_Title[3] = // 8005A978
 {
     { 14, 115, 170 },   // New Game
     { 55, 115, 190 },   // Load Game
 	{ 11, 115, 210 },   // Options
 };
 
-menuitem_t Menu_TitleNoSave[2] =
+const menuitem_t Menu_TitleNoSave[2] =
 {
     { 14, 115, 190 },   // New Game
 	{ 11, 115, 210 },   // Options
 };
 
 #if ENABLE_NIGHTMARE == 1
-menuitem_t Menu_Skill[5] = // 8005A990
+const menuitem_t Menu_Skill[5] = // 8005A990
 #else
-menuitem_t Menu_Skill[4] = // 8005A990
+const menuitem_t Menu_Skill[4] = // 8005A990
 #endif // ENABLE_NIGHTMARE
 {
     { 15, 102, 80 },    // Be Gentle!
@@ -150,7 +150,7 @@ menuitem_t Menu_Skill[4] = // 8005A990
     #endif // ENABLE_NIGHTMARE
 };
 
-menuitem_t Menu_Episode[2] =
+const menuitem_t Menu_Episode[2] =
 {
     { 51, 112, 80 },    // DOOM 64
     { 52, 112, 100},    // The Lost Levels
@@ -167,7 +167,7 @@ menuitem_t Menu_Options[7] = // 8005A9C0
     {  6, 102, 180},    // Return
 };
 
-menuitem_t Menu_Volume[4] = // 8005AA08
+const menuitem_t Menu_Volume[4] = // 8005AA08
 {
     {  7, 102, 60 },    // Music Volume
     {  8, 102, 100},    // Sound Volume
@@ -175,14 +175,14 @@ menuitem_t Menu_Volume[4] = // 8005AA08
     {  6, 102, 160},    // Return
 };
 
-menuitem_t Menu_ControlStick[3] = // 8005AA38
+const menuitem_t Menu_ControlStick[3] = // 8005AA38
 {
     { 43, 102, 90 },    // Sensitivity
     { 42, 102, 130},    // Default Sensitivity
     {  6, 102, 150},    // Return
 };
 
-menuitem_t Menu_Video[5] =
+const menuitem_t Menu_Video[5] =
 {
     {  9, 102, 60 },    // Brightness
     { 32, 102, 100 },    // Center Display
@@ -192,9 +192,9 @@ menuitem_t Menu_Video[5] =
 };
 
 #if ENABLE_REMASTER_SPRITES == 1
-menuitem_t Menu_Display[7] = // 8005AA5C
+const menuitem_t Menu_Display[7] = // 8005AA5C
 #else
-menuitem_t Menu_Display[5] = // 8005AA5C
+const menuitem_t Menu_Display[5] = // 8005AA5C
 #endif
 {
     #if ENABLE_REMASTER_SPRITES == 1
@@ -215,7 +215,7 @@ menuitem_t Menu_Display[5] = // 8005AA5C
     #endif
 };
 
-menuitem_t Menu_Game[5] = // 8005AAA4
+const menuitem_t Menu_Game[5] = // 8005AAA4
 {
     { 11, 122, 80 },    // Options
     {  4, 122, 100},    // Main Menu
@@ -224,7 +224,7 @@ menuitem_t Menu_Game[5] = // 8005AAA4
     { 22, 122, 160},    // Features
 };
 
-menuitem_t Menu_GameNoSave[4] =
+const menuitem_t Menu_GameNoSave[4] =
 {
     { 11, 122, 80 },    // Options
     {  4, 122, 100},    // Main Menu
@@ -232,32 +232,32 @@ menuitem_t Menu_GameNoSave[4] =
     { 22, 122, 140},    // Features
 };
 
-menuitem_t Menu_Quit[2] = // 8005AAD4
+const menuitem_t Menu_Quit[2] = // 8005AAD4
 {
     { 20, 142, 100},    // Yes
     { 21, 142, 120},    // No
 };
 
-menuitem_t Menu_DeleteNote[2] = // 8005AAEC
+const menuitem_t Menu_DeleteNote[2] = // 8005AAEC
 {
     { 20, 142, 100},    // Yes
     { 21, 142, 120},    // No
 };
 
-menuitem_t Menu_ControllerPakBad[2] = // 8005AB04
+const menuitem_t Menu_ControllerPakBad[2] = // 8005AB04
 {
     { 46, 120, 100},    // Try again
     { 45, 120, 120},    // Do not use Pak
 };
 
-menuitem_t Menu_ControllerPakFull[3] = // 8005AB1C
+const menuitem_t Menu_ControllerPakFull[3] = // 8005AB1C
 {
     { 44, 110, 90 },    // Manage Pak
     { 47, 110, 110},    // Create game note
     { 45, 110, 130},    // Do not use Pak
 };
 
-menuitem_t Menu_CreateNote[3] = // 8005AB40
+const menuitem_t Menu_CreateNote[3] = // 8005AB40
 {
     { 20, 110, 90 },    // Yes
     { 45, 110, 110},    // Do not use Pak
@@ -265,7 +265,7 @@ menuitem_t Menu_CreateNote[3] = // 8005AB40
 };
 
 #define MAXFEATURES 13
-menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
+const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 {
     { 23, 40, 50},      // WARP TO LEVEL
     { 24, 40, 60},      // INVULNERABLE
@@ -291,7 +291,7 @@ menudata_t MenuData[8]; // 800A54F0
 int MenuAnimationTic;   // 800a5570
 int cursorpos;          // 800A5574
 int m_vframe1;          // 800A5578
-menuitem_t *MenuItem;   // 800A5578
+const menuitem_t *MenuItem;   // 800A5578
 int itemlines;          // 800A5580
 menufunc_t MenuCall;    // 800A5584
 
@@ -1970,7 +1970,7 @@ void M_MenuClearCall(void) // 80008E6C
 
 void M_MenuTitleDrawer(void) // 80008E7C
 {
-    menuitem_t *item;
+    const menuitem_t *item;
     int i;
 
     if (MenuItem == Menu_Game || MenuItem == Menu_GameNoSave)
@@ -2024,7 +2024,7 @@ void M_MenuTitleDrawer(void) // 80008E7C
 void M_FeaturesDrawer(void) // 800091C0
 {
     char *text, textbuff[32];
-    menuitem_t *item;
+    const menuitem_t *item;
     int i;
 
     ST_DrawString(-1, 20, "Features", text_alpha | 0xff000000);
@@ -2139,7 +2139,7 @@ void M_FeaturesDrawer(void) // 800091C0
 
 void M_VolumeDrawer(void) // 800095B4
 {
-    menuitem_t *item;
+    const menuitem_t *item;
     int i;
 
     ST_DrawString(-1, 20, "Volume", text_alpha | 0xff000000);
@@ -2162,7 +2162,7 @@ void M_VolumeDrawer(void) // 800095B4
 
 void M_ControlStickDrawer(void) // 80009738
 {
-    menuitem_t *item;
+    const menuitem_t *item;
     int i;
 
     ST_DrawString(-1, 20, "Control Stick", text_alpha | 0xff000000);
@@ -2184,7 +2184,7 @@ void M_ControlStickDrawer(void) // 80009738
 void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 {
     char *text;
-    menuitem_t *item;
+    const menuitem_t *item;
     int i, casepos;
 
     ST_DrawString(-1, 20, "Video", text_alpha | 0xff000000);
@@ -2235,7 +2235,7 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 void M_DisplayDrawer(void) // 80009884
 {
     char *text;
-    menuitem_t *item;
+    const menuitem_t *item;
     int i, casepos;
 
     ST_DrawString(-1, 20, "Display", text_alpha | 0xff000000);
