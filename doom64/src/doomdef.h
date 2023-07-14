@@ -99,11 +99,12 @@ typedef unsigned angle_t;
 #define	FINEANGLES			8192
 #define	FINEMASK			(FINEANGLES-1)
 #define	ANGLETOFINESHIFT	19	/* 0x100000000 to 0x2000 */
+#define INLINE_ALWAYS __attribute__((always_inline)) inline // Nova's forced inline function
 
 extern fixed_t		finesine[5*FINEANGLES/4];
 extern fixed_t		*finecosine;
 
-static inline fixed_t FixedDiv2(fixed_t a, fixed_t b)
+static INLINE_ALWAYS fixed_t FixedDiv2(fixed_t a, fixed_t b)
 {
     fixed_t flo;
 
@@ -122,7 +123,7 @@ static inline fixed_t FixedDiv2(fixed_t a, fixed_t b)
     return (fixed_t) flo;
 }
 
-static inline fixed_t FixedMul(fixed_t a, fixed_t b)
+static INLINE_ALWAYS fixed_t FixedMul(fixed_t a, fixed_t b)
 {
     fixed_t flo;
 
@@ -141,7 +142,7 @@ static inline fixed_t FixedMul(fixed_t a, fixed_t b)
     return (fixed_t) flo;
 }
 
-static inline fixed_t D_abs(fixed_t x)
+static INLINE_ALWAYS fixed_t D_abs(fixed_t x)
 {
     fixed_t _s = x >> 31;
     return (x ^ _s) - _s;
