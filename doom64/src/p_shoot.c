@@ -225,8 +225,7 @@ boolean PTR_ShootTraverse(intercept_t* in) // 800177A8
                 return false;
 
             // it's a sky hack wall
-            // [nova] fix lower walls eating projectiles
-            if(back && (back->ceilingpic == -1) && back->ceilingheight < z)
+			if(back && (back->ceilingpic == -1))
                return false;
 
             // don't shoot blank mid texture
