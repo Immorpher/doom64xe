@@ -86,7 +86,13 @@ boolean PIT_ChangeSector (mobj_t *thing) // 80010234
 	/* crunch bodies to giblets */
 	if (thing->health <= 0 && thing->tics == -1)
 	{
-	    if(thing->state != &states[S_498])
+        // [nova] - remove exploding monsters/objects
+        if(thing->type == MT_PAIN || thing->type == MT_SKULL || thing->type == MT_PROP_BARREL)
+        {
+            P_RemoveMobj (thing);
+            return true;		/* keep checking */
+        }
+        else if(thing->state != &states[S_498])
         {
             P_SetMobjState(thing, S_498);//S_GIBS
             S_StartSound(thing, sfx_slop);

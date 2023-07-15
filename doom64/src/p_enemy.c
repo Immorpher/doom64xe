@@ -1921,6 +1921,7 @@ mobj_t* P_MissileAttack(mobj_t *actor, dirproj_e direction) // 800134BC
     fixed_t x, y;
     mobjtype_t type;
     mobj_t *mo;
+	mobj_t *target;
 
     // silence compiler
     type = MT_PROJ_ROCKET;
@@ -1998,6 +1999,7 @@ mobj_t* P_MissileAttack(mobj_t *actor, dirproj_e direction) // 800134BC
         break;
     }
 
-    mo = P_SpawnMissile(actor, actor->target, deltax, deltay, deltaz, type);
+    target = P_SubstNullMobj(actor->target);
+    mo = P_SpawnMissile(actor, target, deltax, deltay, deltaz, type);
     return mo;
 }

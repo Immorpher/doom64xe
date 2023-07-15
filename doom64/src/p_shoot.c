@@ -225,7 +225,8 @@ boolean PTR_ShootTraverse(intercept_t* in) // 800177A8
                 return false;
 
             // it's a sky hack wall
-            if(back && (back->ceilingpic == -1))
+            // [nova] fix lower walls eating projectiles
+            if(back && (back->ceilingpic == -1) && back->ceilingheight < z)
                return false;
 
             // don't shoot blank mid texture
@@ -324,6 +325,8 @@ fixed_t P_AimLineAttack (mobj_t *t1, angle_t angle, fixed_t zheight, fixed_t dis
 {
     int flags;
     fixed_t dist;
+	
+	 t1 = P_SubstNullMobj(t1); // nova's null bug fix
 
     angle >>= ANGLETOFINESHIFT;
     dist = distance>>FRACBITS;
