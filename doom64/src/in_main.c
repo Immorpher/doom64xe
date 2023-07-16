@@ -303,29 +303,29 @@ void IN_Drawer(void) // 80005164
 
     if ((nextstage > 0) && (killvalue > -1))
     {
-        ST_DrawString(57, 60, "Kills", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawString(248, 60, "%", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawNumber(210, 60, killvalue, 1, PACKRGBA(192, 0, 0, text_alpha));
+        ST_DrawString(57, 60, "Kills", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawString(248, 60, "%", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawNumber(210, 60, killvalue, 1, PACKRGBA(255, 0, 0, text_alpha));
     }
 
     if ((nextstage > 1) && (itemvalue > -1))
     {
-        ST_DrawString(57, 78, "Items", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawString(248, 78, "%", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawNumber(210, 78, itemvalue, 1, PACKRGBA(192, 0, 0, text_alpha));
+        ST_DrawString(57, 78, "Items", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawString(248, 78, "%", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawNumber(210, 78, itemvalue, 1, PACKRGBA(255, 0, 0, text_alpha));
     }
 
     if ((nextstage > 2) && (secretvalue > -1))
     {
-        ST_DrawString(57, 99, "Secrets", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawString(248, 99, "%", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawNumber(210, 99, secretvalue, 1, PACKRGBA(192, 0, 0, text_alpha));
+        ST_DrawString(57, 99, "Secrets", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawString(248, 99, "%", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawNumber(210, 99, secretvalue, 1, PACKRGBA(255, 0, 0, text_alpha));
     }
 
     if ((nextstage > 3))
     {
-        ST_DrawString(57, 120, "Time", PACKRGBA(192, 0, 0, text_alpha));
-        ST_DrawString(210, 120, timetext, PACKRGBA(192, 0, 0, text_alpha));
+        ST_DrawString(57, 120, "Time", PACKRGBA(255, 0, 0, text_alpha));
+        ST_DrawString(210, 120, timetext, PACKRGBA(255, 0, 0, text_alpha));
     }
 
 	if ((nextstage > 4) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap))
