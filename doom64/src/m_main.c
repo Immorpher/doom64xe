@@ -88,7 +88,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT49 "FULL BRIGHT"   // [GEC] NEW CHEAT CODE
 #define M_TXT50 "Filtering:"   // [GEC] NEW CHEAT CODE
 
-#define M_TXT51 "DOOM 64"
+#define M_TXT51 "Doom 64"
 
 // Early CE Options
 
@@ -103,6 +103,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT58 "Video"
 #define M_TXT59 "Default" // Default video
 #define M_TXT60 "Map Stats:" // Automap stats
+#define M_TXT61 "Bonus Pak" // Bonus level hub
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -118,7 +119,7 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
-	M_TXT60
+	M_TXT60, M_TXT61
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -150,10 +151,11 @@ const menuitem_t Menu_Skill[4] = // 8005A990
     #endif // ENABLE_NIGHTMARE
 };
 
-const menuitem_t Menu_Episode[2] =
+const menuitem_t Menu_Episode[3] =
 {
-    { 51, 112, 80 },    // DOOM 64
-    { 52, 112, 100},    // The Lost Levels
+    { 51, 102, 80 },    // Doom 64
+    { 52, 102, 100},    // The Lost Levels
+    { 61, 102, 120},    // Bonus Pak
 };
 
 menuitem_t Menu_Options[7] = // 8005A9C0
@@ -886,7 +888,7 @@ void M_MenuGameDrawer(void) // 80007C48
         gDPSetCycleType(GFX1++, G_CYC_FILL);
         gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
         gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
-        gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0));
+        gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
         gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
         M_DrawBackground(56, 57, 80, "TITLE");
@@ -1288,7 +1290,7 @@ int M_MenuTicker(void) // 80007E0C
                         EnableExpPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Episode;
-                        itemlines = 2;
+                        itemlines = 3;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 0;
 
@@ -1954,7 +1956,33 @@ int M_MenuTicker(void) // 80007E0C
 						return ga_nothing;
 					}
 					break;
+                case 61: // Bonus Pak
+                    if (truebuttons)
+                    {
+                        startmap = MenuItem[cursorpos].casepos == 61 ? 0 : 1;
+                        
+                        S_StartSound(NULL, sfx_pistol);
+                        M_SaveMenuData();
 
+                        MenuItem = Menu_Skill;
+                        #if ENABLE_NIGHTMARE == 1
+                        itemlines = 5;
+                        #else
+                        itemlines = 4;
+                        #endif // ENABLE_NIGHTMARE
+                        MenuCall = M_MenuTitleDrawer;
+                        cursorpos = 2;
+
+                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+                        M_RestoreMenuData((exit == ga_exit));
+                        
+                        if (exit == ga_exit)
+                            return ga_nothing;
+
+                        return exit;
+                    }
+                    break;
+					
                 }
             exit = ga_nothing;
         }
@@ -2376,7 +2404,10 @@ void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
         t += yh;
         y += yh;
     }
-
+	
+    gDPPipeSync(GFX1++);
+    gDPSetCycleType(GFX1++, G_CYC_2CYCLE);
+	
     globallump = -1;
 }
 

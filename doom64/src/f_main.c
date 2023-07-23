@@ -100,7 +100,7 @@ extern void P_CheckCheats (void);
 #define C_END7_TXT13	"path of perpetual torment..."
 #define C_END7_TXT14	"A path through DOOM..."
 
-const char *endcluster1[] =   // 8005A2C0
+char *endcluster1[] =   // 8005A2C0
 {
     C_END1_TXT01,
 	C_END1_TXT02,
@@ -120,7 +120,7 @@ const char *endcluster1[] =   // 8005A2C0
 	T_NULL
 };
 
-const char *endcluster2[] =   // 8005A300
+char *endcluster2[] =   // 8005A300
 {
     C_END2_TXT01,
 	C_END2_TXT02,
@@ -136,7 +136,7 @@ const char *endcluster2[] =   // 8005A300
 	T_NULL
 };
 
-const char *endcluster3[] =   // 8005A330
+char *endcluster3[] =   // 8005A330
 {
     C_END3_TXT01,
 	C_END3_TXT02,
@@ -152,7 +152,7 @@ const char *endcluster3[] =   // 8005A330
 	T_NULL
 };
 
-const char *endcluster4[] =   // 8005A360
+char *endcluster4[] =   // 8005A360
 {
     C_END4_TXT01,
 	C_END4_TXT02,
@@ -168,7 +168,7 @@ const char *endcluster4[] =   // 8005A360
 	T_NULL
 };
 
-const char *endcluster5[] =   // 8005A390
+char *endcluster5[] =   // 8005A390
 {
     C_END5_TXT01,
 	C_END5_TXT02,
@@ -180,7 +180,7 @@ const char *endcluster5[] =   // 8005A390
 	T_NULL
 };
 
-const char *endcluster6[] =   // 8005A3B0
+char *endcluster6[] =   // 8005A3B0
 {
     C_END6_TXT01,
 	C_END6_TXT02,
@@ -200,7 +200,7 @@ const char *endcluster6[] =   // 8005A3B0
 	T_NULL
 };
 
-const char *endcluster7[] =
+char *endcluster7[] =
 {
     C_END7_TXT01,
     C_END7_TXT02,

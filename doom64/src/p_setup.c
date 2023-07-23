@@ -582,7 +582,8 @@ void P_LoadLights(void) // 8001E29C
     light_t     *l;
 
     length = W_MapLumpLength(ML_LIGHTS);
-    maplights = (maplights_t *)Z_Malloc(length, PU_LEVEL, 0);
+    if (length > 0)
+        maplights = (maplights_t *)Z_Malloc(length, PU_LEVEL, 0);
 
     data = (byte *)W_GetMapLump(ML_LIGHTS);
     D_memcpy(maplights,data,length);
@@ -628,12 +629,21 @@ void P_LoadMacros(void) // 8001E478
     macro_t *pMacro;
     int headerSize;
     int i, j;
-
+	
+    int size = W_MapLumpLength(ML_MACROS);
+    if (size <= 0)
+    {
+        nummacros = 0;
+        return;
+    }
     data = (short *)W_GetMapLump(ML_MACROS);
 
     nummacros = LITTLESHORT(*data++);
     specialCount = LITTLESHORT(*data++);
     headerSize = sizeof(void*) * nummacros;
+	
+	if (nummacros < 1)
+        return;
 
     macroData = (byte *)Z_Malloc(((nummacros + specialCount) * sizeof(macro_t)) + headerSize, PU_LEVEL, 0);
     macros = (macro_t**)macroData;

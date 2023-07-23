@@ -245,7 +245,7 @@ void G_RunGame (void) // 80004794
 		}
         else
         {
-            if (nextmap >= LASTLEVEL)
+            if ((nextmap >= LASTLEVEL) && (nextmap < BONUSLEVEL))
             {
                 /* run the finale if needed */
                 MiniLoop(F_Start, F_Stop, F_Ticker, F_Drawer);

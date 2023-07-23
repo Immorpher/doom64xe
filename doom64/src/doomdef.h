@@ -179,6 +179,9 @@ typedef enum
 #endif
 #define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 40))
 
+
+#define BONUSLEVEL 129 // [Immorpher] Define where bonus pak levels begin
+
 /* */
 /* library replacements */
 /* */

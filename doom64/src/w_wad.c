@@ -56,49 +56,45 @@ extern char _doom64_wadSegmentRomStart[], _doom64_wadSegmentRomEnd[];
 
 void W_Init (void) // 8002BEC0
 {
+    wadinfo_t wadfileheader __attribute__((aligned(16)));
     OSIoMesg romio_msgbuf;
-	wadinfo_t *wadfileptr;
 	int infotableofs, i;
 
-	wadfileptr = (wadinfo_t *)Z_Alloc(sizeof(wadinfo_t), PU_STATIC, NULL);
-	osInvalDCache((void *)wadfileptr, sizeof(wadinfo_t));
+	osInvalDCache(&wadfileheader, sizeof(wadinfo_t));
 
 	osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
               (u32)_doom64_wadSegmentRomStart,
-              (void *)wadfileptr, sizeof(wadinfo_t), &romcopy_msgque);
+              &wadfileheader, sizeof(wadinfo_t), &romcopy_msgque);
 
     osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
 
     //sprintf(str, "identification %s",wadfileptr->identification);
     //printstr(WHITE, 0, 4, str);
 
-	if (D_strncasecmp(wadfileptr->identification, "IWAD", 4))
-		I_Error("W_Init: invalid main IWAD id");
+	// [Immorpher] Ignore IWAD check to make it easier to edit WADs
+	//if (bcmp(wadfileheader.identification, "IWAD", 4))
+	//	I_Error("W_Init: invalid main IWAD id");
 
-	numlumps = LONGSWAP(wadfileptr->numlumps);
+	numlumps = LONGSWAP(wadfileheader.numlumps);
 	lumpinfo = (lumpinfo_t *) Z_Malloc(numlumps * sizeof(lumpinfo_t), PU_STATIC, 0);
 	osInvalDCache((void *)lumpinfo, numlumps * sizeof(lumpinfo_t));
 
-	infotableofs = LONGSWAP(wadfileptr->infotableofs);
+	infotableofs = LONGSWAP(wadfileheader.infotableofs);
 
 	osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
               (u32)_doom64_wadSegmentRomStart + infotableofs,
               (void *)lumpinfo, numlumps * sizeof(lumpinfo_t), &romcopy_msgque);
-
     osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
-
 	//sprintf(str, "identification %s",wadfileptr->identification);
     //printstr(WHITE, 0, 4, str);
 	//sprintf(str, "numlumps %d",numlumps);
     //printstr(WHITE, 0, 5, str);
 	//sprintf(str, "infotableofs %d",infotableofs);
     //printstr(WHITE, 0, 6, str);
-
     for(i = 0; i < numlumps; i++)
     {
         lumpinfo[i].filepos = LONGSWAP(lumpinfo[i].filepos);
         lumpinfo[i].size = LONGSWAP(lumpinfo[i].size);
-
         //sprintf(str, "filepos %d        ",lumpinfo[i].filepos);
         //printstr(WHITE, 0, 7, str);
         //sprintf(str, "size %d           ",lumpinfo[i].size);
@@ -107,7 +103,6 @@ void W_Init (void) // 8002BEC0
 
     lumpcache = (lumpcache_t *) Z_Malloc(numlumps * sizeof(lumpcache_t), PU_STATIC, 0);
     D_memset(lumpcache, NULL, numlumps * sizeof(lumpcache_t));
-    Z_Free(wadfileptr);
 }
 
 

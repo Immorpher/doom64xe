@@ -236,7 +236,7 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 
 	p = &players[0];
 
-	if (p->playerstate == PST_REBORN)
+	if ((p->playerstate == PST_REBORN) || gamemap == 0) // [Immorpher] Also reset health at Bonus Pak hub!
 		G_PlayerReborn(0);
     else
     {

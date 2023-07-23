@@ -1051,6 +1051,10 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         case 141:		/* Silent Ceiling Crush & Raise (Demon Disposer)*/
 			ok = EV_DoCeiling(line, silentCrushAndRaise, CEILSPEED*2);
 			break;
+		case 164: // [Immorpher] custom linedef for hub level name display
+			player->message[MSG_LOW] = MapInfo[line->tag].name;
+			player->messagetic[MSG_LOW] = MSGTICS;
+			break;
         case 200:       /* Set Lookat Camera */
             ok = P_SetAimCamera(line, true);
             break;

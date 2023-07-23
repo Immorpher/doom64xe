@@ -9,6 +9,7 @@ extern int nextmap;
 
 #define T_NULL	    ""
 
+#define MI_TXT00	"Bonus Pak" // bonus hub!
 #define MI_TXT01	"Staging Area"
 #define MI_TXT02	"The Terraformer"
 #define MI_TXT03	"Main Engineering"
@@ -41,8 +42,8 @@ extern int nextmap;
 #define MI_TXT30	"The Lair"
 #define MI_TXT31	"In The Void"
 #define MI_TXT32	"Hectic"
-#define MI_TXT33	"TITLE"
-#define MI_TXT34	"Plant Ops"
+#define MI_TXT33	"Title"
+#define MI_TXT34	"Plant Ops" // Lost levels
 #define MI_TXT35	"Evil Sacrifice"
 #define MI_TXT36	"Cold Grounds"
 #define MI_TXT37	"Wretched Vats"
@@ -50,10 +51,24 @@ extern int nextmap;
 #define MI_TXT39	"Final Judgement"
 #define MI_TXT40	"Panic"
 
+// Bonus Pak Maps
+#define MI_TXT129	"Anguish"
+#define MI_TXT130	"Wretched"
+#define MI_TXT131	"Entryway"
+#define MI_TXT132	"Visions of Hostility"
+#define MI_TXT133	"Secondary Engineering"
+#define MI_TXT134	"Hangar"
+#define MI_TXT135	"Fabrication Labs"
+#define MI_TXT136	"Switchless"
+#define MI_TXT137	"Devolving Being"
+#define MI_TXT138	"Ring of Fire"
+#define MI_TXT139	"Doomsday Keep"
+#define MI_TXT140	"Dark Retrospect"
+
 mapinfo_t MapInfo[] = //8005A478
 {
-    {T_NULL , 0},
-    {MI_TXT01 , 96},
+    {MI_TXT00 , 116}, // Bonus Pak hub with menu music
+    {MI_TXT01 , 96}, // Doom 64
     {MI_TXT02 , 97},
     {MI_TXT03 , 105},
     {MI_TXT04 , 104},
@@ -86,13 +101,113 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT31 , 103},
     {MI_TXT32 , 104},
     {MI_TXT33 , 115},
-    {MI_TXT34 , 100},
+    {MI_TXT34 , 100}, // Lost Levels
     {MI_TXT35 , 95},
     {MI_TXT36 , 111},
     {MI_TXT37 , 94},
     {MI_TXT38 , 105},
     {MI_TXT39 , 98},
     {MI_TXT40 , 101},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {T_NULL , 0},
+    {MI_TXT129 , 106}, // Anguish - Map 129 Bonus Pak Maps begin
+    {MI_TXT130 , 99}, // Wretched
+    {MI_TXT131 , 104}, // Entryway
+    {MI_TXT132 , 97}, // Visions of Hostility
+    {MI_TXT133 , 108}, // Secondary Engineering
+    {MI_TXT134 , 96}, // Hangar
+    {MI_TXT135 , 105}, // Fabrication Labs
+    {MI_TXT136 , 94}, // Switchless
+    {MI_TXT137 , 110}, // Devolving Being
+    {MI_TXT138 , 95}, // Ring of Fire
+    {MI_TXT139 , 103}, // Doomsday Keep
+    {MI_TXT140 , 107}, // Dark Retrospect
     {T_NULL , 0}
 };
 
@@ -149,7 +264,7 @@ void IN_Start(void) // 80004AF0
 	last_ticon = 0;
 	text_alpha = 255;
 
-    if ((nextmap >= 0) && (nextmap < LASTLEVEL))
+    if ((nextmap > 0) && (nextmap < LASTLEVEL))
 	{
 		M_EncodePassword(Passwordbuff);
         CurPasswordSlot = 16;
@@ -162,7 +277,7 @@ void IN_Stop(void) // 80004DB0
 {
 	S_StopMusic();
 
-    if ((nextmap >= 0) && (nextmap < LASTLEVEL))
+    if ((nextmap > 0) && (nextmap < LASTLEVEL))
     {
         if (EnableExpPak) {
             MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_SavePakDrawer);
@@ -328,7 +443,11 @@ void IN_Drawer(void) // 80005164
         ST_DrawString(210, 120, timetext, PACKRGBA(255, 0, 0, text_alpha));
     }
 
-	if ((nextstage > 4) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap))
+	if ((nextstage > 4) && ((nextmap >= BONUSLEVEL) || nextmap == 0)) // [Immorpher] Dont show passwords for Bonus Pak
+	{
+        ST_DrawString(-1, 165, "Entering", PACKRGBA(255, 255, 255, text_alpha));
+        ST_DrawString(-1, 181, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));
+	} else if ((nextstage > 4) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap))
 	{
         ST_DrawString(-1, 145, "Entering", PACKRGBA(255, 255, 255, text_alpha));
         ST_DrawString(-1, 161, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));

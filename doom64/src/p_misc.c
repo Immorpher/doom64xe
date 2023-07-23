@@ -212,7 +212,9 @@ void P_SecretExitLevel(int map) // 8000E25C
 {
     int delaytics;
 
-    if (map < LASTLEVEL)
+    if (map >= BONUSLEVEL) // [Immorpher] Exit right away to bonus levels
+		delaytics = 5;
+	else if (map < LASTLEVEL)
         delaytics = 15;
     else
         delaytics = 120;
