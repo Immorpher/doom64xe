@@ -495,12 +495,12 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
         VTX1[1].v.ob[2] = VTX1[2].v.ob[2] = (signed short)-(v2->y >> 16);
 
         // texture s coordinates
-        VTX1[0].v.tc[0] = VTX1[3].v.tc[0] = ((seg->sidedef->textureoffset + seg->offset) >> 11) % 512;
+        VTX1[0].v.tc[0] = VTX1[3].v.tc[0] = ((seg->sidedef->textureoffset + seg->offset) >> 11);
         VTX1[1].v.tc[0] = VTX1[2].v.tc[0] = VTX1[0].v.tc[0] + (seg->length << 1);
 
         // texture t coordinates
-        VTX1[0].v.tc[1] = VTX1[1].v.tc[1] = ((topOffset % 1024) << 5);
-        VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = ((bottomOffset % 1024) << 5);
+        VTX1[0].v.tc[1] = VTX1[1].v.tc[1] = (topOffset << 5);
+        VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = (bottomOffset << 5);
 
         // vertex color
         *(int*)VTX1[0].v.cn = *(int*)VTX1[1].v.cn = topColor;
