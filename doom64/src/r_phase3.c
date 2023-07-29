@@ -5,17 +5,17 @@
 #include "r_local.h"
 
 //-----------------------------------//
-void R_RenderWorld(subsector_t *sub);
+void R_RenderWorld(subsector_t *sub) HOT;
 
-void R_WallPrep(seg_t *seg);
-void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomHeight, int topOffset, int bottomOffset, int topColor, int bottomColor);
-void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color);
+void R_WallPrep(seg_t *seg) HOT;
+void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomHeight, int topOffset, int bottomOffset, int topColor, int bottomColor) HOT;
+void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) HOT;
 
-void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color);
+void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color) HOT;
 
-void R_RenderThings(subsector_t *sub);
-void R_RenderLaser(mobj_t *thing);
-void R_RenderPSprites(void);
+void R_RenderThings(subsector_t *sub) HOT;
+void R_RenderLaser(mobj_t *thing) HOT;
+void R_RenderPSprites(void) HOT;
 //-----------------------------------//
 
 void R_RenderAll(void) // 80026590

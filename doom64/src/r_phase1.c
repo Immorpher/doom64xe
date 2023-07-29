@@ -20,12 +20,12 @@ int checkcoord[12][4] =				// 8005B110
 	{ 0, 0, 0, 0 }
 };
 
-void	R_RenderBSPNode(int bspnum);
-boolean R_CheckBBox(fixed_t bspcoord[4]);
-void	R_Subsector(int num);
-void	R_AddLine(seg_t *line);
-void    R_AddSprite(subsector_t *sub);
-void    R_RenderBSPNodeNoClip(int bspnum);
+void	R_RenderBSPNode(int bspnum) HOT;
+boolean R_CheckBBox(fixed_t bspcoord[4]) HOT;
+void	R_Subsector(int num) HOT;
+void	R_AddLine(seg_t *line) HOT;
+void    R_AddSprite(subsector_t *sub) HOT;
+void    R_RenderBSPNodeNoClip(int bspnum) HOT;
 
 //
 // Kick off the rendering process by initializing the solidsubsectors array and then

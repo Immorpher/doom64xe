@@ -127,13 +127,6 @@ int WDD_size[4]     = {0x1716C4, 0x1716C4, 0x1716C4, 0x1716C4};
 int main(int argc, char *argv[])
 {
     byte a;
-    
-    show_info();
-    if (argc != 3)
-    {
-        do_error("Arguments not found\n");
-        exit(0);
-    }
 
     // Parse arguments
     char *romname;
@@ -149,6 +142,12 @@ int main(int argc, char *argv[])
         }
     }
 
+    show_info();
+    if (argc == 1)
+    {
+        exit(0);
+    }
+
     FILE *in, *out;
     in = fopen(romname, "rb");
 
@@ -162,12 +161,12 @@ int main(int argc, char *argv[])
 
     if (!check_name())
     {
-        do_error("Not a Doom 64 ROM\n");
+        do_error("Not a Doom 64 Rom\n");
         exit(0);
     }
 
     // Extract the file DOOM64.WAD
-    printf("Extracting DOOM64.WAD... ");
+    printf("Extracting DOOM64.WAD ");
     fseek(in, WAD_offset[region], SEEK_SET);
     out = fopen("DOOM64.WAD", "wb");
     for (int i = 0; i < WAD_size[region]; i++)
@@ -179,7 +178,7 @@ int main(int argc, char *argv[])
     printf("Ok\n");
 
     // Extract the file DOOM64.WMD
-    printf("Extracting DOOM64.WMD... ");
+    printf("Extracting DOOM64.WMD ");
     fseek(in, WMD_offset[region], SEEK_SET);
     out = fopen("DOOM64.WMD", "wb");
     for (int i = 0; i < WMD_size[region]; i++)
@@ -191,7 +190,7 @@ int main(int argc, char *argv[])
     printf("Ok\n");
 
     // Extract the file DOOM64.WSD
-    printf("Extracting DOOM64.WSD... ");
+    printf("Extracting DOOM64.WSD ");
     fseek(in, WSD_offset[region], SEEK_SET);
     out = fopen("DOOM64.WSD", "wb");
     for (int i = 0; i < WSD_size[region]; i++)
@@ -203,7 +202,7 @@ int main(int argc, char *argv[])
     printf("Ok\n");
 
     // Extract the file DOOM64.WDD
-    printf("Extracting DOOM64.WDD... ");
+    printf("Extracting DOOM64.WDD ");
     fseek(in, WDD_offset[region], SEEK_SET);
     out = fopen("DOOM64.WDD", "wb");
     for (int i = 0; i < WDD_size[region]; i++)
@@ -216,6 +215,6 @@ int main(int argc, char *argv[])
 
     fclose(in);
 
-    printf("\nCompleted!\n");
+    printf("\nCompleted\n");
     return 0;
 }

@@ -8,7 +8,8 @@
 .section .start, "ax"
 
 glabel __start
-	la $t0, _codeSegmentBssStart
+    la      $gp, _gp
+    la $t0, _codeSegmentBssStart
     la $t1, _codeSegmentBssSize
 bss_clear:
     addi $t1, $t1, -8
@@ -17,6 +18,6 @@ bss_clear:
     bnez $t1, bss_clear
     addi $t0, $t0, 8
     la $t2, I_Start #Boot function address
-    la $sp, bootStack+0x2000 #Setup boot stack pointer, change stack size if needed here
+    la $sp, bootStack+0x100 #Setup boot stack pointer, change stack size if needed here
     jr $t2
     nop

@@ -272,13 +272,13 @@ extern fixed_t  quakeviewy;     // 800A8114
 /*------*/
 /*R_data*/
 /*------*/
-void	R_InitData (void);
+void	R_InitData (void) COLD;
 
 /*--------*/
 /*r_phase1*/
 /*--------*/
-void	R_BSP (void);
-void	R_RenderBSPNode (int bspnum);
+void	R_BSP (void) HOT;
+void	R_RenderBSPNode (int bspnum) HOT;
 
 /*--------*/
 /*r_phase2*/
@@ -294,8 +294,8 @@ void R_SetupSky(void);
 /*--------*/
 /*r_phase3*/
 /*--------*/
-void R_RenderAll(void);
-void R_RenderPSprites(void);
+void R_RenderAll(void) HOT;
+void R_RenderPSprites(void) HOT;
 
 
 /* to get a global angle from cartesian coordinates, the coordinates are */
