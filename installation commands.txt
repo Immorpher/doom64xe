@@ -19,3 +19,6 @@ sudo apt-get install ./n64sdk-common.deb
 sudo apt-get install ./n64sdk.deb 
 
 sudo apt-get install ./makemask.deb 
+
+then to build the ROM go to doom64
+./make-rom.sh

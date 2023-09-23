@@ -208,11 +208,10 @@ void G_RunGame (void) // 80004794
             return;
 
         /* run a stats intermission */
-        if (nextmap != 32)
-		{
-            MiniLoop(IN_Start, IN_Stop, IN_Ticker, IN_Drawer);
-        } 
-		else if (EnableExpPak)
+        
+		MiniLoop(IN_Start, IN_Stop, IN_Ticker, IN_Drawer);
+			
+        if (EnableExpPak)
 		{
 			M_EncodePassword(Passwordbuff);
         	CurPasswordSlot = 16;
