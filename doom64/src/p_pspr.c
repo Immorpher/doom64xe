@@ -102,7 +102,7 @@ void P_MovePsprites (player_t *player) // 8001B14C
 /*
 =================
 =
-= P_NoiseAlert
+= P_RecursiveSound
 =
 = If a monster yells at a player, it will alert other monsters to the player
 =
