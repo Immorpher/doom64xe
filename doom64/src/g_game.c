@@ -75,8 +75,8 @@ void G_PlayerFinishLevel (int player) // 80004598
 
 	p = &players[player];
 
-	D_memset (p->powers, 0, sizeof (p->powers));
-	D_memset (p->cards, 0, sizeof (p->cards));
+	bzero(p->powers, sizeof (p->powers));
+    bzero(p->cards, sizeof (p->cards));
 	p->mo->flags &= ~MF_SHADOW; /* cancel invisibility  */
 	p->extralight = 0;                      /* cancel gun flashes  */
 	p->damagecount = 0;                     /* no palette changes  */
@@ -103,7 +103,7 @@ void G_PlayerReborn (int player) // 80004630
 	player_t *p;
 
 	p = &players[player];
-	D_memset(p, 0, sizeof(*p));
+	bzero(p, sizeof(*p));
 
 	p->usedown = p->attackdown = true; // don't do anything immediately
 	p->playerstate = PST_LIVE;
@@ -162,7 +162,7 @@ void G_InitNew (skill_t skill, int map, gametype_t gametype) // 800046F4
 	gameskill = skill;
 	gamemap = map;
 
-	D_memset(&emptymobj, 0, sizeof(emptymobj));
+	bzero(&emptymobj, sizeof(emptymobj));
 	players[0].mo = &emptymobj;	/* for net consistancy checks */
 
 	demorecording = false;

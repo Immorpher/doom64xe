@@ -46,7 +46,7 @@ void R_BSP(void) // 80023F30
     visspritehead = vissprites;
 
 	endsubsector = solidsubsectors; /* Init the free memory pointer */
-	D_memset(solidcols, 0, 320);
+	bzero(solidcols, 320);
 
     if (camviewpitch == 0)
     {

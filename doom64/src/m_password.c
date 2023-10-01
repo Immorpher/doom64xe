@@ -45,7 +45,7 @@ void M_EncodePassword(byte *buff) // 8000BC10
 	#endif // ENABLE_NIGHTMARE
 
     player = &players[0];
-    D_memset(encode, 0, sizeof(encode));
+    bzero(encode, sizeof(encode));
 
     #if ENABLE_NIGHTMARE == 1
 	//Check the nightmare difficulty

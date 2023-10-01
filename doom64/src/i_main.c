@@ -566,7 +566,7 @@ void I_Init(void) // 80005C50
     osViSetXScale(1.0);
     osViSetYScale(1.0);
 
-    D_memset(cfb, 0, ((SCREEN_WD*SCREEN_HT)*sizeof(u32))*2);
+	bzero(cfb, ((SCREEN_WD*SCREEN_HT)*sizeof(u32))*2);
     osViSwapBuffer(cfb);
 
     if (osViGetCurrentFramebuffer() != cfb) {
@@ -1158,7 +1158,7 @@ int I_CreatePakFile(void) // 800074D4
         Pak_Size = 512;
 
     Pak_Data = (byte *)Z_Malloc(Pak_Size, PU_STATIC, NULL);
-    D_memset(Pak_Data, 0, Pak_Size);
+    bzero(Pak_Data, Pak_Size);
 
     *(int*)ExtName = 0;
 

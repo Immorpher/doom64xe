@@ -287,9 +287,9 @@ void P_SpawnSpecials (void) // 8001F490
 	/* */
 	/*	Init other misc stuff */
 	/* */
-	D_memset(activeceilings, 0, MAXCEILINGS * sizeof(ceiling_t*));
-	D_memset(activeplats, 0, MAXPLATS * sizeof(plat_t*));
-	D_memset(buttonlist, 0, MAXBUTTONS * sizeof(button_t));
+    bzero(activeceilings, MAXCEILINGS * sizeof(ceiling_t*));
+    bzero(activeplats, MAXPLATS * sizeof(plat_t*));
+    bzero(buttonlist, MAXBUTTONS * sizeof(button_t));
 }
 
 /*
@@ -379,7 +379,7 @@ fixed_t	P_FindNextHighestFloor(sector_t *sec,int currentheight) // 8001FAE4
 	fixed_t		height = currentheight;
 	fixed_t		heightlist[20];		/* 20 adjoining sectors max! */
 
-	D_memset(heightlist, 0, 20*sizeof(fixed_t));
+	bzero(heightlist, 20*sizeof(fixed_t));
 
 	for (i =0,h = 0 ;i < sec->linecount ; i++)
 	{
@@ -680,7 +680,7 @@ void P_UpdateSpecials (void) // 8001FEC0
 					break;
 				}
 				S_StartSound((mobj_t *)buttonlist[i].soundorg, sfx_switch1);
-				D_memset(&buttonlist[i], 0, sizeof(button_t)); // ? Doom 64 elimina esta linea
+				bzero(&buttonlist[i], sizeof(button_t)); // ? Doom 64 elimina esta linea
 			}
 		}
 	}
