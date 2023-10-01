@@ -188,9 +188,11 @@ void P_LoadSectors (void) // 8001D43C
 	mapsector_t		*ms;
 	sector_t		*ss;
 	int				skyname;
+	int				lastsky;
 
 	skytexture = 0;
 	skyname = W_GetNumForName("F_SKYA") - firsttex;
+	lastsky = W_GetNumForName("F_SKYQ") - firsttex;
 
 	numsectors = W_MapLumpLength(ML_SECTORS) / sizeof(mapsector_t);
 	sectors = Z_Malloc (numsectors*sizeof(sector_t),PU_LEVEL,0);
@@ -216,12 +218,13 @@ void P_LoadSectors (void) // 8001D43C
 		ss->tag = LITTLESHORT(ms->tag);
 		ss->flags = LITTLESHORT(ms->flags);
 
-        if (skyname <= ss->ceilingpic)
+		// Set skies to be cut out
+        if (skyname <= ss->ceilingpic && lastsky >= ss->ceilingpic)
         {
             skytexture = (ss->ceilingpic - skyname) + 1;
             ss->ceilingpic = -1;
         }
-        if (skyname <= ss->floorpic)
+        if (skyname <= ss->floorpic && lastsky >= ss->floorpic)
             ss->floorpic = -1;
 
 	}

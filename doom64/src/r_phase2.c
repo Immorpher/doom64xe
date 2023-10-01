@@ -200,17 +200,142 @@ void R_SetupSky(void) // 80025060
             break;
 
         case 8:
-            R_RenderSKY = R_RenderVoidSky;
-            FogNear = 975;
-            FogColor = PACKRGBA(0,64,64,0); // 0x404000;
-            SkyVoidColor = PACKRGBA(0,56,56,0); // 0x383800;
+			if (gamemap >= BETALEVEL && gamemap <= LASTLEVEL)
+			{
+				FogNear = 975;
+				SkyFlags = SKF_CLOUD;
+				R_RenderSKY = R_RederCloudSky;
+
+				SkyCloudData = (byte *)W_CacheLumpName("CLOUD", PU_STATIC, dec_jag);
+				SkyCloudColor = PACKRGBA(37,0,56,255); // 25 0 38
+
+				*(int*)SkyCloudVertex[0].v.cn = PACKRGBA(0,0,0,255); // 1 0 0
+				*(int*)SkyCloudVertex[1].v.cn = PACKRGBA(0,0,0,255); // 1 0 0
+				*(int*)SkyCloudVertex[2].v.cn = PACKRGBA(0,0,0,255); // 20 30 0
+				*(int*)SkyCloudVertex[3].v.cn = PACKRGBA(0,0,0,255); // 20 30 0;
+			}
+			else
+			{
+				R_RenderSKY = R_RenderVoidSky;
+				FogNear = 975;
+				FogColor = PACKRGBA(0,64,64,0); // 0x404000;
+				SkyVoidColor = PACKRGBA(0,56,56,0); // 0x383800;
+			}
             break;
 
         case 11:
-            R_RenderSKY = R_RenderSpaceSky;
-            SkyPicMount = W_GetNumForName("MOUNTA");
-            SkyFlags |= SKF_MOUNTAIN;
+			if (gamemap >= BETALEVEL && gamemap <= LASTLEVEL)
+			{
+				SkyFlags = (SKF_CLOUD|SKF_THUNDER);
+				FogNear = 985;
+				R_RenderSKY = R_RederCloudSky;
+
+				SkyCloudData = (byte *)W_CacheLumpName("CLOUD4", PU_STATIC, dec_jag);
+				SkyCloudColor = PACKRGBA(0,64,128,255); // 0 40 80
+
+				SkyPicMount = W_GetNumForName("MOUNTA");
+				SkyFlags |= SKF_MOUNTAIN;
+
+				*(int*)SkyCloudVertex[0].v.cn = PACKRGBA(0,0,0,255); // 0 0 0
+				*(int*)SkyCloudVertex[1].v.cn = PACKRGBA(0,0,0,255); // 0 0 0
+				*(int*)SkyCloudVertex[2].v.cn = PACKRGBA(0,0,0,255); // 0 0 0
+				*(int*)SkyCloudVertex[3].v.cn = PACKRGBA(0,0,0,255); // 0 0 0
+			}
+			else
+			{
+				R_RenderSKY = R_RenderSpaceSky;
+				SkyPicMount = W_GetNumForName("MOUNTA");
+				SkyFlags |= SKF_MOUNTAIN;
+			}
             break;
+		
+		case 12:
+            R_RenderSKY = R_RenderVoidSky;
+            FogNear = 950;
+            FogColor = PACKRGBA(32,64,0,0); // 20 40 0
+            SkyVoidColor = PACKRGBA(64,80,0,0); // 40 50 0
+			
+            break;
+			
+        case 13:
+            SkyFlags = SKF_CLOUD;
+            R_RenderSKY = R_RederCloudSky;
+
+            SkyCloudData = (byte *)W_CacheLumpName("CLOUD", PU_STATIC, dec_jag);
+            SkyCloudColor = PACKRGBA(48,21,0,255); // 30 15 0
+
+			SkyPicMount = W_GetNumForName("MOUNTB");
+			SkyFlags |= SKF_MOUNTAIN;
+
+            *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(0,0,0,255); // 0xff;
+            *(int*)SkyCloudVertex[1].v.cn = PACKRGBA(0,0,0,255); // 0xff;
+            *(int*)SkyCloudVertex[2].v.cn = PACKRGBA(16,5,0,255); // 10 5 0;
+            *(int*)SkyCloudVertex[3].v.cn = PACKRGBA(16,5,0,255); // 10 5 0;
+            break;
+		
+        case 14:
+            SkyFlags = SKF_CLOUD;
+            R_RenderSKY = R_RederCloudSky;
+
+            SkyCloudData = (byte *)W_CacheLumpName("CLOUD4", PU_STATIC, dec_jag);
+            SkyCloudColor = PACKRGBA(96,128,0,255); // 60 80 0
+
+			SkyPicMount = W_GetNumForName("MOUNTD");
+			SkyFlags |= SKF_MOUNTAIN;
+
+            *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(1,0,0,255); // 1 0 0
+            *(int*)SkyCloudVertex[1].v.cn = PACKRGBA(1,0,0,255); // 1 0 0
+            *(int*)SkyCloudVertex[2].v.cn = PACKRGBA(32,48,0,255); // 20 30 0
+            *(int*)SkyCloudVertex[3].v.cn = PACKRGBA(32,48,0,255); // 20 30 0;
+            break;
+			
+        case 15:
+            SkyFlags = (SKF_CLOUD|SKF_THUNDER);
+            R_RenderSKY = R_RederCloudSky;
+
+            SkyCloudData = (byte *)W_CacheLumpName("CLOUD", PU_STATIC, dec_jag);
+            SkyCloudColor = PACKRGBA(53,32,0,255); // 35 20 0
+
+			SkyPicMount = W_GetNumForName("MOUNTB");
+			SkyFlags |= SKF_MOUNTAIN;
+
+            *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(0,0,0,255); // 0 0 0
+            *(int*)SkyCloudVertex[1].v.cn = PACKRGBA(0,0,0,255); // 0 0 0
+            *(int*)SkyCloudVertex[2].v.cn = PACKRGBA(16,5,0,255); // 10 5 0
+            *(int*)SkyCloudVertex[3].v.cn = PACKRGBA(16,5,0,255); // 10 5 0;
+            break;
+			
+        case 16:
+            R_RenderSKY = R_RenderFireSky;
+			FogColor = PACKRGBA(64,16,8,0); // 40 10 8
+
+            data = W_CacheLumpName("FIRE", PU_LEVEL, dec_jag);
+            SkyFireData[0] = (data + 8);
+            SkyFireData[1] = Z_Malloc((FIRESKY_WIDTH*FIRESKY_HEIGHT), PU_LEVEL, NULL);
+
+            D_memcpy(SkyFireData[1], SkyFireData[0],(FIRESKY_WIDTH*FIRESKY_HEIGHT));
+
+			*(int*)SkyFireVertex[0].v.cn = PACKRGBA(255,0,0,255); // ff 20 0;
+			*(int*)SkyFireVertex[1].v.cn = PACKRGBA(255,0,0,255); //ff 20 0;
+			*(int*)SkyFireVertex[2].v.cn = PACKRGBA(255,32,0,255); // ff 20 0;
+			*(int*)SkyFireVertex[3].v.cn = PACKRGBA(255,32,0,255); // ff 20 0;
+            break;
+			
+		case 17:
+            R_RenderSKY = R_RenderVoidSky;
+            FogNear = 965;
+            FogColor = PACKRGBA(48,7,2,0); // 30 7 2
+            SkyVoidColor = PACKRGBA(80,7,2,0); // 50 7 2
+            break;
+			
+		case 18:
+            SkyFlags = (SKF_THUNDER);
+            R_RenderSKY = R_RenderVoidSky;
+            FogNear = 965;
+            FogColor = PACKRGBA(48,7,2,0); // 30 7 2
+            SkyVoidColor = PACKRGBA(80,7,2,0); // 50 7 2
+            break;
+			
     }
 }
 
@@ -224,6 +349,9 @@ void R_RenderSpaceSky(void) // 80025440
 
     R_RenderSkyPic(SkyPicSpace, 128);
 
+	if (SkyFlags & SKF_THUNDER)
+	R_CloudThunder();
+	
     if (SkyFlags & SKF_MOUNTAIN)
     {
         gDPPipeSync(GFX1++);
@@ -263,6 +391,9 @@ void R_RenderVoidSky(void) // 800256B4
     // Fill borders with SkyVoidColor
     gDPSetFillColor(GFX1++, SkyVoidColor);
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+	
+	if (SkyFlags & SKF_THUNDER)
+	R_CloudThunder();
 }
 
 void R_RenderEvilSky(void) // 80025738

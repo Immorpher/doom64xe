@@ -9,7 +9,9 @@ extern void P_CheckCheats (void);
 
 #define T_NULL	        ""
 
-#define C_END1_TXT01	"you cackle as the"
+// Doom 64
+
+#define C_END1_TXT01	"You cackle as the"
 #define C_END1_TXT02	"familiarity of the"
 #define C_END1_TXT03	"situation occurs to you."
 #define C_END1_TXT04	"The gateway to the Demons"
@@ -85,6 +87,8 @@ extern void P_CheckCheats (void);
 #define C_END6_TXT14	" "
 #define C_END6_TXT15	"The End."
 
+// Lost Levels
+
 #define C_END7_TXT01    "You had not expected to be"
 #define C_END7_TXT02	"torn from Hell so soon after"
 #define C_END7_TXT03	"your fateful decision."
@@ -99,6 +103,112 @@ extern void P_CheckCheats (void);
 #define C_END7_TXT12	"Stretched before you is a"
 #define C_END7_TXT13	"path of perpetual torment..."
 #define C_END7_TXT14	"A path through DOOM..."
+
+// Beta 64
+
+#define C_END8_TXT01	"The presence of hell is seeping"
+#define C_END8_TXT02	"into the facility like blood"
+#define C_END8_TXT03	"through arteries. It is upturning"
+#define C_END8_TXT04	"reality and infecting the dead."
+#define C_END8_TXT05	" "
+#define C_END8_TXT06	"A stench leaks from the"
+#define C_END8_TXT07	"portal. It is from a place not"
+#define C_END8_TXT08	"meant for humans. But I have"
+#define C_END8_TXT09	"not felt human for a long time."
+#define C_END8_TXT10	" "
+#define C_END8_TXT11	"Our mistakes have damned this"
+#define C_END8_TXT12	"place! I have to bring the fight"
+#define C_END8_TXT13	"to their world. Let them bring"
+#define C_END8_TXT14	"their worst. Let this end in hell!"
+
+#define C_END9_TXT01	"What kind of madness is this?"
+#define C_END9_TXT02	" "
+#define C_END9_TXT03	"I heard rumors of a secret lab,"
+#define C_END9_TXT04	"but I did not think the U.A.C."
+#define C_END9_TXT05	"would have the audacity."
+#define C_END9_TXT06	"the security operations."
+#define C_END9_TXT07	" "
+#define C_END9_TXT08	"I must find the purpose of this"
+#define C_END9_TXT09	"lab. The U.A.C. must not be"
+#define C_END9_TXT10	"allowed to keep their secrets."
+
+#define C_END10_TXT01	"I wretch as an acrid fog"
+#define C_END10_TXT02	"assaults my eyes. There is no"
+#define C_END10_TXT03	"mistaking the odor of a U.A.C."
+#define C_END10_TXT04	"weapons facility."
+#define C_END10_TXT05	" "
+#define C_END10_TXT06	"Why is it so deep in hell and"
+#define C_END10_TXT07	"what went wrong? It seems to"
+#define C_END10_TXT08	"have been enveloped in this"
+#define C_END10_TXT09	"toxic haze for a long time."
+#define C_END10_TXT10	" "
+#define C_END10_TXT11	"Perhaps they were trying to"
+#define C_END10_TXT12	"get back here. What hellish"
+#define C_END10_TXT13	"weapon technology could be"
+#define C_END10_TXT14	"so important?"
+
+#define C_END11_TXT01	"The death of the cyberdemon"
+#define C_END11_TXT02	"shook the ground as the world"
+#define C_END11_TXT03	"around me dissolved. What"
+#define C_END11_TXT04	"has pulled me from reality?"
+#define C_END11_TXT05	" "
+#define C_END11_TXT06	"An entity feels close now. I can"
+#define C_END11_TXT07	"feel its hate... It hates as much."
+#define C_END11_TXT08	"as I do and it wishes for my"
+#define C_END11_TXT09	"death."
+#define C_END11_TXT10	" "
+#define C_END11_TXT11	"I have been dropped in its"
+#define C_END11_TXT12	"realm. The smell of demon is"
+#define C_END11_TXT13	"everywhere! They wish to"
+#define C_END11_TXT14	"end my suffering. Only if it"
+#define C_END11_TXT15	"would be that simple!"
+
+#define C_END12_TXT01	"The demons have entered more"
+#define C_END12_TXT02	"worlds than we can comprehend."
+#define C_END12_TXT03	"This place does not follow the"
+#define C_END12_TXT04	"laws of nature."
+#define C_END12_TXT05	" "
+#define C_END12_TXT06	"A force beyond human"
+#define C_END12_TXT07	"understanding suspends this"
+#define C_END12_TXT08	"structure in an endless crimson"
+#define C_END12_TXT09	"void. A source of demonic"
+#define C_END12_TXT10	"power resides here."
+#define C_END12_TXT11	" "
+#define C_END12_TXT12	"This is either the edge of my"
+#define C_END12_TXT13	"sanity, or perhaps a key to"
+#define C_END12_TXT14	"fighting the demons..."
+
+#define C_END13_TXT01	"The mother of horrors has been"
+#define C_END13_TXT02	"slain! My comrades can now"
+#define C_END13_TXT03	"rest in peace. I wish I could"
+#define C_END13_TXT04	"rest with them..."
+#define C_END13_TXT05	" "
+#define C_END13_TXT06	"But something is not right with"
+#define C_END13_TXT07	"this place… The horizon is"
+#define C_END13_TXT08	"littered with monuments to"
+#define C_END13_TXT09	"technology."
+#define C_END13_TXT10	" "
+#define C_END13_TXT11	"This must be where their ship"
+#define C_END13_TXT12	"of flesh and steel was made!"
+#define C_END13_TXT13	"I cannot rest until all U.A.C."
+#define C_END13_TXT14	"technology is destroyed…"
+
+#define C_END14_TXT01    "The last facility smolders in."
+#define C_END14_TXT02	"ruin. Even the vile resurrector"
+#define C_END14_TXT03	"has fallen amongst the rubble.."
+#define C_END14_TXT04	" "
+#define C_END14_TXT05	"For the first time since stepping"
+#define C_END14_TXT06	"into hell... a sense of serenity"
+#define C_END14_TXT07	"permeates. I have found a."
+#define C_END14_TXT08	"purpose to live."
+#define C_END14_TXT09	" "
+#define C_END14_TXT10	"Hell is vast and the demons"
+#define C_END14_TXT11	"scavenge like rats. I shall"
+#define C_END14_TXT12	"hunt down every weapon and"
+#define C_END14_TXT13	"every circuit. I will bring"
+#define C_END14_TXT14	"this realm into the stone age."
+
+// Doom 64
 
 char *endcluster1[] =   // 8005A2C0
 {
@@ -200,6 +310,8 @@ char *endcluster6[] =   // 8005A3B0
 	T_NULL
 };
 
+// Lost Levels
+
 char *endcluster7[] =
 {
     C_END7_TXT01,
@@ -216,6 +328,137 @@ char *endcluster7[] =
     C_END7_TXT12,
     C_END7_TXT13,
     C_END7_TXT14,
+    T_NULL
+};
+
+// Beta 64
+
+char *endcluster8[] =   // 8005A2C0
+{
+    C_END8_TXT01,
+	C_END8_TXT02,
+	C_END8_TXT03,
+	C_END8_TXT04,
+	C_END8_TXT05,
+	C_END8_TXT06,
+	C_END8_TXT07,
+	C_END8_TXT08,
+	C_END8_TXT09,
+	C_END8_TXT10,
+	C_END8_TXT11,
+	C_END8_TXT12,
+	C_END8_TXT13,
+	C_END8_TXT14,
+	T_NULL
+};
+
+char *endcluster9[] =   // 8005A300
+{
+    C_END9_TXT01,
+	C_END9_TXT02,
+	C_END9_TXT03,
+	C_END9_TXT04,
+	C_END9_TXT05,
+	C_END9_TXT06,
+	C_END9_TXT07,
+	C_END9_TXT08,
+	C_END9_TXT09,
+	C_END9_TXT10,
+	T_NULL
+};
+
+char *endcluster10[] =   // 8005A330
+{
+    C_END10_TXT01,
+	C_END10_TXT02,
+	C_END10_TXT03,
+	C_END10_TXT04,
+	C_END10_TXT05,
+	C_END10_TXT06,
+	C_END10_TXT07,
+	C_END10_TXT08,
+	C_END10_TXT09,
+	C_END10_TXT10,
+	C_END10_TXT11,
+	C_END10_TXT12,
+	C_END10_TXT13,
+	C_END10_TXT14,
+	T_NULL
+};
+
+char *endcluster11[] =   // 8005A360
+{
+    C_END11_TXT01,
+	C_END11_TXT02,
+	C_END11_TXT03,
+	C_END11_TXT04,
+	C_END11_TXT05,
+	C_END11_TXT06,
+	C_END11_TXT07,
+	C_END11_TXT08,
+	C_END11_TXT09,
+	C_END11_TXT10,
+	C_END11_TXT11,
+	C_END11_TXT12,
+	C_END11_TXT13,
+	C_END11_TXT14,
+	C_END11_TXT15,
+	T_NULL
+};
+
+char *endcluster12[] =   // 8005A390
+{
+    C_END12_TXT01,
+	C_END12_TXT02,
+	C_END12_TXT03,
+	C_END12_TXT04,
+	C_END12_TXT05,
+	C_END12_TXT06,
+	C_END12_TXT08,
+	C_END12_TXT09,
+	C_END12_TXT10,
+	C_END12_TXT11,
+	C_END12_TXT12,
+	C_END12_TXT13,
+	C_END12_TXT14,
+	T_NULL
+};
+
+char *endcluster13[] =   // 8005A3B0
+{
+    C_END13_TXT01,
+	C_END13_TXT02,
+	C_END13_TXT03,
+	C_END13_TXT04,
+	C_END13_TXT05,
+	C_END13_TXT06,
+	C_END13_TXT07,
+	C_END13_TXT08,
+	C_END13_TXT09,
+	C_END13_TXT10,
+	C_END13_TXT11,
+	C_END13_TXT12,
+	C_END13_TXT13,
+	C_END13_TXT14,
+	T_NULL
+};
+
+char *endcluster14[] =
+{
+    C_END14_TXT01,
+    C_END14_TXT02,
+    C_END14_TXT03,
+    C_END14_TXT04,
+    C_END14_TXT05,
+    C_END14_TXT06,
+    C_END14_TXT07,
+    C_END14_TXT08,
+    C_END14_TXT09,
+    C_END14_TXT10,
+    C_END14_TXT11,
+    C_END14_TXT12,
+    C_END14_TXT13,
+    C_END14_TXT14,
     T_NULL
 };
 
@@ -303,30 +546,55 @@ static boolean speed = false;
 
 void F_StartIntermission(void) // 80002CD0
 {
-    if ((gamemap == 8) && (nextmap == 9))
+    if (nextmap == 9)
     {
         text = endcluster1;
         textypos = 15;
     }
-    else if ((gamemap == 4) && (nextmap == 29))
+    else if (nextmap == 29)
     {
         text = endcluster2;
         textypos = 43;
     }
-    else if ((gamemap == 12) && (nextmap == 30))
+    else if (nextmap == 30)
     {
         text = endcluster3;
         textypos = 43;
     }
-    else if ((gamemap == 18) && (nextmap == 31))
+    else if (nextmap == 31)
     {
         text = endcluster4;
         textypos = 43;
     }
-    else if ((gamemap == 1) && (nextmap == 32))
+    else if (nextmap == 32)
     {
         text = endcluster5;
         textypos = 71;
+    }
+	else if (nextmap == 49) // Beta 64
+    {
+        text = endcluster8;
+        textypos = 15;
+    }
+    else if (nextmap == 72)
+    {
+        text = endcluster9;
+        textypos = 15;
+    }
+    else if (nextmap == 71)
+    {
+        text = endcluster10;
+        textypos = 15;
+    }
+    else if (nextmap == 56)
+    {
+        text = endcluster11;
+        textypos = 15;
+    }
+    else if (nextmap == 70)
+    {
+        text = endcluster12;
+        textypos = 15;
     }
 
     DrawerStatus = 2;
@@ -534,7 +802,7 @@ int F_Ticker(void) // 80003258
             break;
 
         case F_STAGE_DRAWTEXT:
-            if (gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
+            if (gamemap == 74 ? *endcluster14[textline] : gamemap == 64 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
             {
                 textalpha += !speed ? 8 : 16;
                 if (textalpha > 255)

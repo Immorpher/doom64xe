@@ -1038,7 +1038,15 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
 			ok = EV_DoPlat(line, blazeUWDS, 0);
 			break;
         case 124:		/* Secret EXIT */
-			P_SecretExitLevel(line->tag);//(G_SecretExitLevel)
+			if (gamemap >= BETALEVEL && gamemap <= LASTLEVEL)
+			{ // Update for the Beta 64 secret exits
+				P_SecretExitLevel(line->tag+BETALEVEL-1);//(G_SecretExitLevel)
+			}
+			else
+			{
+				P_SecretExitLevel(line->tag);//(G_SecretExitLevel)
+			}
+			
 			ok = true;
 			break;
         case 125:		/* TELEPORT MonsterONLY */

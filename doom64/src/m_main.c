@@ -104,6 +104,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT59 "Default" // Default video
 #define M_TXT60 "Map Stats:" // Automap stats
 #define M_TXT61 "Bonus Pak" // Bonus level hub
+#define M_TXT62 "Beta 64" // Antnee's Beta 64
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -119,7 +120,7 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
-	M_TXT60, M_TXT61
+	M_TXT60, M_TXT61, M_TXT62
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -151,11 +152,12 @@ const menuitem_t Menu_Skill[4] = // 8005A990
     #endif // ENABLE_NIGHTMARE
 };
 
-const menuitem_t Menu_Episode[3] =
+const menuitem_t Menu_Episode[4] =
 {
     { 51, 102, 80 },    // Doom 64
     { 52, 102, 100},    // The Lost Levels
-    { 61, 102, 120},    // Bonus Pak
+    { 62, 102, 120},    // Beta 64
+    { 61, 102, 140},    // Bonus Pak
 };
 
 menuitem_t Menu_Options[7] = // 8005A9C0
@@ -1290,7 +1292,7 @@ int M_MenuTicker(void) // 80007E0C
                         EnableExpPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Episode;
-                        itemlines = 3;
+                        itemlines = 4;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 0;
 
@@ -1956,10 +1958,38 @@ int M_MenuTicker(void) // 80007E0C
 						return ga_nothing;
 					}
 					break;
+					
                 case 61: // Bonus Pak
                     if (truebuttons)
                     {
                         startmap = MenuItem[cursorpos].casepos == 61 ? 0 : 1;
+                        
+                        S_StartSound(NULL, sfx_pistol);
+                        M_SaveMenuData();
+
+                        MenuItem = Menu_Skill;
+                        #if ENABLE_NIGHTMARE == 1
+                        itemlines = 5;
+                        #else
+                        itemlines = 4;
+                        #endif // ENABLE_NIGHTMARE
+                        MenuCall = M_MenuTitleDrawer;
+                        cursorpos = 2;
+
+                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+                        M_RestoreMenuData((exit == ga_exit));
+                        
+                        if (exit == ga_exit)
+                            return ga_nothing;
+
+                        return exit;
+                    }
+                    break;
+					
+				case 62: // Beta 64
+                    if (truebuttons)
+                    {
+                        startmap = MenuItem[cursorpos].casepos == 62 ? 41 : 1;
                         
                         S_StartSound(NULL, sfx_pistol);
                         M_SaveMenuData();

@@ -175,11 +175,9 @@ typedef enum
 	ga_exit
 } gameaction_t;
 
-#if ENABLE_EXTRA_EPISODES == 1
-#define LASTLEVEL 41
-#else
-#define LASTLEVEL 34
-#endif
+
+#define LASTLEVEL 74 // end of normal levels
+#define BETALEVEL 34 // [Immorpher] Define where beta 64 levels begin
 #define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 40))
 
 

@@ -51,6 +51,42 @@ extern int nextmap;
 #define MI_TXT39	"Final Judgement"
 #define MI_TXT40	"Panic"
 
+// Beta 64
+#define MI_TXT41	"Penumbra"
+#define MI_TXT42	"Hydroplant"
+#define MI_TXT43	"Signal Processing"
+#define MI_TXT44	"Disposal Center"
+#define MI_TXT45	"Refinery"
+#define MI_TXT46	"Gamma Lab"
+#define MI_TXT47	"Sector R"
+#define MI_TXT48	"Ultima Porta"
+#define MI_TXT49	"Profane Paradise"
+#define MI_TXT50	"Pain Warren"
+#define MI_TXT51	"City of The Damned"
+#define MI_TXT52	"Mines"
+#define MI_TXT53	"Lair of the Blind"
+#define MI_TXT54	"Abhorred Sanctuary"
+#define MI_TXT55	"Fortress of Abaddon"
+#define MI_TXT56	"Simplicity"
+#define MI_TXT57	"Inferni Carceris"
+#define MI_TXT58	"Umbra"
+#define MI_TXT59	"Unearthly Spire"
+#define MI_TXT60	"Putrid Cloister"
+#define MI_TXT61	"Tartarus"
+#define MI_TXT62	"Court of the Crimson"
+#define MI_TXT63	"Nowhere to Hide"
+#define MI_TXT64	"The Nest"
+#define MI_TXT65	"Hubris"
+#define MI_TXT66	"Folly"
+#define MI_TXT67	"Regret"
+#define MI_TXT68	"Rage"
+
+#define MI_TXT70	"The Beyond"
+#define MI_TXT71	"Irradiated"
+#define MI_TXT72	"Dark Secrets"
+
+#define MI_TXT74	"Sorrow" // Altars of Tech
+
 // Bonus Pak Maps
 #define MI_TXT129	"Anguish"
 #define MI_TXT130	"Wretched"
@@ -108,40 +144,40 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT38 , 105},
     {MI_TXT39 , 98},
     {MI_TXT40 , 101},
+    {MI_TXT41 , 96}, // Beta 64
+    {MI_TXT42 , 97},
+    {MI_TXT43 , 105},
+    {MI_TXT44 , 104},
+    {MI_TXT45 , 101},
+    {MI_TXT46 , 107},
+    {MI_TXT47 , 108},
+    {MI_TXT48 , 110},
+    {MI_TXT49 , 95},
+    {MI_TXT50 , 98},
+    {MI_TXT51 , 99},
+    {MI_TXT52 , 102},
+    {MI_TXT53 , 93},
+    {MI_TXT54 , 106},
+    {MI_TXT55 , 111},
+    {MI_TXT56 , 97},
+    {MI_TXT57 , 103},
+    {MI_TXT58 , 94},
+    {MI_TXT59 , 100},
+    {MI_TXT60 , 112},
+    {MI_TXT61 , 109},
+    {MI_TXT62 , 101},
+    {MI_TXT63 , 108},
+    {MI_TXT64 , 98},
+    {MI_TXT65 , 97},
+    {MI_TXT66 , 98},
+    {MI_TXT67 , 94},
+    {MI_TXT68 , 99},
     {T_NULL , 0},
+    {MI_TXT70 , 102},
+    {MI_TXT71 , 103},
+    {MI_TXT72 , 104},
     {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
+    {MI_TXT74 , 100},
     {T_NULL , 0},
     {T_NULL , 0},
     {T_NULL , 0},

@@ -219,11 +219,16 @@ void G_RunGame (void) // 80004794
 			I_WIPE_FadeOutScreen();
         }
 
-        if(((gamemap ==  8) && (nextmap ==  9)) ||
-           ((gamemap ==  4) && (nextmap == 29)) ||
-           ((gamemap == 12) && (nextmap == 30)) ||
-           ((gamemap == 18) && (nextmap == 31)) ||
-           ((gamemap ==  1) && (nextmap == 32)))
+        if(nextmap ==  9 ||
+           nextmap == 29 ||
+           nextmap == 30 ||
+           nextmap == 31 ||
+           nextmap == 32 ||
+           nextmap == 49 || // Beta 64
+           nextmap == 71 ||
+           nextmap == 72 ||
+           nextmap == 56 ||
+           nextmap == 70)
         {
             /* run the intermission if needed */
             MiniLoop(F_StartIntermission, F_StopIntermission, F_TickerIntermission, F_DrawerIntermission);
