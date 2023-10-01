@@ -704,7 +704,9 @@ void P_RefreshBrightness(void) // 8000f410
     if (factor < infraredFactor) {
         factor = infraredFactor;
     }
-    P_SetLightFactor(factor);
+	
+    if (DrawerStatus == 1) // Doom 64 1.1 bug fix found by Nova
+        P_SetLightFactor(factor);
 	
 }
 
