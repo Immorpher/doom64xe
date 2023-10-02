@@ -92,7 +92,7 @@ void D_DrawLegal(void) // 8002B644
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-    M_DrawBackground(27, 74, text_alpha, "USLEGAL");
+    M_DrawBackground(0, 0, text_alpha, "USLEGAL");
 
     if (FilesUsed > -1) {
         ST_DrawString(-1, 200, "hold \x8d to manage pak", text_alpha | 0xffffff00);
@@ -119,6 +119,8 @@ void D_DrawNoPak(void) // 8002B7F4
     gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+	
+	M_DrawBackground(0, 0, text_alpha, "USLEGAL");
 
     ST_DrawString(-1,  40, "no controller pak.", 0xffffffff);
     ST_DrawString(-1,  60, "your game cannot", 0xffffffff);
@@ -141,6 +143,8 @@ void D_DrawNoMemory(void)
     gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+	
+	M_DrawBackground(0, 0, text_alpha, "USLEGAL");
 
     ST_DrawString(-1,  20, "no expansion pak.", 0xffffffff);
     ST_DrawString(-1,  40, "complex levels outside", 0xffffffff);
