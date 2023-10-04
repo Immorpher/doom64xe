@@ -185,7 +185,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
     side = seg->sidedef;
 
     // [GEC] Prevents errors in textures in T coordinates, but is not applied to switches
-    curRowoffset = side->rowoffset & (127 << FRACBITS);
+    curRowoffset = side->rowoffset & (511 << FRACBITS);
 	
     f_ceilingheight = frontsector->ceilingheight >> 16;
     f_floorheight = frontsector->floorheight >> 16;
@@ -412,7 +412,7 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
     int wshift, hshift;
 	
 	// [GEC] Prevents errors in textures in S coordinates
-    int curTextureoffset = (seg->sidedef->textureoffset + seg->offset) & (127 << FRACBITS);
+    int curTextureoffset = (seg->sidedef->textureoffset + seg->offset) & (511 << FRACBITS);
 
     if (texture != 16)
     {
