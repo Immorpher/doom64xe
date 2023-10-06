@@ -15,7 +15,7 @@
 
 #ifndef NOUSEWESSCODE
 
-module_header	sfile_hdr;				//800b6a60
+module_header sfile_hdr __attribute__((aligned(16)));				//800b6a60
 master_status_structure *ref_pm_stat;	//800B6A80
 char *loaderfile;						//800B6A84
 int ref_max_seq_num;					//800B6A88
