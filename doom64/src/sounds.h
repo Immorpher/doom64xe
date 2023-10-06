@@ -105,7 +105,7 @@ typedef enum
 
 typedef enum
 {
-    mus_amb01 = 93, //NUMSFX
+    mus_amb01 = NUMSFX,
     mus_amb02,
     mus_amb03,
     mus_amb04,
