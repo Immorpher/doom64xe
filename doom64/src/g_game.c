@@ -216,7 +216,7 @@ void G_RunGame (void) // 80004794
            nextmap == 30 ||
            nextmap == 31 ||
            nextmap == 32 ||
-           nextmap == 49 || // Beta 64
+           nextmap == 49 || // Beta 64 maps start here
            nextmap == 71 ||
            nextmap == 72 ||
            nextmap == 56 ||
