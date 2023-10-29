@@ -13,6 +13,7 @@ int		    numlinespecials;    // 800A5F64
 sector_t    **sectorspeciallist;// 800A5F68
 int         numsectorspecials;  // 800A5F6C
 
+/*---------- Beta 64 table for the future
 animdef_t		animdefs[MAXANIMS] = // 8005AE80
 {
 	{ 15, "SMONAA", 4, 7, false, false },
@@ -32,7 +33,8 @@ animdef_t		animdefs[MAXANIMS] = // 8005AE80
 	{  0,  "HTELA", 4, 1,  true, false }
 };
 
-/*---------- Beta 64 table for the future
+/---------*/
+
 animdef_t		animdefs[MAXANIMS] = // 8005AE80
 {
 	{ 15, "SMONAA", 4, 7, false, false },
@@ -56,7 +58,6 @@ animdef_t		animdefs[MAXANIMS] = // 8005AE80
 	{  0,  "LASERG", 2, 1,  false, false },
 	{  0,  "WFALL1", 8, 2,  false, false }
 };
-/---------*/
 
 
 /*----------

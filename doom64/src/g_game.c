@@ -210,14 +210,6 @@ void G_RunGame (void) // 80004794
         /* run a stats intermission */
         
 		MiniLoop(IN_Start, IN_Stop, IN_Ticker, IN_Drawer);
-			
-        if (EnableExpPak)
-		{
-			M_EncodePassword(Passwordbuff);
-        	CurPasswordSlot = 16;
-            MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_SavePakDrawer);
-			I_WIPE_FadeOutScreen();
-        }
 
         if(nextmap ==  9 ||
            nextmap == 29 ||

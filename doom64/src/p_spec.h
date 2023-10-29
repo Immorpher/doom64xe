@@ -118,7 +118,7 @@ typedef struct
 	boolean	ispalcycle;
 } animdef_t;
 
-#define	MAXANIMS		15  //[d64] is 15, Beta 64 goes to 20
+#define	MAXANIMS		20  //[d64] is 15, Beta 64 goes to 20
 extern	anim_t	anims[MAXANIMS], *lastanim;
 
 extern card_t   MapBlueKeyType;
