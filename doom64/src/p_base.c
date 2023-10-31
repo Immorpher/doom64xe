@@ -601,9 +601,9 @@ boolean PB_BoxCrossLine(line_t *ld) // 8000920
 	ldx = ld->dx >> FRACBITS;
 	ldy = ld->dy >> FRACBITS;
 
-	dx1 = (x1 - lx) >> 16;
+	dx1 = (x1 - lx) >> FRACBITS;
 	dy1 = (testbbox[BOXTOP] - ly) >> FRACBITS;
-	dx2 = (x2 - lx) >> 16;
+	dx2 = (x2 - lx) >> FRACBITS;
 	dy2 = (testbbox[BOXBOTTOM] - ly) >> FRACBITS;
 
 	side1 = ldy*dx1 < dy1*ldx;

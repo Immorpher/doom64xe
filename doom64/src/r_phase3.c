@@ -187,8 +187,8 @@ void R_WallPrep(seg_t *seg) // 80026A44
     // [GEC] Prevents errors in textures in T coordinates, but is not applied to switches
     curRowoffset = side->rowoffset & (511 << FRACBITS);
 	
-    f_ceilingheight = frontsector->ceilingheight >> 16;
-    f_floorheight = frontsector->floorheight >> 16;
+    f_ceilingheight = frontsector->ceilingheight >> FRACBITS;
+    f_floorheight = frontsector->floorheight >> FRACBITS;
 
     thingcolor = lights[frontsector->colors[2]].rgba;
     upcolor = lights[frontsector->colors[3]].rgba;
@@ -197,10 +197,10 @@ void R_WallPrep(seg_t *seg) // 80026A44
     if (li->flags & ML_BLENDING)
     {
         r1 = upcolor  >> 24;
-        g1 = upcolor  >> 16 & 0xff;
+        g1 = upcolor  >> FRACBITS & 0xff;
         b1 = upcolor  >> 8 & 0xff;
         r2 = lowcolor >> 24;
-        g2 = lowcolor >> 16 & 0xff;
+        g2 = lowcolor >> FRACBITS & 0xff;
         b2 = lowcolor >> 8 & 0xff;
 
         tmp_upcolor = upcolor;
@@ -218,20 +218,20 @@ void R_WallPrep(seg_t *seg) // 80026A44
     backsector = seg->backsector;
     if (backsector)
     {
-        b_floorheight = backsector->floorheight >> 16;
-        b_ceilingheight = backsector->ceilingheight >> 16;
+        b_floorheight = backsector->floorheight >> FRACBITS;
+        b_ceilingheight = backsector->ceilingheight >> FRACBITS;
 
         if ((backsector->ceilingheight < frontsector->ceilingheight) && (backsector->ceilingpic != -1))
         {
             if (li->flags & ML_DONTPEGTOP)
             {
                 height = (f_ceilingheight - b_ceilingheight);
-                rowoffs = (curRowoffset >> 16) + height;
+                rowoffs = (curRowoffset >> FRACBITS) + height;
             }
             else
             {
                 height = (f_ceilingheight - b_ceilingheight);
-                rowoffs = ((height + 127) & -128) + (curRowoffset >> 16);
+                rowoffs = ((height + 127) & -128) + (curRowoffset >> FRACBITS);
             }
 
             if (li->flags & ML_BLENDING)
@@ -247,9 +247,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
                         height2 = 0;
                     }
 
-                    tmp_lowcolor = (((((r2 - r1) * height2) >> 16) + r1) << 24) |
-                                   (((((g2 - g1) * height2) >> 16) + g1) << 16) |
-                                   (((((b2 - b1) * height2) >> 16) + b1) << 8)  | 0xff;
+                    tmp_lowcolor = (((((r2 - r1) * height2) >> FRACBITS) + r1) << 24) |
+                                   (((((g2 - g1) * height2) >> FRACBITS) + g1) << 16) |
+                                   (((((b2 - b1) * height2) >> FRACBITS) + b1) << 8)  | 0xff;
                 }
 
                 if (li->flags & ML_INVERSEBLEND)
@@ -278,12 +278,12 @@ void R_WallPrep(seg_t *seg) // 80026A44
                 if (SWITCHMASK(li->flags) == ML_SWITCHX04)
                 {
                     pic = side->bottomtexture;
-                    rowoffs = side->rowoffset >> 16;
+                    rowoffs = side->rowoffset >> FRACBITS;
                 }
                 else
                 {
                     pic = side->midtexture;
-                    rowoffs = side->rowoffset >> 16;
+                    rowoffs = side->rowoffset >> FRACBITS;
                 }
 
                 R_RenderSwitch(seg, pic, b_ceilingheight + rowoffs + 48, thingcolor);
@@ -296,11 +296,11 @@ void R_WallPrep(seg_t *seg) // 80026A44
 
             if ((li->flags & ML_DONTPEGBOTTOM) == 0)
             {
-                rowoffs = curRowoffset >> 16;
+                rowoffs = curRowoffset >> FRACBITS;
             }
             else
             {
-                rowoffs = height + (curRowoffset >> 16);
+                rowoffs = height + (curRowoffset >> FRACBITS);
             }
 
             if (li->flags & ML_BLENDING)
@@ -316,9 +316,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
                         height2 = 0;
                     }
 
-                    tmp_upcolor = (((((r2 - r1) * height2) >> 16) + r1) << 24) |
-                                  (((((g2 - g1) * height2) >> 16) + g1) << 16) |
-                                  (((((b2 - b1) * height2) >> 16) + b1) << 8)  | 0xff;
+                    tmp_upcolor = (((((r2 - r1) * height2) >> FRACBITS) + r1) << 24) |
+                                  (((((g2 - g1) * height2) >> FRACBITS) + g1) << 16) |
+                                  (((((b2 - b1) * height2) >> FRACBITS) + b1) << 8)  | 0xff;
                 }
 
                 topcolor = tmp_upcolor;
@@ -339,12 +339,12 @@ void R_WallPrep(seg_t *seg) // 80026A44
                 if (SWITCHMASK(li->flags) == ML_SWITCHX02)
                 {
                     pic = side->toptexture;
-                    rowoffs = side->rowoffset >> 16;
+                    rowoffs = side->rowoffset >> FRACBITS;
                 }
                 else
                 {
                     pic = side->midtexture;
-                    rowoffs = side->rowoffset >> 16;
+                    rowoffs = side->rowoffset >> FRACBITS;
                 }
 
                 R_RenderSwitch(seg, pic, b_floorheight + rowoffs - 16, thingcolor);
@@ -360,17 +360,17 @@ void R_WallPrep(seg_t *seg) // 80026A44
     if (li->flags & ML_DONTPEGBOTTOM)
     {
         height = m_top - m_bottom;
-        rowoffs = ((height + 127) & -128) + (curRowoffset >> 16);
+        rowoffs = ((height + 127) & -128) + (curRowoffset >> FRACBITS);
     }
     else if (li->flags & ML_DONTPEGTOP)
     {
-        rowoffs = (curRowoffset >> 16) - m_bottom;
+        rowoffs = (curRowoffset >> FRACBITS) - m_bottom;
         height = m_top - m_bottom;
     }
     else
     {
         height = m_top - m_bottom;
-        rowoffs = (curRowoffset >> 16) + height;
+        rowoffs = (curRowoffset >> FRACBITS) + height;
     }
 
     if (li->flags & ML_BLENDING)
@@ -389,12 +389,12 @@ void R_WallPrep(seg_t *seg) // 80026A44
         if (SWITCHMASK(li->flags) == ML_SWITCHX02)
         {
             pic = side->toptexture;
-            rowoffs = side->rowoffset >> 16;
+            rowoffs = side->rowoffset >> FRACBITS;
         }
         else
         {
             pic = side->bottomtexture;
-            rowoffs = side->rowoffset >> 16;
+            rowoffs = side->rowoffset >> FRACBITS;
         }
 
         R_RenderSwitch(seg, pic, m_bottom + rowoffs + 48, thingcolor);
@@ -490,16 +490,16 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
         v2 = seg->v2;
 
         // x coordinates
-        VTX1[0].v.ob[0] = VTX1[3].v.ob[0] = (signed short)(v1->x >> 16);
-        VTX1[1].v.ob[0] = VTX1[2].v.ob[0] = (signed short)(v2->x >> 16);
+        VTX1[0].v.ob[0] = VTX1[3].v.ob[0] = (signed short)(v1->x >> FRACBITS);
+        VTX1[1].v.ob[0] = VTX1[2].v.ob[0] = (signed short)(v2->x >> FRACBITS);
 
         // y coordinates
         VTX1[0].v.ob[1] = VTX1[1].v.ob[1] = topHeight;
         VTX1[3].v.ob[1] = VTX1[2].v.ob[1] = bottomHeight;
 
         // z coordinates
-        VTX1[0].v.ob[2] = VTX1[3].v.ob[2] = (signed short)-(v1->y >> 16);
-        VTX1[1].v.ob[2] = VTX1[2].v.ob[2] = (signed short)-(v2->y >> 16);
+        VTX1[0].v.ob[2] = VTX1[3].v.ob[2] = (signed short)-(v1->y >> FRACBITS);
+        VTX1[1].v.ob[2] = VTX1[2].v.ob[2] = (signed short)-(v2->y >> FRACBITS);
 
         // texture s coordinates
         VTX1[0].v.tc[0] = VTX1[3].v.tc[0] = (curTextureoffset >> 11);
@@ -600,16 +600,16 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
     sin = finesine[seg->angle >> ANGLETOFINESHIFT] << 1;
 
     // x coordinates
-    VTX1[0].v.ob[0] = VTX1[3].v.ob[0] = ((x) - (cos << 3) + sin) >> 16;
-    VTX1[1].v.ob[0] = VTX1[2].v.ob[0] = ((x) + (cos << 3) + sin) >> 16;
+    VTX1[0].v.ob[0] = VTX1[3].v.ob[0] = ((x) - (cos << 3) + sin) >> FRACBITS;
+    VTX1[1].v.ob[0] = VTX1[2].v.ob[0] = ((x) + (cos << 3) + sin) >> FRACBITS;
 
     // y coordinates
     VTX1[0].v.ob[1] = VTX1[1].v.ob[1] = topOffset;
     VTX1[3].v.ob[1] = VTX1[2].v.ob[1] = topOffset - 32;
 
     // z coordinates
-    VTX1[0].v.ob[2] = VTX1[3].v.ob[2] = ((-y) + (sin << 3) + cos) >> 16;
-    VTX1[1].v.ob[2] = VTX1[2].v.ob[2] = ((-y) - (sin << 3) + cos) >> 16;
+    VTX1[0].v.ob[2] = VTX1[3].v.ob[2] = ((-y) + (sin << 3) + cos) >> FRACBITS;
+    VTX1[1].v.ob[2] = VTX1[2].v.ob[2] = ((-y) - (sin << 3) + cos) >> FRACBITS;
 
     // texture s coordinates
     VTX1[0].v.tc[0] = VTX1[3].v.tc[0] = (0 << 6);
@@ -683,15 +683,15 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
     }
 
     vrt = leaf->vertex;
-    VTX1[0].v.ob[0] = (vrt->x >> 16);
+    VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
     VTX1[0].v.ob[1] = zpos;
-    VTX1[0].v.ob[2] =-(vrt->y >> 16);
-    VTX1[0].v.tc[0] = ((((vrt->x + xpos) & 0x3f0000U) >> 16) << 5);
-    VTX1[0].v.tc[1] =-((((vrt->y + ypos) & 0x3f0000U) >> 16) << 5);
+    VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+    VTX1[0].v.tc[0] = ((((vrt->x + xpos) & 0x3f0000U) >> FRACBITS) << 5);
+    VTX1[0].v.tc[1] =-((((vrt->y + ypos) & 0x3f0000U) >> FRACBITS) << 5);
     *(int *)VTX1[0].v.cn = color;
 
-    x = ((vrt->x + xpos) >> 16) & -64;
-    y = ((vrt->y + ypos) >> 16) & -64;
+    x = ((vrt->x + xpos) >> FRACBITS) & -64;
+    y = ((vrt->y + ypos) >> FRACBITS) & -64;
 
     gSPTexture(GFX1++, (1024 << 6)-1, (1024 << 6)-1, 0, G_TX_RENDERTILE, G_ON);
 
@@ -739,11 +739,11 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
             while(i != (numverts & 3))
             {
                 vrt = leaf->vertex;
-                VTX1[0].v.ob[0] = (vrt->x >> 16);
+                VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
                 VTX1[0].v.ob[1] = zpos;
-                VTX1[0].v.ob[2] =-(vrt->y >> 16);
-                VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> 16) - x) << 5);
-                VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> 16) - y) << 5);
+                VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+                VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
+                VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
                 *(int *)VTX1[0].v.cn = color;
                 VTX1++;
                 leaf++;
@@ -754,41 +754,41 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
         while(i != numverts)
         {
             vrt = leaf->vertex;
-            VTX1[0].v.ob[0] = (vrt->x >> 16);
+            VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
             VTX1[0].v.ob[1] = zpos;
-            VTX1[0].v.ob[2] =-(vrt->y >> 16);
-            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> 16) - x) << 5);
-            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> 16) - y) << 5);
+            VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
+            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
             *(int *)VTX1[0].v.cn = color;
             VTX1++;
             leaf++;
 
             vrt = leaf->vertex;
-            VTX1[0].v.ob[0] = (vrt->x >> 16);
+            VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
             VTX1[0].v.ob[1] = zpos;
-            VTX1[0].v.ob[2] =-(vrt->y >> 16);
-            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> 16) - x) << 5);
-            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> 16) - y) << 5);
+            VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
+            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
             *(int *)VTX1[0].v.cn = color;
             VTX1++;
             leaf++;
 
             vrt = leaf->vertex;
-            VTX1[0].v.ob[0] = (vrt->x >> 16);
+            VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
             VTX1[0].v.ob[1] = zpos;
-            VTX1[0].v.ob[2] =-(vrt->y >> 16);
-            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> 16) - x) << 5);
-            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> 16) - y) << 5);
+            VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
+            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
             *(int *)VTX1[0].v.cn = color;
             VTX1++;
             leaf++;
 
             vrt = leaf->vertex;
-            VTX1[0].v.ob[0] = (vrt->x >> 16);
+            VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
             VTX1[0].v.ob[1] = zpos;
-            VTX1[0].v.ob[2] =-(vrt->y >> 16);
-            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> 16) - x) << 5);
-            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> 16) - y) << 5);
+            VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+            VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
+            VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
             *(int *)VTX1[0].v.cn = color;
             VTX1++;
             leaf++;
@@ -800,11 +800,11 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
     for(i = 0; i < numverts; i++)
     {
         vrt = leaf->vertex;
-        VTX1[0].v.ob[0] = (vrt->x >> 16);
+        VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
         VTX1[0].v.ob[1] = zpos;
-        VTX1[0].v.ob[2] =-(vrt->y >> 16);
-        VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> 16) - x) << 5);
-        VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> 16) - y) << 5);
+        VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
+        VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
+        VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
         *(int *)VTX1[0].v.cn = color;
         VTX1++;
         leaf++;
@@ -911,22 +911,22 @@ void R_RenderThings(subsector_t *sub) // 80028248
             if (flip)
             {
                 xx = thing->x + (((spriteN64_t*)data)->xoffs * viewsin);
-                xpos1 = (xx - (width * viewsin)) >> 16;
-                xpos2 = (xx) >> 16;
+                xpos1 = (xx - (width * viewsin)) >> FRACBITS;
+                xpos2 = (xx) >> FRACBITS;
 
                 yy = thing->y - (((spriteN64_t*)data)->xoffs * viewcos);
-                zpos1 = -(yy + (width * viewcos)) >> 16;
-                zpos2 = -(yy) >> 16;
+                zpos1 = -(yy + (width * viewcos)) >> FRACBITS;
+                zpos2 = -(yy) >> FRACBITS;
             }
             else
             {
                 xx = thing->x - (((spriteN64_t*)data)->xoffs * viewsin);
-                xpos2 = (xx + (width * viewsin)) >> 16;
-                xpos1 = (xx) >> 16;
+                xpos2 = (xx + (width * viewsin)) >> FRACBITS;
+                xpos1 = (xx) >> FRACBITS;
 
                 yy = thing->y + (((spriteN64_t*)data)->xoffs * viewcos);
-                zpos2 = -(yy - (width * viewcos)) >> 16;
-                zpos1 = -(yy) >> 16;
+                zpos2 = -(yy - (width * viewcos)) >> FRACBITS;
+                zpos1 = -(yy) >> FRACBITS;
             }
 
             gSPTexture(GFX1++, (512 << 6), (512 << 6), 0, 0, 1);
@@ -982,7 +982,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
                 gDPPipeSync(GFX1++);
             }
 
-            ypos = (thing->z >> 16) + ((spriteN64_t*)data)->yoffs;
+            ypos = (thing->z >> FRACBITS) + ((spriteN64_t*)data)->yoffs;
 
             VTX1[0].v.ob[0] = xpos1;
             VTX1[0].v.ob[1] = ypos;
@@ -1105,29 +1105,29 @@ void R_RenderLaser(mobj_t *thing) // 80028CCC
     gSP2Triangles(GFX1++, 0, 3, 5, 2/*flag1*/,
 						  3, 4, 5, 2/*flag2*/);
 
-    VTX1[0].v.ob[0] = (laserdata->x1 >> 16);
-    VTX1[0].v.ob[1] = (laserdata->z1 >> 16);
-    VTX1[0].v.ob[2] = -(laserdata->y1 >> 16);
+    VTX1[0].v.ob[0] = (laserdata->x1 >> FRACBITS);
+    VTX1[0].v.ob[1] = (laserdata->z1 >> FRACBITS);
+    VTX1[0].v.ob[2] = -(laserdata->y1 >> FRACBITS);
 
-    VTX1[1].v.ob[0] = ((laserdata->x1 - laserdata->slopey) >> 16);
-    VTX1[1].v.ob[1] = (laserdata->z1 >> 16);
-    VTX1[1].v.ob[2] = (-(laserdata->y1 + laserdata->slopex) >> 16);
+    VTX1[1].v.ob[0] = ((laserdata->x1 - laserdata->slopey) >> FRACBITS);
+    VTX1[1].v.ob[1] = (laserdata->z1 >> FRACBITS);
+    VTX1[1].v.ob[2] = (-(laserdata->y1 + laserdata->slopex) >> FRACBITS);
 
-    VTX1[2].v.ob[0] = ((laserdata->x2 - laserdata->slopey) >> 16);
-    VTX1[2].v.ob[1] = (laserdata->z2 >> 16);
-    VTX1[2].v.ob[2] = (-(laserdata->y2 + laserdata->slopex) >> 16);
+    VTX1[2].v.ob[0] = ((laserdata->x2 - laserdata->slopey) >> FRACBITS);
+    VTX1[2].v.ob[1] = (laserdata->z2 >> FRACBITS);
+    VTX1[2].v.ob[2] = (-(laserdata->y2 + laserdata->slopex) >> FRACBITS);
 
-    VTX1[3].v.ob[0] = (laserdata->x2 >> 16);
-    VTX1[3].v.ob[1] = (laserdata->z2 >> 16);
-    VTX1[3].v.ob[2] = -(laserdata->y2 >> 16);
+    VTX1[3].v.ob[0] = (laserdata->x2 >> FRACBITS);
+    VTX1[3].v.ob[1] = (laserdata->z2 >> FRACBITS);
+    VTX1[3].v.ob[2] = -(laserdata->y2 >> FRACBITS);
 
-    VTX1[4].v.ob[0] = ((laserdata->x2 + laserdata->slopey) >> 16);
-    VTX1[4].v.ob[1] = (laserdata->z2 >> 16);
-    VTX1[4].v.ob[2] = (-(laserdata->y2 - laserdata->slopex) >> 16);
+    VTX1[4].v.ob[0] = ((laserdata->x2 + laserdata->slopey) >> FRACBITS);
+    VTX1[4].v.ob[1] = (laserdata->z2 >> FRACBITS);
+    VTX1[4].v.ob[2] = (-(laserdata->y2 - laserdata->slopex) >> FRACBITS);
 
-    VTX1[5].v.ob[0] = ((laserdata->x1 + laserdata->slopey) >> 16);
-    VTX1[5].v.ob[1] = (laserdata->z1 >> 16);
-    VTX1[5].v.ob[2] = (-(laserdata->y1 - laserdata->slopex) >> 16);
+    VTX1[5].v.ob[0] = ((laserdata->x1 + laserdata->slopey) >> FRACBITS);
+    VTX1[5].v.ob[1] = (laserdata->z1 >> FRACBITS);
+    VTX1[5].v.ob[2] = (-(laserdata->y1 - laserdata->slopex) >> FRACBITS);
 
     *(int *)VTX1[0].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
     *(int *)VTX1[1].v.cn = PACKRGBA(0,0,0,255);   // 0xff;
@@ -1205,8 +1205,8 @@ void R_RenderPSprites(void) // 80028f20
             height = ((spriteN64_t*)data)->height;
             src = data + sizeof(spriteN64_t);
 
-            x = (((psp->sx >> 16) - ((spriteN64_t*)data)->xoffs) + 160) << 2;
-            y = (((psp->sy >> 16) - ((spriteN64_t*)data)->yoffs) + 239) << 2;
+            x = (((psp->sx >> FRACBITS) - ((spriteN64_t*)data)->xoffs) + 160) << 2;
+            y = (((psp->sy >> FRACBITS) - ((spriteN64_t*)data)->yoffs) + 239) << 2;
             if (viewplayer->onground)
             {
                 x += (quakeviewx >> 20);

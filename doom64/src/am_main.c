@@ -268,8 +268,8 @@ void AM_Drawer (void) // 800009AC
     if (p->automapflags & AF_FOLLOW)
     {
         angle = (p->mo->angle + ANG270) >> ANGLETOFINESHIFT;
-        ox = (p->automapx - xpos) >> 16;
-        oy = (p->automapy - ypos) >> 16;
+        ox = (p->automapx - xpos) >> FRACBITS;
+        oy = (p->automapy - ypos) >> FRACBITS;
         xpos += ((ox * finecosine[angle]) - (oy * finesine[angle]));
         ypos += ((ox * finesine[angle]) + (oy * finecosine[angle]));
     }
@@ -324,7 +324,7 @@ void AM_Drawer (void) // 800009AC
     MTX1->m[0][3] = 0;
     MTX1->m[1][0] = 0;
     MTX1->m[1][1] = 0x10000;
-    MTX1->m[1][2] = ((-xpos) & 0xffff0000) | (((-scale) >> 16) &0xffff);
+    MTX1->m[1][2] = ((-xpos) & 0xffff0000) | (((-scale) >> FRACBITS) &0xffff);
     MTX1->m[1][3] = (ypos & 0xffff0000) | 1;
     MTX1->m[2][0] = 0;
     MTX1->m[2][1] = 0;

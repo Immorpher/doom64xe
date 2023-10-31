@@ -217,9 +217,9 @@ void R_RenderPlayerView(void) // 80023448
     gSPMatrix(GFX1++, OS_K0_TO_PHYSICAL(MTX1), G_MTX_MODELVIEW| G_MTX_LOAD | G_MTX_NOPUSH);
     MTX1->m[0][0] = 0x10000;
     MTX1->m[0][1] = 0;
-    MTX1->m[0][2] = ((cos & 0xffff0000) >> 16);
+    MTX1->m[0][2] = ((cos & 0xffff0000) >> FRACBITS);
     MTX1->m[0][3] = ((-sin) & 0xffff0000);
-    MTX1->m[1][0] = ((sin & 0xffff0000) >> 16);
+    MTX1->m[1][0] = ((sin & 0xffff0000) >> FRACBITS);
     MTX1->m[1][1] = (cos & 0xffff0000);
     MTX1->m[1][2] = 0;
     MTX1->m[1][3] = 1;
@@ -262,7 +262,7 @@ void R_RenderPlayerView(void) // 80023448
     MTX1->m[0][3] = 0;
     MTX1->m[1][0] = 0;
     MTX1->m[1][1] = 0x10000;
-    MTX1->m[1][2] = ((-viewx) & 0xffff0000) | (((-viewz) >> 16) & 0xffff);
+    MTX1->m[1][2] = ((-viewx) & 0xffff0000) | (((-viewz) >> FRACBITS) & 0xffff);
     MTX1->m[1][3] = (viewy & 0xffff0000) | 1;
     MTX1->m[2][0] = 0;
     MTX1->m[2][1] = 0;
@@ -312,8 +312,8 @@ int	R_PointOnSide(int x, int y, node_t *node) // 80023B6C
 	dx = (x - node->line.x);
 	dy = (y - node->line.y);
 
-	left = (node->line.dy >> 16) * (dx >> 16);
-	right = (dy >> 16) * (node->line.dx >> 16);
+	left = (node->line.dy >> FRACBITS) * (dx >> FRACBITS);
+	right = (dy >> FRACBITS) * (node->line.dx >> FRACBITS);
 
 	if (right < left)
 		return 0;		/* front side */

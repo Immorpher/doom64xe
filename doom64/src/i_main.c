@@ -811,7 +811,7 @@ long LongSwap(long dat) // 80006724
 
 short LittleShort(short dat) // 80006750
 {
-    return ((((dat << 8) | (dat >> 8 & 0xff)) << 16) >> 16);
+    return ((((dat << 8) | (dat >> 8 & 0xff)) << 16) >> FRACBITS);
 }
 
 short BigShort(short dat) // 80006770

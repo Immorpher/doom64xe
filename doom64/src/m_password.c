@@ -305,7 +305,7 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
     xbit2 = *(short*)&decode[2];
     xbit3 = *(short*)&decode[4];
 
-    x = ((~((xbit1 + xbit2) + xbit3) << 16) >> 16);
+    x = ((~((xbit1 + xbit2) + xbit3) << 16) >> FRACBITS);
     y = *(short*)&decode[6];
 
     if(x != y)
@@ -313,7 +313,7 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
         return false;
     }
 
-    x = ((~(xbit1 ^ (xbit2 ^ xbit3)) << 16) >> 16);
+    x = ((~(xbit1 ^ (xbit2 ^ xbit3)) << 16) >> FRACBITS);
     y = *(short*)&decode[8];
 
     if(x != y)

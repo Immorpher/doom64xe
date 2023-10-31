@@ -91,8 +91,8 @@ void R_RenderBSPNode(int bspnum) // 80024020
         dx = (viewx - bsp->line.x);
         dy = (viewy - bsp->line.y);
 
-        left = (bsp->line.dy >> 16) * (dx >> 16);
-        right = (dy >> 16) * (bsp->line.dx >> 16);
+        left = (bsp->line.dy >> FRACBITS) * (dx >> FRACBITS);
+        right = (dy >> FRACBITS) * (bsp->line.dx >> FRACBITS);
 
         if (right < left)
             side = 0;		/* front side */
@@ -173,7 +173,7 @@ boolean R_CheckBBox(fixed_t bspcoord[4]) // 80024170
     if ((vy1 < vx1) && (vy2 < vx2))
         return false;
 
-    if ((((vx2 >> 16) * (vy1 >> 16)) - ((vx1 >> 16) * (vy2 >> 16))) < 2)
+    if ((((vx2 >> FRACBITS) * (vy1 >> FRACBITS)) - ((vx1 >> FRACBITS) * (vy2 >> FRACBITS))) < 2)
         return true;
 
     if ((vy1 <= 0) && (vy2 <= 0))
@@ -198,8 +198,8 @@ boolean R_CheckBBox(fixed_t bspcoord[4]) // 80024170
         vy2 = vx2;
     }
 
-    Xstart = ((FixedDiv2(vx1, vy1) * 160) >> 16) + 160;
-    Xend   = ((FixedDiv2(vx2, vy2) * 160) >> 16) + 160;
+    Xstart = ((FixedDiv2(vx1, vy1) * 160) >> FRACBITS) + 160;
+    Xend   = ((FixedDiv2(vx2, vy2) * 160) >> FRACBITS) + 160;
 
     if (Xstart < 0)
         Xstart = 0;
@@ -314,7 +314,7 @@ void R_AddLine(seg_t *line) // 80024604
     if ((y1 < ((8*FRACUNIT)+1)) && (y2 < ((8*FRACUNIT)+1)))
         return;
 
-    if ((((x2 >> 16) * (y1 >> 16)) - ((x1 >> 16) * (y2 >> 16))) <= 0)
+    if ((((x2 >> FRACBITS) * (y1 >> FRACBITS)) - ((x1 >> FRACBITS) * (y2 >> FRACBITS))) <= 0)
         return;
 
     if (y1 < (8*FRACUNIT))
@@ -332,8 +332,8 @@ void R_AddLine(seg_t *line) // 80024604
         y2 = (8*FRACUNIT);
     }
 
-    Xstart = ((FixedDiv2(x1, y1) * 160) >> 16) + 160;
-    Xend   = ((FixedDiv2(x2, y2) * 160) >> 16) + 160;
+    Xstart = ((FixedDiv2(x1, y1) * 160) >> FRACBITS) + 160;
+    Xend   = ((FixedDiv2(x2, y2) * 160) >> FRACBITS) + 160;
 
     if (Xstart < 0)
         Xstart = 0;
@@ -428,10 +428,10 @@ void R_AddSprite(subsector_t *sub) // 80024A98
         else
         {
             // transform origin relative to viewpoint
-            x = (thing->x - viewx) >> 16;
-            y = (thing->y - viewy) >> 16;
-            tx = ((viewsin * x) - (viewcos * y)) >> 16;
-            tz = ((viewcos * x) + (viewsin * y)) >> 16;
+            x = (thing->x - viewx) >> FRACBITS;
+            y = (thing->y - viewy) >> FRACBITS;
+            tx = ((viewsin * x) - (viewcos * y)) >> FRACBITS;
+            tz = ((viewcos * x) + (viewsin * y)) >> FRACBITS;
 
             // thing is behind view plane?
             if (tz < MINZ)
@@ -560,8 +560,8 @@ void R_RenderBSPNodeNoClip(int bspnum) // 80024E64
         dx = (viewx - bsp->line.x);
         dy = (viewy - bsp->line.y);
 
-        left = (bsp->line.dy >> 16) * (dx >> 16);
-        right = (dy >> 16) * (bsp->line.dx >> 16);
+        left = (bsp->line.dy >> FRACBITS) * (dx >> FRACBITS);
+        right = (dy >> FRACBITS) * (bsp->line.dx >> FRACBITS);
 
         if (right < left)
             side = 1;		/* back side */

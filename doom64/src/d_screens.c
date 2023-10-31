@@ -219,7 +219,7 @@ int D_Credits(void) // 8002BA34
 
 int D_CreditTicker(void) // 8002BA88
 {
-    if (((u32)ticbuttons[0] >> 16) != 0)
+    if (((u32)ticbuttons[0] >> FRACBITS) != 0)
         return ga_exit;
 
     if ((cred_next == 0) || (cred_next == 1))

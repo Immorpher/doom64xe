@@ -301,7 +301,7 @@ void P_Drawer (void) // 80021AC8
 	else
     {
 		R_RenderPlayerView();
-        //ST_DebugPrint("x %d || y %d", players[0].mo->x >> 16, players[0].mo->y >> 16);
+        //ST_DebugPrint("x %d || y %d", players[0].mo->x >> FRACBITS, players[0].mo->y >> FRACBITS);
 
         if (demoplayback == false)
             ST_Drawer();

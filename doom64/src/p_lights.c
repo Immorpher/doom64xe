@@ -493,7 +493,7 @@ void P_UpdateLightThinker(int destlight, int srclight) // 80016118
     lt->dest = destlight;
     lt->src = srclight;
     lt->r = (rgb >> 24) & 0xff;
-    lt->g = (rgb >> 16) & 0xff;
+    lt->g = (rgb >> FRACBITS) & 0xff;
     lt->b = (rgb >>  8) & 0xff;
 }
 
@@ -517,7 +517,7 @@ void T_LightMorph(lightmorph_t *lt) // 80016244
     rgb = lights[lt->dest].rgba;
     lights[lt->src].rgba =
     (lt->r + ((lt->inc * (((rgb >> 24) & 0xff) - lt->r)) >> 8)) << 24 |
-    (lt->g + ((lt->inc * (((rgb >> 16) & 0xff) - lt->g)) >> 8)) << 16 |
+    (lt->g + ((lt->inc * (((rgb >> FRACBITS) & 0xff) - lt->g)) >> 8)) << 16 |
     (lt->b + ((lt->inc * (((rgb >>  8) & 0xff) - lt->b)) >> 8)) <<  8 | 0xff;
 }
 

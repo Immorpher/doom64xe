@@ -188,8 +188,8 @@ int PM_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)//L8001EB8C()
 	dx = (x - line->v1->x);
 	dy = (y - line->v1->y);
 
-	left  = (line->dy >> 16) * (dx >> 16);
-	right = (dy >> 16) *(line->dx >> 16);
+	left  = (line->dy >> FRACBITS) * (dx >> FRACBITS);
+	right = (dy >> FRACBITS) *(line->dx >> FRACBITS);
 
 	if (right < left)
 		return 0; /* front side */

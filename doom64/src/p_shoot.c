@@ -509,10 +509,10 @@ void P_Shoot2(void)//L80024144()
 
 	shootdivpositive = (shootdiv.dx ^ shootdiv.dy)>0;
 
-	ssx1 = shootdiv.x >> 16;
-	ssy1 = shootdiv.y >> 16;
-	ssx2 = shootx2 >> 16;
-	ssy2 = shooty2 >> 16;
+	ssx1 = shootdiv.x >> FRACBITS;
+	ssy1 = shootdiv.y >> FRACBITS;
+	ssx2 = shootx2 >> FRACBITS;
+	ssy2 = shooty2 >> FRACBITS;
 
 	aimmidslope = (aimtopslope + aimbottomslope)>>1;
 
