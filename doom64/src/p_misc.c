@@ -322,9 +322,16 @@ int P_ModifyLineTexture(line_t *line, int tag) // 8000E82C
         {
             if (line->tag == line1->tag)
             {
-                sides[line1->sidenum[0]].toptexture    = sides[line2->sidenum[0]].toptexture;
+                sides[line1->sidenum[0]].toptexture = sides[line2->sidenum[0]].toptexture;
                 sides[line1->sidenum[0]].bottomtexture = sides[line2->sidenum[0]].bottomtexture;
-                sides[line1->sidenum[0]].midtexture    = sides[line2->sidenum[0]].midtexture;
+                sides[line1->sidenum[0]].midtexture = sides[line2->sidenum[0]].midtexture;
+				
+				if (line1->flags & ML_TWOSIDED && line2->flags & ML_TWOSIDED) {
+					sides[line1->sidenum[1]].toptexture = sides[line2->sidenum[1]].toptexture;
+					sides[line1->sidenum[1]].bottomtexture = sides[line2->sidenum[1]].bottomtexture;
+					sides[line1->sidenum[1]].midtexture = sides[line2->sidenum[1]].midtexture;
+				}
+				
             }
         }
 
