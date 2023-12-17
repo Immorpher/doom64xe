@@ -881,12 +881,11 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
             if (thing->flags & MF_NIGHTMARE)
             {
-                color = PACKRGBA(64, 255, 0, 255);
-                gDPSetRenderMode(GFX1++, G_RM_XLU_SURF_CLAMP, G_RM_XLU_SURF2_ADD);
+                color = 0x40ff80ff; //PACKRGBA(64, 255, 128, 255)
             }
             else if (thing->frame & FF_FULLBRIGHT)
             {
-                color = PACKRGBA(255, 255, 255, 255);//0xffffffff;
+                color = 0xffffffff; //PACKRGBA(255, 255, 255, 255)
             }
             else
             {
@@ -1078,10 +1077,6 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
             vissprite_p = vissprite_p->next;
 
-            if (thing->flags & MF_NIGHTMARE)
-            {
-                gDPSetRenderMode(GFX1++, G_RM_FOG_SHADE_A, G_RM_TEX_EDGE2);
-            }
         }
 
         globallump = -1;

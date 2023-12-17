@@ -198,6 +198,7 @@ mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
 	if (mthing->options & MTF_NIGHTMARE) {
 		mobj->health *= 2;
 		mobj->flags |= MF_NIGHTMARE;
+		mobj->alpha = mobj->alpha - 64;
 	}
 
     if (mthing->options & MTF_SECRET)
