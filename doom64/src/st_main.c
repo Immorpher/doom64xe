@@ -258,8 +258,8 @@ void ST_Drawer (void) // 80029DC0
             ms_alpha = players[0].messagetic[i] << 3;
             if (ms_alpha > 0)
             {
-                if (ms_alpha >= 255)
-                    ms_alpha = 255;
+                if (ms_alpha >= 128)
+                    ms_alpha = 128;
                 
                 ST_Message(20, pos, players[0].message[i], ms_alpha | messagecolors[i]);
                 pos += 10;
