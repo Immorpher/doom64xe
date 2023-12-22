@@ -177,7 +177,7 @@ typedef enum
 
 
 #define LASTLEVEL 74 // end of normal levels
-#define BETALEVEL 34 // [Immorpher] Define where beta 64 levels begin
+#define BETALEVEL 41 // [Immorpher] Define where beta 64 levels begin
 #define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 40))
 
 
