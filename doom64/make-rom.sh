@@ -5,6 +5,11 @@ export PATH=$PATH:/opt/crashsdk/bin
 
 make clean
 
+rm ./Data/DOOM64.WAD.o
+rm ./Data/DOOM64.WMD.o
+rm ./Data/DOOM64.WSD.o
+rm ./Data/DOOM64.WDD.o
+
 mips-n64-ld -r -b binary ./Data/DOOM64.WAD -o ./Data/DOOM64.WAD.o
 mips-n64-ld -r -b binary ./Data/DOOM64.WMD -o ./Data/DOOM64.WMD.o
 mips-n64-ld -r -b binary ./Data/DOOM64.WSD -o ./Data/DOOM64.WSD.o

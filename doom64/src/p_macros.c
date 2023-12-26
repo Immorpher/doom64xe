@@ -33,12 +33,11 @@ int P_StartMacro(int macroindex, line_t *line, mobj_t *thing) // 80021088
         return 0;
     }
 
-	line->tag = 0; // [Immorpher] nullify tag so it doesnt bork macros on tagged lines
     activemacro = macro;
     macroactivator = thing;
     macrothinker = NULL;
     macroline = line;
-
+	
     D_memcpy(&macrotempline, line, sizeof(line_t));
     P_ChangeSwitchTexture(line, line->special & MLU_REPEAT);
 
