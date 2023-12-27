@@ -600,9 +600,7 @@ void P_SpawnDelayTimer(int tics, void(*action)()); // 8000E1CC
 void T_CountdownTimer(delay_t *timer); // 8000E1CC
 void P_ExitLevel(void); // 8000E220
 void P_SecretExitLevel(int map); // 8000E25C
-int P_ModifyLineFlags(line_t *line, int tag); // 8000E6BC
-int P_ModifyLineData(line_t *line, int tag); // 8000E780
-int P_ModifyLineTexture(line_t *line, int tag); // 8000E82C
+int P_ModifyLine(line_t *line, int tag, int type); // [Immorpher] combined line action
 int P_ModifySector(line_t *line, int tag, int type); // 8000E928
 void T_FadeThinker(fade_t *fade); // 8000EACC
 int EV_SpawnMobjTemplate(int tag); // 8000EB8C

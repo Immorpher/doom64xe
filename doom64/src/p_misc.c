@@ -240,7 +240,7 @@ void P_SecretExitLevel(int map) // 8000E25C
 
 /* --------------------------------------------------------------------------------- */
 
-int P_ModifyLineFlags(line_t *line, int tag) // 8000E6BC
+int P_ModifyLine(line_t *line, int tag, int type) // [Immorpher] Combined modify line action
 {
     line_t *line1, *line2;
     int i;
@@ -258,80 +258,38 @@ int P_ModifyLineFlags(line_t *line, int tag) // 8000E6BC
         {
             if (line->tag == line1->tag)
             {
-                if (line1->flags & ML_TWOSIDED)
-                {
-                    line1->flags = (line2->flags | ML_TWOSIDED);
-                }
-                else
-                {
-                    line1->flags = line2->flags;
-                    line1->flags &= ~ML_TWOSIDED;
-                }
-            }
-        }
-
-        return 1;
-    }
-
-    return 0;
-}
-
-int P_ModifyLineData(line_t *line, int tag) // 8000E780
-{
-    line_t *line1, *line2;
-    int i;
-
-    line2 = lines;
-    for (i = 0; i < numlines; i++, line2++)
-    {
-        if (line2->tag == tag) break;
-    }
-
-    if (i < numlines)
-    {
-        line1 = lines;
-        for (i = 0; i < numlines; i++, line1++)
-        {
-            if (line->tag == line1->tag)
-            {
-                line1->special = line2->special;
-            }
-        }
-
-        return 1;
-    }
-
-    return 0;
-}
-
-int P_ModifyLineTexture(line_t *line, int tag) // 8000E82C
-{
-    line_t *line1, *line2;
-    int i;
-
-    line2 = lines;
-    for (i = 0; i < numlines; i++, line2++)
-    {
-        if (line2->tag == tag) break;
-    }
-
-    if (i < numlines)
-    {
-        line1 = lines;
-        for (i = 0; i < numlines; i++, line1++)
-        {
-            if (line->tag == line1->tag)
-            {
-                sides[line1->sidenum[0]].toptexture = sides[line2->sidenum[0]].toptexture;
-                sides[line1->sidenum[0]].bottomtexture = sides[line2->sidenum[0]].bottomtexture;
-                sides[line1->sidenum[0]].midtexture = sides[line2->sidenum[0]].midtexture;
-				
-				if (line1->flags & ML_TWOSIDED && line2->flags & ML_TWOSIDED) {
-					sides[line1->sidenum[1]].toptexture = sides[line2->sidenum[1]].toptexture;
-					sides[line1->sidenum[1]].bottomtexture = sides[line2->sidenum[1]].bottomtexture;
-					sides[line1->sidenum[1]].midtexture = sides[line2->sidenum[1]].midtexture;
+				switch(type)
+				{
+				case mods_flags:
+					if (line1->flags & ML_TWOSIDED)
+					{
+						line1->flags = (line2->flags | ML_TWOSIDED);
+					}
+					else
+					{
+						line1->flags = line2->flags;
+						line1->flags &= ~ML_TWOSIDED;
+					}
+					break;
+				case mods_special:
+					if (line1->special != line2->special)
+					{
+						line1->special = line2->special;
+					}
+					break;
+				case mods_flats:
+					sides[line1->sidenum[0]].toptexture = sides[line2->sidenum[0]].toptexture;
+					sides[line1->sidenum[0]].bottomtexture = sides[line2->sidenum[0]].bottomtexture;
+					sides[line1->sidenum[0]].midtexture = sides[line2->sidenum[0]].midtexture;
+					if (line1->flags & ML_TWOSIDED && line2->flags & ML_TWOSIDED) {
+						sides[line1->sidenum[1]].toptexture = sides[line2->sidenum[1]].toptexture;
+						sides[line1->sidenum[1]].bottomtexture = sides[line2->sidenum[1]].bottomtexture;
+						sides[line1->sidenum[1]].midtexture = sides[line2->sidenum[1]].midtexture;
+					}
+					break;
+				default:
+					break;
 				}
-				
             }
         }
 

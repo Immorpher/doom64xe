@@ -1134,10 +1134,10 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
             ok = EV_SplitSector(line, true);
             break;
         case 218:       /* Modify Line Flags */
-            ok = P_ModifyLineFlags(line, macrointeger);
+            ok = P_ModifyLine(line, macrointeger, mods_flags);
             break;
         case 219:       /* Modify Line Texture */
-            ok = P_ModifyLineTexture(line, macrointeger);
+            ok = P_ModifyLine(line, macrointeger, mods_flats);
             break;
         case 220:       /* Modify Sector Flags */
             ok = P_ModifySector(line, macrointeger, mods_flags);
@@ -1171,7 +1171,7 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
             ok = EV_DoFloor(line, customFloor, 4096 * FRACUNIT);
             break;
         case 230:       /* Modify Line Special */
-            ok = P_ModifyLineData(line, macrointeger);
+            ok = P_ModifyLine(line, macrointeger, mods_special);
             break;
         case 231:       /* Invoke Revenant Missile */
             ok = EV_SpawnTrapMissile(line, thing, MT_PROJ_TRACER);
