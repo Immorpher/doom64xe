@@ -170,7 +170,7 @@ boolean P_Move (mobj_t *actor) // 80010D08
 =
 = TryWalk
 =
-= Attempts to move actoron in its current (ob->moveangle) direction.
+= Attempts to move actor in its current (ob->moveangle) direction.
 =
 = If blocked by either a wall or an actor returns FALSE
 = If move is either clear or blocked only by a door, returns TRUE and sets

@@ -272,10 +272,7 @@ int P_ModifyLine(line_t *line, int tag, int type) // [Immorpher] Combined modify
 					}
 					break;
 				case mods_special:
-					if (line1->special != line2->special)
-					{
-						line1->special = line2->special;
-					}
+					line1->special = line2->special;
 					break;
 				case mods_flats:
 					sides[line1->sidenum[0]].toptexture = sides[line2->sidenum[0]].toptexture;
