@@ -274,7 +274,7 @@ int P_ModifyLine(line_t *line, int tag, int type) // [Immorpher] Combined modify
 				case mods_special:
 					line1->special = line2->special;
 					break;
-				case mods_flats:
+				case mods_texture:
 					sides[line1->sidenum[0]].toptexture = sides[line2->sidenum[0]].toptexture;
 					sides[line1->sidenum[0]].bottomtexture = sides[line2->sidenum[0]].bottomtexture;
 					sides[line1->sidenum[0]].midtexture = sides[line2->sidenum[0]].midtexture;
@@ -329,7 +329,7 @@ int P_ModifySector(line_t *line, int tag, int type) // 8000E928
                 P_AddSectorSpecial(sec1);
             }
             break;
-        case mods_flats:
+        case mods_texture:
             sec1->ceilingpic = sec2->ceilingpic;
             sec1->floorpic = sec2->floorpic;
             break;

@@ -271,7 +271,7 @@ typedef enum
 {
     mods_flags,
     mods_special,
-    mods_flats,
+    mods_texture,
     mods_lights,
 } modifysector_t;
 

@@ -65,21 +65,22 @@ extern int nextmap;
 #define MI_TXT51	"City of The Damned"
 #define MI_TXT52	"Mines"
 #define MI_TXT53	"Lair of the Blind"
-#define MI_TXT54	"Abhorred Sanctuary"
-#define MI_TXT55	"Fortress of Abaddon"
-#define MI_TXT56	"Simplicity"
-#define MI_TXT57	"Inferni Carceris"
-#define MI_TXT58	"Umbra"
-#define MI_TXT59	"Unearthly Spire"
-#define MI_TXT60	"Putrid Cloister"
-#define MI_TXT61	"Tartarus"
-#define MI_TXT62	"Court of the Crimson"
-#define MI_TXT63	"Nowhere to Hide"
-#define MI_TXT64	"The Nest"
-#define MI_TXT65	"Hubris"
-#define MI_TXT66	"Folly"
-#define MI_TXT67	"Regret"
-#define MI_TXT68	"Rage"
+#define MI_TXT54	"The Dungeons"
+#define MI_TXT55	"Abhorred Sanctuary"
+#define MI_TXT56	"Fortress of Abaddon"
+#define MI_TXT57	"Simplicity"
+#define MI_TXT58	"Inferni Carceris"
+#define MI_TXT59	"Umbra"
+#define MI_TXT60	"Unearthly Spire"
+#define MI_TXT61	"Putrid Cloister"
+#define MI_TXT62	"Tartarus"
+#define MI_TXT63	"Court of the Crimson"
+#define MI_TXT64	"Nowhere to Hide"
+#define MI_TXT65	"The Nest"
+#define MI_TXT66	"Hubris"
+#define MI_TXT67	"Folly"
+#define MI_TXT68	"Regret"
+#define MI_TXT69	"Rage"
 
 #define MI_TXT70	"The Beyond"
 #define MI_TXT71	"Irradiated"
@@ -172,7 +173,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT66 , 98},
     {MI_TXT67 , 94},
     {MI_TXT68 , 99},
-    {T_NULL , 0},
+    {MI_TXT69, 101},
     {MI_TXT70 , 102},
     {MI_TXT71 , 103},
     {MI_TXT72 , 104},

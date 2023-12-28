@@ -1137,7 +1137,7 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
             ok = P_ModifyLine(line, macrointeger, mods_flags);
             break;
         case 219:       /* Modify Line Texture */
-            ok = P_ModifyLine(line, macrointeger, mods_flats);
+            ok = P_ModifyLine(line, macrointeger, mods_texture);
             break;
         case 220:       /* Modify Sector Flags */
             ok = P_ModifySector(line, macrointeger, mods_flags);
@@ -1149,7 +1149,7 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
             ok = P_ModifySector(line, macrointeger, mods_lights);
             break;
         case 223:       /* Modify Sector Flats */
-            ok = P_ModifySector(line, macrointeger, mods_flats);
+            ok = P_ModifySector(line, macrointeger, mods_texture);
             break;
         case 224:       /* Spawn Thing */
             ok = EV_SpawnMobjTemplate(line->tag);
