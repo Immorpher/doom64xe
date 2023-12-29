@@ -106,20 +106,21 @@ extern void P_CheckCheats (void);
 
 // Beta 64
 
-#define C_END8_TXT01	"The presence of hell is seeping"
-#define C_END8_TXT02	"into the facility like blood"
-#define C_END8_TXT03	"through arteries. It is upturning"
-#define C_END8_TXT04	"reality and infecting the dead."
-#define C_END8_TXT05	" "
-#define C_END8_TXT06	"A stench leaks from the"
-#define C_END8_TXT07	"portal. It is from a place not"
-#define C_END8_TXT08	"meant for humans. But I have"
-#define C_END8_TXT09	"not felt human for a long time."
-#define C_END8_TXT10	" "
-#define C_END8_TXT11	"Our mistakes have damned this"
-#define C_END8_TXT12	"place! I have to bring the fight"
-#define C_END8_TXT13	"to their world. Let them bring"
-#define C_END8_TXT14	"their worst. Let this end in hell!"
+#define C_END8_TXT01	"The presence of hell is"
+#define C_END8_TXT02	"seeping in the facility like"
+#define C_END8_TXT03	"blood through arteries."
+#define C_END8_TXT04	"It is upturning reality and"
+#define C_END8_TXT05	"infecting the dead."
+#define C_END8_TXT06	" "
+#define C_END8_TXT07	"A stench leaks from the"
+#define C_END8_TXT08	"portal. It is from a place"
+#define C_END8_TXT09	"not for humans. But I have"
+#define C_END8_TXT10	"not felt human for while..."
+#define C_END8_TXT11	" "
+#define C_END8_TXT12	"Our mistakes have damned"
+#define C_END8_TXT13	"this place! I have to go to"
+#define C_END8_TXT14	"their world. Let them bring"
+#define C_END8_TXT15	"their worst. This ends in hell!"
 
 #define C_END9_TXT01	"What kind of madness is this?"
 #define C_END9_TXT02	" "
@@ -147,13 +148,13 @@ extern void P_CheckCheats (void);
 #define C_END10_TXT13	"weapon technology could be"
 #define C_END10_TXT14	"so important?"
 
-#define C_END11_TXT01	"The death of the cyberdemon"
-#define C_END11_TXT02	"shook the ground as the world"
-#define C_END11_TXT03	"around me dissolved. What"
+#define C_END11_TXT01	"The death of the demon"
+#define C_END11_TXT02	"shook the ground as the"
+#define C_END11_TXT03	"world faded away. What"
 #define C_END11_TXT04	"has pulled me from reality?"
 #define C_END11_TXT05	" "
-#define C_END11_TXT06	"An entity feels close now. I can"
-#define C_END11_TXT07	"feel its hate... It hates as much."
+#define C_END11_TXT06	"An entity feels close. I can"
+#define C_END11_TXT07	"feel hate... It hates as much."
 #define C_END11_TXT08	"as I do and it wishes for my"
 #define C_END11_TXT09	"death."
 #define C_END11_TXT10	" "
@@ -349,6 +350,7 @@ char *endcluster8[] =   // 8005A2C0
 	C_END8_TXT12,
 	C_END8_TXT13,
 	C_END8_TXT14,
+	C_END8_TXT15,
 	T_NULL
 };
 
@@ -586,7 +588,7 @@ void F_StartIntermission(void) // 80002CD0
         text = endcluster10;
         textypos = 15;
     }
-    else if (nextmap == 56)
+    else if (nextmap == 57)
     {
         text = endcluster11;
         textypos = 15;
