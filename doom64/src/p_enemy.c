@@ -962,6 +962,7 @@ void A_HeadAttack (mobj_t *actor) // 80011E90
 	A_FaceTarget (actor);
 	if (P_CheckMeleeRange (actor))
 	{
+        S_StartSound(actor, sfx_scratch);
 		damage = ((P_Random() & 7) * 8) + 8;
 		P_DamageMobj (actor->target, actor, actor, damage);
 		return;
