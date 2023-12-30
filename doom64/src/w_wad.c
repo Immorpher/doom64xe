@@ -379,16 +379,31 @@ void W_OpenMapWad(int mapnum) // 8002C5B0
 /*
 ====================
 =
-= W_FreeMapLump
+= W_FreeMapLumps
 =
 = Exclusive Doom64
 ====================
 */
 
-void W_FreeMapLump(void) // 8002C748
+void W_FreeMapLumps(void) // 8002C748
 {
-    Z_Free(mapfileptr);
+    if (mapfileptr)
+    {
+        Z_Free(mapfileptr);
+        mapfileptr = NULL;
+    }
+    else
+    {
+        Z_Free(maplump);
+    }
+    maplump = NULL;
     mapnumlumps = 0;
+}
+
+void W_FreeMapLump(void *ptr)
+{
+    if (!mapfileptr)
+        Z_Free(ptr);
 }
 
 /*

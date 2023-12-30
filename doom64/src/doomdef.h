@@ -757,7 +757,8 @@ void	*W_CacheLumpNum (int lump, int tag, decodetype dectype) HOT;
 void	*W_CacheLumpName (char *name, int tag, decodetype dectype);
 
 void	W_OpenMapWad(int mapnum);
-void    W_FreeMapLump(void);
+void    W_FreeMapLumps(void);
+void	W_FreeMapLump(void *ptr);
 int		W_MapLumpLength(int lump);
 int		W_MapGetNumForName(char *name);
 void	*W_GetMapLump(int lump);
