@@ -11,7 +11,7 @@ boolean tryopen[6]; // 800A81E0
 
 byte *sfontlump;     // 800A81F8
 byte *statuslump;   // 800A81FC
-int sumbolslump;    // 800A8204
+int symbolslump;    // 800A8204
 
 int err_text_x;     // 800A8208
 int err_text_y;     // 800A820C
@@ -139,7 +139,7 @@ void ST_Init(void) // 80029BA0
 {
   sfontlump = (byte *)W_CacheLumpName("SFONT",PU_STATIC,dec_jag);
   statuslump = (byte *)W_CacheLumpName("STATUS",PU_STATIC,dec_jag);
-  sumbolslump = W_GetNumForName("SYMBOLS");
+  symbolslump = W_GetNumForName("SYMBOLS");
 }
 
 void ST_InitEveryLevel(void) // 80029C00
@@ -768,9 +768,9 @@ void ST_DrawSymbol(int xpos, int ypos, int index, int color) // 8002ADEC
     byte *data;
     int offset;
 
-    data = W_CacheLumpNum(sumbolslump, PU_CACHE, dec_jag);
+    data = W_CacheLumpNum(symbolslump, PU_CACHE, dec_jag);
 
-    if (sumbolslump != globallump)
+    if (symbolslump != globallump)
     {
         gDPPipeSync(GFX1++);
         gDPSetCycleType(GFX1++, G_CYC_1CYCLE);
@@ -798,7 +798,7 @@ void ST_DrawSymbol(int xpos, int ypos, int index, int color) // 8002ADEC
 
         gDPPipeSync(GFX1++);
 
-        globallump = sumbolslump;
+        globallump = symbolslump;
     }
 
     gDPSetPrimColorD64(GFX1++, 0, 0, color)

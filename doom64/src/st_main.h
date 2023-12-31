@@ -14,7 +14,7 @@ extern boolean tryopen[6]; // 800A81E0
 
 extern byte *sfontlump;     // 800A81F8
 extern byte *statuslump;   // 800A81FC
-extern int sumbolslump;    // 800A8204
+extern int symbolslump;    // 800A8204
 
 extern int err_text_x;     // 800A8208
 extern int err_text_y;     // 800A820C

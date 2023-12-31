@@ -169,14 +169,14 @@ typedef enum
 	ga_warped,
 	ga_exitdemo,
 	//News
-	//ga_recorddemo,// no used
+	//ga_recorddemo,// not used
 	ga_timeout,
 	ga_restart,
 	ga_exit
 } gameaction_t;
 
 
-#define LASTLEVEL 75 // end of normal levels + 1
+#define LASTLEVEL 74 // end of normal levels + 1
 #define BETALEVEL 41 // [Immorpher] Define where beta 64 levels begin
 #define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 40))
 

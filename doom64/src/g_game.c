@@ -219,7 +219,7 @@ void G_RunGame (void) // 80004794
            nextmap == 49 || // Beta 64 maps start here
            nextmap == 71 ||
            nextmap == 72 ||
-           nextmap == 56 ||
+           nextmap == 57 ||
            nextmap == 70)
         {
             /* run the intermission if needed */

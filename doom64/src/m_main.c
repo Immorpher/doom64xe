@@ -1420,27 +1420,30 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         if (buttons & PAD_LEFT)
                         {
-                            m_actualmap -= (m_actualmap == 34) ? 2 : 1;
-
-                            if (m_actualmap > LASTLEVEL-1)
-                                m_actualmap = LASTLEVEL-1;
-
-                            if (m_actualmap > 0)
-                            {
-                                S_StartSound(NULL, sfx_switch2);
-                                return ga_nothing;
-                            }
-                            m_actualmap = 1;
+                            m_actualmap -= 1;
+							
+							if (m_actualmap < 0)
+							{
+								m_actualmap = 0;
+							}
+							else
+							{
+								S_StartSound(NULL, sfx_switch2);
+							}
+							return ga_nothing;
                         }
                         else if (buttons & PAD_RIGHT)
                         {
-                            m_actualmap += (m_actualmap == 32) ? 2 : 1;
-                            if (m_actualmap < LASTLEVEL)
-                            {
-                                S_StartSound(NULL, sfx_switch2);
-                                return ga_nothing;
-                            }
-                            m_actualmap = (LASTLEVEL == 34) ? LASTLEVEL-2 : LASTLEVEL-1;
+							m_actualmap += 1;
+							if (m_actualmap > LASTLEVEL)
+							{
+								m_actualmap = LASTLEVEL;
+							}
+							else
+							{
+								S_StartSound(NULL, sfx_switch2);
+							}
+							return ga_nothing;
                         }
                         else if (buttons & ALL_CBUTTONS)
                         {
