@@ -324,7 +324,7 @@ void R_SetupSky(void) // 80025060
 		case 17:
             R_RenderSKY = R_RenderVoidSky;
             FogNear = 965;
-            FogColor = PACKRGBA(48,7,2,0); // 30 7 2
+            FogColor = PACKRGBA(80,7,2,0); // 50 7 2
             SkyVoidColor = PACKRGBA(80,7,2,0); // 50 7 2
             break;
 			

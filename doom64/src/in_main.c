@@ -447,7 +447,12 @@ void IN_Drawer(void) // 80005164
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-	M_DrawBackground(63, 25, 128, "EVIL");
+	if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
+		M_DrawBackground(63, 25, 128, "BETA");
+	}
+	else {
+		M_DrawBackground(63, 25, 128, "EVIL");
+	}
 
 	ST_DrawString(-1, 20, MapInfo[gamemap].name, PACKRGBA(255, 255, 255, text_alpha));
 
