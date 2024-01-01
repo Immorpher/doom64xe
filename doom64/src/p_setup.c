@@ -811,7 +811,6 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 
 	spawncount = 0;
 
-	#if ENABLE_NIGHTMARE == 1
 	if (skill == sk_nightmare)
 	{
 		states[S_054].tics = 4; // S_SARG_ATK1
@@ -840,7 +839,6 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 		mobjinfo[MT_PROJ_IMP1].speed = 10; // MT_TROOPSHOT
 		mobjinfo[MT_PROJ_IMP2].speed = 20; // MT_TROOPSHOT2
 	}
-	#endif // ENABLE_NIGHTMARE
 
 	W_OpenMapWad(map);
 

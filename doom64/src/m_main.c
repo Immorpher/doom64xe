@@ -136,20 +136,13 @@ const menuitem_t Menu_TitleNoSave[2] =
 	{ 11, 115, 210 },   // Options
 };
 
-#if ENABLE_NIGHTMARE == 1
 const menuitem_t Menu_Skill[5] = // 8005A990
-#else
-const menuitem_t Menu_Skill[4] = // 8005A990
-#endif // ENABLE_NIGHTMARE
 {
     { 15, 102, 80 },    // Be Gentle!
     { 16, 102, 100},    // Bring it on!
     { 17, 102, 120},    // I own Doom!
     { 18, 102, 140},    // Watch me die!
-    /* Disable on Doom 64 Original */
-    #if ENABLE_NIGHTMARE == 1
     { 19, 102, 160},    // Nightmare
-    #endif // ENABLE_NIGHTMARE
 };
 
 const menuitem_t Menu_Episode[4] =
@@ -1314,11 +1307,7 @@ int M_MenuTicker(void) // 80007E0C
                         EnableExpPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Skill;
-                        #if ENABLE_NIGHTMARE == 1
                         itemlines = 5;
-                        #else
-                        itemlines = 4;
-                        #endif // ENABLE_NIGHTMARE
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 1;  // Set Default Bring it on!
 
@@ -1890,11 +1879,7 @@ int M_MenuTicker(void) // 80007E0C
                         }
                         else if (buttons & PAD_RIGHT)
                         {
-                            #if ENABLE_NIGHTMARE == 1
                             if (gameskill < sk_nightmare || startskill < sk_nightmare)
-                            #else
-                            if (gameskill < sk_hard || startskill < sk_hard)
-                            #endif
                             {
                                 startskill += 1;
                                 gameskill += 1;
@@ -1995,11 +1980,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        #if ENABLE_NIGHTMARE == 1
                         itemlines = 5;
-                        #else
-                        itemlines = 4;
-                        #endif // ENABLE_NIGHTMARE
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
@@ -2025,11 +2006,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        #if ENABLE_NIGHTMARE == 1
                         itemlines = 5;
-                        #else
-                        itemlines = 4;
-                        #endif // ENABLE_NIGHTMARE
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
@@ -2195,11 +2172,9 @@ void M_FeaturesDrawer(void) // 800091C0
             case 54: /* SKILL */
                 switch (gameskill)
                 {
-                    #if ENABLE_NIGHTMARE == 1
                     case 4:
                         text = M_TXT19;
                         break;
-                    #endif
                     case 3:
                         text = M_TXT18;
                         break;
@@ -2884,7 +2859,7 @@ void M_SavePakDrawer(void) // 8000AB44
     {
         for(i = linepos; i < (linepos + 6); i++)
         {
-            if (Pak_Data[(i * 32) + 16] == 0) {
+            if (Pak_Data[(i * 32) + 15] != 0xCE)  {
                 D_memmove(buffer, "empty");
             }
             else {
@@ -3042,7 +3017,7 @@ int M_LoadPakTicker(void) // 8000AFE4
     if (!(buttons ^ oldbuttons) || !(buttons & PAD_START))
     {
         if (!(buttons ^ oldbuttons) || buttons != (PAD_RIGHT_C|PAD_LEFT_C) ||
-            (Pak_Data[(cursorpos * 32) + 16] == 0))
+            (Pak_Data[(cursorpos * 32) + 16] == 0xCE))
         {
             exit = ga_nothing;
         }
@@ -3094,7 +3069,7 @@ void M_LoadPakDrawer(void) // 8000B270
         if (FilesUsed == -1) {
             D_memmove(buffer, "-");
         }
-        else if (Pak_Data[(i * 32) + 16] == 0) {
+        else if (Pak_Data[(i * 32) + 15] != 0xCE) {
             D_memmove(buffer, "no save");
         }
         else {
@@ -3103,11 +3078,9 @@ void M_LoadPakDrawer(void) // 8000B270
             M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
             switch (skilltxt)
             {
-                #if ENABLE_NIGHTMARE == 1
                 case 4:
                     sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
                     break;
-                #endif
                 case 3:
                     sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
                     break;

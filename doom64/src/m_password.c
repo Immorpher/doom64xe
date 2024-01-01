@@ -39,22 +39,17 @@ void M_EncodePassword(byte *buff) // 8000BC10
     int xbit1, xbit2, xbit3;
     int maxclip, maxshell, maxcell, maxmisl;
     player_t* player;
-
-    #if ENABLE_NIGHTMARE == 1
 	int skillnightmare;
-	#endif // ENABLE_NIGHTMARE
 
     player = &players[0];
     bzero(encode, sizeof(encode));
 
-    #if ENABLE_NIGHTMARE == 1
 	//Check the nightmare difficulty
 	skillnightmare = 0;
 	if(gameskill == sk_nightmare)
     {
         skillnightmare = sk_nightmare;
     }
-    #endif // ENABLE_NIGHTMARE
 
     //
     // Map and Skill
