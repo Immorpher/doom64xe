@@ -25,9 +25,9 @@ char *passFeatures[3] =
     "k41s3r?w4s?h3r3?"
 };
 
-#define MAPUP       0x20
 // [GEC] NEW FLAGS
-#define NIGHTMARE	0x40
+#define MAPUP       0x20 // Increase map upper limit
+#define NIGHTMARE	0x40 // Enable nightmare difficulty in armor slot
 
 void M_EncodePassword(byte *buff) // 8000BC10
 {
@@ -151,12 +151,11 @@ void M_EncodePassword(byte *buff) // 8000BC10
     //
     encode[5] |= (player->artifacts << 2);
 
-    #if ENABLE_NIGHTMARE == 1
-	//I used the ArmorType space to add the 0x40 flag to identify that the difficulty is nightmare
+	//[GEC] I used the ArmorType space to add the 0x40 flag to identify that the difficulty is nightmare
 	if(skillnightmare != 0) {
         encode[5] |= NIGHTMARE;
     }
-    #endif // ENABLE_NIGHTMARE
+	
     if (nextmap >= 64)
     {
         encode[5] |= MAPUP;
@@ -345,14 +344,12 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
     //
     *skill = (decode[0] & 3);
 
-    #if ENABLE_NIGHTMARE == 1
     //Check that the flag is 0x40, add the nightmare difficulty and remove the flag 0x80
     if (decode[5] & NIGHTMARE)
     {
         decode[5] &= ~NIGHTMARE;
         *skill = sk_nightmare;
     }
-    #endif // ENABLE_NIGHTMARE
 
     //
     // Verify Skill

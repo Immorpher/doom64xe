@@ -323,6 +323,7 @@ int MusVolume = 80;             // 8005A7C4
 int brightness = 100;             // 8005A7C8
 int M_SENSITIVITY = 0;          // 8005A7CC
 boolean FeaturesUnlocked = false; // 8005A7D0
+boolean runintroduction = false; // [Immorpher] New introduction sequence!
 int TextureFilter = 0;
 int Autorun = 0;
 byte SavedConfig[16];
@@ -1331,6 +1332,30 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 
                 case 51: // DOOM 64
+                    if (truebuttons)
+                    {
+                        startmap = MenuItem[cursorpos].casepos == 52 ? 34 : 1;
+                        
+                        S_StartSound(NULL, sfx_pistol);
+                        M_SaveMenuData();
+
+                        MenuItem = Menu_Skill;
+                        itemlines = 5;
+                        MenuCall = M_MenuTitleDrawer;
+                        cursorpos = 2;
+
+                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+                        M_RestoreMenuData((exit == ga_exit));
+                        
+                        if (exit == ga_exit)
+                            return ga_nothing;
+						
+						nextmap = 1; // [Immorpher] For running introduction for Doom 64
+						runintroduction = true; // [Immorpher] turn introduction on
+
+                        return exit;
+                    }
+                    break;
                 case 52: // The Lost Levels
                     if (truebuttons)
                     {
@@ -1340,11 +1365,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        #if ENABLE_NIGHTMARE == 1
                         itemlines = 5;
-                        #else
-                        itemlines = 4;
-                        #endif // ENABLE_NIGHTMARE
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
@@ -1353,7 +1374,10 @@ int M_MenuTicker(void) // 80007E0C
                         
                         if (exit == ga_exit)
                             return ga_nothing;
-
+						
+						nextmap = LOSTLEVEL; // [Immorpher] For running introduction for Lost Levels
+						runintroduction = true; // [Immorpher] turn introduction on
+						
                         return exit;
                     }
                     break;
@@ -1984,6 +2008,9 @@ int M_MenuTicker(void) // 80007E0C
                         
                         if (exit == ga_exit)
                             return ga_nothing;
+						
+						nextmap = 0; // [Immorpher] For running introduction for Bonus Pak
+						runintroduction = true; // [Immorpher] turn introduction on
 
                         return exit;
                     }
@@ -2012,6 +2039,9 @@ int M_MenuTicker(void) // 80007E0C
                         if (exit == ga_exit)
                             return ga_nothing;
 
+						nextmap = BETALEVEL; // [Immorpher] For running introduction for Lost Levels
+						runintroduction = true; // [Immorpher] turn introduction on
+						
                         return exit;
                     }
                     break;
@@ -2863,11 +2893,9 @@ void M_SavePakDrawer(void) // 8000AB44
                 M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
                 switch (skilltxt)
                 {
-                    #if ENABLE_NIGHTMARE == 1
                     case 4:
                         sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
                         break;
-                    #endif
                     case 3:
                         sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
                         break;

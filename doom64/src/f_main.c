@@ -9,7 +9,93 @@ extern void P_CheckCheats (void);
 
 #define T_NULL	        ""
 
-// Doom 64
+// [Immorpher] Doom 64 introduction text adapted from Doom 64 Reloaded
+#define C_INTR1_TXT01	"Surviving the poison of evil has"
+#define C_INTR1_TXT02	"pushed sanity to an edge. The"
+#define C_INTR1_TXT03	"doctors' treatments are of little"
+#define C_INTR1_TXT04	"help. Nightmares of so many demons"
+#define C_INTR1_TXT05	"pouring through will not stop."
+#define C_INTR1_TXT06	" "
+#define C_INTR1_TXT07	"The outpost at Phobos was left dead"
+#define C_INTR1_TXT08	"in a nuclear haze. However, hell"
+#define C_INTR1_TXT09	"has reached back in. Something has"
+#define C_INTR1_TXT10	"distorted reality and resurrected"
+#define C_INTR1_TXT11	"decaying carnage back into hideous"
+#define C_INTR1_TXT12	"living tissue."
+#define C_INTR1_TXT13	" "
+#define C_INTR1_TXT14	"The mutations are devastating. The"
+#define C_INTR1_TXT15	"demons have returned even stronger"
+#define C_INTR1_TXT16	"and more vicious than before. As"
+#define C_INTR1_TXT17	"the only one who has survived the"
+#define C_INTR1_TXT18	"horror, the mission is clear..."
+#define C_INTR1_TXT19	" "
+#define C_INTR1_TXT20	"MERCILESS EXTERMINATION!"
+
+// [Immorpher] Lost Levels introduction text adapted from Doom 64 CE
+#define C_INTR2_TXT01	"The mother demon's lifeless stench"
+#define C_INTR2_TXT02	"is sharp as a dagger in the mind."
+#define C_INTR2_TXT03	"With their mother dead, the demons"
+#define C_INTR2_TXT04	"have turned to a state of violence"
+#define C_INTR2_TXT05	"and hunger. Nothing can be allowed"
+#define C_INTR2_TXT06	"to refocus their rage towards us."
+#define C_INTR2_TXT07	" "
+#define C_INTR2_TXT08	"Each moment, hell pushes your mind"
+#define C_INTR2_TXT09	"to a more primitive state. It is a"
+#define C_INTR2_TXT10	"struggle not to join the chaos."
+#define C_INTR2_TXT11	"The demonic hordes are endless."
+#define C_INTR2_TXT12	"Loss of coherent thought is making"
+#define C_INTR2_TXT13	"it difficult to find their origin."
+#define C_INTR2_TXT14	" "
+#define C_INTR2_TXT15	"Suddenly, you find yourself back in"
+#define C_INTR2_TXT16	"a vacated UAC base. The last time"
+#define C_INTR2_TXT17	"you were ripped across worlds was by"
+#define C_INTR2_TXT18	"the mother demon. Has sanity broke?"
+#define C_INTR2_TXT19	"You must return to hell. Your path"
+#define C_INTR2_TXT20	"of extermination shall not end!"
+
+// [Immorpher] Beta 64 introduction text adapted from Doom 64 CE
+#define C_INTR3_TXT01	"The moon of Io was chosen by the"
+#define C_INTR3_TXT02	"U.A.C. to resume portal testing."
+#define C_INTR3_TXT03	"We were prepared for any demon who"
+#define C_INTR3_TXT04	"entered through the portal. But"
+#define C_INTR3_TXT05	"the demons made a ship of flesh"
+#define C_INTR3_TXT06	"and iron. They attacked from space"
+#define C_INTR3_TXT07	"and I barely stopped the invasion."
+#define C_INTR3_TXT08	" "
+#define C_INTR3_TXT09	"Everyone I knew died. I was meant"
+#define C_INTR3_TXT10	"to go down with the facility. It"
+#define C_INTR3_TXT11	"should be me frozen on the surface"
+#define C_INTR3_TXT12	"of Io. Instead I remained on a"
+#define C_INTR3_TXT13	"research ship observing the moon."
+#define C_INTR3_TXT14	" "
+#define C_INTR3_TXT15	"Unexpectedly, I received a message"
+#define C_INTR3_TXT16	"from Io. It said demons and humans"
+#define C_INTR3_TXT17	"alike have returned back from the"
+#define C_INTR3_TXT18	"dead. My comrades will not be able"
+#define C_INTR3_TXT19	"to rest until I end what the demons"
+#define C_INTR3_TXT20	"are doing... I must return to Io!"
+
+// [Immorpher] Bonus Pak Introduction
+#define C_INTR4_TXT01	"Of many worlds, the demons infect."
+#define C_INTR4_TXT02	"Even after death, their mother"
+#define C_INTR4_TXT03	"will resurrect. They bring"
+#define C_INTR4_TXT04	"damnation through decimation. The"
+#define C_INTR4_TXT05	"demons will relentlessly spawn"
+#define C_INTR4_TXT06	"until they bring a new dawn."
+#define C_INTR4_TXT07	" "
+#define C_INTR4_TXT08	"But there are those who forge a"
+#define C_INTR4_TXT09	"trail of destruction. They are"
+#define C_INTR4_TXT10	"the tide that brings retribution."
+#define C_INTR4_TXT11	"Any ordeal they will suffer, as"
+#define C_INTR4_TXT12	"long as their weapons are allowed"
+#define C_INTR4_TXT13	"to thunder."
+#define C_INTR4_TXT14	" "
+#define C_INTR4_TXT15	"The demons will have fear, because"
+#define C_INTR4_TXT16	"you can be anywhere through here."
+#define C_INTR4_TXT17	"Your guns will fume as you bring"
+#define C_INTR4_TXT18	"the demons their doom. Choose any"
+#define C_INTR4_TXT19	"destination, as it is time for"
+#define C_INTR4_TXT20	"merciless extermination!"
 
 #define C_END1_TXT01	"You cackle as the"
 #define C_END1_TXT02	"familiarity of the"
@@ -209,7 +295,109 @@ extern void P_CheckCheats (void);
 #define C_END14_TXT13	"every circuit. I will bring"
 #define C_END14_TXT14	"this realm into the stone age."
 
-// Doom 64
+// Introduction Texts
+
+char *introcluster1[] =   // [Immorpher] Doom 64 intro text adapted from Doom 64 Manual and Doom 64 Reloaded
+{
+    C_INTR1_TXT01,
+	C_INTR1_TXT02,
+	C_INTR1_TXT03,
+	C_INTR1_TXT04,
+	C_INTR1_TXT05,
+	C_INTR1_TXT06,
+	C_INTR1_TXT07,
+	C_INTR1_TXT08,
+	C_INTR1_TXT09,
+	C_INTR1_TXT10,
+	C_INTR1_TXT11,
+	C_INTR1_TXT12,
+	C_INTR1_TXT13,
+	C_INTR1_TXT14,
+	C_INTR1_TXT15,
+	C_INTR1_TXT16,
+	C_INTR1_TXT17,
+	C_INTR1_TXT18,
+	C_INTR1_TXT19,
+	C_INTR1_TXT20,
+	T_NULL
+};
+
+char *introcluster2[] =   // [Immorpher] Lost Levels intro text adapted from Doom 64 CE
+{
+    C_INTR2_TXT01,
+	C_INTR2_TXT02,
+	C_INTR2_TXT03,
+	C_INTR2_TXT04,
+	C_INTR2_TXT05,
+	C_INTR2_TXT06,
+	C_INTR2_TXT07,
+	C_INTR2_TXT08,
+	C_INTR2_TXT09,
+	C_INTR2_TXT10,
+	C_INTR2_TXT11,
+	C_INTR2_TXT12,
+	C_INTR2_TXT13,
+	C_INTR2_TXT14,
+	C_INTR2_TXT15,
+	C_INTR2_TXT16,
+	C_INTR2_TXT17,
+	C_INTR2_TXT18,
+	C_INTR2_TXT19,
+	C_INTR2_TXT20,
+	T_NULL
+};
+
+char *introcluster3[] =   // [Immorpher] Beta 64 intro text adapted from Doom 64 CE
+{
+    C_INTR3_TXT01,
+	C_INTR3_TXT02,
+	C_INTR3_TXT03,
+	C_INTR3_TXT04,
+	C_INTR3_TXT05,
+	C_INTR3_TXT06,
+	C_INTR3_TXT07,
+	C_INTR3_TXT08,
+	C_INTR3_TXT09,
+	C_INTR3_TXT10,
+	C_INTR3_TXT11,
+	C_INTR3_TXT12,
+	C_INTR3_TXT13,
+	C_INTR3_TXT14,
+	C_INTR3_TXT15,
+	C_INTR3_TXT16,
+	C_INTR3_TXT17,
+	C_INTR3_TXT18,
+	C_INTR3_TXT19,
+	C_INTR3_TXT20,
+	T_NULL
+};
+
+char *introcluster4[] =   // [Immorpher] Bonus Pak intro text
+{
+    C_INTR4_TXT01,
+	C_INTR4_TXT02,
+	C_INTR4_TXT03,
+	C_INTR4_TXT04,
+	C_INTR4_TXT05,
+	C_INTR4_TXT06,
+	C_INTR4_TXT07,
+	C_INTR4_TXT08,
+	C_INTR4_TXT09,
+	C_INTR4_TXT10,
+	C_INTR4_TXT11,
+	C_INTR4_TXT12,
+	C_INTR4_TXT13,
+	C_INTR4_TXT14,
+	C_INTR4_TXT15,
+	C_INTR4_TXT16,
+	C_INTR4_TXT17,
+	C_INTR4_TXT18,
+	C_INTR4_TXT19,
+	C_INTR4_TXT20,
+	T_NULL
+};
+
+// Doom 64 Texts
 
 char *endcluster1[] =   // 8005A2C0
 {
@@ -536,7 +724,6 @@ static int textline;			// 800631F4
 static char **text;			    // 800631F8
 static int textalpha;			// 800631FC
 
-static boolean speed = false;
 
 /*
 =================
@@ -548,7 +735,24 @@ static boolean speed = false;
 
 void F_StartIntermission(void) // 80002CD0
 {
-    if (nextmap == 9)
+    if (nextmap == 0)
+    {
+        text = introcluster4;
+        textypos = 20;
+    } else if (nextmap == 1)
+    {
+        text = introcluster1;
+        textypos = 20;
+    } else if (nextmap == LOSTLEVEL)
+    {
+        text = introcluster2;
+        textypos = 20;
+    } else if (nextmap == BETALEVEL)
+    {
+        text = introcluster3;
+        textypos = 20;
+    }
+    else if (nextmap == 9)
     {
         text = endcluster1;
         textypos = 15;
@@ -602,7 +806,8 @@ void F_StartIntermission(void) // 80002CD0
     DrawerStatus = 2;
     textline = 0;
     textalpha = 0;
-    speed = false;
+	
+	S_StartMusic(116); // [Immorpher] Play menu music for intermission
 }
 
 /*
@@ -615,6 +820,7 @@ void F_StartIntermission(void) // 80002CD0
 
 void F_StopIntermission(void) // 80002E14
 {
+	S_StopMusic(); // [Immorpher] stop intermission music
     gamepaused = false;
     DrawerStatus = 0;
     I_WIPE_FadeOutScreen();
@@ -643,14 +849,9 @@ int F_TickerIntermission(void) // 80002E44
 
 	    exit = ga_nothing;
 
-        if ((buttons != oldbuttons) && (buttons & ALL_BUTTONS))
-        {
-            speed = true;
-        }
-
         if(*text[textline])
         {
-            textalpha += !speed ? 8 : 16;
+            textalpha += 8;
             if (textalpha > 255)
             {
                 textalpha = 0;
@@ -660,6 +861,12 @@ int F_TickerIntermission(void) // 80002E44
         else if ((buttons != oldbuttons) && (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B)))
         {
             exit = ga_exit;
+        }
+		
+		 // [Immorpher] Speed up text intermission by pressing buttons
+		if (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B))
+        {
+            textalpha += 256;
         }
 	}
 
@@ -702,11 +909,20 @@ void F_DrawerIntermission(void) // 80002F14
     ypos = textypos;
     for(i = 0; i < textline; i++)
     {
-        ST_DrawString(-1, ypos, text[i], 0xffffffff);
-        ypos += 14;
+		if(runintroduction) {
+			ST_Message(20, ypos, text[i], 0xffffffff);
+			ypos += 10;
+		} else {
+			ST_DrawString(-1, ypos, text[i], 0xffffffff);
+			ypos += 14;
+		}
     }
-
-    ST_DrawString(-1, ypos, text[i], textalpha | 0xffffff00);
+	
+	if(runintroduction) {
+		ST_Message(20, ypos, text[i], textalpha | 0xffffff00);
+	} else {
+		ST_DrawString(-1, ypos, text[i], textalpha | 0xffffff00);
+	}
 
     if (MenuCall)
     {
@@ -752,7 +968,6 @@ void F_Start(void) // 8000313C
 	castonmelee = 0;
 	castrotation = 0;
 	castfadein = 0;
-    speed = false;
 
 	S_StartMusic(113);
 }
@@ -797,11 +1012,6 @@ int F_Ticker(void) // 80003258
 		return gameaction;
 	}
 
-    if ((buttons != oldbuttons) && (buttons & ALL_BUTTONS))
-    {
-        speed = true;
-    }
-
     switch(finalestage)
     {
         case F_STAGE_FADEIN_BACKGROUD:
@@ -816,7 +1026,7 @@ int F_Ticker(void) // 80003258
         case F_STAGE_DRAWTEXT:
             if (gamemap == 74 ? *endcluster14[textline] : gamemap == 64 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
             {
-                textalpha += !speed ? 8 : 16;
+                textalpha += 8;
                 if (textalpha > 255)
                 {
                     textalpha = 0;

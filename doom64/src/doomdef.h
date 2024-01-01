@@ -872,6 +872,7 @@ extern int Autorun;
 extern boolean GreenBlood;
 extern boolean BlueCross;
 extern boolean ShowStats;
+extern boolean runintroduction; 	// [Immorpher] Introduction text
 
 int M_RunTitle(void); // 80007630
 
