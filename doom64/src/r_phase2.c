@@ -166,6 +166,7 @@ void R_SetupSky(void) // 80025060
 
         case 4:
         case 9:
+		case 20:
             R_RenderSKY = R_RenderFireSky;
 
             data = W_CacheLumpName("FIRE", PU_LEVEL, dec_jag);
@@ -174,19 +175,25 @@ void R_SetupSky(void) // 80025060
 
             D_memcpy(SkyFireData[1], SkyFireData[0],(FIRESKY_WIDTH*FIRESKY_HEIGHT));
 
-            if (skytexture == 4)
-            {
-                *(int*)SkyFireVertex[0].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
-                *(int*)SkyFireVertex[1].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
-                *(int*)SkyFireVertex[2].v.cn = PACKRGBA(255,96,0,255); // 0xff6000ff;
-                *(int*)SkyFireVertex[3].v.cn = PACKRGBA(255,96,0,255); // 0xff6000ff;
-            }
-            else
+            if (skytexture == 9)
             {
                 *(int*)SkyFireVertex[0].v.cn = PACKRGBA(0,255,0,255); // 0xff00ff;
                 *(int*)SkyFireVertex[1].v.cn = PACKRGBA(0,255,0,255); // 0xff00ff;
                 *(int*)SkyFireVertex[2].v.cn = PACKRGBA(112,112,0,255); // 0x707000ff;
                 *(int*)SkyFireVertex[3].v.cn = PACKRGBA(112,112,0,255); // 0x707000ff;
+            }
+            else
+            {
+                *(int*)SkyFireVertex[0].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
+                *(int*)SkyFireVertex[1].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
+                *(int*)SkyFireVertex[2].v.cn = PACKRGBA(255,96,0,255); // 0xff6000ff;
+                *(int*)SkyFireVertex[3].v.cn = PACKRGBA(255,96,0,255); // 0xff6000ff;
+			
+				if (skytexture == 20)
+					{
+						SkyPicMount = W_GetNumForName("MOUNTE");
+						SkyFlags |= SKF_MOUNTAIN;
+					}
             }
             break;
 
@@ -677,6 +684,17 @@ void R_RenderFireSky(void) // 80025F68
     gSP1Triangle(GFX1++, 0, 3, 2, 0);
 
     VTX1 += 4;
+
+    if (SkyFlags & SKF_MOUNTAIN)
+    {
+        gDPPipeSync(GFX1++);
+        gDPSetAlphaCompare(GFX1++, G_AC_THRESHOLD);
+        gDPSetCombineMode(GFX1++, G_CC_D64COMB10, G_CC_D64COMB10);
+        gDPSetRenderMode(GFX1++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
+
+        R_RenderSkyPic(SkyPicMount, 170);
+    }
+
 }
 
 void R_CloudThunder(void) // 80026418

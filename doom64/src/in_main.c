@@ -447,7 +447,10 @@ void IN_Drawer(void) // 80005164
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-	if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
+	if ((gamemap >= LOSTLEVEL) && (gamemap < BETALEVEL)) {
+		M_DrawBackground(63, 25, 128, "LOST");
+	}
+	else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
 		M_DrawBackground(63, 25, 128, "BETA");
 	}
 	else {
