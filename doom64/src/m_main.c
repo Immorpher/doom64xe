@@ -2534,7 +2534,7 @@ int M_ScreenTicker(void) // 8000A0F8
     {
         if (buttons ^ oldbuttons)
         {
-            if(buttons == (PAD_LEFT_C|PAD_RIGHT_C))
+            if(buttons == PAD_A)
             {
                 fState = &FileState[cursorpos];
 
@@ -2648,7 +2648,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
         ST_DrawSymbol(23, (cursorpos - linepos) * 15 + 51, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
         ST_DrawString(-1, 200, "press \x8d to exit", text_alpha | 0xffffff00);
-        ST_DrawString(-1, 215, "press \x84\x85 to delete", text_alpha | 0xffffff00);
+        ST_DrawString(-1, 215, "press \x8a to delete", text_alpha | 0xffffff00);
     }
 }
 
@@ -2784,7 +2784,7 @@ int M_SavePakTicker(void) // 8000A804
 
     if (last_ticon == 0)
     {
-        if ((buttons != oldbuttons) && (buttons == (PAD_RIGHT_C|PAD_LEFT_C)))
+        if ((buttons != oldbuttons) && (buttons == PAD_A))
         {
 
             // save configuration
@@ -2906,7 +2906,7 @@ void M_SavePakDrawer(void) // 8000AB44
         ST_DrawSymbol(11, (cursorpos - linepos) * 15 + 66, 78, text_alpha | 0xffffff00);
 
         ST_DrawString(-1, 195, "press \x8d to exit", text_alpha | 0xffffff00);
-        ST_DrawString(-1, 210, "press \x84\x85 to save", text_alpha | 0xffffff00);
+        ST_DrawString(-1, 210, "press \x8a to save", text_alpha | 0xffffff00);
     }
 
     I_DrawFrame();
@@ -3019,7 +3019,7 @@ int M_LoadPakTicker(void) // 8000AFE4
 
     if (!(buttons ^ oldbuttons) || !(buttons & PAD_START))
     {
-        if (!(buttons ^ oldbuttons) || buttons != (PAD_RIGHT_C|PAD_LEFT_C) ||
+        if (!(buttons ^ oldbuttons) || buttons != PAD_A ||
             (Pak_Data[(cursorpos * 32) + 16] == 0xCE))
         {
             exit = ga_nothing;
@@ -3116,7 +3116,7 @@ void M_LoadPakDrawer(void) // 8000B270
     ST_DrawSymbol(11, (cursorpos - linepos) * 15 + 66, 78, text_alpha | 0xffffff00);
 
     ST_DrawString(-1, 195, "press \x8D to exit", text_alpha | 0xffffff00);
-    ST_DrawString(-1, 210, "press \x84\x85 to load", text_alpha | 0xffffff00);
+    ST_DrawString(-1, 210, "press \x8a to load", text_alpha | 0xffffff00);
 }
 
 int M_CenterDisplayTicker(void) // 8000B4C4
