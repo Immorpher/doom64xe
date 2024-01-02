@@ -901,6 +901,9 @@ void F_DrawerIntermission(void) // 80002F14
 	else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
 		M_DrawBackground(63, 25, 128, "BETA");
 	}
+	else if (gamemap >= BONUSLEVEL || gamemap == 0) {
+		M_DrawBackground(63, 25, 128, "BONUS");
+	}
 	else {
 		M_DrawBackground(63, 25, 128, "EVIL");
 	}
@@ -1317,6 +1320,9 @@ void F_Drawer(void) // 800039DC
 			}
 			else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
 				M_DrawBackground(63, 25, 128, "BETA");
+			}
+			else if (gamemap >= BONUSLEVEL || gamemap == 0) {
+				M_DrawBackground(63, 25, 128, "BONUS");
 			}
 			else {
 				M_DrawBackground(63, 25, 128, "EVIL");

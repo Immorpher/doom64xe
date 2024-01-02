@@ -2839,6 +2839,9 @@ void M_SavePakDrawer(void) // 8000AB44
 	else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
 		M_DrawBackground(63, 25, 128, "BETA");
 	}
+	else if (gamemap >= BONUSLEVEL || gamemap == 0) {
+		M_DrawBackground(63, 25, 128, "BONUS");
+	}
 	else {
 		M_DrawBackground(63, 25, 128, "EVIL");
 	}
