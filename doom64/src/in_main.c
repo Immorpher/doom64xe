@@ -491,11 +491,16 @@ void IN_Drawer(void) // 80005164
         ST_DrawString(210, 120, timetext, PACKRGBA(255, 0, 0, text_alpha));
     }
 
-	if ((nextstage > 4) && ((nextmap >= BONUSLEVEL) || nextmap == 0)) // [Immorpher] Dont show passwords for Bonus Pak
+	if ((nextstage > 4) && (gamemap == 74 || gamemap == 65 || gamemap == 39 || gamemap == 28 || !FUNLEVEL(gamemap))) // [Immorpher] Ignore finale and fun levels
+	{
+		// nothing
+	}
+	else if ((nextstage > 4) && ((nextmap >= BONUSLEVEL) || nextmap == 0)) // [Immorpher] Dont show passwords for Bonus Pak
 	{
         ST_DrawString(-1, 165, "Entering", PACKRGBA(255, 255, 255, text_alpha));
         ST_DrawString(-1, 181, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));
-	} else if ((nextstage > 4) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap))
+	}
+	else if (nextstage > 4)
 	{
         ST_DrawString(-1, 145, "Entering", PACKRGBA(255, 255, 255, text_alpha));
         ST_DrawString(-1, 161, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));

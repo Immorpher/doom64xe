@@ -265,22 +265,22 @@ extern void P_CheckCheats (void);
 #define C_END12_TXT13	"sanity, or perhaps a key to"
 #define C_END12_TXT14	"fighting the demons..."
 
-#define C_END13_TXT01	"The mother of horrors has been"
-#define C_END13_TXT02	"slain! My comrades can now"
-#define C_END13_TXT03	"rest in peace. I wish I could"
-#define C_END13_TXT04	"rest with them..."
+#define C_END13_TXT01	"The mother of horrors has"
+#define C_END13_TXT02	"been slain! My comrades can"
+#define C_END13_TXT03	"now rest in peace. I wish I"
+#define C_END13_TXT04	"could rest with them..."
 #define C_END13_TXT05	" "
-#define C_END13_TXT06	"But something is not right with"
-#define C_END13_TXT07	"this place… The horizon is"
-#define C_END13_TXT08	"littered with monuments to"
-#define C_END13_TXT09	"technology."
+#define C_END13_TXT06	"But something is not right"
+#define C_END13_TXT07	"with this place... The horizon"
+#define C_END13_TXT08	"is littered with monuments"
+#define C_END13_TXT09	"to technology."
 #define C_END13_TXT10	" "
 #define C_END13_TXT11	"This must be where their ship"
 #define C_END13_TXT12	"of flesh and steel was made!"
 #define C_END13_TXT13	"I cannot rest until all U.A.C."
-#define C_END13_TXT14	"technology is destroyed…"
+#define C_END13_TXT14	"technology is destroyed..."
 
-#define C_END14_TXT01    "The last facility smolders in."
+#define C_END14_TXT01   "The last facility smolders in."
 #define C_END14_TXT02	"ruin. Even the vile resurrector"
 #define C_END14_TXT03	"has fallen amongst the rubble.."
 #define C_END14_TXT04	" "
@@ -1027,7 +1027,7 @@ int F_Ticker(void) // 80003258
             break;
 
         case F_STAGE_DRAWTEXT:
-            if (gamemap == 74 ? *endcluster14[textline] : gamemap == 64 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
+            if (gamemap == 74 ? *endcluster14[textline] : gamemap == 65 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
             {
                 textalpha += 8;
                 if (textalpha > 255)
@@ -1307,11 +1307,11 @@ void F_Drawer(void) // 800039DC
             ypos = textypos;
             for(i = 0; i < textline; i++)
             {
-                ST_DrawString(-1, ypos, (gamemap == 39 ? endcluster7[i] : endcluster6[i]), 0xc0c0c0ff);
+                ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] :gamemap == 39 ? endcluster7[i] : endcluster6[i]), 0xffffffff);
                 ypos += 14;
             }
 
-            ST_DrawString(-1, ypos, (gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xc0c0c000);
+            ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] :gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xffffff00);
             break;
 
         case F_STAGE_CAST:
