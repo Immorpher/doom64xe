@@ -888,7 +888,7 @@ void M_MenuGameDrawer(void) // 80007C48
         gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
         gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-        M_DrawBackground(56, 57, 80, "TITLE");
+        M_DrawBackground(0, 0, 80, "TITLE");
 
         if (MenuItem != Menu_Title && MenuItem != Menu_TitleNoSave) {
             M_DrawOverlay(0, 0, 320, 240, 96);
