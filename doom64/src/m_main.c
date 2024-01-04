@@ -146,12 +146,13 @@ menuitem_t Menu_Skill[6] = // 8005A990
     { 6, 102, 180},    	// Return
 };
 
-const menuitem_t Menu_Episode[4] =
+const menuitem_t Menu_Episode[5] =
 {
     { 51, 102, 80 },    // Doom 64
     { 52, 102, 100},    // The Lost Levels
     { 62, 102, 120},    // Beta 64
     { 61, 102, 140},    // Bonus Pak
+    { 6, 102, 170},    	// Return
 };
 
 menuitem_t Menu_Options[7] = // 8005A9C0
@@ -1294,7 +1295,7 @@ int M_MenuTicker(void) // 80007E0C
                         EnableExpPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Episode;
-                        itemlines = 4;
+                        itemlines = 5;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 0;
 
