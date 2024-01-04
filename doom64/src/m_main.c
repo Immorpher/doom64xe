@@ -136,13 +136,14 @@ const menuitem_t Menu_TitleNoSave[2] =
 	{ 11, 115, 210 },   // Options
 };
 
-const menuitem_t Menu_Skill[5] = // 8005A990
+menuitem_t Menu_Skill[6] = // 8005A990
 {
-    { 15, 102, 80 },    // Be Gentle!
-    { 16, 102, 100},    // Bring it on!
-    { 17, 102, 120},    // I own Doom!
-    { 18, 102, 140},    // Watch me die!
-    { 19, 102, 160},    // Nightmare
+    { 15, 102, 70 },    // Be Gentle!
+    { 16, 102, 90},    // Bring it on!
+    { 17, 102, 110},    // I own Doom!
+    { 18, 102, 130},    // Watch me die!
+    { 19, 102, 150},    // Be merciless!
+    { 6, 102, 180},    	// Return
 };
 
 const menuitem_t Menu_Episode[4] =
@@ -1083,24 +1084,31 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 
-                case 5: // Restart Level
+                case 5: // [Immorpher] Updated restart level so player can change difficulty at will
                     if (truebuttons)
                     {
+						
                         S_StartSound(NULL, sfx_pistol);
                         M_SaveMenuData();
 
-                        MenuItem = Menu_Quit;
-                        itemlines = 2;
+                        MenuItem = Menu_Skill;
+                        itemlines = 6;
                         MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 1;
+                        cursorpos = gameskill;  // Set default to current difficulty
 
                         exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
 
-                        if (exit == ga_exit)
+                        if (exit == ga_exit && cursorpos == 5) { // [Immorpher] 5th to exit menu
+							M_RestoreMenuData((exit == ga_exit));
                             return ga_nothing;
-
-                        return ga_restart;
+						}
+						
+                        gameskill = cursorpos;
+						
+						startmap = gamemap;
+						startskill = gameskill;
+						
+						return ga_warped;
                     }
                     break;
 
@@ -1307,11 +1315,17 @@ int M_MenuTicker(void) // 80007E0C
                         EnableExpPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Skill;
-                        itemlines = 5;
+                        itemlines = 6;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 1;  // Set Default Bring it on!
 
                         MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+						
+						if (exit == ga_exit && cursorpos == 5) { // [Immorpher] 5th to exit menu
+							M_RestoreMenuData((exit == ga_exit));
+                            return ga_nothing;
+						}
+						
                         startskill = MenuItem[cursorpos].casepos - 15;
 
                         return ga_exit;
@@ -1329,7 +1343,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        itemlines = 5;
+                        itemlines = 6;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
@@ -1354,7 +1368,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        itemlines = 5;
+                        itemlines = 6;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
@@ -1980,7 +1994,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        itemlines = 5;
+                        itemlines = 6;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
@@ -2006,7 +2020,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Skill;
-                        itemlines = 5;
+                        itemlines = 6;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 2;
 
