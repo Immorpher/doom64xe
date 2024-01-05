@@ -40,7 +40,7 @@ mapthing_t	playerstarts[MAXPLAYERS];   // 800a8c60
 
 void G_DoLoadLevel (void) // 80004530
 {
-	if (((gameaction == 7) || (gameaction == 4)) || (players[0].playerstate == PST_DEAD))
+	if (((gameaction == ga_restart) || (gameaction == ga_warped)) || (players[0].playerstate == PST_DEAD))
 	{
 		players[0].playerstate = PST_REBORN;
 	}
