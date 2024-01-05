@@ -1124,12 +1124,12 @@ void R_RenderLaser(mobj_t *thing) // 80028CCC
     VTX1[5].v.ob[1] = (laserdata->z1 >> FRACBITS);
     VTX1[5].v.ob[2] = (-(laserdata->y1 - laserdata->slopex) >> FRACBITS);
 
-    *(int *)VTX1[0].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
-    *(int *)VTX1[1].v.cn = PACKRGBA(0,0,0,255);   // 0xff;
-    *(int *)VTX1[2].v.cn = PACKRGBA(0,0,0,255);   // 0xff;
-    *(int *)VTX1[3].v.cn = PACKRGBA(255,0,0,255); // 0xff0000ff;
-    *(int *)VTX1[4].v.cn = PACKRGBA(0,0,0,255);   // 0xff;
-    *(int *)VTX1[5].v.cn = PACKRGBA(0,0,0,255);   // 0xff;
+    *(int *)VTX1[0].v.cn = 0xff0000ff;		// PACKRGBA(255,0,0,255)
+    *(int *)VTX1[1].v.cn = 0xff;			// PACKRGBA(0,0,0,255);
+    *(int *)VTX1[2].v.cn = 0xff;			// PACKRGBA(0,0,0,255);
+    *(int *)VTX1[3].v.cn = 0xff0000ff;		// PACKRGBA(255,0,0,255);
+    *(int *)VTX1[4].v.cn = 0xff;			// PACKRGBA(0,0,0,255);
+    *(int *)VTX1[5].v.cn = 0xff;			// PACKRGBA(0,0,0,255);
 
     VTX1 += 6;
 }
@@ -1210,7 +1210,7 @@ void R_RenderPSprites(void) // 80028f20
 
 			if (psp->state->frame & FF_FULLBRIGHT)
 			{
-			    gDPSetPrimColorD64(GFX1, 0, 0, PACKRGBA(255,255,255,0));//0xffffff00
+			    gDPSetPrimColorD64(GFX1, 0, 0, 0xffffff00);		// PACKRGBA(255,255,255,0)
 			}
 			else
 			{

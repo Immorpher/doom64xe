@@ -120,7 +120,7 @@ void R_SetupSky(void) // 80025060
                 SkyFlags |= SKF_MOUNTAIN;
             }
 
-            *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(0,0,0,255); // 0xff;
+            *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(0,0,0,255); // PACKRGBA(0,0,0,255)
             *(int*)SkyCloudVertex[1].v.cn = PACKRGBA(0,0,0,255); // 0xff;
             *(int*)SkyCloudVertex[2].v.cn = PACKRGBA(0,0,21,255); // 0x15ff;
             *(int*)SkyCloudVertex[3].v.cn = PACKRGBA(0,0,21,255); // 0x15ff;

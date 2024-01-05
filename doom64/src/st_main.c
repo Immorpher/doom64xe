@@ -371,18 +371,18 @@ void ST_Drawer (void) // 80029DC0
             if (ammo < 0)
                 ammo = 0;
 
-            ST_DrawNumber(160, 215, ammo, 0, PACKRGBA(255,0,0,128)); // 0xe0000080
+            ST_DrawNumber(160, 215, ammo, 0, 0xff000080); // PACKRGBA(255,0,0,128)
         }
 
         /* */
         /* Health */
         /* */
-        ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(255,0,0,128)); // 0xe0000080
+        ST_DrawNumber(49, 215, player->health, 0, 0xff000080); // PACKRGBA(255,0,0,128)
 
         /* */
         /* Armor */
         /* */
-        ST_DrawNumber(271, 215, player->armorpoints, 0, PACKRGBA(255,0,0,128)); // 0xe0000080
+        ST_DrawNumber(271, 215, player->armorpoints, 0, 0xff000080); // PACKRGBA(255,0,0,128)
     }
 
     #if SHOWFPS == 1
@@ -696,7 +696,7 @@ void ST_UpdateFlash(void) // 8002AC30
     /* invulnerability flash (white) */
 	if (plyr->powers[pw_invulnerability] >= 61 || plyr->powers[pw_invulnerability] & 8)
 	{
-		FlashEnvColor = PACKRGBA(128, 128, 128, 255);
+		FlashEnvColor = 0x808080ff; //PACKRGBA(128, 128, 128, 255)
 	}
 	/* bfg flash (green)*/
 	else if(plyr->bfgcount)
@@ -741,7 +741,7 @@ void ST_UpdateFlash(void) // 8002AC30
         /* suit flash (green/yellow) */
         else if(plyr->powers[pw_ironfeet] >= 61 || plyr->powers[pw_ironfeet] & 8)
         {
-            FlashEnvColor = PACKRGBA(0, 32, 4, 255);
+            FlashEnvColor = 0x002004ff;  // PACKRGBA(0, 32, 4, 255)
         }
         /* bonus flash (yellow) */
         else if (plyr->bonuscount)
@@ -757,7 +757,7 @@ void ST_UpdateFlash(void) // 8002AC30
         }
         else
         {
-            FlashEnvColor = PACKRGBA(0, 0, 0, 255); /* Default Flash */
+            FlashEnvColor = 0xff; // Default Flash - PACKRGBA(0, 0, 0, 255)
         }
 	}
 }

@@ -13,27 +13,6 @@ int		    numlinespecials;    // 800A5F64
 sector_t    **sectorspeciallist;// 800A5F68
 int         numsectorspecials;  // 800A5F6C
 
-/*---------- Beta 64 table for the future
-animdef_t		animdefs[MAXANIMS] = // 8005AE80
-{
-	{ 15, "SMONAA", 4, 7, false, false },
-	{  0, "SMONBA", 4, 1, false, false },
-	{  0, "SMONCA", 4, 7, false, false },
-	{ 90, "CFACEA", 3, 3,  true, false },
-	{  0, "SMONDA", 4, 3, false, false },
-	{ 10, "SMONEA", 4, 7, false, false },
-	{  0, "SPORTA", 9, 3, false,  true },
-	{ 10,  "SMONF", 5, 1,  true,  true },
-	{ 10, "STRAKR", 5, 1,  true,  true },
-	{ 10, "STRAKB", 5, 1,  true,  true },
-	{ 10, "STRAKY", 5, 1,  true,  true },
-	{ 50,  "C307B", 5, 1,  true,  true },
-	{  0,   "CTEL", 8, 3, false,  true },
-	{  0,"CASFL98", 5, 7,  true,  true },
-	{  0,  "HTELA", 4, 1,  true, false }
-};
-
-/---------*/
 
 animdef_t		animdefs[MAXANIMS] = // 8005AE80
 {
