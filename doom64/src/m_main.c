@@ -130,9 +130,10 @@ const menuitem_t Menu_Title[3] = // 8005A978
 	{ 11, 115, 210 },   // Options
 };
 
-const menuitem_t Menu_TitleNoSave[2] =
+const menuitem_t Menu_TitleNoSave[3] =
 {
-    { 14, 115, 190 },   // New Game
+    { 14, 115, 170 },   // New Game
+    {  3, 115, 190},    // Password
 	{ 11, 115, 210 },   // Options
 };
 
@@ -633,7 +634,7 @@ int M_RunTitle(void) // 80007630
     MenuItem =  hasPak && hasSave ? Menu_Title : Menu_TitleNoSave;
     MenuCall = M_MenuTitleDrawer;
     text_alpha = 0;
-    itemlines = hasPak && hasSave ? 3 : 2;
+    itemlines = 3;
     cursorpos = 0;
     last_ticon = 0;
 
