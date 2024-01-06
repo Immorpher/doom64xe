@@ -280,20 +280,20 @@ extern void P_CheckCheats (void);
 #define C_END13_TXT13	"I cannot rest until all U.A.C."
 #define C_END13_TXT14	"technology is destroyed..."
 
-#define C_END14_TXT01   "The last facility smolders in."
-#define C_END14_TXT02	"ruin. Even the vile resurrector"
-#define C_END14_TXT03	"has fallen amongst the rubble.."
+#define C_END14_TXT01   "The last facility smolders in"
+#define C_END14_TXT02	"ruin. Even the vile nightmare"
+#define C_END14_TXT03	"mother has fallen in the ash."
 #define C_END14_TXT04	" "
-#define C_END14_TXT05	"For the first time since stepping"
-#define C_END14_TXT06	"into hell... a sense of serenity"
-#define C_END14_TXT07	"permeates. I have found a."
-#define C_END14_TXT08	"purpose to live."
+#define C_END14_TXT05	"For the first time since"
+#define C_END14_TXT06	"entering hell a sense of"
+#define C_END14_TXT07	"peace permeates. I have"
+#define C_END14_TXT08	"found a purpose to live."
 #define C_END14_TXT09	" "
 #define C_END14_TXT10	"Hell is vast and the demons"
 #define C_END14_TXT11	"scavenge like rats. I shall"
 #define C_END14_TXT12	"hunt down every weapon and"
 #define C_END14_TXT13	"every circuit. I will bring"
-#define C_END14_TXT14	"this realm into the stone age."
+#define C_END14_TXT14	"them into the stone age!"
 
 // Introduction Texts
 
@@ -1307,11 +1307,18 @@ void F_Drawer(void) // 800039DC
             ypos = textypos;
             for(i = 0; i < textline; i++)
             {
-                ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] :gamemap == 39 ? endcluster7[i] : endcluster6[i]), 0xffffffff);
+				if (ypos >= 16)
+                    alpha = 0xff;
+                else if (ypos > 0)
+                    alpha = ypos<<4;
+                else
+                    alpha = 0;
+				
+                ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), alpha | 0xffffff00);
                 ypos += 14;
             }
 
-            ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] :gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xffffff00);
+            ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xffffff00);
             break;
 
         case F_STAGE_CAST:
