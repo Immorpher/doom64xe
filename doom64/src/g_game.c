@@ -207,8 +207,10 @@ void G_RunGame (void) // 80004794
             return;
 
         /* run a stats intermission */
-        
-		MiniLoop(IN_Start, IN_Stop, IN_Ticker, IN_Drawer);
+		
+		if (gamemap != 0) { // [Immorpher] dont run stats at bonus pak hub
+			MiniLoop(IN_Start, IN_Stop, IN_Ticker, IN_Drawer);
+		}
 
         if(nextmap ==  9 ||
            nextmap == 29 ||
