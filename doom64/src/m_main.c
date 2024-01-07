@@ -1480,7 +1480,9 @@ int M_MenuTicker(void) // 80007E0C
                             startmap = m_actualmap;
                             return ga_warped;
                         }
-                    }
+                    } else if (m_actualmap > LASTLEVEL) { // [Immorpher] If at bonus pak reset to hub
+						m_actualmap = 0;
+					}
                     break;
 
                 case 24: // INVULNERABLE
