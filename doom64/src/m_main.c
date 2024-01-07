@@ -890,10 +890,10 @@ void M_MenuGameDrawer(void) // 80007C48
         gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
         gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 		
-		M_DrawBackground(0, 0, 191, "TITLE");
+		M_DrawBackground(0, 0, 255, "TITLE");
 
-        if (MenuItem != Menu_Title && MenuItem != Menu_TitleNoSave) {
-            M_DrawOverlay(0, 0, 320, 240, 128);
+        if ((MenuItem != Menu_Title && MenuItem != Menu_TitleNoSave) || MenuCall != M_MenuTitleDrawer) {
+            M_DrawOverlay(0, 0, 320, 240, 191);
         }
 
         MenuCall();
