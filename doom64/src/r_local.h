@@ -21,6 +21,7 @@
 
 #define	MINZ				8
 #define	MAXZ				256
+#define	SPRMAXZ				4096 // [Immorpher] Maximum sprite distance for rendering
 
 #define	FIELDOFVIEW			2048   /* fineangles in the SCREENWIDTH wide window */
 

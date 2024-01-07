@@ -412,7 +412,7 @@ void R_AddSprite(subsector_t *sub) // 80024A98
         if (thing->subsector != sub)
 			continue;
 
-        if (numdrawvissprites >= MAXVISSPRITES)
+        if (numdrawvissprites >= MAXVISSPRITES) // Limit the number of sprites that can be rendered
             break;
 
         if (thing->flags & MF_RENDERLASER)
@@ -435,6 +435,10 @@ void R_AddSprite(subsector_t *sub) // 80024A98
 
             // thing is behind view plane?
             if (tz < MINZ)
+                continue;
+			
+			// [GBA Doom] Too far away. Always draw Cyberdemon. They are big sprites!
+			if((tz > SPRMAXZ) && (thing->type != MT_CYBORG) && (thing->type != MT_CYBORG_TITLE))
                 continue;
 
             // too far off the side?
