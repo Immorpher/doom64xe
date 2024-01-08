@@ -4,6 +4,7 @@
 #include "p_local.h"
 
 void G_PlayerReborn (int player);
+void G_PlayerReload (int player);
 
 void G_DoReborn (int playernum);
 
@@ -17,6 +18,7 @@ int				nextmap;				    // 8006323C /* the map to go to after the stats */
 
 //boolean         playeringame[MAXPLAYERS]; //
 player_t        players[MAXPLAYERS];        // 80063240
+thingdata_t		playdata[MAXPLAYERS]; // [Immorpher] store player data for reload
 
 int             consoleplayer;          /* player taking events and displaying  */
 int             displayplayer;          /* view being displayed  */
@@ -116,6 +118,36 @@ void G_PlayerReborn (int player) // 80004630
     p->maxammo[am_shell] = maxammo[am_shell];
     p->maxammo[am_cell] = maxammo[am_cell];
     p->maxammo[am_misl] = maxammo[am_misl];
+
+    p->cheats |= gobalcheats; // [GEC] Apply global cheat codes
+}
+
+void G_PlayerReload (int player) // [Immorpher] Reload player's starting state
+{
+	player_t *p;
+	int	i;
+
+	p = &players[player];
+	bzero(p, sizeof(*p));
+
+	p->usedown = p->attackdown = true; // don't do anything immediately
+	p->playerstate = PST_LIVE;
+	p->health = MAXHEALTH;
+	p->readyweapon = p->pendingweapon = wp_pistol;
+	p->health = playdata[player].health;				
+	p->armorpoints = playdata[player].armorpoints;
+	p->armortype = playdata[player].armortype;	
+	p->artifacts = playdata[player].artifacts;
+	p->backpack = playdata[player].backpack;
+	for (i = 0; i < NUMWEAPONS; i++) // Store weapon possession
+	{
+		p->weaponowned[i] = playdata[player].weaponowned[i];
+	}
+	for (i = 0; i < NUMAMMO; i++) // Store ammo amount
+	{
+		p->ammo[i] = playdata[player].ammo[i];
+		p->maxammo[i] = playdata[player].maxammo[i];
+	}
 
     p->cheats |= gobalcheats; // [GEC] Apply global cheat codes
 }

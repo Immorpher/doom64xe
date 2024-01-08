@@ -370,7 +370,8 @@ typedef enum
 {
 	PST_LIVE,			/* playing */
 	PST_DEAD,			/* dead on the ground */
-	PST_REBORN			/* ready to restart */
+	PST_REBORN,			/* set stats to default and restart */
+	PST_RELOAD			/* reload from level entering stats */
 } playerstate_t;
 
 
@@ -538,6 +539,17 @@ typedef struct player_s
 	boolean		speeddown;				/* true if button down last tic */
 } player_t;
 
+typedef struct thingdata_s // [Immorpher] use this to store player data when the player needs to restart the level
+{
+	int			health;					/* only used between levels, mo->health */
+	int			armorpoints, armortype;	/* armor type is 0-2 */
+	int         artifacts;              /* [d64]*/
+	boolean		backpack;
+	boolean		weaponowned[NUMWEAPONS];
+	int			ammo[NUMAMMO];
+	int			maxammo[NUMAMMO];
+} thingdata_t;
+
 #define CF_NOCLIP       1       // no use
 #define CF_GODMODE      2
 #define CF_ALLMAP       4
@@ -610,6 +622,7 @@ typedef enum
 //extern	int			consoleplayer;		/* player taking events and displaying */
 //extern	int			displayplayer;
 extern	player_t	players[MAXPLAYERS];
+extern	thingdata_t playdata[MAXPLAYERS]; // [Immorpher] store player data for reload
 
 extern	skill_t		gameskill;
 extern	int			gamemap;

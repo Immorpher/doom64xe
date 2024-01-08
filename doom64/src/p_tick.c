@@ -257,7 +257,7 @@ int P_Ticker (void)//80021A00
 	//
 	pl = players;
 
-	if (pl->playerstate == PST_REBORN) {
+	if (pl->playerstate == PST_RELOAD) {
         gameaction = ga_died;
 	}
 

@@ -5,6 +5,7 @@
 #include "sounds.h"
 
 void G_PlayerReborn (int player);
+void G_PlayerReload (int player);
 
 extern void ST_InitEveryLevel(void);
 extern void ST_UpdateFlash(void);
@@ -227,8 +228,11 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 
 	p = &players[0];
 
-	if ((p->playerstate == PST_REBORN) || gamemap == 0) // [Immorpher] Also reset health at Bonus Pak hub!
+	// [Immorpher] Reset health at Bonus Pak hub and include reload state
+	if ((p->playerstate == PST_REBORN) || gamemap == 0)
 		G_PlayerReborn(0);
+	else if (p->playerstate == PST_RELOAD)
+		G_PlayerReload(0);
     else
     {
         p->killcount = 0;
@@ -271,6 +275,22 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
         M_DecodePassword(Passwordbuff, &levelnum, &skill, p);
         doPassword = false;
     }
+	
+	// [Immorpher] Store player data for reload
+	playdata[0].health = p->health;				
+	playdata[0].armorpoints = p->armorpoints;
+	playdata[0].armortype = p->armortype;	
+	playdata[0].artifacts = p->artifacts;
+	playdata[0].backpack = p->backpack;
+	for (i = 0; i < NUMWEAPONS; i++) // Store weapon possession
+	{
+		playdata[0].weaponowned[i] = p->weaponowned[i];
+	}
+	for (i = 0; i < NUMAMMO; i++) // Store ammo amount
+	{
+		playdata[0].ammo[i] = p->ammo[i];
+		playdata[0].maxammo[i] = p->maxammo[i];
+	}
 
     ST_InitEveryLevel();
     ST_UpdateFlash(); // ST_doPaletteStuff();

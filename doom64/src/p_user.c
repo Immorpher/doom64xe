@@ -593,7 +593,7 @@ void P_DeathThink (player_t *player) // 80022914
 	if (((ticbuttons[0] & (PAD_A|PAD_B|ALL_TRIG|ALL_CBUTTONS)) != 0) &&
         (player->viewheight <= 8*FRACUNIT))
     {
-		player->playerstate = PST_REBORN;
+		player->playerstate = PST_RELOAD;
     }
 
     if (player->bonuscount)
