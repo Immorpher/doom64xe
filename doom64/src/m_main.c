@@ -105,6 +105,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT60 "Map Stats:" // Automap stats
 #define M_TXT61 "Bonus Pak" // Bonus level hub
 #define M_TXT62 "Beta 64" // Antnee's Beta 64
+#define M_TXT63 "WARP TO FINAL"
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -120,7 +121,7 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
-	M_TXT60, M_TXT61, M_TXT62
+	M_TXT60, M_TXT61, M_TXT62, M_TXT63
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -2122,6 +2123,10 @@ void M_FeaturesDrawer(void) // 800091C0
         {
             /* Show "WARP TO FUN" text */
             ST_Message(item->x, item->y, MenuText[40], text_alpha | 0xffffff00);
+        } else if ((item->casepos == 23) && FINLEVEL(m_actualmap))
+        {
+            /* Show "WARP TO FINAL" text */
+            ST_Message(item->x, item->y, MenuText[63], text_alpha | 0xffffff00);
         }
         else
         {

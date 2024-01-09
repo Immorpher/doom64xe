@@ -274,7 +274,7 @@ void G_RunGame (void) // 80004794
 		}
         else
         {
-            if ((nextmap != gamemap) && ((gamemap == 74 && nextmap == (BETALEVEL + 99)) || gamemap == 65 || gamemap == 39 || gamemap == 28)) // check finale maps to run finale
+            if ((nextmap != gamemap) && FINLEVEL(gamemap)) // check finale maps to run finale
             {
                 /* run the finale if needed */
                 MiniLoop(F_Start, F_Stop, F_Ticker, F_Drawer);

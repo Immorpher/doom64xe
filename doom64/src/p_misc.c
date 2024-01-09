@@ -214,10 +214,10 @@ void P_SecretExitLevel(int map) // 8000E25C
 
     if (map >= BONUSLEVEL) // [Immorpher] Exit right away to bonus levels
 		delaytics = 5;
-	else if (map < LASTLEVEL)
-        delaytics = 15;
-    else
+    else if FINLEVEL(map) // Longer delay after final victory
         delaytics = 120;
+	else // Normal maps have this exit delay
+        delaytics = 15;
 
     nextmap = map;
     P_SpawnDelayTimer(delaytics, G_CompleteLevel);

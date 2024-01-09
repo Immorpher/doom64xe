@@ -267,33 +267,18 @@ extern void P_CheckCheats (void);
 
 #define C_END13_TXT01	"The mother of horrors has"
 #define C_END13_TXT02	"been slain! My comrades can"
-#define C_END13_TXT03	"now rest in peace. I wish I"
-#define C_END13_TXT04	"could rest with them..."
-#define C_END13_TXT05	" "
-#define C_END13_TXT06	"But something is not right"
-#define C_END13_TXT07	"with this place... The horizon"
-#define C_END13_TXT08	"is littered with monuments"
-#define C_END13_TXT09	"to technology."
-#define C_END13_TXT10	" "
-#define C_END13_TXT11	"This must be where their ship"
-#define C_END13_TXT12	"of flesh and steel was made!"
-#define C_END13_TXT13	"I cannot rest until all U.A.C."
-#define C_END13_TXT14	"technology is destroyed..."
-
-#define C_END14_TXT01   "The last facility smolders in"
-#define C_END14_TXT02	"ruin. Even the vile nightmare"
-#define C_END14_TXT03	"mother has fallen in the ash."
-#define C_END14_TXT04	" "
-#define C_END14_TXT05	"For the first time since"
-#define C_END14_TXT06	"entering hell a sense of"
-#define C_END14_TXT07	"peace permeates. I have"
-#define C_END14_TXT08	"found a purpose to live."
-#define C_END14_TXT09	" "
-#define C_END14_TXT10	"Hell is vast and the demons"
-#define C_END14_TXT11	"scavenge like rats. I shall"
-#define C_END14_TXT12	"hunt down every weapon and"
-#define C_END14_TXT13	"every circuit. I will bring"
-#define C_END14_TXT14	"them into the stone age!"
+#define C_END13_TXT03	"now rest in peace."
+#define C_END13_TXT04	" "
+#define C_END13_TXT05	"For the first time since"
+#define C_END13_TXT06	"entering hell a sense of"
+#define C_END13_TXT07	"peace permeates. I have"
+#define C_END13_TXT08	"found a purpose to live."
+#define C_END13_TXT09	" "
+#define C_END13_TXT10	"Hell is vast and the demons"
+#define C_END13_TXT11	"scavenge like rats. I shall"
+#define C_END13_TXT12	"hunt down every weapon and"
+#define C_END13_TXT13	"every circuit. I will bring"
+#define C_END13_TXT14	"them into the stone age!"
 
 // Introduction Texts
 
@@ -631,25 +616,6 @@ char *endcluster13[] =   // 8005A3B0
 	C_END13_TXT13,
 	C_END13_TXT14,
 	T_NULL
-};
-
-char *endcluster14[] =
-{
-    C_END14_TXT01,
-    C_END14_TXT02,
-    C_END14_TXT03,
-    C_END14_TXT04,
-    C_END14_TXT05,
-    C_END14_TXT06,
-    C_END14_TXT07,
-    C_END14_TXT08,
-    C_END14_TXT09,
-    C_END14_TXT10,
-    C_END14_TXT11,
-    C_END14_TXT12,
-    C_END14_TXT13,
-    C_END14_TXT14,
-    T_NULL
 };
 
 //
@@ -1027,7 +993,7 @@ int F_Ticker(void) // 80003258
             break;
 
         case F_STAGE_DRAWTEXT:
-            if (gamemap == 74 ? *endcluster14[textline] : gamemap == 65 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
+            if (gamemap == 65 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
             {
                 textalpha += 8;
                 if (textalpha > 255)
@@ -1314,11 +1280,11 @@ void F_Drawer(void) // 800039DC
                 else
                     alpha = 0;
 				
-                ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), alpha | 0xffffff00);
+                ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), alpha | 0xffffff00);
                 ypos += 14;
             }
 
-            ST_DrawString(-1, ypos, (gamemap == 74 ? endcluster14[i] : gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xffffff00);
+            ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xffffff00);
             break;
 
         case F_STAGE_CAST:

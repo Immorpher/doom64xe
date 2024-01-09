@@ -62,31 +62,29 @@ extern int nextmap;
 #define MI_TXT48	"Ultima Porta"
 #define MI_TXT49	"Profane Paradise"
 #define MI_TXT50	"Pain Warren"
-#define MI_TXT51	"City of The Damned"
+#define MI_TXT51	"City of the Damned"
 #define MI_TXT52	"Mines"
 #define MI_TXT53	"Lair of the Blind"
 #define MI_TXT54	"The Dungeons"
 #define MI_TXT55	"Abhorred Sanctuary"
-#define MI_TXT56	"Fortress of Abaddon"
+#define MI_TXT56	"Abaddon Fortress"
 #define MI_TXT57	"Simplicity"
 #define MI_TXT58	"Inferni Carceris"
 #define MI_TXT59	"Umbra"
 #define MI_TXT60	"Unearthly Spire"
 #define MI_TXT61	"Putrid Cloister"
 #define MI_TXT62	"Tartarus"
-#define MI_TXT63	"Court of the Crimson"
+#define MI_TXT63	"Crimson Court"
 #define MI_TXT64	"Nowhere to Hide"
 #define MI_TXT65	"The Nest"
-#define MI_TXT66	"Hubris"
-#define MI_TXT67	"Folly"
-#define MI_TXT68	"Regret"
-#define MI_TXT69	"Rage"
-
-#define MI_TXT70	"The Beyond"
-#define MI_TXT71	"Irradiated"
-#define MI_TXT72	"Dark Secrets"
-
-#define MI_TXT74	"Sorrow" // Altars of Tech
+#define MI_TXT66	"Hubris" // Fun level
+#define MI_TXT67	"Folly" // Fun level
+#define MI_TXT68	"Regret" // Fun level
+#define MI_TXT69	"Rage" // Fun level
+#define MI_TXT70	"The Beyond" // Secret level
+#define MI_TXT71	"Irradiated" // Secret level
+#define MI_TXT72	"Dark Secrets" // Secret level
+#define MI_TXT73	"Sorrow" // Fun level
 
 // Bonus Pak Maps
 #define MI_TXT129	"Anguish"
@@ -177,8 +175,8 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT70 , 102},
     {MI_TXT71 , 103},
     {MI_TXT72 , 104},
+    {MI_TXT73 , 100},
     {T_NULL , 0},
-    {MI_TXT74 , 100},
     {T_NULL , 0},
     {T_NULL , 0},
     {T_NULL , 0},
@@ -491,7 +489,7 @@ void IN_Drawer(void) // 80005164
         ST_DrawString(210, 120, timetext, PACKRGBA(255, 0, 0, text_alpha));
     }
 
-	if ((nextstage > 4) && (gamemap == 74 || gamemap == 65 || gamemap == 39 || gamemap == 28 || FUNLEVEL(gamemap))) // [Immorpher] Ignore finale and fun levels
+	if ((nextstage > 4) && (FINLEVEL(gamemap) || FUNLEVEL(gamemap))) // [Immorpher] Ignore finale and fun levels
 	{
 		// nothing
 	}
