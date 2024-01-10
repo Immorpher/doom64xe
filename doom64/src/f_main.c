@@ -832,7 +832,7 @@ int F_TickerIntermission(void) // 80002E44
 		 // [Immorpher] Speed up text intermission by pressing buttons
 		if (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B))
         {
-            textalpha += 256;
+            textalpha = 256;
         }
 	}
 
@@ -993,7 +993,7 @@ int F_Ticker(void) // 80003258
             break;
 
         case F_STAGE_DRAWTEXT:
-            if (gamemap == 65 ? *endcluster13[textline] :gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
+            if (gamemap == 65 ? *endcluster13[textline] : gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
             {
                 textalpha += 8;
                 if (textalpha > 255)
@@ -1002,10 +1002,17 @@ int F_Ticker(void) // 80003258
                     textline++;
                 }
             }
-            else
+            else if ((buttons != oldbuttons) && (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B)))
             {
                 finalestage = F_STAGE_SCROLLTEXT;
             }
+			
+			// [Immorpher] Speed up text intermission by pressing buttons
+			if (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B))
+			{
+				textalpha = 256;
+			}
+		
             break;
 
         case F_STAGE_SCROLLTEXT:
@@ -1263,12 +1270,22 @@ void F_Drawer(void) // 800039DC
     {
         case F_STAGE_FADEIN_BACKGROUD:
         case F_STAGE_FADEOUT_BACKGROUD:
-            M_DrawBackground(0, 0, fadeinout, "FINAL");
+			if (gamemap == 39)
+				M_DrawBackground(0, 0, fadeinout, "FINLOST");
+			else if (gamemap == 65)
+				M_DrawBackground(0, 0, fadeinout, "FINBETA");
+			else
+				M_DrawBackground(0, 0, fadeinout, "FINAL");
             break;
 
         case F_STAGE_DRAWTEXT:
         case F_STAGE_SCROLLTEXT:
-            M_DrawBackground(0, 0, fadeinout, "FINAL");
+			if (gamemap == 39)
+				M_DrawBackground(0, 0, fadeinout, "FINLOST");
+			else if (gamemap == 65)
+				M_DrawBackground(0, 0, fadeinout, "FINBETA");
+			else
+				M_DrawBackground(0, 0, fadeinout, "FINAL");
 
             ypos = textypos;
             for(i = 0; i < textline; i++)
