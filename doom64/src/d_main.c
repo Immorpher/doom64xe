@@ -62,12 +62,7 @@ void D_DoomMain(void) // 800027C0
 
                         if(exit != ga_exit)
                         {
-                            exit = D_Credits();
-
-                            if(exit != ga_exit)
-                            {
-                                continue;
-                            }
+							continue;
                         }
                     }
                 }

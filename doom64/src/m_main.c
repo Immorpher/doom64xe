@@ -92,7 +92,7 @@ char *ControlText[] =   //8007517C
 
 // Early CE Options
 
-#define M_TXT52 "The Lost Levels"
+#define M_TXT52 "Lost Levels"
 #define M_TXT53 "Artifacts"
 #define M_TXT54 "Skill"
 #define M_TXT55 "Load Game"
@@ -106,6 +106,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT61 "Bonus Pak" // Bonus level hub
 #define M_TXT62 "Beta 64" // Antnee's Beta 64
 #define M_TXT63 "WARP TO FINAL"
+#define M_TXT64 "Credits"
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -121,7 +122,7 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
-	M_TXT60, M_TXT61, M_TXT62, M_TXT63
+	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -157,7 +158,7 @@ const menuitem_t Menu_Episode[5] =
     { 6, 102, 170},    	// Return
 };
 
-menuitem_t Menu_Options[7] = // 8005A9C0
+menuitem_t Menu_Options[8] = // 8005A9C0
 {
     {  0, 102, 60 },    // Control Pad
     { 41, 102, 80 },    // Control Stick
@@ -165,7 +166,8 @@ menuitem_t Menu_Options[7] = // 8005A9C0
     {  58, 102, 120},    // Video
     {  2, 102, 140},    // Display
     {  3, 102, 160},    // Password
-    {  6, 102, 180},    // Return
+    { 64, 102, 180},    // Credits
+    {  6, 102, 200},    // Return
 };
 
 const menuitem_t Menu_Volume[4] = // 8005AA08
@@ -1241,7 +1243,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Options;
-                        itemlines = 7;
+                        itemlines = 8;
                         MenuCall = M_MenuTitleDrawer;
                         cursorpos = 0;
 
@@ -2039,6 +2041,17 @@ int M_MenuTicker(void) // 80007E0C
 						runintroduction = true; // [Immorpher] turn introduction on
 						
                         return exit;
+                    }
+                    break;
+
+				case 64: // Credits
+                    if (truebuttons)
+                    {
+                        S_StartSound(NULL, sfx_pistol);
+                        M_SaveMenuData();
+                        exit = D_Credits();
+						M_RestoreMenuData(true);
+                        return ga_nothing;
                     }
                     break;
 					

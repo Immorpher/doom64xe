@@ -201,7 +201,6 @@ void D_SplashScreen(void) // 8002B988
 
 static int cred_step;   // 800B2210
 static int cred1_alpha; // 800B2214
-static int cred2_alpha; // 800B2218
 static int cred_next;   // 800B2218
 
 int D_Credits(void) // 8002BA34
@@ -210,7 +209,6 @@ int D_Credits(void) // 8002BA34
 
     cred_next = 0;
     cred1_alpha = 0;
-    cred2_alpha = 0;
     cred_step = 0;
     exit = MiniLoop(NULL, NULL, D_CreditTicker, D_CreditDrawer);
 
@@ -219,9 +217,6 @@ int D_Credits(void) // 8002BA34
 
 int D_CreditTicker(void) // 8002BA88
 {
-    if (((u32)ticbuttons[0] >> FRACBITS) != 0)
-        return ga_exit;
-
     if ((cred_next == 0) || (cred_next == 1))
     {
         if (cred_step == 0)
@@ -235,30 +230,14 @@ int D_CreditTicker(void) // 8002BA88
         }
         else if (cred_step == 1)
         {
-            cred2_alpha += 8;
-            if (cred2_alpha >= 255)
-            {
-                cred2_alpha = 0xff;
-                last_ticon = ticon;
+            if (((u32)ticbuttons[0] >> FRACBITS) != 0)
                 cred_step = 2;
-            }
-        }
-        else if (cred_step == 2)
-        {
-            if ((ticon - last_ticon) >= 180) // 6 * TICRATE
-                cred_step = 3;
         }
         else
         {
-            cred1_alpha -= 8;
-            cred2_alpha -= 8;
-            if (cred1_alpha < 0)
-            {
-                cred_next += 1;
-                cred1_alpha = 0;
-                cred2_alpha = 0;
-                cred_step = 0;
-            }
+			cred_next += 1;
+			cred1_alpha = 0;
+			cred_step = 0;
         }
     }
     else if (cred_next == 2)
@@ -269,8 +248,6 @@ int D_CreditTicker(void) // 8002BA88
 
 void D_CreditDrawer(void) // 8002BBE4
 {
-    int color;
-
     I_ClearFrame();
 
     gDPPipeSync(GFX1++);
@@ -280,25 +257,15 @@ void D_CreditDrawer(void) // 8002BBE4
 
     if (cred_next == 0)
     {
-        // Set Background Color (Dark Blue)
-        color = (cred1_alpha * 16) / 255;
-        gDPSetFillColor(GFX1++, color << 8 | 255);
-        gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-        M_DrawBackground(68, 21, cred1_alpha, "IDCRED1");
-        M_DrawBackground(32, 41, cred2_alpha, "IDCRED2");
+        M_DrawBackground(0, 0, cred1_alpha, "OGCRED");
     }
     else
     {
         if ((cred_next == 1) || (cred_next == 2))
         {
-            // Set Background Color (Dark Grey)
-            color = (cred1_alpha * 30) / 255;
-            gDPSetFillColor(GFX1++, color << 24 | color << 16 | color << 8 | 255);
-            gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-            M_DrawBackground(22, 82, cred1_alpha, "WMSCRED1");
-            M_DrawBackground(29, 28, cred2_alpha, "WMSCRED2");
+            M_DrawBackground(0, 0, cred1_alpha, "XECRED");
         }
     }
 
