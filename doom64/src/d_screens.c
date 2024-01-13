@@ -81,7 +81,7 @@ int D_LegalTicker(void) // 8002B5F8
     return 0;
 }
 
-void D_DrawLegal(void) // 8002B644
+void D_DrawSplash(void) // 8002B644
 {
     I_ClearFrame();
 
@@ -92,7 +92,7 @@ void D_DrawLegal(void) // 8002B644
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-    M_DrawBackground(0, 0, text_alpha, "USLEGAL");
+    M_DrawBackground(0, 0, text_alpha, "SPLASH");
 
     if (FilesUsed > -1) {
         ST_DrawString(-1, 200, "hold \x8d to manage pak", text_alpha | 0xffffff00);
@@ -120,7 +120,7 @@ void D_DrawNoPak(void) // 8002B7F4
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 	
-	M_DrawBackground(0, 0, text_alpha, "USLEGAL");
+	M_DrawBackground(0, 0, text_alpha, "SPLASH");
 
     ST_DrawString(-1,  40, "no controller pak.", 0xffffffff);
     ST_DrawString(-1,  60, "your game cannot", 0xffffffff);
@@ -144,7 +144,7 @@ void D_DrawNoMemory(void)
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 	
-	M_DrawBackground(0, 0, text_alpha, "USLEGAL");
+	M_DrawBackground(0, 0, text_alpha, "SPLASH");
 
     ST_DrawString(-1,  20, "no expansion pak.", 0xffffffff);
     ST_DrawString(-1,  40, "complex levels outside", 0xffffffff);
@@ -196,7 +196,7 @@ void D_SplashScreen(void) // 8002B988
 
     text_alpha = 0xff;
     last_ticon = 0;
-    MiniLoop(NULL, NULL, D_LegalTicker, D_DrawLegal);
+    MiniLoop(NULL, NULL, D_LegalTicker, D_DrawSplash);
 }
 
 static int cred_step;   // 800B2210

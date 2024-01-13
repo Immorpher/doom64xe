@@ -981,7 +981,7 @@ int D_TitleMap(void);           // 8002B358
 int D_WarningTicker(void);      // 8002B3E8
 void D_DrawWarning(void);       // 8002B430
 int D_LegalTicker(void);        // 8002B5F8
-void D_DrawLegal(void);         // 8002B644
+void D_DrawSplash(void);         // 8002B644
 int D_NoPakTicker(void);        // 8002B7A0
 void D_DrawNoPak(void);         // 8002B7F4
 void D_DrawNoMemory(void);

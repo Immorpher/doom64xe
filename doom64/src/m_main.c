@@ -88,7 +88,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT49 "FULL BRIGHT"   // [GEC] NEW CHEAT CODE
 #define M_TXT50 "Filtering:"   // [GEC] NEW CHEAT CODE
 
-#define M_TXT51 "Doom 64"
+#define M_TXT51 "Absolution"
 
 // Early CE Options
 
