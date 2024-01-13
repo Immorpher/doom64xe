@@ -81,7 +81,7 @@ typedef enum
     sfx_skelact,    //revenantact??
     sfx_tracer,     //tracer
     sfx_dart,       //dart
-    sfx_dartshoot,  //revenantpunch??
+    sfx_revpunch,  //revenantpunch??
     sfx_cybsit,     //cybsit
     sfx_cybdth,     //cybdeath
     sfx_cybhoof,    //hoof
