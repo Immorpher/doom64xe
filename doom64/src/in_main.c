@@ -103,13 +103,13 @@ extern int nextmap;
 mapinfo_t MapInfo[] = //8005A478
 {
     {MI_TXT00 , 116}, // Bonus Pak hub with menu music
-    {MI_TXT01 , 96}, // Doom 64
+    {MI_TXT01 , 96}, // Doom 64 - Staging Area
     {MI_TXT02 , 97},
     {MI_TXT03 , 105},
     {MI_TXT04 , 104},
     {MI_TXT05 , 101},
     {MI_TXT06 , 107},
-    {MI_TXT07 , 108},
+    {MI_TXT07 , 108}, // Research Lab
     {MI_TXT08 , 110},
     {MI_TXT09 , 95},
     {MI_TXT10 , 98},
