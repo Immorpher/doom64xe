@@ -773,7 +773,7 @@ void F_StartIntermission(void) // 80002CD0
     textline = 0;
     textalpha = 0;
 	
-	S_StartMusic(116); // [Immorpher] Play menu music for intermission
+	S_StartMusic(mus_title); // [Immorpher] Play menu music for intermission
 }
 
 /*
@@ -938,7 +938,7 @@ void F_Start(void) // 8000313C
 	castrotation = 0;
 	castfadein = 0;
 
-	S_StartMusic(113);
+	S_StartMusic(mus_final);
 }
 
 /*

@@ -305,7 +305,7 @@ void IN_Start(void) // 80004AF0
         CurPasswordSlot = 16;
 	}
 
-	S_StartMusic(114);
+	S_StartMusic(mus_complete);
 }
 
 void IN_Stop(void) // 80004DB0

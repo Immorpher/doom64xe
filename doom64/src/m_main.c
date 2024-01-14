@@ -641,7 +641,7 @@ int M_RunTitle(void) // 80007630
     cursorpos = 0;
     last_ticon = 0;
 
-    S_StartMusic(116);
+    S_StartMusic(mus_title);
 
     exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
     I_WIPE_FadeOutScreen();
@@ -1755,7 +1755,7 @@ int M_MenuTicker(void) // 80007E0C
                         else if (buttons & ALL_CBUTTONS)
                         {
                             S_StopMusic();
-                            S_StartMusic(MusicID+92);
+                            S_StartMusic(MusicID+(NUMSFX-1));
                             return ga_nothing;
                         }
                     }
