@@ -96,9 +96,10 @@ extern int nextmap;
 #define MI_TXT135	"Fabrication Labs"
 #define MI_TXT136	"Switchless"
 #define MI_TXT137	"Devolving Being"
-#define MI_TXT138	"Ring of Fire"
+#define MI_TXT138	"Outer Outpost"
 #define MI_TXT139	"Doomsday Keep"
 #define MI_TXT140	"Dark Retrospect"
+#define MI_TXT141	"Ring of Fire"
 
 mapinfo_t MapInfo[] = //8005A478
 {
@@ -108,7 +109,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT03 , 105},
     {MI_TXT04 , 104},
     {MI_TXT05 , 101},
-    {MI_TXT06 , 107},
+    {MI_TXT06 , 107}, // Alpha Quadrant
     {MI_TXT07 , 108}, // Research Lab
     {MI_TXT08 , 110},
     {MI_TXT09 , 95},
@@ -125,7 +126,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT20 , 112},
     {MI_TXT21 , 109},
     {MI_TXT22 , 101},
-    {MI_TXT23 , 108},
+    {MI_TXT23 , 108}, // Unholy Temple
     {MI_TXT24 , 98},
     {MI_TXT25 , 97},
     {MI_TXT26 , 98},
@@ -240,9 +241,10 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT135 , 105}, // Fabrication Labs
     {MI_TXT136 , 94}, // Switchless
     {MI_TXT137 , 110}, // Devolving Being
-    {MI_TXT138 , 95}, // Ring of Fire
+    {MI_TXT138 , 96}, // Outer Outpost
     {MI_TXT139 , 103}, // Doomsday Keep
     {MI_TXT140 , 107}, // Dark Retrospect
+    {MI_TXT141 , 95}, // Ring of Fire
     {T_NULL , 0}
 };
 
