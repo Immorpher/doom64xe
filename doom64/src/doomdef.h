@@ -177,7 +177,7 @@ typedef enum
 #define LOSTLEVEL 34 // [Immorpher] Define where lost levels begin
 #define BETALEVEL 41 // [Immorpher] Define where beta 64 levels begin
 #define BONUSLEVEL 129 // [Immorpher] Define where bonus pak levels begin
-#define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 40 || map == 66 || map == 67 || map == 68 || map == 69 || map == 73)) // specific fun levels
+#define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 33 || map == 40 || map == 66 || map == 67 || map == 68 || map == 69 || map == 73)) // specific fun levels
 #define FINLEVEL(map)	((map == 28 || map == 39 || map == 65)) // specific final levels
 
 /* */
@@ -1040,8 +1040,6 @@ void S_StopAll(void);
 int S_SoundStatus(int seqnum);
 void S_StartSound(mobj_t *origin, int sound_id);
 int S_AdjustSoundParams(mobj_t *listener, mobj_t *origin, int* vol, int* pan);
-
-void S_StartSoundTest(int origin, int sound_id);
 
 /*--------*/
 /* I_MAIN */
