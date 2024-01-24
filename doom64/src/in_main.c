@@ -245,6 +245,8 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT139 , 103}, // Doomsday Keep
     {MI_TXT140 , 107}, // Dark Retrospect
     {MI_TXT141 , 95}, // Ring of Fire
+    {T_NULL , 0},
+    {T_NULL , 0},
     {T_NULL , 0}
 };
 
