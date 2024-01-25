@@ -306,7 +306,7 @@ int last_ticon;         // 800A5598
 
 skill_t startskill;     // 800A55A0
 int startmap;           // 800A55A4
-int EnableExpPak;       // 800A55A8
+int EnableMemPak;       // 800A55A8
 
 //-----------------------------------------
 
@@ -1296,7 +1296,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         // Check ControllerPak
-                        EnableExpPak = (M_ControllerPak() == 0);
+                        EnableMemPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Episode;
                         itemlines = 5;
@@ -1317,7 +1317,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_FadeOutStart(8);
 
                         // Check ControllerPak
-                        EnableExpPak = (M_ControllerPak() == 0);
+                        EnableMemPak = (M_ControllerPak() == 0);
 
                         MenuItem = Menu_Skill;
                         itemlines = 6;
@@ -1924,7 +1924,7 @@ int M_MenuTicker(void) // 80007E0C
                         {
                             if (I_ReadPakFile() == 0)
                             {
-                                EnableExpPak = 1;
+                                EnableMemPak = 1;
                                 MenuCall = M_LoadPakDrawer;
                                 exit = MiniLoop(M_LoadPakStart,M_LoadPakStop,M_LoadPakTicker,M_MenuGameDrawer);
                             }
@@ -1938,12 +1938,12 @@ int M_MenuTicker(void) // 80007E0C
                             return ga_nothing;
                         }
 
-                        if (EnableExpPak != 0)
+                        if (EnableMemPak != 0)
                         {
                             return exit;
                         }
 
-                        EnableExpPak = (M_ControllerPak() == 0);
+                        EnableMemPak = (M_ControllerPak() == 0);
                         return exit;
                     }
 					break;

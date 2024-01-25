@@ -168,7 +168,7 @@ void P_CheckCheats (void) // 8002187C
             MenuCall = M_MenuTitleDrawer;
             cursorpos = 0;
 
-            if (EnableExpPak)
+            if (EnableMemPak)
             {
                 MenuItem = Menu_Game;
                 itemlines = 4;

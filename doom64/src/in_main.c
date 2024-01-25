@@ -87,6 +87,7 @@ extern int nextmap;
 #define MI_TXT73	"Sorrow" // Fun level
 
 // Bonus Pak Maps
+#define MI_TXT128	"The Fortress"
 #define MI_TXT129	"Anguish"
 #define MI_TXT130	"Wretched"
 #define MI_TXT131	"Entryway"
@@ -100,13 +101,14 @@ extern int nextmap;
 #define MI_TXT139	"Doomsday Keep"
 #define MI_TXT140	"Dark Retrospect"
 #define MI_TXT141	"Ring of Fire"
+#define MI_TXT142	"Alpha Void"
 
 mapinfo_t MapInfo[] = //8005A478
 {
-    {MI_TXT00 , 116}, // Bonus Pak hub with menu music
+    {MI_TXT00 , 116}, // Bonus Pak Hub
     {MI_TXT01 , 96}, // Doom 64 - Staging Area
-    {MI_TXT02 , 97},
-    {MI_TXT03 , 105},
+    {MI_TXT02 , 97}, // Terraformer
+    {MI_TXT03 , 105}, // Main Engineering
     {MI_TXT04 , 104},
     {MI_TXT05 , 101},
     {MI_TXT06 , 107}, // Alpha Quadrant
@@ -115,7 +117,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT09 , 95},
     {MI_TXT10 , 98},
     {MI_TXT11 , 99},
-    {MI_TXT12 , 102},
+    {MI_TXT12 , 102}, // Altar of Pain
     {MI_TXT13 , 93},
     {MI_TXT14 , 106},
     {MI_TXT15 , 111},
@@ -127,17 +129,17 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT21 , 109},
     {MI_TXT22 , 101},
     {MI_TXT23 , 108}, // Unholy Temple
-    {MI_TXT24 , 98},
+    {MI_TXT24 , 98}, // No Escape
     {MI_TXT25 , 97},
     {MI_TXT26 , 98},
     {MI_TXT27 , 94},
     {MI_TXT28 , 99},
     {MI_TXT29 , 101},
-    {MI_TXT30 , 102},
-    {MI_TXT31 , 103},
-    {MI_TXT32 , 104},
-    {MI_TXT33 , 115},
-    {MI_TXT34 , 100}, // Lost Levels
+    {MI_TXT30 , 102}, // The Lair
+    {MI_TXT31 , 103}, // In The Void
+    {MI_TXT32 , 104}, // Hectic
+    {MI_TXT33 , 115}, // Title
+    {MI_TXT34 , 100}, // Plant Ops - Lost Levels
     {MI_TXT35 , 95},
     {MI_TXT36 , 111},
     {MI_TXT37 , 94},
@@ -231,8 +233,8 @@ mapinfo_t MapInfo[] = //8005A478
     {T_NULL , 0},
     {T_NULL , 0},
     {T_NULL , 0},
-    {T_NULL , 0},
-    {MI_TXT129 , 106}, // Anguish - Map 129 Bonus Pak Maps begin
+    {MI_TXT128 , 98}, // The Fortress - Map 129 Bonus Pak Maps begin
+    {MI_TXT129 , 106}, // Anguish
     {MI_TXT130 , 99}, // Wretched
     {MI_TXT131 , 104}, // Entryway
     {MI_TXT132 , 97}, // Visions of Hostility
@@ -245,7 +247,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT139 , 103}, // Doomsday Keep
     {MI_TXT140 , 107}, // Dark Retrospect
     {MI_TXT141 , 95}, // Ring of Fire
-    {T_NULL , 0},
+    {MI_TXT142 , 103}, // Alpha Void
     {T_NULL , 0},
     {T_NULL , 0}
 };
@@ -315,9 +317,9 @@ void IN_Start(void) // 80004AF0
 void IN_Stop(void) // 80004DB0
 {
 
-    if ((nextmap > 0) && (nextmap < LASTLEVEL))
+    if ((nextmap > 0) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap)) // No memory pak on fun levels
     {
-        if (EnableExpPak) {
+        if (EnableMemPak) {
             MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_SavePakDrawer);
         }
     }

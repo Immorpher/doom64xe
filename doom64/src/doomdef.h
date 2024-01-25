@@ -862,7 +862,7 @@ extern int last_ticon;              // 800a5598
 
 extern skill_t startskill;          // 800A55A0
 extern int startmap;                // 800A55A4
-extern int EnableExpPak;            // 800A55A8
+extern int EnableMemPak;            // 800A55A8
 
 //-----------------------------------------
 
