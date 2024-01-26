@@ -594,8 +594,6 @@ extern	boolean		gamepaused;
 
 extern	int DrawerStatus;
 
-//extern	int		maxlevel;			/* highest level selectable in menu (1-25) */
-
 int MiniLoop ( void (*start)(void),  void (*stop)()
 		,  int (*ticker)(void), void (*drawer)(void) ) HOT;
 

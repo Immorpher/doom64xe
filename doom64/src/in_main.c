@@ -102,6 +102,7 @@ extern int nextmap;
 #define MI_TXT140	"Dark Retrospect"
 #define MI_TXT141	"Ring of Fire"
 #define MI_TXT142	"Alpha Void"
+#define MI_TXT143	"Technological Terror"
 
 mapinfo_t MapInfo[] = //8005A478
 {
@@ -113,7 +114,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT05 , 101},
     {MI_TXT06 , 107}, // Alpha Quadrant
     {MI_TXT07 , 108}, // Research Lab
-    {MI_TXT08 , 110},
+    {MI_TXT08 , 110}, // Final Outpost
     {MI_TXT09 , 95},
     {MI_TXT10 , 98},
     {MI_TXT11 , 99},
@@ -242,13 +243,13 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT134 , 96}, // Hangar
     {MI_TXT135 , 105}, // Fabrication Labs
     {MI_TXT136 , 94}, // Switchless
-    {MI_TXT137 , 110}, // Devolving Being
+    {MI_TXT137 , 101}, // Devolving Being
     {MI_TXT138 , 96}, // Outer Outpost
     {MI_TXT139 , 103}, // Doomsday Keep
     {MI_TXT140 , 107}, // Dark Retrospect
     {MI_TXT141 , 95}, // Ring of Fire
     {MI_TXT142 , 103}, // Alpha Void
-    {T_NULL , 0},
+    {MI_TXT143 , 110}, // Technological Terror
     {T_NULL , 0}
 };
 
