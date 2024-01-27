@@ -329,7 +329,7 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
     //
     // Verify Map
     //
-    if ((*levelnum == 0) || (*levelnum >= LASTLEVEL))
+    if ((*levelnum < 0) || (*levelnum >= LASTLEVEL))
     {
         return false;
     }

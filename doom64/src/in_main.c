@@ -306,7 +306,7 @@ void IN_Start(void) // 80004AF0
 	last_ticon = 0;
 	text_alpha = 255;
 
-    if ((nextmap > 0) && (nextmap < LASTLEVEL))
+    if ((nextmap > 0) && (nextmap < LASTLEVEL)) // Show password only for normal levels
 	{
 		M_EncodePassword(Passwordbuff);
         CurPasswordSlot = 16;

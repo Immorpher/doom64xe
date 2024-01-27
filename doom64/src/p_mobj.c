@@ -507,7 +507,7 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
     an >>= ANGLETOFINESHIFT;
     speed = th->info->speed;
 
-	if (source && source->flags & MF_NIGHTMARE)
+	if (source->flags & MF_NIGHTMARE)
 	{
         th->flags |= MF_NIGHTMARE;
         speed *= 2;
