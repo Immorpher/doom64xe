@@ -93,7 +93,7 @@ extern int nextmap;
 #define MI_TXT131	"Entryway"
 #define MI_TXT132	"Visions of Hostility"
 #define MI_TXT133	"Secondary Engineering"
-#define MI_TXT134	"Hangar"
+#define MI_TXT134	"Deja Vu"
 #define MI_TXT135	"Fabrication Labs"
 #define MI_TXT136	"Switchless"
 #define MI_TXT137	"Devolving Being"
@@ -240,7 +240,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT131 , 104}, // Entryway
     {MI_TXT132 , 97}, // Visions of Hostility
     {MI_TXT133 , 108}, // Secondary Engineering
-    {MI_TXT134 , 96}, // Hangar
+    {MI_TXT134 , 112}, // Deja Vu
     {MI_TXT135 , 105}, // Fabrication Labs
     {MI_TXT136 , 94}, // Switchless
     {MI_TXT137 , 101}, // Devolving Being
