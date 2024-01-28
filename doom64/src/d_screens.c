@@ -159,6 +159,26 @@ void D_DrawNoMemory(void)
     I_DrawFrame();
 }
 
+void D_DrawLoadScreen(int textalpha)
+{
+	if (demoplayback || runintroduction) // No loading screens for demos and introductions
+		return;
+
+    I_ClearFrame();
+
+    gDPPipeSync(GFX1++);
+    gDPSetCycleType(GFX1++, G_CYC_FILL);
+    gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
+    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+    gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
+    gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+
+	ST_DrawString(-1, 100, "Entering", PACKRGBA(255, (255-textalpha)>>1, (255-textalpha)>>1, textalpha));
+	ST_DrawString(-1, 120, MapInfo[gamemap].name, PACKRGBA(255, (255-textalpha)>>1, (255-textalpha)>>1, textalpha));
+
+    I_DrawFrame();
+}
+
 void D_SplashScreen(void) // 8002B988
 {
     /* */

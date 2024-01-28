@@ -719,6 +719,7 @@ void P_GroupLines (void) // 8001E614
 		ss->sector = seg->sidedef->sector;
 	}
 
+	D_DrawLoadScreen(239);
 /* count number of lines in each sector */
 	li = lines;
 	total = 0;
@@ -733,6 +734,7 @@ void P_GroupLines (void) // 8001E614
 		}
 	}
 
+	D_DrawLoadScreen(255);
 /* build line tables for each sector	 */
 	linebuffer = Z_Malloc (total*4, PU_LEVEL, 0);
 	sector = sectors;
@@ -843,31 +845,50 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 	W_OpenMapWad(map);
 
 	/* note: most of this ordering is important	 */
+	
+	D_DrawLoadScreen(31); // This starts the loading screen
     P_LoadMacros();
     P_LoadBlockMap();
+	D_DrawLoadScreen(63);
     P_LoadVertexes();
     P_LoadSectors();
+	D_DrawLoadScreen(95);
     P_LoadSideDefs();
     P_LoadLineDefs();
+	D_DrawLoadScreen(127);
     P_LoadSubSectors();
     P_LoadNodes();
+	D_DrawLoadScreen(159);
     P_LoadSegs();
     P_LoadLeafs();
+	D_DrawLoadScreen(191);
     P_LoadReject();
     P_LoadLights();
-    P_GroupLines();
+	
+	D_DrawLoadScreen(223);
+    P_GroupLines(); // This is the longest to load so some of the loading screen is activated in here
+	
+
+	D_DrawLoadScreen(223);	
 	P_LoadThings();
+	
+	D_DrawLoadScreen(191);
 	W_FreeMapLumps();
-
+	
 	P_Init();
-
 	/* set up world state */
 	P_SpawnSpecials();
+	
+	D_DrawLoadScreen(159);
 	R_SetupSky();
 
+	D_DrawLoadScreen(127);
     Z_SetAllocBase(mainzone);
-    Z_CheckZone(mainzone);
 
+	D_DrawLoadScreen(95);
+    Z_CheckZone(mainzone);
+	
+	D_DrawLoadScreen(63);
 	memory = Z_FreeMemory(mainzone);
 	if (memory < 0x10000)
 	{
@@ -875,6 +896,7 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 		I_Error("P_SetupLevel: not enough free memory %d", memory);
 	}
 
+	D_DrawLoadScreen(31);
     P_SpawnPlayer();
 
     //PRINTF_D2(WHITE, 0, 27, "P_SetupLevel DONE\n");

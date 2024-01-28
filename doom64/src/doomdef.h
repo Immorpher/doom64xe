@@ -983,6 +983,7 @@ void D_DrawSplash(void);         // 8002B644
 int D_NoPakTicker(void);        // 8002B7A0
 void D_DrawNoPak(void);         // 8002B7F4
 void D_DrawNoMemory(void);
+void D_DrawLoadScreen(int textalpha);
 void D_SplashScreen(void);      // 8002B988
 int D_Credits(void);            // 8002BA34
 int D_CreditTicker(void);       // 8002BA88

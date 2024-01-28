@@ -100,7 +100,7 @@ extern int nextmap;
 #define MI_TXT138	"Outer Outpost"
 #define MI_TXT139	"Doomsday Keep"
 #define MI_TXT140	"Dark Retrospect"
-#define MI_TXT141	"Ring of Fire"
+#define MI_TXT141	"Diverged Fates"
 #define MI_TXT142	"Alpha Void"
 #define MI_TXT143	"Technological Terror"
 
@@ -247,7 +247,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT138 , 96}, // Outer Outpost
     {MI_TXT139 , 103}, // Doomsday Keep
     {MI_TXT140 , 107}, // Dark Retrospect
-    {MI_TXT141 , 95}, // Ring of Fire
+    {MI_TXT141 , 93}, // Diverged Fates
     {MI_TXT142 , 103}, // Alpha Void
     {MI_TXT143 , 110}, // Technological Terror
     {T_NULL , 0}
@@ -503,7 +503,7 @@ void IN_Drawer(void) // 80005164
 	}
 	else if (nextstage > 4)
 	{
-        ST_DrawString(-1, 145, "Entering", PACKRGBA(255, 255, 255, text_alpha));
+        ST_DrawString(-1, 145, "Approaching", PACKRGBA(255, 255, 255, text_alpha));
         ST_DrawString(-1, 161, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));
 
         pbuff = password;

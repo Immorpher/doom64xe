@@ -888,9 +888,9 @@ void F_DrawerIntermission(void) // 80002F14
     }
 	
 	if(runintroduction) {
-		ST_Message(20, ypos, text[i], textalpha | 0xffffff00);
+		ST_Message(20, ypos, text[i], PACKRGBA(255, textalpha, textalpha, textalpha));
 	} else {
-		ST_DrawString(-1, ypos, text[i], textalpha | 0xffffff00);
+		ST_DrawString(-1, ypos, text[i], PACKRGBA(255, textalpha, textalpha, textalpha));
 	}
 
     if (MenuCall)
@@ -1297,11 +1297,11 @@ void F_Drawer(void) // 800039DC
                 else
                     alpha = 0;
 				
-                ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), alpha | 0xffffff00);
+                ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), PACKRGBA(255, alpha, alpha, alpha));
                 ypos += 14;
             }
 
-            ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), textalpha | 0xffffff00);
+            ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), PACKRGBA(255, textalpha, textalpha, textalpha));
             break;
 
         case F_STAGE_CAST:
