@@ -235,7 +235,7 @@ void R_Subsector(int num) // 8002451C
 		I_Error("R_Subsector: ss %i with numss = %i", num, numsubsectors);
 	}
 
-	if (numdrawsubsectors < MAXSUBSECTORS)
+	if (numdrawsubsectors < MapInfo[gamemap].MaxSubSectors)
 	{
 	    numdrawsubsectors++;
 

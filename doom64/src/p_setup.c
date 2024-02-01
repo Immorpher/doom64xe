@@ -200,7 +200,7 @@ void P_LoadSectors (void) // 8001D43C
 
 	skytexture = 0;
 	skyname = W_GetNumForName("F_SKYA") - firsttex;
-	lastsky = W_GetNumForName("F_SKYT") - firsttex;
+	lastsky = W_GetNumForName("F_SKYU") - firsttex;
 
 	numsectors = W_MapLumpLength(ML_SECTORS) / sizeof(mapsector_t);
 	sectors = Z_Malloc (numsectors*sizeof(sector_t),PU_LEVEL,0);

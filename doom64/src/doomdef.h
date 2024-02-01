@@ -1006,6 +1006,7 @@ typedef struct
 {
 	char *	name;
 	int		MusicSeq;
+	int		MaxSubSectors; // Should not exceed MAXSUBSECTORS define, this improves rendering per map, good for void maps
 } mapinfo_t;
 
 extern mapinfo_t MapInfo[];

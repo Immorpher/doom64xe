@@ -106,151 +106,151 @@ extern int nextmap;
 
 mapinfo_t MapInfo[] = //8005A478
 {
-    {MI_TXT00 , 116}, // Bonus Pak Hub
-    {MI_TXT01 , 96}, // Doom 64 - Staging Area
-    {MI_TXT02 , 97}, // Terraformer
-    {MI_TXT03 , 105}, // Main Engineering
-    {MI_TXT04 , 104},
-    {MI_TXT05 , 101},
-    {MI_TXT06 , 107}, // Alpha Quadrant
-    {MI_TXT07 , 108}, // Research Lab
-    {MI_TXT08 , 110}, // Final Outpost
-    {MI_TXT09 , 95},
-    {MI_TXT10 , 98},
-    {MI_TXT11 , 99},
-    {MI_TXT12 , 102}, // Altar of Pain
-    {MI_TXT13 , 93},
-    {MI_TXT14 , 106},
-    {MI_TXT15 , 111},
-    {MI_TXT16 , 97},
-    {MI_TXT17 , 103},
-    {MI_TXT18 , 94},
-    {MI_TXT19 , 100},
-    {MI_TXT20 , 112},
-    {MI_TXT21 , 109},
-    {MI_TXT22 , 101},
-    {MI_TXT23 , 108}, // Unholy Temple
-    {MI_TXT24 , 98}, // No Escape
-    {MI_TXT25 , 97},
-    {MI_TXT26 , 98},
-    {MI_TXT27 , 94},
-    {MI_TXT28 , 99},
-    {MI_TXT29 , 101},
-    {MI_TXT30 , 102}, // The Lair
-    {MI_TXT31 , 103}, // In The Void
-    {MI_TXT32 , 104}, // Hectic
-    {MI_TXT33 , 115}, // Title
-    {MI_TXT34 , 100}, // Plant Ops - Lost Levels
-    {MI_TXT35 , 95},
-    {MI_TXT36 , 111},
-    {MI_TXT37 , 94},
-    {MI_TXT38 , 105},
-    {MI_TXT39 , 98},
-    {MI_TXT40 , 101},
-    {MI_TXT41 , 96}, // Beta 64
-    {MI_TXT42 , 97},
-    {MI_TXT43 , 105},
-    {MI_TXT44 , 104},
-    {MI_TXT45 , 101},
-    {MI_TXT46 , 107},
-    {MI_TXT47 , 108},
-    {MI_TXT48 , 110},
-    {MI_TXT49 , 95},
-    {MI_TXT50 , 98},
-    {MI_TXT51 , 99},
-    {MI_TXT52 , 102},
-    {MI_TXT53 , 93},
-    {MI_TXT54 , 106},
-    {MI_TXT55 , 111},
-    {MI_TXT56 , 97},
-    {MI_TXT57 , 103},
-    {MI_TXT58 , 94},
-    {MI_TXT59 , 100},
-    {MI_TXT60 , 112},
-    {MI_TXT61 , 109},
-    {MI_TXT62 , 101},
-    {MI_TXT63 , 108},
-    {MI_TXT64 , 98},
-    {MI_TXT65 , 97},
-    {MI_TXT66 , 98},
-    {MI_TXT67 , 94},
-    {MI_TXT68 , 99},
-    {MI_TXT69, 101},
-    {MI_TXT70 , 102},
-    {MI_TXT71 , 103},
-    {MI_TXT72 , 104},
-    {MI_TXT73 , 100},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {MI_TXT128 , 98}, // The Fortress - Map 129 Bonus Pak Maps begin
-    {MI_TXT129 , 106}, // Anguish
-    {MI_TXT130 , 99}, // Wretched
-    {MI_TXT131 , 104}, // Entryway
-    {MI_TXT132 , 97}, // Visions of Hostility
-    {MI_TXT133 , 108}, // Secondary Engineering
-    {MI_TXT134 , 112}, // Deja Vu
-    {MI_TXT135 , 105}, // Fabrication Labs
-    {MI_TXT136 , 94}, // Switchless
-    {MI_TXT137 , 101}, // Devolving Being
-    {MI_TXT138 , 96}, // Outer Outpost
-    {MI_TXT139 , 103}, // Doomsday Keep
-    {MI_TXT140 , 107}, // Dark Retrospect
-    {MI_TXT141 , 93}, // Diverged Fates
-    {MI_TXT142 , 103}, // Alpha Void
-    {MI_TXT143 , 110}, // Technological Terror
-    {T_NULL , 0}
+    {MI_TXT00 , 116 , 640}, // Bonus Pak Hub
+    {MI_TXT01 , 96 , 256}, // Doom 64 - Staging Area
+    {MI_TXT02 , 97 , 256}, // Terraformer
+    {MI_TXT03 , 105 , 256}, // Main Engineering
+    {MI_TXT04 , 104 , 256},
+    {MI_TXT05 , 101 , 256},
+    {MI_TXT06 , 107 , 256}, // Alpha Quadrant
+    {MI_TXT07 , 108 , 256}, // Research Lab
+    {MI_TXT08 , 110 , 256}, // Final Outpost
+    {MI_TXT09 , 95 , 256},
+    {MI_TXT10 , 98 , 256},
+    {MI_TXT11 , 99 , 256},
+    {MI_TXT12 , 102 , 256}, // Altar of Pain
+    {MI_TXT13 , 93 , 256},
+    {MI_TXT14 , 106 , 256},
+    {MI_TXT15 , 111 , 256},
+    {MI_TXT16 , 97 , 256},
+    {MI_TXT17 , 103 , 256},
+    {MI_TXT18 , 94 , 256},
+    {MI_TXT19 , 100 , 256}, // The Spiral
+    {MI_TXT20 , 112 , 256},
+    {MI_TXT21 , 109 , 256},
+    {MI_TXT22 , 101 , 256},
+    {MI_TXT23 , 108 , 256}, // Unholy Temple
+    {MI_TXT24 , 98 , 256}, // No Escape
+    {MI_TXT25 , 97 , 256},
+    {MI_TXT26 , 98 , 256},
+    {MI_TXT27 , 94 , 256},
+    {MI_TXT28 , 99 , 256},
+    {MI_TXT29 , 101 , 256},
+    {MI_TXT30 , 102 , 256}, // The Lair
+    {MI_TXT31 , 103 , 256}, // In The Void
+    {MI_TXT32 , 104 , 256}, // Hectic
+    {MI_TXT33 , 115 , 256}, // Title
+    {MI_TXT34 , 100 , 256}, // Plant Ops - Lost Levels
+    {MI_TXT35 , 95 , 512}, // Evil Sacrifice
+    {MI_TXT36 , 111 , 384}, // Cold Grounds
+    {MI_TXT37 , 94 , 384}, // Wretched Vats
+    {MI_TXT38 , 105 , 384}, // Thy Glory
+    {MI_TXT39 , 98 , 384}, // Final Judgement
+    {MI_TXT40 , 101 , 256}, // Panic
+    {MI_TXT41 , 96 , 256}, // Penumbra - Beta 64
+    {MI_TXT42 , 97 , 256},  // Hydroplant
+    {MI_TXT43 , 105 , 256}, // Signal Processing
+    {MI_TXT44 , 104 , 256}, // Disposal Center
+    {MI_TXT45 , 101 , 256}, // Refinery
+    {MI_TXT46 , 107 , 384}, // Gamma Lab
+    {MI_TXT47 , 108 , 256}, // Sector R
+    {MI_TXT48 , 110 , 768}, // Ultima Porta
+    {MI_TXT49 , 95 , 256}, // Profane Paradise
+    {MI_TXT50 , 98 , 1024}, // Pain Warren
+    {MI_TXT51 , 99 , 1024}, // City of the Damned
+    {MI_TXT52 , 102 , 512}, // Mines
+    {MI_TXT53 , 93 , 256}, // Lair of the Blind
+    {MI_TXT54 , 106 , 256}, // The Dungeons
+    {MI_TXT55 , 111 , 512}, // Abhorred Sanctuary
+    {MI_TXT56 , 97 , 640}, // Abaddon Fortress
+    {MI_TXT57 , 103 , 512}, // Simplicity
+    {MI_TXT58 , 94 , 768}, // Inferni Carceris
+    {MI_TXT59 , 100 , 256}, // Umbra
+    {MI_TXT60 , 112 , 768}, // Unearthly Spire
+    {MI_TXT61 , 109 , 384}, // Putrid Cloister
+    {MI_TXT62 , 101 , 1024}, // Tartarus 
+    {MI_TXT63 , 108 , 640}, // Crimson Court
+    {MI_TXT64 , 98 , 1024}, // Nowhere to Hide
+    {MI_TXT65 , 106 , 384}, // The Nest
+    {MI_TXT66 , 110 , 256}, // Hubris
+    {MI_TXT67 , 94 , 384}, // Folly
+    {MI_TXT68 , 99 , 768}, // Regret
+    {MI_TXT69, 101 , 256}, // Rage
+    {MI_TXT70 , 102 , 640}, // The Beyond
+    {MI_TXT71 , 103 , 256}, // Irradiated
+    {MI_TXT72 , 104 , 256}, // Dark Secrets
+    {MI_TXT73 , 95 , 256}, // Sorrow
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {T_NULL , 0 , 256},
+    {MI_TXT128 , 98 , 256}, // The Fortress - Map 129 Bonus Pak Maps begin
+    {MI_TXT129 , 106 , 256}, // Anguish
+    {MI_TXT130 , 99 , 384}, // Wretched
+    {MI_TXT131 , 104 , 256}, // Entryway
+    {MI_TXT132 , 97 , 640}, // Visions of Hostility
+    {MI_TXT133 , 108 , 256}, // Secondary Engineering
+    {MI_TXT134 , 112 , 256}, // Deja Vu
+    {MI_TXT135 , 105 , 512}, // Fabrication Labs
+    {MI_TXT136 , 94 , 256}, // Switchless
+    {MI_TXT137 , 101 , 768}, // Devolving Being
+    {MI_TXT138 , 96 , 256}, // Outer Outpost
+    {MI_TXT139 , 111 , 512}, // Doomsday Keep
+    {MI_TXT140 , 107 , 256}, // Dark Retrospect
+    {MI_TXT141 , 93 , 256}, // Diverged Fates
+    {MI_TXT142 , 103 , 256}, // Alpha Void
+    {MI_TXT143 , 110 , 512}, // Technological Terror
+    {T_NULL , 0 , 256}
 };
 
 typedef struct pstats_s

@@ -354,6 +354,13 @@ void R_SetupSky(void) // 80025060
 			SkyPicMount = W_GetNumForName("MOUNTC");
 			SkyFlags |= SKF_MOUNTAIN;
             break;
+			
+		case 21: // Black void sky to help rendering in underground facilities and caves
+			FogNear = 975;
+            R_RenderSKY = R_RenderVoidSky;
+            FogColor = PACKRGBA(0,0,0,0); // 0 0 0
+            SkyVoidColor = PACKRGBA(0,0,0,0); // 0 0 0
+            break;
     }
 }
 
