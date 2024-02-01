@@ -19,9 +19,9 @@ fixed_t am_box[4]; // 80063110
 int am_plycolor;    // 80063120
 int am_plyblink;    // 80063124
 
-void AM_DrawSubsectors(player_t *player);
+void AM_DrawSubsectors(player_t *player, fixed_t cx, fixed_t cy, fixed_t bbox[static 4]);
 void AM_DrawThings(fixed_t x, fixed_t y, angle_t angle, int color);
-void AM_DrawLine(player_t *player);
+void AM_DrawLines(player_t *player, fixed_t bbox[static 4]);
 
 /*================================================================= */
 /* */
@@ -226,13 +226,15 @@ void AM_Drawer (void) // 800009AC
 	mobj_t		*next;
 	fixed_t		xpos, ypos;
 	fixed_t		ox, oy;
-	fixed_t     c;
-	fixed_t     s;
+	fixed_t		c, s, ts, tc;
 	angle_t     angle;
 	int			color;
 	int			scale;
 	int         artflag;
 	char        map_name[48];
+	fixed_t     screen_box[4];
+    fixed_t     boxscale;
+    boolean     linemode;
 
 	boolean     msgticking = false;
 	int         msgpos;
@@ -336,26 +338,59 @@ void AM_Drawer (void) // 800009AC
     MTX1->m[3][3] = ((ypos << 16) & 0xffff0000);
     MTX1+=1;
 
-    if (p->automapflags & AF_LINES)
+    boxscale = scale / 160;
+
     {
-        AM_DrawLine(p);
+        fixed_t cx, cy, tx, x, y;
+        angle_t thingangle;
+
+        thingangle = (ANG90 - p->mo->angle) >> ANGLETOFINESHIFT;
+        ts = finesine[thingangle];
+        tc = finecosine[thingangle];
+
+        cx = FixedMul(SCREEN_WD<<(FRACBITS-1), boxscale);
+        cy = FixedMul(SCREEN_HT<<(FRACBITS-1), boxscale);
+
+        M_ClearBox(screen_box);
+
+        for (int i = 0; i < 2; i++)
+        {
+            tx = i ? -cx : cx;
+            x = ((s64) tx * (s64) tc + (s64) cy * (s64) ts) >> FRACBITS;
+            y = ((s64) -tx * (s64) ts + (s64) cy * (s64) tc) >> FRACBITS;
+            M_AddToBox(screen_box, x, y);
+            M_AddToBox(screen_box, -x, -y);
+        }
+
+        screen_box[BOXTOP] += ypos;
+        screen_box[BOXBOTTOM] += ypos;
+        screen_box[BOXLEFT] += xpos;
+        screen_box[BOXRIGHT] += xpos;
+    }
+
+    linemode = !!(p->automapflags & AF_LINES);
+    if (linemode)
+    {
+        AM_DrawLines(p, screen_box);
     }
     else
     {
-        AM_DrawSubsectors(p);
+        AM_DrawSubsectors(p, xpos, ypos, screen_box);
         gDPPipeSync(GFX1++);
         gDPSetCombineMode(GFX1++, G_CC_SHADE, G_CC_SHADE);
     }
 
     /* SHOW ALL MAP THINGS (CHEAT) */
-	if (p->cheats & CF_ALLMAP)
-	{
-		for (mo = mobjhead.next; mo != &mobjhead; mo = next)
-		{
-		    I_CheckGFX();
-			next = mo->next;
+    if (p->cheats & CF_ALLMAP)
+    {
+        for (mo = mobjhead.next; mo != (void*) &mobjhead; mo = next)
+        {
+            fixed_t bbox[4];
 
-			if (mo == p->mo)
+            I_CheckGFX();
+            next = mo->next;
+
+            if (mo == p->mo)
                 continue;  /* Ignore player */
 
             if (mo->flags & (MF_NOSECTOR|MF_RENDERLASER))
@@ -369,11 +404,20 @@ void AM_Drawer (void) // 800009AC
                 color = COLOR_RED;
             else
                 color = COLOR_AQUA;
-            
+			
+            bbox[BOXTOP   ] = mo->y + 0x2d413c; // sqrt(2) * 32;
+            bbox[BOXBOTTOM] = mo->y - 0x2d413c;
+            bbox[BOXRIGHT ] = mo->x + 0x2d413c;
+            bbox[BOXLEFT  ] = mo->x - 0x2d413c;
+
+            if (!M_BoxIntersect(bbox, screen_box))
+                continue;
+			
             AM_DrawThings(mo->x, mo->y, mo->angle, color);
 
-            if (p->automapflags & AF_LINES)
+            if (linemode)
             {
+
                 gSPLine3D(GFX1++, 0, 1, 0 /*flag*/);
                 gSPLine3D(GFX1++, 1, 2, 0 /*flag*/);
                 gSPLine3D(GFX1++, 2, 0, 0 /*flag*/);
@@ -388,7 +432,7 @@ void AM_Drawer (void) // 800009AC
 	/* SHOW PLAYERS */
     AM_DrawThings(p->mo->x, p->mo->y, p->mo->angle, am_plycolor << 16 | 0xff);
 
-    if (p->automapflags & AF_LINES)
+    if (linemode)
     {
         gSPLine3D(GFX1++, 0, 1, 0 /*flag*/);
         gSPLine3D(GFX1++, 1, 2, 0 /*flag*/);
@@ -461,21 +505,53 @@ void AM_Drawer (void) // 800009AC
     } while (artflag != 0);
 }
 
+static boolean AM_DrawSubsector(player_t *player, int bspnum)
+{
+    subsector_t *sub;
+    sector_t *sec;
+
+    if(!(bspnum & NF_SUBSECTOR))
+        return false;
+
+    sub = &subsectors[bspnum & (~NF_SUBSECTOR)];
+
+    if(!sub->drawindex && !player->powers[pw_allmap] && !(player->cheats & CF_ALLMAP))
+        return true;
+
+    sec = sub->sector;
+
+    if((sec->flags & MS_HIDESSECTOR) || (sec->floorpic == -1))
+        return true;
+
+    I_CheckGFX();
+
+    R_RenderPlane(&leafs[sub->leaf], sub->numverts, 0,
+                  textures[sec->floorpic], 0, 0,
+                  lights[sec->colors[1]].rgba);
+
+    return true;
+}
 
 /*
 ==================
 =
-= AM_DrawSubsectors
+= AM_DrawSubsectors improve with GBA rendering to not overload
 =
 ==================
 */
 
-void AM_DrawSubsectors(player_t *player) // 800012A0
+// Nova took advantage of the GBA Doom stack rendering to improve the automap rendering speed
+#define MAX_BSP_DEPTH 128
+
+void AM_DrawSubsectors(player_t *player, fixed_t cx, fixed_t cy, fixed_t bbox[static 4]) // 800012A0
 {
-    subsector_t *sub;
-    sector_t *sec;
-    leaf_t *lf;
-    int i;
+    int sp = 0;
+    node_t *bsp;
+    int     side;
+    fixed_t    dx, dy;
+    fixed_t    left, right;
+    int bspnum = numnodes - 1;
+    int bspstack[MAX_BSP_DEPTH];
 
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_1CYCLE);
@@ -486,25 +562,62 @@ void AM_DrawSubsectors(player_t *player) // 800012A0
 
     globallump = -1;
 
-	sub = subsectors;
-	for (i=0 ; i<numsubsectors ; i++, sub++)
-	{
-        if((sub->drawindex) || (player->powers[pw_allmap]) || (player->cheats & CF_ALLMAP))
+	while(true)
+    {
+        while (!AM_DrawSubsector(player, bspnum))
         {
-            sec = sub->sector;
+            if(sp == MAX_BSP_DEPTH)
+                break;
 
-            if((sec->flags & MS_HIDESSECTOR) || (sec->floorpic == -1))
-                continue;
+            bsp = &nodes[bspnum];
+            dx = (cx - bsp->line.x);
+            dy = (cy - bsp->line.y);
 
-            I_CheckGFX();
+            left = (bsp->line.dy >> 16) * (dx >> 16);
+            right = (dy >> 16) * (bsp->line.dx >> 16);
 
-            lf = &leafs[sub->leaf];
-            R_RenderPlane(lf, sub->numverts, 0,
-                          textures[sec->floorpic],
-                          0, 0,
-                          lights[sec->colors[1]].rgba);
+            if (right < left)
+                side = 0;        /* front side */
+            else
+                side = 1;        /* back side */
+
+            bspstack[sp++] = bspnum;
+            bspstack[sp++] = side;
+
+            bspnum = bsp->children[side];
+
         }
-	}
+        if(sp == 0)
+        {
+            //back at root node and not visible. All done!
+            return;
+        }
+
+        //Back sides.
+        side = bspstack[--sp];
+        bspnum = bspstack[--sp];
+        bsp = &nodes[bspnum];
+
+        // Possibly divide back space.
+        //Walk back up the tree until we find
+        //a node that has a visible backspace.
+        while(!M_BoxIntersect (bbox, bsp->bbox[side^1]))
+        {
+            if(sp == 0)
+            {
+                //back at root node and not visible. All done!
+                return;
+            }
+
+            //Back side next.
+            side = bspstack[--sp];
+            bspnum = bspstack[--sp];
+
+            bsp = &nodes[bspnum];
+        }
+
+        bspnum = bsp->children[side^1];
+    }
 }
 
 /*
@@ -515,7 +628,7 @@ void AM_DrawSubsectors(player_t *player) // 800012A0
 ==================
 */
 
-void AM_DrawLine(player_t *player) // 800014C8
+void AM_DrawLines(player_t *player, fixed_t bbox[static 4]) // 800014C8
 {
     line_t *l;
     int i, color;
@@ -538,6 +651,9 @@ void AM_DrawLine(player_t *player) // 800014C8
     for (i = 0; i < numlines; i++, l++)
     {
         if(l->flags & ML_DONTDRAW)
+            continue;
+		
+		if (!M_BoxIntersect(bbox, l->bbox))
             continue;
 
         if(((l->flags & ML_MAPPED) || player->powers[pw_allmap]) || (player->cheats & CF_ALLMAP))
