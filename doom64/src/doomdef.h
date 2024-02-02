@@ -974,6 +974,7 @@ void AM_Drawer (void);
 /* D_SCREENS */
 /*-----------*/
 
+char* EpisodeGraphic(); // [Immorpher] Custom episode graphics
 int D_RunDemo(char *name, skill_t skill, int map); // 8002B2D0
 int D_TitleMap(void);           // 8002B358
 int D_WarningTicker(void);      // 8002B3E8

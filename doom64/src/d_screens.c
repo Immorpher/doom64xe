@@ -5,6 +5,23 @@
 #include "r_local.h"
 #include "st_main.h"
 
+// [Immorpher] Used for selecting the proper graphic to show for each episode
+char* EpisodeGraphic()
+{
+	if ((gamemap >= LOSTLEVEL) && (gamemap < BETALEVEL)) {
+		return "LOST";
+	}
+	else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
+		return "BETA";
+	}
+	else if (gamemap >= BONUSLEVEL || gamemap == 0) {
+		return "BONUS";
+	}
+	else {
+		return "EVIL";
+	}
+}
+
 int D_RunDemo(char *name, skill_t skill, int map) // 8002B2D0
 {
   int lump;
@@ -173,19 +190,8 @@ void D_DrawLoadScreen(int textalpha)
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 	
-	if ((gamemap >= LOSTLEVEL) && (gamemap < BETALEVEL)) {
-		M_DrawBackground(63, 25, textalpha>>1, "LOST");
-	}
-	else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
-		M_DrawBackground(63, 25, textalpha>>1, "BETA");
-	}
-	else if (gamemap >= BONUSLEVEL || gamemap == 0) {
-		M_DrawBackground(63, 25, textalpha>>1, "BONUS");
-	}
-	else {
-		M_DrawBackground(63, 25, textalpha>>1, "EVIL");
-	}
-	
+	M_DrawBackground(63, 25, textalpha>>1, EpisodeGraphic());
+
 	ST_DrawString(-1, 100, "Entering", PACKRGBA(textalpha,0,0,textalpha));
 	ST_DrawString(-1, 120, MapInfo[gamemap].name, PACKRGBA(textalpha,0,0,textalpha));
 

@@ -445,7 +445,7 @@ void R_RenderEvilSky(void) // 80025738
         else
             color = Skyfadeback;
 
-        M_DrawBackground(63, 25, color, "EVIL");
+        M_DrawBackground(63, 25, color, EpisodeGraphic());
     }
 }
 
