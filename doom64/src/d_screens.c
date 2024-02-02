@@ -172,7 +172,20 @@ void D_DrawLoadScreen(int textalpha)
     gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
     gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
     gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
-
+	
+	if ((gamemap >= LOSTLEVEL) && (gamemap < BETALEVEL)) {
+		M_DrawBackground(63, 25, textalpha>>1, "LOST");
+	}
+	else if ((gamemap >= BETALEVEL) && (gamemap < BONUSLEVEL)) {
+		M_DrawBackground(63, 25, textalpha>>1, "BETA");
+	}
+	else if (gamemap >= BONUSLEVEL || gamemap == 0) {
+		M_DrawBackground(63, 25, textalpha>>1, "BONUS");
+	}
+	else {
+		M_DrawBackground(63, 25, textalpha>>1, "EVIL");
+	}
+	
 	ST_DrawString(-1, 100, "Entering", PACKRGBA(textalpha,0,0,textalpha));
 	ST_DrawString(-1, 120, MapInfo[gamemap].name, PACKRGBA(textalpha,0,0,textalpha));
 
