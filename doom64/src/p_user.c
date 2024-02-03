@@ -417,7 +417,7 @@ void P_BuildMove (player_t *player) // 80022154
 ===============================================================================
 */
 
-#define MAXBOB			0x100000		/* 16 pixels of bob */
+#define MAXBOB			0x100000		// 16 pixels of bob 0x100000
 
 /*
 ==================

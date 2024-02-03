@@ -493,7 +493,7 @@ void P_UpdateLightThinker(int destlight, int srclight) // 80016118
     lt->dest = destlight;
     lt->src = srclight;
     lt->r = (rgb >> 24) & 0xff;
-    lt->g = (rgb >> FRACBITS) & 0xff;
+    lt->g = (rgb >> 16) & 0xff;
     lt->b = (rgb >>  8) & 0xff;
 }
 
