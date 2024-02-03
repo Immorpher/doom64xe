@@ -197,10 +197,10 @@ void R_WallPrep(seg_t *seg) // 80026A44
     if (li->flags & ML_BLENDING)
     {
         r1 = upcolor  >> 24;
-        g1 = upcolor  >> FRACBITS & 0xff;
+        g1 = upcolor  >> 16 & 0xff;
         b1 = upcolor  >> 8 & 0xff;
         r2 = lowcolor >> 24;
-        g2 = lowcolor >> FRACBITS & 0xff;
+        g2 = lowcolor >> 16 & 0xff;
         b2 = lowcolor >> 8 & 0xff;
 
         tmp_upcolor = upcolor;
@@ -241,11 +241,15 @@ void R_WallPrep(seg_t *seg) // 80026A44
                     if (f_floorheight < f_ceilingheight)
                     {
                         height2 = ((height << 16) / (f_ceilingheight - f_floorheight));
+						
+						if (height2 > 65535) // [Immorpher] Fix lighting bug when height is too large or sector intersection
+							height2 = 65535;
                     }
                     else
                     {
                         height2 = 0;
                     }
+
 
                     tmp_lowcolor = (((((r2 - r1) * height2) >> FRACBITS) + r1) << 24) |
                                    (((((g2 - g1) * height2) >> FRACBITS) + g1) << 16) |
@@ -310,6 +314,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
                     if (f_floorheight < f_ceilingheight)
                     {
                         height2 = ((height << 16) / (f_ceilingheight - f_floorheight));
+					
+						if (height2 > 65535) // [Immorpher] Fix lighting bug when height is too large or sector intersection
+							height2 = 65535;
                     }
                     else
                     {
