@@ -145,7 +145,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT36 , 111 , 384}, // Cold Grounds
     {MI_TXT37 , 94 , 384}, // Wretched Vats
     {MI_TXT38 , 105 , 384}, // Thy Glory
-    {MI_TXT39 , 98 , 384}, // Final Judgement
+    {MI_TXT39 , 98 , 448}, // Final Judgement
     {MI_TXT40 , 101 , 256}, // Panic
     {MI_TXT41 , 96 , 256}, // Penumbra - Beta 64
     {MI_TXT42 , 97 , 256},  // Hydroplant
@@ -154,7 +154,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT45 , 101 , 256}, // Refinery
     {MI_TXT46 , 107 , 384}, // Gamma Lab
     {MI_TXT47 , 108 , 256}, // Sector R
-    {MI_TXT48 , 110 , 768}, // Ultima Porta
+    {MI_TXT48 , 110 , 640}, // Ultima Porta
     {MI_TXT49 , 95 , 256}, // Profane Paradise
     {MI_TXT50 , 98 , 1024}, // Pain Warren
     {MI_TXT51 , 99 , 1024}, // City of the Damned
@@ -163,7 +163,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT54 , 106 , 256}, // The Dungeons
     {MI_TXT55 , 111 , 512}, // Abhorred Sanctuary
     {MI_TXT56 , 97 , 640}, // Abaddon Fortress
-    {MI_TXT57 , 103 , 512}, // Simplicity
+    {MI_TXT57 , 103 , 768}, // Simplicity
     {MI_TXT58 , 94 , 768}, // Inferni Carceris
     {MI_TXT59 , 100 , 256}, // Umbra
     {MI_TXT60 , 112 , 768}, // Unearthly Spire
