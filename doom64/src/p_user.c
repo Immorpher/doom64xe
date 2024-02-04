@@ -719,31 +719,24 @@ void P_PlayerThink (player_t *player) // 80022D60
 		if (weapon == wp_nochange)
 			weapon = player->readyweapon;
 
-		if ((buttons & cbutton->BT_WEAPONBACKWARD) && !(oldbuttons & cbutton->BT_WEAPONBACKWARD))
+		if ((buttons & cbutton->BT_WEAPONBACKWARD) && !(oldbuttons & cbutton->BT_WEAPONBACKWARD)) // [Immorpher] Change weapon decriment for easier chainsaw access
 		{
-            if (weapon == wp_chainsaw)
-            {
-                player->pendingweapon = wp_fist;
-            }
-            else
-            {
-                if((int)(weapon-1) >= wp_chainsaw)
-                {
-                    while(--weapon >= wp_chainsaw && !player->weaponowned[weapon]);
-                }
-
-                if((int)weapon >= wp_chainsaw)
-                    player->pendingweapon = weapon;
-            }
+			if((int)(weapon) >= wp_chainsaw)
+			{
+				while(--weapon >= wp_chainsaw && !player->weaponowned[weapon]);
+			}
+			
+			if((int)weapon >= wp_chainsaw)
+				player->pendingweapon = weapon;
 		}
 		else if ((buttons & cbutton->BT_WEAPONFORWARD) && !(oldbuttons & cbutton->BT_WEAPONFORWARD))
 		{
-		    if((int)(weapon+1) < NUMWEAPONS)
+		    if((int)(weapon) < NUMWEAPONS)
             {
                 while(++weapon < NUMWEAPONS && !player->weaponowned[weapon]);
             }
 
-            if((int)weapon < NUMWEAPONS)
+            if((int)(weapon) < NUMWEAPONS)
                 player->pendingweapon = weapon;
 		}
 	}

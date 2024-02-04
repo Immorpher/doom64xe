@@ -241,7 +241,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT132 , 97 , 640}, // Visions of Hostility
     {MI_TXT133 , 108 , 256}, // Secondary Engineering
     {MI_TXT134 , 112 , 256}, // Deja Vu
-    {MI_TXT135 , 105 , 512}, // Fabrication Labs
+    {MI_TXT135 , 105 , 448}, // Fabrication Labs
     {MI_TXT136 , 94 , 256}, // Switchless
     {MI_TXT137 , 101 , 768}, // Devolving Being
     {MI_TXT138 , 96 , 256}, // Outer Outpost
