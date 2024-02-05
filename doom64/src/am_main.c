@@ -465,7 +465,7 @@ void AM_Drawer (void) // 800009AC
         {
             if (p->messagetic[i] > 0)
             {
-                ST_Message(20, msgpos, p->message[i], 255 | messagecolors[i]);
+                ST_Message(20, msgpos, p->message[i], 128 | messagecolors[i]);
                 msgpos += 10;
                 for (j = 0; p->message[i][j] != '\0'; ++j)
                 {
@@ -477,19 +477,19 @@ void AM_Drawer (void) // 800009AC
         if (!msgticking)
         {
             sprintf(map_name, "LEVEL %d: %s", gamemap, MapInfo[gamemap].name);
-            ST_Message(20, 20, map_name, 0xffffffff);
+            ST_Message(20, 20, map_name, 0xffffff80);
         }
     }
 
     if (ShowStats)
     {
-        sprintf(kills, "K: %d/%d", players[0].killcount, totalkills);
-        sprintf(items, "I: %d/%d", players[0].itemcount, totalitems);
-        sprintf(secrets, "S: %d/%d", players[0].secretcount, totalsecret);
+        sprintf(kills, "KILLS: %d/%d", players[0].killcount, totalkills);
+        sprintf(items, "ITEMS: %d/%d", players[0].itemcount, totalitems);
+        sprintf(secrets, "SECRETS: %d/%d", players[0].secretcount, totalsecret);
 
-        ST_Message(20, 200, kills, 0xffffffff);		
-		ST_Message(20, 210, items, 0xffffffff);
-		ST_Message(20, 220, secrets, 0xffffffff);
+        ST_Message(20, 200, kills, 0xffffff80);		
+		ST_Message(20, 210, items, 0xffffff80);
+		ST_Message(20, 220, secrets, 0xffffff80);
     }
 
     xpos = 280;
