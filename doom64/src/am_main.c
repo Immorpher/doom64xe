@@ -5,12 +5,14 @@
 extern void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color);
 
 extern void ST_Message(int x,int y,char *text,int color);
-#define COLOR_RED     0xA40000FF
-#define COLOR_GREEN   0x00C000FF
-#define COLOR_BROWN   0x8A5C30ff
-#define COLOR_YELLOW  0xCCCC00FF
-#define COLOR_GREY    0x808080FF
-#define COLOR_AQUA    0x3373B3FF
+#define COLOR_BBROWN	0xAA642BFF
+#define COLOR_RED		0xFF4000FF
+#define COLOR_GREEN		0x00FF00FF
+#define COLOR_BLUE		0x0040FFFF
+#define COLOR_DBROWN	0x603818FF
+#define COLOR_YELLOW	0xCCCC00FF
+#define COLOR_GREY		0x202020FF
+#define COLOR_AQUA		0x3373B3FF
 
 #define MAXSCALE	1500
 #define MINSCALE	200
@@ -389,6 +391,16 @@ void AM_Drawer (void) // 800009AC
 
             I_CheckGFX();
             next = mo->next;
+			
+			/* [nova] - always draw keys on automap */
+			if (!(p->cheats & CF_ALLMAP)
+					&& mo->type != MT_ITEM_BLUECARDKEY
+					&& mo->type != MT_ITEM_REDCARDKEY
+					&& mo->type != MT_ITEM_YELLOWCARDKEY
+					&& mo->type != MT_ITEM_YELLOWSKULLKEY
+					&& mo->type != MT_ITEM_REDSKULLKEY
+					&& mo->type != MT_ITEM_BLUESKULLKEY)
+				continue;
 
             if (mo == p->mo)
                 continue;  /* Ignore player */
@@ -401,7 +413,7 @@ void AM_Drawer (void) // 800009AC
             if ((players->artifacts & 4) != 0 && mo->type == MT_ITEM_ARTIFACT3) continue;
 
             if (mo->flags & (MF_SHOOTABLE|MF_MISSILE))
-                color = COLOR_RED;
+                color = COLOR_BBROWN;
             else
                 color = COLOR_AQUA;
 			
@@ -663,16 +675,25 @@ void AM_DrawLines(player_t *player, fixed_t bbox[static 4]) // 800014C8
             /* */
             /* Figure out color */
             /* */
-            color = COLOR_BROWN;
+            color = COLOR_DBROWN;
 
             if((player->powers[pw_allmap] || (player->cheats & CF_ALLMAP)) && !(l->flags & ML_MAPPED))
                 color = COLOR_GREY;
             else if (l->flags & ML_SECRET)
-                color = COLOR_RED;
+                color = COLOR_BBROWN;
             else if(l->special && !(l->flags & ML_HIDEAUTOMAPTRIGGER))
-                color = COLOR_YELLOW;
+            {
+                if(l->special & MLU_BLUE)
+                    color = COLOR_BLUE;
+                else if(l->special & MLU_YELLOW)
+                    color = COLOR_YELLOW;
+                else if(l->special & MLU_RED)
+                    color = COLOR_RED;
+                else
+                    color = COLOR_GREEN;
+            }
             else if (!(l->flags & ML_TWOSIDED)) /* ONE-SIDED LINE */
-                color = COLOR_RED;
+                color = COLOR_BBROWN;
 
             gSPVertex(GFX1++, (VTX1), 2, 0);
             gSPLine3D(GFX1++, 0, 1, 0);
