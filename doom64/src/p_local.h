@@ -273,7 +273,7 @@ void P_DamageMobj (mobj_t *target, mobj_t *inflictor, mobj_t *source, int damage
 
 //PSX NEW
 #define MAXTHINGSPEC 8
-extern line_t  *thingspec[8];
+extern line_t  *thingspec[MAXTHINGSPEC];
 extern int		numthingspec;//80077ee8
 
 extern mobj_t  *tmthing;

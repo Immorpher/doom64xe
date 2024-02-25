@@ -20,5 +20,22 @@ sudo apt-get install ./n64sdk.deb
 
 sudo apt-get install ./makemask.deb 
 
+
+----------------------------------------------
+LTO Stuff
+
+git clone https://github.com/ModernN64SDK/libultra_modern
+
+cd libultra_modern
+
+in this folder add -flto=auto to the OPT_FLAGS
+
+sudo apt install build-essential python3
+
+https://github.com/ModernN64SDK/libultra_modern?tab=readme-ov-file
+
+// Use this when building with LTO so it can find link time optimization
+PATH=$PATH:/opt/crashsdk/bin; export PATH
+
 then to build the ROM go to doom64
 ./make-rom.sh

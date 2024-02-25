@@ -343,7 +343,7 @@ extern	int			validcount; //800779F4
 extern boolean rendersky;                           // 800A68A8
 extern byte solidcols[320];				            // 800A6348
 
-#define	MAXSUBSECTORS	1024		// Maximum number of subsectors to scan greatly - increased for custom levels
+#define	MAXSUBSECTORS	1024		// Maximum number of potential subsectors - adjusted on per level basis
 extern subsector_t *solidsubsectors[MAXSUBSECTORS];	// 800A6488 /* List of valid ranges to scan through */
 extern subsector_t **endsubsector;				    // 800A6888 /* Pointer to the first free entry */
 extern int numdrawsubsectors;                       // 800A68AC

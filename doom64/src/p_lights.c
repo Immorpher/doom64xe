@@ -577,20 +577,11 @@ int P_DoSectorLightChange(int tag1,int tag2) // 800163B8
         sec1 = &sectors[secnum];
         rtn = 1;
 
-        if (sec1->colors[0] >= 256)
-            P_UpdateLightThinker(sec2->colors[0], sec1->colors[0]);
-
-        if (sec1->colors[1] >= 256)
-            P_UpdateLightThinker(sec2->colors[1], sec1->colors[1]);
-
-        if (sec1->colors[2] >= 256)
-            P_UpdateLightThinker(sec2->colors[2], sec1->colors[2]);
-
-        if (sec1->colors[3] >= 256)
-            P_UpdateLightThinker(sec2->colors[3], sec1->colors[3]);
-
-        if (sec1->colors[4] >= 256)
-            P_UpdateLightThinker(sec2->colors[4], sec1->colors[4]);
+		P_UpdateLightThinker(sec2->colors[0], sec1->colors[0]);
+		P_UpdateLightThinker(sec2->colors[1], sec1->colors[1]);
+		P_UpdateLightThinker(sec2->colors[2], sec1->colors[2]);
+		P_UpdateLightThinker(sec2->colors[3], sec1->colors[3]);
+		P_UpdateLightThinker(sec2->colors[4], sec1->colors[4]);
     }
 
     return rtn;
