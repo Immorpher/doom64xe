@@ -600,6 +600,9 @@ void T_MoveCamera(movecamera_t *camera) // 8000F014
         camera->current++;
         return;
     }
+	
+	// [kex] remove thinker after its done
+	P_RemoveThinker(&camera->thinker);
 }
 
 void P_SetMovingCamera(line_t *line) // 8000F2F8
@@ -623,6 +626,9 @@ void P_SetMovingCamera(line_t *line) // 8000F2F8
         camera->x = mo->x;
         camera->y = mo->y;
         camera->z = mo->z;
+		camera->slopex = 0;
+		camera->slopey = 0;
+		camera->slopez = 0;
         camera->tic = CAMMOVESPEED;
         camera->current = mo->tid + 1;
 
