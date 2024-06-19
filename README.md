@@ -37,4 +37,4 @@ You can add the following preprocessor definitions to the `DEFINES` section of t
 
 ## Notes
 
-Special thanks to Erick194, Molecicco, JNMartin, and Kovic for making all of this possible.
+Special thanks to Erick194, Molecicco, JNMartin, Nova and Kovic for making all of this possible.
