@@ -169,7 +169,6 @@ void R_WallPrep(seg_t *seg) // 80026A44
 	fixed_t rowoffs;
 	int pic;
 
-	unsigned int height2;
 	unsigned int r1 = 0, g1 = 0, b1 = 0;
 	unsigned int r2 = 0, g2 = 0, b2 = 0;
 	unsigned int thingcolor = 0;
@@ -215,197 +214,200 @@ void R_WallPrep(seg_t *seg) // 80026A44
     m_bottom = f_floorheight; // set middle bottom
     m_top = f_ceilingheight;  // set middle top
 
-    backsector = seg->backsector;
-    if (backsector)
-    {
-        b_floorheight = backsector->floorheight >> FRACBITS;
-        b_ceilingheight = backsector->ceilingheight >> FRACBITS;
+	backsector = seg->backsector;
+	if (backsector) {
+		b_floorheight = backsector->floorheight >> 16;
+		b_ceilingheight = backsector->ceilingheight >> 16;
 
-        if ((backsector->ceilingheight < frontsector->ceilingheight) && (backsector->ceilingpic != -1))
-        {
-            if (li->flags & ML_DONTPEGTOP)
-            {
-                height = (f_ceilingheight - b_ceilingheight);
-                rowoffs = (curRowoffset >> FRACBITS) + height;
-            }
-            else
-            {
-                height = (f_ceilingheight - b_ceilingheight);
-                rowoffs = ((height + 127) & -128) + (curRowoffset >> FRACBITS);
-            }
+		if ((b_ceilingheight < f_ceilingheight) && (backsector->ceilingpic != -1)) {
+			height = f_ceilingheight - b_ceilingheight;
 
-            if (li->flags & ML_BLENDING)
-            {
-                if (!(li->flags & ML_BLENDFULLTOP))
-                {
-                    if (f_floorheight < f_ceilingheight)
-                    {
-                        height2 = ((height << 16) / (f_ceilingheight - f_floorheight));
-						
-						if (height2 > 65535) // [Immorpher] Fix lighting bug when height is too large or sector intersection
-							height2 = 65535;
-                    }
-                    else
-                    {
-                        height2 = 0;
-                    }
+			if (li->flags & ML_DONTPEGTOP) {
+				rowoffs = (curRowoffset >> 16) + height;
+			} else {
+				rowoffs = ((height + 127) & -128) + (curRowoffset >> 16);
+			}
 
+			if (li->flags & ML_BLENDING) {
+				if (!(li->flags & ML_BLENDFULLTOP)) {
+					int inheight = f_ceilingheight - f_floorheight;
+					int sideheight1 = b_ceilingheight - f_floorheight;
+					int sideheight2 = f_ceilingheight - b_ceilingheight;
 
-                    tmp_lowcolor = (((((r2 - r1) * height2) >> FRACBITS) + r1) << 24) |
-                                   (((((g2 - g1) * height2) >> FRACBITS) + g1) << 16) |
-                                   (((((b2 - b1) * height2) >> FRACBITS) + b1) << 8)  | 0xff;
-                }
+					float scale1 = (float)sideheight1 / (float)inheight;
+					float scale2 = (float)sideheight2 / (float)inheight;
+			
+					float nr1 = r1*scale1;
+					float ng1 = g1*scale1;
+					float nb1 = b1*scale1;
 
-                if (li->flags & ML_INVERSEBLEND)
-                {
-                    bottomcolor = tmp_upcolor;
-                    topcolor = tmp_lowcolor;
-                }
-                else
-                {
-                    topcolor = tmp_upcolor;
-                    bottomcolor = tmp_lowcolor;
-                }
+					float nr2 = r2*scale2;
+					float ng2 = g2*scale2;
+					float nb2 = b2*scale2;
 
-                // clip middle color upper
-                upcolor = tmp_lowcolor;
-            }
+					float rf = nr1 + nr2;
+					float gf = ng1 + ng2;
+					float bf = nb1 + nb2;
 
-            R_RenderWall(seg, li->flags, textures[side->toptexture],
-                         f_ceilingheight, b_ceilingheight,
-                         rowoffs - height, rowoffs,
-                         topcolor, bottomcolor);
+					if (!((rf < 256) && (gf < 256) && (bf < 256))) {
+						float scale;
 
-            m_top = b_ceilingheight; // clip middle top height
-            if ((li->flags & (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) == ML_SWITCHX08)
-            {
-                if (SWITCHMASK(li->flags) == ML_SWITCHX04)
-                {
-                    pic = side->bottomtexture;
-                    rowoffs = side->rowoffset >> FRACBITS;
-                }
-                else
-                {
-                    pic = side->midtexture;
-                    rowoffs = side->rowoffset >> FRACBITS;
-                }
+						if (rf >= gf && rf >= bf) {
+							scale = 255.0f / rf;
+						} else if (gf >= rf && gf >= bf) {
+							scale = 255.0f / gf;
+						} else {
+							scale = 255.0f / bf;
+						}
 
-                R_RenderSwitch(seg, pic, b_ceilingheight + rowoffs + 48, thingcolor);
-            }
-        }
+						rf *= scale;
+						gf *= scale;
+						bf *= scale;
+					} else { // if (rf > 255) rf = 255; if (gf > 255) gf = 255; if (bf > 255) bf = 255;
+						tmp_lowcolor = ((int)rf << 24) | ((int)gf << 16) | ((int)bf << 8) | 0xff;
+					}
+				} 
 
-        if (frontsector->floorheight < backsector->floorheight)
-        {
-            height = (f_ceilingheight - b_floorheight);
+				if (li->flags & ML_INVERSEBLEND) {
+					bottomcolor = tmp_upcolor;
+					topcolor = tmp_lowcolor;
+				} else {
+					topcolor = tmp_upcolor;
+					bottomcolor = tmp_lowcolor;
+				}
 
-            if ((li->flags & ML_DONTPEGBOTTOM) == 0)
-            {
-                rowoffs = curRowoffset >> FRACBITS;
-            }
-            else
-            {
-                rowoffs = height + (curRowoffset >> FRACBITS);
-            }
+				// clip middle color upper
+				upcolor = tmp_lowcolor;
+			}
 
-            if (li->flags & ML_BLENDING)
-            {
-                if (!(li->flags & ML_BLENDFULLBOTTOM))
-                {
-                    if (f_floorheight < f_ceilingheight)
-                    {
-                        height2 = ((height << 16) / (f_ceilingheight - f_floorheight));
-					
-						if (height2 > 65535) // [Immorpher] Fix lighting bug when height is too large or sector intersection
-							height2 = 65535;
-                    }
-                    else
-                    {
-                        height2 = 0;
-                    }
+			R_RenderWall(seg, li->flags, textures[side->toptexture],
+						 f_ceilingheight, b_ceilingheight,
+						 rowoffs - height, rowoffs,
+						 topcolor, bottomcolor);
 
-                    tmp_upcolor = (((((r2 - r1) * height2) >> FRACBITS) + r1) << 24) |
-                                  (((((g2 - g1) * height2) >> FRACBITS) + g1) << 16) |
-                                  (((((b2 - b1) * height2) >> FRACBITS) + b1) << 8)  | 0xff;
-                }
+			m_top = b_ceilingheight; // clip middle top height
 
-                topcolor = tmp_upcolor;
-                bottomcolor = lowcolor;
+			if ((li->flags & (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) == ML_SWITCHX08) {
+				if (SWITCHMASK(li->flags) == ML_SWITCHX04) {
+					pic = side->bottomtexture;
+					rowoffs = side->rowoffset >> 16;
+				} else {
+					pic = side->midtexture;
+					rowoffs = side->rowoffset >> 16;
+				}
+				R_RenderSwitch(seg, pic, b_ceilingheight + rowoffs + 48, thingcolor);
+			}
+		}
 
-                // clip middle color lower
-                lowcolor = tmp_upcolor;
-            }
+		if (f_floorheight < b_floorheight) {
+			height = f_ceilingheight - b_floorheight;
 
-            R_RenderWall(seg, li->flags, textures[side->bottomtexture],
-                         b_floorheight, f_floorheight,
-                         rowoffs, rowoffs + (b_floorheight - f_floorheight),
-                         topcolor, bottomcolor);
+			if ((li->flags & ML_DONTPEGBOTTOM) == 0) {
+				rowoffs = curRowoffset >> 16;
+			} else {
+				rowoffs = height + (curRowoffset >> 16);
+			}
 
-            m_bottom = b_floorheight; // clip middle bottom height
-            if ((li->flags & (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) == ML_CHECKFLOORHEIGHT)
-            {
-                if (SWITCHMASK(li->flags) == ML_SWITCHX02)
-                {
-                    pic = side->toptexture;
-                    rowoffs = side->rowoffset >> FRACBITS;
-                }
-                else
-                {
-                    pic = side->midtexture;
-                    rowoffs = side->rowoffset >> FRACBITS;
-                }
+			if (li->flags & ML_BLENDING) {
+				if (!(li->flags & ML_BLENDFULLBOTTOM)) {
+					int inheight = f_ceilingheight - f_floorheight;
+					int sideheight1 = b_floorheight - f_floorheight;
+					int sideheight2 = f_ceilingheight - b_floorheight;
 
-                R_RenderSwitch(seg, pic, b_floorheight + rowoffs - 16, thingcolor);
-            }
-        }
+					float scale1 = (float)sideheight1 / (float)inheight;
+					float scale2 = (float)sideheight2 / (float)inheight;
+			
+					float nr1 = r1*scale1;
+					float ng1 = g1*scale1;
+					float nb1 = b1*scale1;
 
-        if (!(li->flags & ML_DRAWMASKED))
-        {
-            return;
-        }
-    }
+					float nr2 = r2*scale2;
+					float ng2 = g2*scale2;
+					float nb2 = b2*scale2;
 
-    if (li->flags & ML_DONTPEGBOTTOM)
-    {
-        height = m_top - m_bottom;
-        rowoffs = ((height + 127) & -128) + (curRowoffset >> FRACBITS);
-    }
-    else if (li->flags & ML_DONTPEGTOP)
-    {
-        rowoffs = (curRowoffset >> FRACBITS) - m_bottom;
-        height = m_top - m_bottom;
-    }
-    else
-    {
-        height = m_top - m_bottom;
-        rowoffs = (curRowoffset >> FRACBITS) + height;
-    }
+					float rf = nr1 + nr2;
+					float gf = ng1 + ng2;
+					float bf = nb1 + nb2;
 
-    if (li->flags & ML_BLENDING)
-    {
-        topcolor = upcolor;
-        bottomcolor = lowcolor;
-    }
+					if (!((rf < 256) && (gf < 256) && (bf < 256))) {
+						float scale;
 
-    R_RenderWall(seg, li->flags, textures[side->midtexture],
-                 m_top, m_bottom,
-                 rowoffs - height, rowoffs,
-                 topcolor, bottomcolor);
+						if (rf >= gf && rf >= bf) {
+							scale = 255.0f / rf;
+						} else if (gf >= rf && gf >= bf) {
+							scale = 255.0f / gf;
+						} else {
+							scale = 255.0f / bf;
+						}
 
-    if ((li->flags & (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) == (ML_CHECKFLOORHEIGHT|ML_SWITCHX08))
-    {
-        if (SWITCHMASK(li->flags) == ML_SWITCHX02)
-        {
-            pic = side->toptexture;
-            rowoffs = side->rowoffset >> FRACBITS;
-        }
-        else
-        {
-            pic = side->bottomtexture;
-            rowoffs = side->rowoffset >> FRACBITS;
-        }
+						rf *= scale;
+						gf *= scale;
+						bf *= scale;
+					} else { // if (rf > 255) rf = 255; if (gf > 255) gf = 255; if (bf > 255) bf = 255;
+						tmp_upcolor = ((int)rf << 24) | ((int)gf << 16) | ((int)bf << 8) | 0xff;
+					}
+				}
 
-        R_RenderSwitch(seg, pic, m_bottom + rowoffs + 48, thingcolor);
-    }
+				topcolor = tmp_upcolor;
+				bottomcolor = lowcolor;
+
+				// clip middle color lower
+				lowcolor = tmp_upcolor;
+			}
+
+			R_RenderWall(seg, li->flags, textures[side->bottomtexture],
+						 b_floorheight, f_floorheight,
+						 rowoffs, rowoffs + (b_floorheight - f_floorheight),
+						 topcolor, bottomcolor);
+
+			m_bottom = b_floorheight; // clip middle bottom height
+			if ((li->flags & (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) == ML_CHECKFLOORHEIGHT) {
+				if (SWITCHMASK(li->flags) == ML_SWITCHX02) {
+					pic = side->toptexture;
+					rowoffs = side->rowoffset >> 16;
+				} else {
+					pic = side->midtexture;
+					rowoffs = side->rowoffset >> 16;
+				}
+				R_RenderSwitch(seg, pic, b_floorheight + rowoffs - 16, thingcolor);
+			}
+		}
+
+		if (!(li->flags & ML_DRAWMASKED)) {
+			return;
+		}
+	}
+
+	height = m_top - m_bottom;
+
+	if (li->flags & ML_DONTPEGBOTTOM) {
+		rowoffs = ((height + 127) & -128) + (curRowoffset >> 16);
+	} else if (li->flags & ML_DONTPEGTOP) {
+		rowoffs = (curRowoffset >> 16) - m_bottom;
+	} else {
+		rowoffs = (curRowoffset >> 16) + height;
+	}
+
+	if (li->flags & ML_BLENDING) {
+		topcolor = upcolor;
+		bottomcolor = lowcolor;
+	}
+
+	R_RenderWall(seg, li->flags, textures[side->midtexture],
+				 m_top, m_bottom,
+				 rowoffs - height, rowoffs,
+				 topcolor, bottomcolor);
+
+	if ((li->flags & (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) == (ML_CHECKFLOORHEIGHT|ML_SWITCHX08)) {
+		if (SWITCHMASK(li->flags) == ML_SWITCHX02) {
+			pic = side->toptexture;
+			rowoffs = side->rowoffset >> 16;
+		} else {
+			pic = side->bottomtexture;
+			rowoffs = side->rowoffset >> 16;
+		}
+		R_RenderSwitch(seg, pic, m_bottom + rowoffs + 48, thingcolor);
+	}
 }
 
 void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomHeight,

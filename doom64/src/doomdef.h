@@ -64,6 +64,8 @@ extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 extern u32 __osGetFpcCsr();
 extern u32 __osSetFpcCsr(u32 value);
 
+extern void bzero(void *, int);
+
 extern void R_RenderFilter(void);
 
 extern int D_vsprintf(char *string, const char *format, int *argptr);

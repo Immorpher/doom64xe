@@ -16,6 +16,8 @@ cd debs
 
 apt-get install gdebi
 
+// Now you have to double click and install files in this folder
+
 sudo apt-get install ./binutils-mips-n64_2.39-1_amd64.deb 
 
 sudo apt-get install ./gcc-mips-n64_12.2.0-1_amd64.deb 
