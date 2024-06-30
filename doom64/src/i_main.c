@@ -849,7 +849,7 @@ void I_WIPE_MeltScreen(void) // 80006964
     fb = Z_Malloc((SCREEN_WD*SCREEN_HT)*sizeof(u32), PU_STATIC, NULL);
 
     I_GetScreenGrab();
-    D_memcpy(&cfb[vid_side][0], &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
+	D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
 
     yscroll = 1;
     while( true )
@@ -920,7 +920,7 @@ void I_WIPE_FadeOutScreen(void) // 80006D34
     fb = Z_Malloc((SCREEN_WD*SCREEN_HT)*sizeof(u32), PU_STATIC, NULL);
 
     I_GetScreenGrab();
-	D_memcpy(CFB(vid_side), CFB(vid_side ^ 1), (SCREEN_WD*SCREEN_HT)*sizeof(u32));
+	D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
 
     outcnt = 248;
     do
