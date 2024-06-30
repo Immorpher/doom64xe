@@ -229,12 +229,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
 			}
 
 			if (li->flags & ML_BLENDING) {
-				if (!(li->flags & ML_BLENDFULLTOP)) {
-					int frontheight = f_ceilingheight - f_floorheight;
+				int frontheight = f_ceilingheight - f_floorheight;
+				if (!(li->flags & ML_BLENDFULLTOP) && frontheight != 0) {
 					int sideheight1 = b_ceilingheight - f_floorheight;
-					
-					if (frontheight == 0)
-						frontheight = 1;
 
 					float scale1 = (float)sideheight1 / (float)frontheight;
 					float scale2 = (float)height / (float)frontheight;
@@ -312,12 +309,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
 			}
 
 			if (li->flags & ML_BLENDING) {
-				if (!(li->flags & ML_BLENDFULLBOTTOM)) {
-					int frontheight = f_ceilingheight - f_floorheight;
+				int frontheight = f_ceilingheight - f_floorheight;
+				if (!(li->flags & ML_BLENDFULLBOTTOM) && frontheight != 0) {
 					int sideheight1 = b_floorheight - f_floorheight;
-					
-					if (frontheight == 0)
-						frontheight = 1;
 
 					float scale1 = (float)sideheight1 / (float)frontheight;
 					float scale2 = (float)height / (float)frontheight;
