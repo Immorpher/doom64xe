@@ -657,7 +657,7 @@ void P_RefreshBrightness(void) // 8000f410
 			lightcurve[i] = (char)curve;
 		}	
 	}
-	else { // [Immorpher] Otherwise might lightcurve linear
+	else { // [Immorpher] Otherwise make lightcurve linear
 		for (i = 1; i < 255; i++) {
 			lightcurve[i] = i;
 		}

@@ -169,8 +169,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
 	fixed_t rowoffs;
 	int pic;
 
-	unsigned int r1 = 0, g1 = 0, b1 = 0;
-	unsigned int r2 = 0, g2 = 0, b2 = 0;
+	float r1 = 0, g1 = 0, b1 = 0;
+	float r2 = 0, g2 = 0, b2 = 0;
+	float scale1 = 0, scale2 = 0;
 	unsigned int thingcolor = 0;
 	unsigned int upcolor = 0;
 	unsigned int lowcolor = 0;
@@ -233,38 +234,30 @@ void R_WallPrep(seg_t *seg) // 80026A44
 				if (!(li->flags & ML_BLENDFULLTOP) && frontheight != 0) {
 					int sideheight1 = b_ceilingheight - f_floorheight;
 
-					float scale1 = (float)sideheight1 / (float)frontheight;
-					float scale2 = (float)height / (float)frontheight;
-			
-					float nr1 = r1*scale1;
-					float ng1 = g1*scale1;
-					float nb1 = b1*scale1;
+					scale1 = (float)sideheight1 / (float)frontheight;
+					scale2 = (float)height / (float)frontheight;
 
-					float nr2 = r2*scale2;
-					float ng2 = g2*scale2;
-					float nb2 = b2*scale2;
+					r1 = r1*scale1 + r2*scale2;
+					g1 = g1*scale1 + g2*scale2;
+					b1 = b1*scale1 + b2*scale2;
 
-					float rf = nr1 + nr2;
-					float gf = ng1 + ng2;
-					float bf = nb1 + nb2;
-
-					if (!((rf < 256) && (gf < 256) && (bf < 256))) {
+					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) {
 						float scale = 255.0f;
 
-						if (rf >= gf && rf >= bf) {
-							scale /= rf;
-						} else if (gf >= rf && gf >= bf) {
-							scale /= gf;
+						if (r1 >= g1 && r1 >= b1) {
+							scale /= r1;
+						} else if (g1 >= r1 && g1 >= b1) {
+							scale /= g1;
 						} else {
-							scale /= bf;
+							scale /= b1;
 						}
 
-						rf *= scale;
-						gf *= scale;
-						bf *= scale;
+						r1 *= scale;
+						g1 *= scale;
+						b1 *= scale;
 					}
 
-					tmp_lowcolor = ((int)rf << 24) | ((int)gf << 16) | ((int)bf << 8) | 0xff;
+					tmp_lowcolor = ((int)r1 << 24) | ((int)g1 << 16) | ((int)b1 << 8) | 0xff;
 
 				} 
 
@@ -313,38 +306,30 @@ void R_WallPrep(seg_t *seg) // 80026A44
 				if (!(li->flags & ML_BLENDFULLBOTTOM) && frontheight != 0) {
 					int sideheight1 = b_floorheight - f_floorheight;
 
-					float scale1 = (float)sideheight1 / (float)frontheight;
-					float scale2 = (float)height / (float)frontheight;
-			
-					float nr1 = r1*scale1;
-					float ng1 = g1*scale1;
-					float nb1 = b1*scale1;
+					scale1 = (float)sideheight1 / (float)frontheight;
+					scale2 = (float)height / (float)frontheight;
 
-					float nr2 = r2*scale2;
-					float ng2 = g2*scale2;
-					float nb2 = b2*scale2;
+					r1 = r1*scale1 + r2*scale2;
+					g1 = g1*scale1 + g2*scale2;
+					b1 = b1*scale1 + b2*scale2;
 
-					float rf = nr1 + nr2;
-					float gf = ng1 + ng2;
-					float bf = nb1 + nb2;
-
-					if (!((rf < 256) && (gf < 256) && (bf < 256))) {
+					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) {
 						float scale = 255.0f;
 
-						if (rf >= gf && rf >= bf) {
-							scale /= rf;
-						} else if (gf >= rf && gf >= bf) {
-							scale /= gf;
+						if (r1 >= g1 && r1 >= b1) {
+							scale /= r1;
+						} else if (g1 >= r1 && g1 >= b1) {
+							scale /= g1;
 						} else {
-							scale /= bf;
+							scale /= b1;
 						}
 
-						rf *= scale;
-						gf *= scale;
-						bf *= scale;
+						r1 *= scale;
+						g1 *= scale;
+						b1 *= scale;
 					}
 
-					tmp_upcolor = ((int)rf << 24) | ((int)gf << 16) | ((int)bf << 8) | 0xff;
+					tmp_upcolor = ((int)r1 << 24) | ((int)g1 << 16) | ((int)b1 << 8) | 0xff;
 
 				}
 
