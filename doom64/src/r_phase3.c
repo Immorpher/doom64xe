@@ -171,7 +171,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 
 	float r1 = 0, g1 = 0, b1 = 0;
 	float r2 = 0, g2 = 0, b2 = 0;
-	float scale1 = 0, scale2 = 0;
+	float scale = 0;
 	unsigned int thingcolor = 0;
 	unsigned int upcolor = 0;
 	unsigned int lowcolor = 0;
@@ -180,6 +180,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 	unsigned int tmp_upcolor = 0;
 	unsigned int tmp_lowcolor = 0;
 	int curRowoffset;
+	int sideheight;
 
     li = seg->linedef;
     side = seg->sidedef;
@@ -229,20 +230,19 @@ void R_WallPrep(seg_t *seg) // 80026A44
 				rowoffs = ((height + 127) & -128) + (curRowoffset >> 16);
 			}
 
-			if (li->flags & ML_BLENDING) {
+			if (li->flags & ML_BLENDING) { // Scale gradient to match upper wall
 				int frontheight = f_ceilingheight - f_floorheight;
 				if (!(li->flags & ML_BLENDFULLTOP) && frontheight != 0) {
-					int sideheight1 = b_ceilingheight - f_floorheight;
+					sideheight = b_ceilingheight - f_ceilingheight;
 
-					scale1 = (float)sideheight1 / (float)frontheight;
-					scale2 = (float)height / (float)frontheight;
+					scale = (float)sideheight / (float)frontheight;
 
-					r1 = r1*scale1 + r2*scale2;
-					g1 = g1*scale1 + g2*scale2;
-					b1 = b1*scale1 + b2*scale2;
+					r1 += (r1-r2)*scale;
+					g1 += (g1-g2)*scale;
+					b1 += (b1-b2)*scale;
 
-					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) {
-						float scale = 255.0f;
+					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) { // Rescale if out of color bounds
+						scale = 255.0f;
 
 						if (r1 >= g1 && r1 >= b1) {
 							scale /= r1;
@@ -258,7 +258,6 @@ void R_WallPrep(seg_t *seg) // 80026A44
 					}
 
 					tmp_lowcolor = ((int)r1 << 24) | ((int)g1 << 16) | ((int)b1 << 8) | 0xff;
-
 				} 
 
 				if (li->flags & ML_INVERSEBLEND) {
@@ -301,20 +300,19 @@ void R_WallPrep(seg_t *seg) // 80026A44
 				rowoffs = height + (curRowoffset >> 16);
 			}
 
-			if (li->flags & ML_BLENDING) {
+			if (li->flags & ML_BLENDING) { // Scale gradient to match lower wall
 				int frontheight = f_ceilingheight - f_floorheight;
 				if (!(li->flags & ML_BLENDFULLBOTTOM) && frontheight != 0) {
-					int sideheight1 = b_floorheight - f_floorheight;
+					sideheight = b_floorheight - f_ceilingheight;
 
-					scale1 = (float)sideheight1 / (float)frontheight;
-					scale2 = (float)height / (float)frontheight;
+					scale = (float)sideheight / (float)frontheight;
 
-					r1 = r1*scale1 + r2*scale2;
-					g1 = g1*scale1 + g2*scale2;
-					b1 = b1*scale1 + b2*scale2;
+					r1 += (r1-r2)*scale;
+					g1 += (g1-g2)*scale;
+					b1 += (b1-b2)*scale;
 
-					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) {
-						float scale = 255.0f;
+					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) { // Rescale if out of color bounds
+						scale = 255.0f;
 
 						if (r1 >= g1 && r1 >= b1) {
 							scale /= r1;
@@ -330,7 +328,6 @@ void R_WallPrep(seg_t *seg) // 80026A44
 					}
 
 					tmp_upcolor = ((int)r1 << 24) | ((int)g1 << 16) | ((int)b1 << 8) | 0xff;
-
 				}
 
 				topcolor = tmp_upcolor;
