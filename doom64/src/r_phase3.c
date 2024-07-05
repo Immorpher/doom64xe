@@ -179,8 +179,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 	unsigned int bottomcolor = 0;
 	unsigned int tmp_upcolor = 0;
 	unsigned int tmp_lowcolor = 0;
-	int curRowoffset;
-	int sideheight;
+	int curRowoffset, sideheight, frontheight;
 
     li = seg->linedef;
     side = seg->sidedef;
@@ -231,7 +230,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 			}
 
 			if (li->flags & ML_BLENDING) { // Scale gradient to match upper wall
-				int frontheight = f_ceilingheight - f_floorheight;
+				frontheight = f_ceilingheight - f_floorheight;
 				if (!(li->flags & ML_BLENDFULLTOP) && frontheight != 0) {
 					sideheight = b_ceilingheight - f_ceilingheight;
 
@@ -301,7 +300,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 			}
 
 			if (li->flags & ML_BLENDING) { // Scale gradient to match lower wall
-				int frontheight = f_ceilingheight - f_floorheight;
+				frontheight = f_ceilingheight - f_floorheight;
 				if (!(li->flags & ML_BLENDFULLBOTTOM) && frontheight != 0) {
 					sideheight = b_floorheight - f_ceilingheight;
 
