@@ -169,8 +169,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
 	fixed_t rowoffs;
 	int pic;
 
-	float r1 = 0, g1 = 0, b1 = 0;
-	float r2 = 0, g2 = 0, b2 = 0;
+	unsigned int r1 = 0, g1 = 0, b1 = 0;
+	unsigned int r2 = 0, g2 = 0, b2 = 0;
+	float rn = 0, gn = 0, bn = 0;
 	float scale = 0;
 	unsigned int thingcolor = 0;
 	unsigned int upcolor = 0;
@@ -236,27 +237,27 @@ void R_WallPrep(seg_t *seg) // 80026A44
 
 					scale = (float)sideheight / (float)frontheight;
 
-					r1 += (r1-r2)*scale;
-					g1 += (g1-g2)*scale;
-					b1 += (b1-b2)*scale;
+					rn = ((float)r1-(float)r2)*scale + (float)r1;
+					gn = ((float)g1-(float)g2)*scale + (float)g1;
+					bn = ((float)b1-(float)b2)*scale + (float)b1;
 
-					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) { // Rescale if out of color bounds
+					if (!((rn < 256) && (gn < 256) && (bn < 256))) { // Rescale if out of color bounds
 						scale = 255.0f;
 
-						if (r1 >= g1 && r1 >= b1) {
-							scale /= r1;
-						} else if (g1 >= r1 && g1 >= b1) {
-							scale /= g1;
+						if (rn >= gn && rn >= bn) {
+							scale /= rn;
+						} else if (gn >= rn && gn >= bn) {
+							scale /= gn;
 						} else {
-							scale /= b1;
+							scale /= bn;
 						}
 
-						r1 *= scale;
-						g1 *= scale;
-						b1 *= scale;
+						rn *= scale;
+						gn *= scale;
+						bn *= scale;
 					}
 
-					tmp_lowcolor = ((int)r1 << 24) | ((int)g1 << 16) | ((int)b1 << 8) | 0xff;
+					tmp_lowcolor = ((int)rn << 24) | ((int)gn << 16) | ((int)bn << 8) | 0xff;
 				} 
 
 				if (li->flags & ML_INVERSEBLEND) {
@@ -306,27 +307,27 @@ void R_WallPrep(seg_t *seg) // 80026A44
 
 					scale = (float)sideheight / (float)frontheight;
 
-					r1 += (r1-r2)*scale;
-					g1 += (g1-g2)*scale;
-					b1 += (b1-b2)*scale;
+					rn = ((float)r1-(float)r2)*scale + (float)r1;
+					gn = ((float)g1-(float)g2)*scale + (float)g1;
+					bn = ((float)b1-(float)b2)*scale + (float)b1;
 
-					if (!((r1 < 256) && (g1 < 256) && (b1 < 256))) { // Rescale if out of color bounds
+					if (!((rn < 256) && (gn < 256) && (bn < 256))) { // Rescale if out of color bounds
 						scale = 255.0f;
 
-						if (r1 >= g1 && r1 >= b1) {
-							scale /= r1;
-						} else if (g1 >= r1 && g1 >= b1) {
-							scale /= g1;
+						if (rn >= gn && rn >= bn) {
+							scale /= rn;
+						} else if (gn >= rn && gn >= bn) {
+							scale /= gn;
 						} else {
-							scale /= b1;
+							scale /= bn;
 						}
 
-						r1 *= scale;
-						g1 *= scale;
-						b1 *= scale;
+						rn *= scale;
+						gn *= scale;
+						bn *= scale;
 					}
 
-					tmp_upcolor = ((int)r1 << 24) | ((int)g1 << 16) | ((int)b1 << 8) | 0xff;
+					tmp_upcolor = ((int)rn << 24) | ((int)gn << 16) | ((int)bn << 8) | 0xff;
 				}
 
 				topcolor = tmp_upcolor;
