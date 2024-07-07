@@ -319,7 +319,7 @@ boolean enable_messages = true; // 8005A7B8
 boolean enable_statusbar = true;// 8005A7BC
 int SfxVolume = 80;             // 8005A7C0
 int MusVolume = 80;             // 8005A7C4
-int brightness = 100;             // 8005A7C8
+int brightness = 50;             // 8005A7C8
 int M_SENSITIVITY = 0;          // 8005A7CC
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
@@ -422,7 +422,7 @@ void M_EncodeConfig(void)
     
     SavedConfig[5] = SfxVolume & 0x7F; //0-100
 
-    SavedConfig[6] = (brightness/2) & 0x7F; //0-100
+    SavedConfig[6] = (brightness) & 0x7F; //0-100
 
     SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-100
 	SavedConfig[7] += (ShowStats & 0x1) << 7;
@@ -530,7 +530,7 @@ void M_DecodeConfig()
 
     SfxVolume = SavedConfig[5] & 0x7F;
 
-    brightness = 2*(SavedConfig[6] & 0x7F);
+    brightness = SavedConfig[6] & 0x7F;
 
     M_SENSITIVITY = SavedConfig[7] & 0x7F;
 	ShowStats = (SavedConfig[7] >> 7) & 0x1;
@@ -1202,11 +1202,11 @@ int M_MenuTicker(void) // 80007E0C
                 case 9: // Brightness
                     if (buttons & PAD_RIGHT)
                     {
-                        brightness += 2;
-                        if (brightness <= 200)
+                        brightness += 1;
+                        if (brightness <= 100)
                         {
                             P_RefreshBrightness();
-                            if (brightness & 2)
+                            if (brightness & 1)
                             {
                                 S_StartSound(NULL, sfx_secmove);
                                 return ga_nothing;
@@ -1214,12 +1214,12 @@ int M_MenuTicker(void) // 80007E0C
                         }
                         else
                         {
-                            brightness = 200;
+                            brightness = 100;
                         }
                     }
                     else if (buttons & PAD_LEFT)
                     {
-                        brightness -= 2;
+                        brightness -= 1;
                         if (brightness < 0)
                         {
                             brightness = 0;
@@ -1227,7 +1227,7 @@ int M_MenuTicker(void) // 80007E0C
                         else
                         {
                             P_RefreshBrightness();
-                            if (brightness & 2)
+                            if (brightness & 1)
                             {
                                 S_StartSound(NULL, sfx_secmove);
                                 return ga_nothing;
@@ -1972,7 +1972,7 @@ int M_MenuTicker(void) // 80007E0C
                         Display_X = 0;
                         Display_Y = 0;
 
-                        brightness = 100;
+                        brightness = 50;
                         I_MoveDisplay(0,0);
                         P_RefreshBrightness();
 
@@ -2329,7 +2329,7 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 
 	// Brightness slider
     ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness/2 + 103, 80, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(Menu_Video[0].x - 37, Menu_Video[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
