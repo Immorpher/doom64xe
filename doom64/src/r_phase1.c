@@ -197,9 +197,12 @@ boolean R_CheckBBox(fixed_t bspcoord[4]) // 80024170
         vx2 = delta + vy1;
         vy2 = vx2;
     }
+	
+	fixed_t vxovery1 = FixedDiv2(vx1, vy1);
+	fixed_t vxovery2 = FixedDiv2(vx2, vy2);
 
-    Xstart = ((FixedDiv2(vx1, vy1) * 160) >> FRACBITS) + 160;
-    Xend   = ((FixedDiv2(vx2, vy2) * 160) >> FRACBITS) + 160;
+	Xstart = (((vxovery1 >> 9) + (vxovery1 >> 11))) + 160;
+	Xend   = (((vxovery2 >> 9) + (vxovery2 >> 11))) + 160;
 
     if (Xstart < 0)
         Xstart = 0;
@@ -332,8 +335,11 @@ void R_AddLine(seg_t *line) // 80024604
         y2 = (8*FRACUNIT);
     }
 
-    Xstart = ((FixedDiv2(x1, y1) * 160) >> FRACBITS) + 160;
-    Xend   = ((FixedDiv2(x2, y2) * 160) >> FRACBITS) + 160;
+	fixed_t xovery1 = FixedDiv2(x1, y1);
+	fixed_t xovery2 = FixedDiv2(x2, y2);
+
+	Xstart = (((xovery1 >> 9) + (xovery1 >> 11))) + 160;
+	Xend   = (((xovery2 >> 9) + (xovery2 >> 11))) + 160;
 
     if (Xstart < 0)
         Xstart = 0;
