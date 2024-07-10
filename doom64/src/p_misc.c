@@ -647,8 +647,8 @@ void P_RefreshBrightness(void) // 8000f410
 	int i;
 	float curve, scale;
 
-	scale = (float)brightness/100;
-	scale /= (1-(float)lightmax[2*brightness]/250)*255; // 250 to prevent divide by 0
+	scale = (float)brightness/127;
+	scale /= 256-(float)lightmax[2*brightness]; // 256 to prevent divide by 0
 	
 	for (i = 1; i < 255; i++) { // [Immorpher] New brightness adjustment by "tracing out the circle"
 		

@@ -388,7 +388,7 @@ void P_BuildMove (player_t *player) // 80022154
 
             if(sensitivity >= MAXSENSIVITY || sensitivity <= -MAXSENSIVITY)
             {
-                sensitivity = (((M_SENSITIVITY * 800) / 100) + 233) * sensitivity;
+                sensitivity = ((M_SENSITIVITY<<3) + 233) * sensitivity;
                 player->angleturn += (sensitivity / 80) << 17;
             }
         }

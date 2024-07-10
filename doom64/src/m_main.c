@@ -319,7 +319,7 @@ boolean enable_messages = true; // 8005A7B8
 boolean enable_statusbar = true;// 8005A7BC
 int SfxVolume = 80;             // 8005A7C0
 int MusVolume = 80;             // 8005A7C4
-int brightness = 50;             // 8005A7C8
+int brightness = 60;             // 8005A7C8
 int M_SENSITIVITY = 0;          // 8005A7CC
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
@@ -422,7 +422,7 @@ void M_EncodeConfig(void)
     
     SavedConfig[5] = SfxVolume & 0x7F; //0-100
 
-    SavedConfig[6] = (brightness) & 0x7F; //0-100
+    SavedConfig[6] = (brightness) & 0x7F; //0-127
 
     SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-100
 	SavedConfig[7] += (ShowStats & 0x1) << 7;
@@ -1203,7 +1203,7 @@ int M_MenuTicker(void) // 80007E0C
                     if (buttons & PAD_RIGHT)
                     {
                         brightness += 1;
-                        if (brightness <= 100)
+                        if (brightness <= 127)
                         {
                             P_RefreshBrightness();
                             if (brightness & 1)
@@ -1214,7 +1214,7 @@ int M_MenuTicker(void) // 80007E0C
                         }
                         else
                         {
-                            brightness = 100;
+                            brightness = 127;
                         }
                     }
                     else if (buttons & PAD_LEFT)
@@ -2329,7 +2329,7 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 
 	// Brightness slider
     ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(brightness + 103, 80, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(((101*brightness)>>7) + 103, 80, 69, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(Menu_Video[0].x - 37, Menu_Video[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
