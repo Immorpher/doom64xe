@@ -250,58 +250,57 @@ boolean PS_CrossSubsector(subsector_t *sub) // 8001EF10
 =================
 */
 
-boolean PS_CrossBSPNode(int bspnum) // 8001F15C
+#define BSP_STACK_SIZE 256
+static int stack[BSP_STACK_SIZE];
+boolean PS_CrossBSPNode(int bspnum)
 {
-	node_t  *bsp;
-	int     side1, side2;
-	int     bsp_num;
-	fixed_t dx, dy;
-    fixed_t left, right;
-
-	if (bspnum & NF_SUBSECTOR)
-	{
-		bsp_num = (bspnum & ~NF_SUBSECTOR);
-		if (bsp_num >= numsubsectors)
-		{
-			I_Error("PS_CrossSubsector: ss %i with numss = %i", bsp_num, numsubsectors);
-		}
-
-		return PS_CrossSubsector(&subsectors[bsp_num]);
-	}
-
-	bsp = &nodes[bspnum];
-
-	// decide which side the start point is on
-    side1 = 1;
-
-    dx = (strace.x - bsp->line.x);
-    dy = (strace.y - bsp->line.y);
-
-    left  = (bsp->line.dy>>FRACBITS) * (dx>>FRACBITS);
-    right = (dy>>FRACBITS) * (bsp->line.dx>>FRACBITS);
-
-    if(right < left)
-        side1 = 0;    // front side
-
-    // cross the starting side
-    if (!PS_CrossBSPNode(bsp->children[side1]))
-        return false;
-
-    // the partition plane is crossed here
-    side2 = 1;
-
-    dx = (t2x - bsp->line.x);
-    dy = (t2y - bsp->line.y);
-
-    left  = (bsp->line.dy>>FRACBITS) * (dx>>FRACBITS);
-    right = (dy>>FRACBITS) * (bsp->line.dx>>FRACBITS);
-
-    if(right < left)
-        side2 = 0;    // front side
-
-    if (side1 == side2)
-        return true; // the line doesn't touch the other side
-
-    // cross the ending side
-    return PS_CrossBSPNode(bsp->children[side1 ^ 1]);
+    size_t stack_top = 0;
+    // Push the initial node onto the stack
+    stack[stack_top++] = bspnum;
+    while (stack_top > 0) {
+        // Pop the top element
+        int current_bspnum = stack[--stack_top];
+        // Check if it's a subsector
+        if (current_bspnum & NF_SUBSECTOR) {
+            int bsp_num = (current_bspnum & ~NF_SUBSECTOR);
+            if (!PS_CrossSubsector(&subsectors[bsp_num])) {
+                return false;
+            }
+            continue;
+        }
+        node_t *bsp = &nodes[current_bspnum];
+        // Decide which side the start point is on
+        int side1 = 1;
+        fixed_t dx = (strace.x - bsp->line.x);
+        fixed_t dy = (strace.y - bsp->line.y);
+        fixed_t left = (bsp->line.dy >> FRACBITS) * (dx >> FRACBITS);
+        fixed_t right = (dy >> FRACBITS) * (bsp->line.dx >> FRACBITS);
+        if (right < left) {
+            side1 = 0; // front side
+        }
+        // Push the starting side onto the stack
+        if (stack_top >= BSP_STACK_SIZE) {
+            // overflowed stack, give up
+            return false;
+        }
+        stack[stack_top++] = bsp->children[side1];
+        // Determine which side the endpoint is on
+        int side2 = 1;
+        dx = (t2x - bsp->line.x);
+        dy = (t2y - bsp->line.y);
+        left = (bsp->line.dy >> FRACBITS) * (dx >> FRACBITS);
+        right = (dy >> FRACBITS) * (bsp->line.dx >> FRACBITS);
+        if (right < left) {
+            side2 = 0; // front side
+        }
+        // If the line doesn't touch the other side, skip
+        if (side1 != side2) {
+            if (stack_top >= BSP_STACK_SIZE) {
+ 	            // overflowed stack, give up
+                return false;
+            }
+            stack[stack_top++] = bsp->children[side1 ^ 1];
+        }
+    }
+    return true;
 }

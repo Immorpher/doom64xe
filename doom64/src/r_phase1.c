@@ -21,7 +21,7 @@ int checkcoord[12][4] =				// 8005B110
 };
 
 void	R_RenderBSPNode(int bspnum) HOT;
-boolean R_CheckBBox(fixed_t bspcoord[4]) HOT;
+boolean R_CheckBBox(const fixed_t bspcoord[4]) HOT;
 void	R_Subsector(int num) HOT;
 void	R_AddLine(seg_t *line) HOT;
 void    R_AddSprite(subsector_t *sub) HOT;
@@ -68,58 +68,81 @@ void R_BSP(void) // 80023F30
     }
 }
 
+static boolean R_RenderBspSubsector(int bspnum)
+{
+	// Found a subsector?
+	if (bspnum & NF_SUBSECTOR) {
+		if (bspnum == -1)
+			R_Subsector(0);
+		else
+			R_Subsector(bspnum & (~NF_SUBSECTOR));
+		return true;
+	}
+	return false;
+}
+
 //
-// Recursively descend through the BSP, classifying nodes according to the
+// JNMartin's Non-recursive descension through the BSP, classifying nodes according to the
 // player's point of view, and render subsectors in view.
 //
 
-void R_RenderBSPNode(int bspnum) // 80024020
+#define MAX_BSP_DEPTH 256
+static int stack[MAX_BSP_DEPTH];
+void R_RenderBSPNode(int bspnum)
 {
-	node_t *bsp;
-	int     side;
-	fixed_t	dx, dy;
-	fixed_t	left, right;
-
-	//printf("R_RenderBSPNode\n");
-
-    while(!(bspnum & NF_SUBSECTOR))
-    {
-        bsp = &nodes[bspnum];
-
-        // Decide which side the view point is on.
-        //side = R_PointOnSide(viewx, viewy, bsp);
-        dx = (viewx - bsp->line.x);
-        dy = (viewy - bsp->line.y);
-
-        left = (bsp->line.dy >> FRACBITS) * (dx >> FRACBITS);
-        right = (dy >> FRACBITS) * (bsp->line.dx >> FRACBITS);
-
-        if (right < left)
-            side = 0;		/* front side */
-        else
-            side = 1;		/* back side */
-
-        // check the front space
-        if(R_CheckBBox(bsp->bbox[side]))
-        {
-            R_RenderBSPNode(bsp->children[side]);
-        }
-
-        // continue down the back space
-        if(!R_CheckBBox(bsp->bbox[side^1]))
-        {
-            return;
-        }
-
-        bspnum = bsp->children[side^1];
-    }
-
-    // subsector with contents
-    // add all the drawable elements in the subsector
-    if(bspnum == -1)
-        bspnum = 0;
-
-    R_Subsector(bspnum & ~NF_SUBSECTOR);
+	const node_t *bsp;
+	int side = 0;
+	int sp = 0;
+	int left;
+	int right;
+	fixed_t dx;
+	fixed_t dy;
+	while (true) {
+		// Front sides.
+		while (!R_RenderBspSubsector(bspnum)) {
+			if (sp == MAX_BSP_DEPTH)
+				break;
+			bsp = &nodes[bspnum];
+			dx = (viewx - bsp->line.x);
+			dy = (viewy - bsp->line.y);
+			left = (bsp->line.dy >> FRACBITS) * (dx >> FRACBITS);
+			right = (dy >> FRACBITS) * (bsp->line.dx >> FRACBITS);
+			if (right < left)
+				side = 0;
+			else
+				side = 1;
+			stack[sp++] = bspnum;
+			stack[sp++] = side;
+			bspnum = bsp->children[side];
+			if (!R_CheckBBox(bsp->bbox[side])) {
+				break;
+			}
+		}
+		if (sp == 0) {
+			// back at root node and not visible. All done!
+			return;
+		}
+		// Back sides.
+		side = stack[--sp];
+		bspnum = stack[--sp];
+		bsp = &nodes[bspnum];
+		// Possibly divide back space.
+		// Walk back up the tree until we find
+		// a node that has a visible backspace.
+		while (!R_CheckBBox(bsp->bbox[side ^ 1]))
+		{
+			if (sp == 0)
+			{
+				// back at root node and not visible. All done!
+				return;
+			}
+			// Back side next.
+			side = stack[--sp];
+			bspnum = stack[--sp];
+			bsp = &nodes[bspnum];
+		}
+		bspnum = bsp->children[side ^ 1];
+	}
 }
 
 //
@@ -127,7 +150,7 @@ void R_RenderBSPNode(int bspnum) // 80024020
 // might be visible.
 //
 
-boolean R_CheckBBox(fixed_t bspcoord[4]) // 80024170
+boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
 {
 	int boxx;
 	int boxy;
