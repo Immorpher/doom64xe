@@ -113,10 +113,15 @@ void W_Init (void) // 8002BEC0
                 && name[4] >= '0' && name[4] <= '9'
                 && name[5] == '\0')
             continue;
-        // skip some lumps never loaded during gameplay
-        if (D_strncmp(name, "\xc5VIL", 8) == 0
-                || D_strncmp(name, "\xc6INAL", 8) == 0
-                || D_strncmp(name, "\xd4ITLE", 8) == 0)
+        // skip some lumps never loaded during gameplay, first ASCII letter number | 0x80
+        if (D_strncmp(name, "\xc5" "VIL", 8) == 0 // Evil intermission for Absolution
+                || D_strncmp(name, "\xc2" "ONUS", 8) == 0 // Bonus intermission for Expansion Pak
+                || D_strncmp(name, "\xc2" "ETA", 8) == 0 // Beta intermission for Beta 64
+                || D_strncmp(name, "\xcc" "OST", 8) == 0 // Lost intermission for Lost Levels
+                || D_strncmp(name, "\xc6" "INAL", 8) == 0 // Final ending for Absolution
+                || D_strncmp(name, "\xc6" "INLOST", 8) == 0 // Finlost ending for Lost Levels
+                || D_strncmp(name, "\xc6" "INBETA", 8) == 0 // Finbeta ending for Beta 64
+                || D_strncmp(name, "\xd4" "ITLE", 8) == 0) // Title screen graphic
             continue;
         int lumpsize = lumpinfo[i+1].filepos - lumpinfo[i].filepos;
         maxcompressedsize = MAX(maxcompressedsize, lumpsize);
