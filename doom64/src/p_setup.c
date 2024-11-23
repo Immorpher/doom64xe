@@ -645,6 +645,7 @@ void P_LoadMacros(void) // 8001E478
     macro_t *pMacro;
     int headerSize;
     int i, j;
+	int toplevelspecial = 0;
 	
     int size = W_MapLumpLength(ML_MACROS);
     if (size <= 0)
@@ -656,6 +657,7 @@ void P_LoadMacros(void) // 8001E478
 
     nummacros = LITTLESHORT(*data++);
     specialCount = LITTLESHORT(*data++);
+	toplevelspecial = specialCount;
     headerSize = sizeof(void*) * nummacros;
 	
 	if (nummacros < 1)
@@ -669,6 +671,8 @@ void P_LoadMacros(void) // 8001E478
     {
         macros[i] = pMacro;
         specialCount = LITTLESHORT(*data++);
+		if (!toplevelspecial)
+			specialCount = 0;
 
         for(j = 0; j < specialCount+1; j++)
         {
