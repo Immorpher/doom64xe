@@ -140,6 +140,22 @@ void D_memcpy(void *dest, const void *src, int count) // 80001ACC
 ====================
 */
 
+int D_strncmp(const char *s1, const char *s2, int len) // 80001BEC
+{
+    while (*s1 && *s2)
+    {
+        if (*s1 != *s2)
+            return *s1 < *s2 ? -1 : 1;
+        s1++;
+        s2++;
+        if (!--len)
+            return 0;
+    }
+    if (*s1 != *s2)
+        return *s1 < *s2 ? -1 : 1;
+    return 0;
+}
+
 void D_strncpy(char *dest, const char *src, int maxcount) // 8000lBB0
 {
 	byte	*p1, *p2;

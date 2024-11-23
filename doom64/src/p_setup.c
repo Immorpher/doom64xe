@@ -466,12 +466,10 @@ void P_LoadBlockMap (void) // 8001DE38
 	int		count;
 	int		i;
 	int     length;
-	byte    *src;
 
 	length = W_MapLumpLength(ML_BLOCKMAP);
 	blockmaplump = Z_Malloc(length, PU_LEVEL, 0);
-	src = (byte *)W_GetMapLump(ML_BLOCKMAP);
-	D_memcpy(blockmaplump,src,length);
+	W_ReadMapLump(ML_BLOCKMAP, blockmaplump);
 
 	blockmap = blockmaplump+4;//skip blockmap header
 	count = length/2;
@@ -501,13 +499,11 @@ void P_LoadBlockMap (void) // 8001DE38
 void P_LoadReject(void) // 8001DF98
 {
 	int     length;
-	byte    *src;
 
 	length = W_MapLumpLength(ML_REJECT);
 	rejectmatrix = (byte*)Z_Malloc(length, PU_LEVEL, NULL);
 
-    src = (byte *)W_GetMapLump(ML_REJECT);
-    D_memcpy(rejectmatrix,src,length);
+    W_ReadMapLump(ML_REJECT, rejectmatrix);
 }
 
 /*
@@ -597,16 +593,15 @@ void P_LoadLights(void) // 8001E29C
 {
     int         i;
     int         length;
-    byte        *data;
     maplights_t *ml;
     light_t     *l;
 
     length = W_MapLumpLength(ML_LIGHTS);
     if (length > 0)
-        maplights = (maplights_t *)Z_Malloc(length, PU_LEVEL, 0);
-
-    data = (byte *)W_GetMapLump(ML_LIGHTS);
-    D_memcpy(maplights,data,length);
+    {
+        maplights = (maplights_t *)Z_Malloc(ALIGN(length, 2), PU_LEVEL, 0);
+        W_ReadMapLump(ML_LIGHTS, maplights);
+    }
 
     numlights = (length / sizeof(maplights_t)) + 256;
 
@@ -623,7 +618,7 @@ void P_LoadLights(void) // 8001E29C
     }
 
     /* Copy custom light colors */
-    for (i = i; i < numlights; i++, l++, ml++)
+    for (; i < numlights; i++, l++, ml++)
     {
         l->rgba = ((ml->r << 24) | (ml->g << 16) | (ml->b << 8) | ml->a);
         l->tag = LITTLESHORT(ml->tag);

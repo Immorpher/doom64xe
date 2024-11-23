@@ -190,6 +190,7 @@ void D_memmove(void *dest, const void *src);
 void D_memset (void *dest, int val, int count);
 void D_memcpy (void *dest, const void *src, int count);
 void D_strncpy (char *dest, const char *src, int maxcount);
+int D_strncmp (const char *s1, const char *s2, int len);
 int D_strncasecmp (const char *s1, const char *s2, int len);
 void D_strupr(char *s);
 int D_strlen(char *s);
@@ -760,11 +761,12 @@ void	W_Init (void) COLD;
 int     W_CheckNumForName (char *name, int hibit1, int hibit2);
 int		W_GetNumForName (char *name);
 
-int		W_LumpLength (int lump);
-void	W_ReadLump (int lump, void *dest, decodetype dectype) HOT;
+int		W_LumpLength(int lump);
+boolean	W_IsLumpCompressed(int lump);
+void	W_ReadLump(int lump, void *dest, decodetype dectype) HOT;
 
-void	*W_CacheLumpNum (int lump, int tag, decodetype dectype) HOT;
-void	*W_CacheLumpName (char *name, int tag, decodetype dectype);
+void	*W_CacheLumpNum(int lump, int tag, decodetype dectype) HOT;
+void	*W_CacheLumpName(char *name, int tag, decodetype dectype);
 
 void	W_OpenMapWad(int mapnum);
 void    W_FreeMapLumps(void);
@@ -772,6 +774,7 @@ void	W_FreeMapLump(void *ptr);
 int		W_MapLumpLength(int lump);
 int		W_MapGetNumForName(char *name);
 void	*W_GetMapLump(int lump);
+void W_ReadMapLump(int lump, void *ptr);
 
 /*---------*/
 /* DECODES */

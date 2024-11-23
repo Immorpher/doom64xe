@@ -29,7 +29,10 @@ static lumpinfo_t	*lumpinfo;				//800B2228 /* points directly to rom image */
 static int          mapnumlumps;			//800B2230 psxdoom/doom64
 static lumpinfo_t   *maplump;				//800B2234 psxdoom/doom64
 static byte         *mapfileptr;			//800B2238 psxdoom/doom64
+static u32           maplumppos;
 
+static int maxcompressedsize = 0;
+static byte *decompressbuf;
 
 /*=========*/
 /* EXTERNS */
@@ -46,6 +49,16 @@ extern char _doom64_wadSegmentRomStart[], _doom64_wadSegmentRomEnd[];
 ============================================================================
 */
 
+static void W_GetRomData(u32 offset, void *dest, u32 len)
+{
+    OSIoMesg romio_msgbuf;
+    osInvalDCache(dest, len);
+    osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
+            (u32)_doom64_wadSegmentRomStart + offset,
+            dest, len, &romcopy_msgque);
+    osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
+}
+
 /*
 ====================
 =
@@ -56,53 +69,62 @@ extern char _doom64_wadSegmentRomStart[], _doom64_wadSegmentRomEnd[];
 
 void W_Init (void) // 8002BEC0
 {
-    wadinfo_t wadfileheader __attribute__((aligned(16)));
-    OSIoMesg romio_msgbuf;
+    wadinfo_t wadfileheader;
 	int infotableofs, i;
 
-	osInvalDCache(&wadfileheader, sizeof(wadinfo_t));
-
-	osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
-              (u32)_doom64_wadSegmentRomStart,
-              &wadfileheader, sizeof(wadinfo_t), &romcopy_msgque);
-
-    osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
+    W_GetRomData(0, &wadfileheader, sizeof(wadinfo_t));
 
     //sprintf(str, "identification %s",wadfileptr->identification);
     //printstr(WHITE, 0, 4, str);
 
-	// [Immorpher] Ignore IWAD check to make it easier to edit WADs
-	//if (bcmp(wadfileheader.identification, "IWAD", 4))
-	//	I_Error("W_Init: invalid main IWAD id");
 
 	numlumps = LONGSWAP(wadfileheader.numlumps);
 	lumpinfo = (lumpinfo_t *) Z_Malloc(numlumps * sizeof(lumpinfo_t), PU_STATIC, 0);
-	osInvalDCache((void *)lumpinfo, numlumps * sizeof(lumpinfo_t));
-
 	infotableofs = LONGSWAP(wadfileheader.infotableofs);
+    W_GetRomData(infotableofs, lumpinfo, numlumps * sizeof(lumpinfo_t));
 
-	osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
-              (u32)_doom64_wadSegmentRomStart + infotableofs,
-              (void *)lumpinfo, numlumps * sizeof(lumpinfo_t), &romcopy_msgque);
-    osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
 	//sprintf(str, "identification %s",wadfileptr->identification);
     //printstr(WHITE, 0, 4, str);
 	//sprintf(str, "numlumps %d",numlumps);
     //printstr(WHITE, 0, 5, str);
 	//sprintf(str, "infotableofs %d",infotableofs);
     //printstr(WHITE, 0, 6, str);
+
     for(i = 0; i < numlumps; i++)
     {
         lumpinfo[i].filepos = LONGSWAP(lumpinfo[i].filepos);
         lumpinfo[i].size = LONGSWAP(lumpinfo[i].size);
+
         //sprintf(str, "filepos %d        ",lumpinfo[i].filepos);
         //printstr(WHITE, 0, 7, str);
         //sprintf(str, "size %d           ",lumpinfo[i].size);
         //printstr(WHITE, 0, 8, str);
     }
 
+    // [nova] - find appropriate size for a buffer for decompressing textures/sprites
+    for(i = 0; i < numlumps; i++)
+    {
+        if (!W_IsLumpCompressed(i))
+            continue;
+        char *name = lumpinfo[i].name;
+        // skip maps
+        if (name[0] == ('M' | -0x80) && name[1] == 'A' && name[2] == 'P'
+                && name[3] >= '0' && name[3] <= '9'
+                && name[4] >= '0' && name[4] <= '9'
+                && name[5] == '\0')
+            continue;
+        // skip some lumps never loaded during gameplay
+        if (D_strncmp(name, "\xc5VIL", 8) == 0
+                || D_strncmp(name, "\xc6INAL", 8) == 0
+                || D_strncmp(name, "\xd4ITLE", 8) == 0)
+            continue;
+        int lumpsize = lumpinfo[i+1].filepos - lumpinfo[i].filepos;
+        maxcompressedsize = MAX(maxcompressedsize, lumpsize);
+    }
     lumpcache = (lumpcache_t *) Z_Malloc(numlumps * sizeof(lumpcache_t), PU_STATIC, 0);
     D_memset(lumpcache, NULL, numlumps * sizeof(lumpcache_t));
+    if (maxcompressedsize)
+        decompressbuf = Z_Malloc(maxcompressedsize, PU_STATIC, 0);
 }
 
 
@@ -191,7 +213,7 @@ int	W_GetNumForName (char *name) // 8002C1B8
 ====================
 */
 
-int W_LumpLength (int lump) // 8002C204
+int W_LumpLength(int lump) // 8002C204
 {
     if ((lump < 0) || (lump >= numlumps))
 		I_Error ("W_LumpLength: lump %i out of range",lump);
@@ -199,6 +221,10 @@ int W_LumpLength (int lump) // 8002C204
 	return lumpinfo[lump].size;
 }
 
+boolean W_IsLumpCompressed(int lump)
+{
+    return !!(lumpinfo[lump].name[0] & 0x80);
+}
 
 /*
 ====================
@@ -397,6 +423,7 @@ void W_FreeMapLumps(void) // 8002C748
         Z_Free(maplump);
     }
     maplump = NULL;
+    maplumppos = 0;
     mapnumlumps = 0;
 }
 
@@ -486,8 +513,21 @@ int W_MapGetNumForName(char *name) // 8002C7D0
 
 void  *W_GetMapLump(int lump) // 8002C890
 {
-	if (lump >= mapnumlumps)
-		I_Error("W_GetMapLump: lump %d out of range", lump);
+    if (lump >= mapnumlumps)
+        I_Error("W_GetMapLump: lump %d out of range", lump);
+    if (mapfileptr)
+        return (void *) ((byte *)mapfileptr + maplump[lump].filepos);
+    int size = ALIGN(maplump[lump].size, 2);
+    void *ptr = Z_Alloc(size, PU_STATIC, NULL);
+    W_GetRomData(maplumppos + maplump[lump].filepos, ptr, size);
 
-	return (void *) ((byte *)mapfileptr + maplump[lump].filepos);
+    return ptr;
+}
+
+void W_ReadMapLump(int lump, void *ptr)
+{
+    if (mapfileptr)
+        D_memcpy(ptr, mapfileptr + maplump[lump].filepos, maplump[lump].size);
+    else
+        W_GetRomData(maplumppos + maplump[lump].filepos, ptr, ALIGN(maplump[lump].size, 2));
 }
