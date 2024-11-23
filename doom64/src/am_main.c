@@ -48,8 +48,6 @@ void AM_Start(void) // 800004D8
 ==================
 */
 
-#define MAXSENSIVITY    10
-
 void AM_Control (player_t *player) // 800004F4
 {
 	int buttons, oldbuttons;
@@ -155,7 +153,7 @@ void AM_Control (player_t *player) // 800004F4
     /* Analyze analog stick movement (left / right) */
 	sensitivity = (int)(((buttons & 0xff00) >> 8) << 24) >> 24;
 
-    if(sensitivity >= MAXSENSIVITY || sensitivity <= -MAXSENSIVITY)
+    if(sensitivity >= PlayDeadzone || sensitivity <= -PlayDeadzone)
     {
         player->automapx += (sensitivity * scale) / 80;
     }
@@ -163,7 +161,7 @@ void AM_Control (player_t *player) // 800004F4
     /* Analyze analog stick movement (up / down) */
     sensitivity = (int)((buttons) << 24) >> 24;
 
-    if(sensitivity >= MAXSENSIVITY || sensitivity <= -MAXSENSIVITY)
+    if(sensitivity >= PlayDeadzone || sensitivity <= -PlayDeadzone)
     {
         player->automapy += (sensitivity * scale) / 80;
     }

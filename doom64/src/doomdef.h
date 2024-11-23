@@ -87,6 +87,8 @@ extern void LightGetRGB(int h,int s,int v,int *r,int *g,int *b); // 8000248C
 
 #define	FRACBITS		16
 #define	FRACUNIT		(1<<FRACBITS)
+#define PlayDeadzone    10 // Analog stick deadzone for the gameplay
+#define MenuDeadzone    20 // Analog stick deadzone for the menu
 
 typedef int fixed_t;
 

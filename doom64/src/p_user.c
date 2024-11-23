@@ -262,7 +262,6 @@ void P_PlayerMobjThink (mobj_t *mobj) // 80022060
 ====================
 */
 
-#define MAXSENSIVITY    10
 
 void P_BuildMove (player_t *player) // 80022154
 {
@@ -315,7 +314,7 @@ void P_BuildMove (player_t *player) // 80022154
         /* Analyze analog stick movement (up / down) */
         sensitivity = (int)((buttons) << 24) >> 24;
 
-        if(sensitivity >= MAXSENSIVITY || sensitivity <= -MAXSENSIVITY)
+        if(sensitivity >= PlayDeadzone || sensitivity <= -PlayDeadzone)
         {
             player->forwardmove += (forwardmove[1] * sensitivity) / 80;
         }
@@ -361,7 +360,7 @@ void P_BuildMove (player_t *player) // 80022154
             /* Analyze analog stick movement (left / right) */
             sensitivity = (int)(((buttons & 0xff00) >> 8) << 24) >> 24;
 
-            if(sensitivity >= MAXSENSIVITY || sensitivity <= -MAXSENSIVITY)
+            if(sensitivity >= PlayDeadzone || sensitivity <= -PlayDeadzone)
             {
                 player->sidemove += (sidemove[1] * sensitivity) / 80;
             }
@@ -386,9 +385,9 @@ void P_BuildMove (player_t *player) // 80022154
             sensitivity = (int)(((buttons & 0xff00) >> 8) << 24) >> 24;
             sensitivity = -sensitivity;
 
-            if(sensitivity >= MAXSENSIVITY || sensitivity <= -MAXSENSIVITY)
+            if(sensitivity >= PlayDeadzone || sensitivity <= -PlayDeadzone)
             {
-                sensitivity = ((M_SENSITIVITY<<3) + 233) * sensitivity;
+                sensitivity = ((M_SENSITIVITY<<3) + 17) * sensitivity;
                 player->angleturn += (sensitivity / 80) << 17;
             }
         }

@@ -320,7 +320,7 @@ boolean enable_statusbar = true;// 8005A7BC
 int SfxVolume = 80;             // 8005A7C0
 int MusVolume = 80;             // 8005A7C4
 int brightness = 60;             // 8005A7C8
-int M_SENSITIVITY = 0;          // 8005A7CC
+int M_SENSITIVITY = 27;          // 8005A7CC
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
 int TextureFilter = 0;
@@ -424,7 +424,7 @@ void M_EncodeConfig(void)
 
     SavedConfig[6] = (brightness) & 0x7F; //0-127
 
-    SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-100
+    SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-127
 	SavedConfig[7] += (ShowStats & 0x1) << 7;
 
     for (i = 0; i < 13; i++)
@@ -757,8 +757,6 @@ int M_ControllerPak(void) // 80007724
     return exit;
 }
 
-#define MAXSENSIVITY    20
-
 int M_ButtonResponder(int buttons) // 80007960
 {
     int sensitivity;
@@ -770,17 +768,17 @@ int M_ButtonResponder(int buttons) // 80007960
     /* Analyze Analog Stick (up / down) */
     sensitivity = (int)((buttons) << 24) >> 24;
 
-    if (sensitivity <= -MAXSENSIVITY)
+    if (sensitivity <= -MenuDeadzone)
         NewButtons |= PAD_DOWN;
-    else if (sensitivity >= MAXSENSIVITY)
+    else if (sensitivity >= MenuDeadzone)
         NewButtons |= PAD_UP;
 
     /* Analyze Analog Stick (left / right) */
     sensitivity = (int)(((buttons & 0xff00) >> 8) << 24) >> 24;
 
-    if (sensitivity <= -MAXSENSIVITY)
+    if (sensitivity <= -MenuDeadzone)
         NewButtons |= PAD_LEFT;
-    else if (sensitivity >= MAXSENSIVITY)
+    else if (sensitivity >= MenuDeadzone)
         NewButtons |= PAD_RIGHT;
 
     return NewButtons & 0xffff0000;
@@ -1783,7 +1781,7 @@ int M_MenuTicker(void) // 80007E0C
                     if (truebuttons)
                     {
                         S_StartSound(NULL, sfx_switch2);
-                        M_SENSITIVITY = 0;
+                        M_SENSITIVITY = 27;
                     }
                     break;
 
@@ -1791,7 +1789,7 @@ int M_MenuTicker(void) // 80007E0C
                     if (buttons & PAD_RIGHT)
                     {
                         M_SENSITIVITY += 1;
-                        if (M_SENSITIVITY <= 100)
+                        if (M_SENSITIVITY <= 127)
                         {
                             if (M_SENSITIVITY & 1)
                             {
@@ -1801,7 +1799,7 @@ int M_MenuTicker(void) // 80007E0C
                         }
                         else
                         {
-                            M_SENSITIVITY = 100;
+                            M_SENSITIVITY = 127;
                         }
                     }
                     else if (buttons & PAD_LEFT)
@@ -2280,7 +2278,7 @@ void M_ControlStickDrawer(void) // 80009738
     ST_DrawSymbol(MenuItem->x - 37, MenuItem[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(102,110,68,text_alpha | 0xffffff00);
-    ST_DrawSymbol(M_SENSITIVITY + 103, 110, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(((101*M_SENSITIVITY)>>7) + 103, 110, 69, text_alpha | 0xffffff00);
 }
 
 void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
