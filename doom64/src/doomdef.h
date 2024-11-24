@@ -878,10 +878,10 @@ extern int Display_X;               // 8005A7B0
 extern int Display_Y;               // 8005A7B4
 extern boolean enable_messages;     // 8005A7B8
 extern boolean enable_statusbar;    // 8005A7BC
-extern int SfxVolume;               // 8005A7C0
-extern int MusVolume;               // 8005A7C4
-extern int brightness;              // 8005A7C8
-extern int M_SENSITIVITY;           // 8005A7CC
+extern char SfxVolume;               // 8005A7C0
+extern char MusVolume;               // 8005A7C4
+extern char brightness;              // 8005A7C8
+extern char M_SENSITIVITY;           // 8005A7CC
 extern boolean FeaturesUnlocked;    // 8005A7D0
 extern int TextureFilter;
 extern int Autorun;

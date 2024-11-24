@@ -17,8 +17,8 @@ void S_Error_Callback_Routine(char *errstring, int errnum1, int errnum2) // 8002
     I_Error(errstring, errnum1, errnum2);
 }
 
-extern int SfxVolume;
-extern int MusVolume;
+extern char SfxVolume;
+extern char MusVolume;
 
 extern void wess_set_tweaks2(WessTweakAttr *attr);
 extern void wess_get_tweaks2(WessTweakAttr *attr);

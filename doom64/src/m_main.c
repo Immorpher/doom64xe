@@ -317,10 +317,10 @@ int Display_X = 0;              // 8005A7B0
 int Display_Y = 0;              // 8005A7B4
 boolean enable_messages = true; // 8005A7B8
 boolean enable_statusbar = true;// 8005A7BC
-int SfxVolume = 80;             // 8005A7C0
-int MusVolume = 80;             // 8005A7C4
-int brightness = 60;             // 8005A7C8
-int M_SENSITIVITY = 27;          // 8005A7CC
+char SfxVolume = 80;             // 8005A7C0
+char MusVolume = 80;             // 8005A7C4
+char brightness = 60;             // 8005A7C8
+char M_SENSITIVITY = 27;          // 8005A7CC
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
 int TextureFilter = 0;
@@ -1126,36 +1126,22 @@ int M_MenuTicker(void) // 80007E0C
                 case 7: // Music Volume
                     if (buttons & PAD_RIGHT)
                     {
-                        MusVolume += 1;
-                        if (MusVolume <= 100)
+                        if (MusVolume < 127)
                         {
+							MusVolume += 1;
                             S_SetMusicVolume(MusVolume);
-                            if (MusVolume & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                        else
-                        {
-                            MusVolume = 100;
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
                         }
                     }
                     else if (buttons & PAD_LEFT)
                     {
-                        MusVolume -= 1;
-                        if (MusVolume < 0)
+                        if (MusVolume > 0)
                         {
-                            MusVolume = 0;
-                        }
-                        else
-                        {
+							MusVolume -= 1;
                             S_SetMusicVolume(MusVolume);
-                            if (MusVolume & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
+							S_StartSound(NULL, sfx_secmove);
+							return ga_nothing;
                         }
                     }
                     break;
@@ -1163,36 +1149,22 @@ int M_MenuTicker(void) // 80007E0C
                 case 8: // Sound Volume
                     if (buttons & PAD_RIGHT)
                     {
-                        SfxVolume += 1;
-                        if (SfxVolume <= 100)
+                        if (SfxVolume < 127)
                         {
+							SfxVolume += 1;
                             S_SetSoundVolume(SfxVolume);
-                            if (SfxVolume & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                        else
-                        {
-                            SfxVolume = 100;
+							S_StartSound(NULL, sfx_secmove);
+							return ga_nothing;
                         }
                     }
                     else if (buttons & PAD_LEFT)
                     {
-                        SfxVolume -= 1;
-                        if (SfxVolume < 0)
+                        if (SfxVolume > 0)
                         {
-                            SfxVolume = 0;
-                        }
-                        else
-                        {
+							SfxVolume -= 1;
                             S_SetSoundVolume(SfxVolume);
-                            if (SfxVolume & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
                         }
                     }
                     break;
@@ -1200,36 +1172,22 @@ int M_MenuTicker(void) // 80007E0C
                 case 9: // Brightness
                     if (buttons & PAD_RIGHT)
                     {
-                        brightness += 1;
-                        if (brightness <= 127)
+                        if (brightness < 127)
                         {
+							brightness += 1;
                             P_RefreshBrightness();
-                            if (brightness & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                        else
-                        {
-                            brightness = 127;
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
                         }
                     }
                     else if (buttons & PAD_LEFT)
                     {
-                        brightness -= 1;
-                        if (brightness < 0)
+                        if (brightness > 0)
                         {
-                            brightness = 0;
-                        }
-                        else
-                        {
+							brightness -= 1;
                             P_RefreshBrightness();
-                            if (brightness & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
+                            S_StartSound(NULL, sfx_secmove);
+                            return ga_nothing;
                         }
                     }
                     break;
@@ -1788,34 +1746,20 @@ int M_MenuTicker(void) // 80007E0C
                 case 43: // Sensitivity
                     if (buttons & PAD_RIGHT)
                     {
-                        M_SENSITIVITY += 1;
-                        if (M_SENSITIVITY <= 127)
-                        {
-                            if (M_SENSITIVITY & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
-                        }
-                        else
-                        {
-                            M_SENSITIVITY = 127;
+                        if (M_SENSITIVITY < 127)
+						{
+							M_SENSITIVITY += 1;
+							S_StartSound(NULL, sfx_secmove);
+							return ga_nothing;
                         }
                     }
                     else if (buttons & PAD_LEFT)
                     {
-                        M_SENSITIVITY -= 1;
-                        if (M_SENSITIVITY < 0)
-                        {
-                            M_SENSITIVITY = 0;
-                        }
-                        else
-                        {
-                            if (M_SENSITIVITY & 1)
-                            {
-                                S_StartSound(NULL, sfx_secmove);
-                                return ga_nothing;
-                            }
+                       if (M_SENSITIVITY > 0)
+						{
+							M_SENSITIVITY -= 1;
+							S_StartSound(NULL, sfx_secmove);
+							return ga_nothing;
                         }
                     }
                     break;
@@ -2254,10 +2198,10 @@ void M_VolumeDrawer(void) // 800095B4
     ST_DrawSymbol(MenuItem->x - 37, MenuItem[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(102, 80, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(MusVolume + 103, 80, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(((101*MusVolume)>>7) + 103, 80, 69, text_alpha | 0xffffff00);
 
     ST_DrawSymbol(102, 120, 68, text_alpha | 0xffffff00);
-    ST_DrawSymbol(SfxVolume + 103, 120, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(((101*SfxVolume)>>7) + 103, 120, 69, text_alpha | 0xffffff00);
 }
 
 void M_ControlStickDrawer(void) // 80009738
