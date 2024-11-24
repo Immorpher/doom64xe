@@ -629,8 +629,8 @@ extern	player_t	players[MAXPLAYERS];
 extern	thingdata_t playdata[MAXPLAYERS]; // [Immorpher] store player data for reload
 
 extern	skill_t		gameskill;
-extern	int			gamemap;
-extern	int			nextmap;
+extern	unsigned char			gamemap;
+extern	unsigned char			nextmap;
 extern	int			totalkills, totalitems, totalsecret;	/* for intermission *///80077d4c,80077d58,80077E18
 
 //extern	mapthing_t	deathmatchstarts[10], *deathmatch_p;    //80097e4c,80077e8c
@@ -859,23 +859,23 @@ extern const menuitem_t *MenuItem;        // 800A5578
 extern int itemlines;               // 800A5580
 extern menufunc_t MenuCall;         // 800A5584
 
-extern int linepos;                 // 800A5588
+extern unsigned char linepos;                 // 800A5588
 extern int text_alpha_change_value; // 800A558C
-extern int MusicID;                 // 800A5590
-extern int m_actualmap;             // 800A5594
+extern unsigned char MusicID;                 // 800A5590
+extern unsigned char m_actualmap;             // 800A5594
 extern int last_ticon;              // 800a5598
 
 extern skill_t startskill;          // 800A55A0
-extern int startmap;                // 800A55A4
-extern int EnableMemPak;            // 800A55A8
+extern unsigned char startmap;                // 800A55A4
+extern boolean EnableMemPak;            // 800A55A8
 
 //-----------------------------------------
 
-extern int MenuIdx;                 // 8005A7A4
+extern unsigned char MenuIdx;                 // 8005A7A4
 extern int text_alpha;              // 8005A7A8
-extern int ConfgNumb;               // 8005A7AC
-extern int Display_X;               // 8005A7B0
-extern int Display_Y;               // 8005A7B4
+extern unsigned char ConfgNumb;               // 8005A7AC
+extern char Display_X;               // 8005A7B0
+extern char Display_Y;               // 8005A7B4
 extern boolean enable_messages;     // 8005A7B8
 extern boolean enable_statusbar;    // 8005A7BC
 extern char SfxVolume;               // 8005A7C0
@@ -883,8 +883,8 @@ extern char MusVolume;               // 8005A7C4
 extern char brightness;              // 8005A7C8
 extern char M_SENSITIVITY;           // 8005A7CC
 extern boolean FeaturesUnlocked;    // 8005A7D0
-extern int TextureFilter;
-extern int Autorun;
+extern char TextureFilter;
+extern char Autorun;
 extern boolean GreenBlood;
 extern boolean BlueCross;
 extern boolean ShowStats;

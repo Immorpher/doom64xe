@@ -5,7 +5,7 @@
 #include "st_main.h"
 #include "r_local.h"
 
-extern int nextmap;
+extern unsigned char nextmap;
 
 #define T_NULL	    ""
 

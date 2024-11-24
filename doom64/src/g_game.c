@@ -13,8 +13,8 @@ void G_DoLoadLevel (void);
 
 gameaction_t    gameaction;                 // 80063230
 skill_t         gameskill;                  // 80063234
-int             gamemap;                    // 80063238
-int				nextmap;				    // 8006323C /* the map to go to after the stats */
+unsigned char	gamemap;                    // 80063238
+unsigned char	nextmap;				    // 8006323C /* the map to go to after the stats */
 
 //boolean         playeringame[MAXPLAYERS]; //
 player_t        players[MAXPLAYERS];        // 80063240

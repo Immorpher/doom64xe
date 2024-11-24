@@ -298,23 +298,23 @@ const menuitem_t *MenuItem;   // 800A5578
 int itemlines;          // 800A5580
 menufunc_t MenuCall;    // 800A5584
 
-int linepos;            // 800A5588
+unsigned char linepos;            // 800A5588
 int text_alpha_change_value;    // 800A558C
-int MusicID;            // 800A5590
-int m_actualmap;        // 800A5594
+unsigned char MusicID;            // 800A5590
+unsigned char m_actualmap;        // 800A5594
 int last_ticon;         // 800A5598
 
 skill_t startskill;     // 800A55A0
-int startmap;           // 800A55A4
-int EnableMemPak;       // 800A55A8
+unsigned char startmap;           // 800A55A4
+boolean EnableMemPak;       // 800A55A8
 
 //-----------------------------------------
 
-int MenuIdx = 0;                // 8005A7A4
+unsigned char MenuIdx = 0;                // 8005A7A4
 int text_alpha = 255;           // 8005A7A8
-int ConfgNumb = 0;              // 8005A7AC
-int Display_X = 0;              // 8005A7B0
-int Display_Y = 0;              // 8005A7B4
+unsigned char ConfgNumb = 0;              // 8005A7AC
+char Display_X = 0;              // 8005A7B0
+char Display_Y = 0;              // 8005A7B4
 boolean enable_messages = true; // 8005A7B8
 boolean enable_statusbar = true;// 8005A7BC
 char SfxVolume = 80;             // 8005A7C0
@@ -323,8 +323,8 @@ char brightness = 60;             // 8005A7C8
 char M_SENSITIVITY = 27;          // 8005A7CC
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
-int TextureFilter = 0;
-int Autorun = 0;
+char TextureFilter = 0;
+char Autorun = 0;
 byte SavedConfig[16];
 boolean GreenBlood;
 boolean BlueCross;
@@ -1408,14 +1408,9 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         if (buttons & PAD_LEFT)
                         {
-                            m_actualmap -= 1;
-							
-							if (m_actualmap < 0)
+							if (m_actualmap > 0)
 							{
-								m_actualmap = 0;
-							}
-							else
-							{
+								m_actualmap -= 1;
 								S_StartSound(NULL, sfx_switch2);
 							}
 							return ga_nothing;
