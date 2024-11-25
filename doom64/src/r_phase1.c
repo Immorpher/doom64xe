@@ -430,10 +430,6 @@ void R_AddSprite(subsector_t *sub) // 80024A98
 	fixed_t         tx, tz;
 	fixed_t         x, y;
 
-    #if ENABLE_REMASTER_SPRITES == 1
-    state_t         *newState;
-    #endif
-
     sub->vissprite = NULL;
 
     for (thing = sub->sector->thinglist; thing; thing = thing->snext)
@@ -474,26 +470,6 @@ void R_AddSprite(subsector_t *sub) // 80024A98
             if (tx > (tz << 1) || tx < -(tz << 1))
                 continue;
             
-            #if ENABLE_REMASTER_SPRITES == 1
-            if (thing->type == MT_ITEM_STIMPACK && thing->state == &states[thing->info->spawnstate])
-            {
-                newState = &states[BlueCross ? S_801 : thing->info->spawnstate];
-                thing->sprite = newState->sprite;
-                thing->frame = newState->frame;
-            }
-            else if (thing->type == MT_ITEM_MEDKIT && thing->state == &states[thing->info->spawnstate])
-            {
-                newState = &states[BlueCross ? S_802 : thing->info->spawnstate];
-                thing->sprite = newState->sprite;
-                thing->frame = newState->frame;
-            }
-            else if (thing->type == MT_ITEM_BERSERK && thing->state == &states[thing->info->spawnstate])
-            {
-                newState = &states[BlueCross ? S_803 : thing->info->spawnstate];
-                thing->sprite = newState->sprite;
-                thing->frame = newState->frame;
-            }
-            #endif
             
             sprdef = &sprites[thing->sprite];
             sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];

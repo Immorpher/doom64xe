@@ -194,13 +194,8 @@ const menuitem_t Menu_Video[5] =
     {  6, 102, 160},    // Return
 };
 
-#if ENABLE_REMASTER_SPRITES == 1
 const menuitem_t Menu_Display[7] = // 8005AA5C
-#else
-const menuitem_t Menu_Display[5] = // 8005AA5C
-#endif
 {
-    #if ENABLE_REMASTER_SPRITES == 1
     { 33, 102, 60},    // Messages
     { 34, 102, 80},    // Status Bar
 	{ 60, 102, 100},    // Map Stats
@@ -208,14 +203,6 @@ const menuitem_t Menu_Display[5] = // 8005AA5C
     { 57, 102, 140},    // Cross Color
     { 13, 102, 160},    // Default Display
     {  6, 102, 180},    // Return
-
-    #else
-    { 33, 102, 60},    // Messages
-    { 34, 102, 80},    // Status Bar
-	{ 60, 102, 100},    // Map Stats
-    { 13, 102, 100},    // Default Display
-    {  6, 102, 120},    // Return
-    #endif
 };
 
 const menuitem_t Menu_Game[5] = // 8005AAA4
@@ -327,7 +314,7 @@ char TextureFilter = 0;
 char Autorun = 0;
 byte SavedConfig[16];
 boolean GreenBlood;
-boolean BlueCross;
+boolean BlueCross; // Temporarily disabled will be replaced with palette swap
 boolean ShowStats;
 
 int TempConfiguration[13] = // 8005A80C
@@ -415,12 +402,12 @@ void M_EncodeConfig(void)
     SavedConfig[3] += (enable_messages & 0x1) << 1;
     SavedConfig[3] += (enable_statusbar & 0x1) << 2;
 	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5
-    SavedConfig[3] += (GreenBlood & 0x1) << 6;
+    SavedConfig[3] += (GreenBlood & 0x1) << 6;// Temporarily disabled will be replaced with palette swap
     SavedConfig[3] += (BlueCross & 0x1) << 7;
 
-    SavedConfig[4] = MusVolume & 0x7F; //0-100
+    SavedConfig[4] = MusVolume & 0x7F; //0-127
     
-    SavedConfig[5] = SfxVolume & 0x7F; //0-100
+    SavedConfig[5] = SfxVolume & 0x7F; //0-127
 
     SavedConfig[6] = (brightness) & 0x7F; //0-127
 
@@ -524,7 +511,7 @@ void M_DecodeConfig()
     enable_statusbar = (SavedConfig[3] >> 2) & 0x1;
     ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
     GreenBlood = (SavedConfig[3] >> 6) & 0x1;
-    BlueCross = (SavedConfig[3] >> 7) & 0x1;
+    BlueCross = (SavedConfig[3] >> 7) & 0x1; // Temporarily disabled will be replaced with palette swap
 
     MusVolume = SavedConfig[4] & 0x7F;
 
@@ -1033,11 +1020,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_Display;
-                        #if ENABLE_REMASTER_SPRITES == 1
                         itemlines = 7;
-                        #else
-                        itemlines = 5;
-                        #endif
                         MenuCall = M_DisplayDrawer;
                         cursorpos = 0;
 
@@ -1237,7 +1220,7 @@ int M_MenuTicker(void) // 80007E0C
                         enable_statusbar = true;
 
                         GreenBlood = 0;
-                        BlueCross = 0;
+                        BlueCross = 0; // Temporarily disabled will be replaced with palette swap
 						ShowStats = 0;
                         return ga_nothing;
                     }
@@ -1246,7 +1229,6 @@ int M_MenuTicker(void) // 80007E0C
                 case 14: // New Game
                     if (truebuttons)
                     {
-                        #if ENABLE_EXTRA_EPISODES == 1
 
                         S_StartSound(NULL, sfx_pistol);
                         M_SaveMenuData();
@@ -1266,32 +1248,6 @@ int M_MenuTicker(void) // 80007E0C
                             return ga_nothing;
 
                         return exit;
-
-                        #else
-                        
-                        S_StartSound(NULL, sfx_pistol);
-                        M_FadeOutStart(8);
-
-                        // Check ControllerPak
-                        EnableMemPak = (M_ControllerPak() == 0);
-
-                        MenuItem = Menu_Skill;
-                        itemlines = 6;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 1;  // Set Default Bring it on!
-
-                        MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
-						
-						if (exit == ga_exit && cursorpos == 5) { // [Immorpher] 5th to exit menu
-							M_RestoreMenuData((exit == ga_exit));
-                            return ga_nothing;
-						}
-						
-                        startskill = MenuItem[cursorpos].casepos - 15;
-
-                        return ga_exit;
-
-                        #endif
                     }
                     break;
 
@@ -1629,7 +1585,7 @@ int M_MenuTicker(void) // 80007E0C
                     if (truebuttons)
                     {
                         S_StartSound(NULL, sfx_switch2);
-                        BlueCross ^= true;
+                        BlueCross ^= true; // Temporarily disabled will be replaced with palette swap
 						return ga_nothing;
                     }
                     break;
@@ -2281,11 +2237,7 @@ void M_DisplayDrawer(void) // 80009884
 
     item = Menu_Display;
 
-    #if ENABLE_REMASTER_SPRITES == 1
     for(i = 0; i < 7; i++)
-    #else
-    for(i = 0; i < 5; i++)
-    #endif
     {
         casepos = item->casepos;
 
@@ -2305,7 +2257,7 @@ void M_DisplayDrawer(void) // 80009884
         {
             text = GreenBlood ? "Green" : "Red";
         }
-        else if (casepos == 57) // Medikit Color
+        else if (casepos == 57) // Medikit Color - Temporarily disabled will be replaced with palette swap
         {
             text = BlueCross ? "Blue" : "Red";
         }

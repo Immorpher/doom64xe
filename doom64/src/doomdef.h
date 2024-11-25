@@ -36,8 +36,6 @@ extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 // FIXES
 #define FIX_LINEDEFS_DELETION   1   // Fixes for the 'linedef deletion' bug. From PsyDoom
 
-//#define ENABLE_EXTRA_EPISODES	1
-//#define ENABLE_REMASTER_SPRITES	1
 
 /*============================================================================= */
 
