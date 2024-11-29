@@ -754,7 +754,6 @@ int     W_CheckNumForName (char *name, int hibit1, int hibit2);
 int		W_GetNumForName (char *name);
 
 int		W_LumpLength(int lump);
-boolean	W_IsLumpCompressed(int lump);
 void	W_ReadLump(int lump, void *dest) HOT;
 
 void	*W_CacheLumpNum(int lump, int tag) HOT;

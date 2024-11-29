@@ -31,9 +31,6 @@ static lumpinfo_t   *maplump;				//800B2234 psxdoom/doom64
 static byte         *mapfileptr;			//800B2238 psxdoom/doom64
 static u32           maplumppos;
 
-static int maxcompressedsize = 0;
-static byte *decompressbuf;
-
 /*=========*/
 /* EXTERNS */
 /*=========*/
@@ -101,35 +98,8 @@ void W_Init (void) // 8002BEC0
         //printstr(WHITE, 0, 8, str);
     }
 
-    // [nova] - find appropriate size for a buffer for decompressing textures/sprites
-    for(i = 0; i < numlumps; i++)
-    {
-        if (!W_IsLumpCompressed(i))
-            continue;
-        char *name = lumpinfo[i].name;
-        // skip maps
-        if (name[0] == ('M' | -0x80) && name[1] == 'A' && name[2] == 'P'
-                && name[3] >= '0' && name[3] <= '9'
-                && name[4] >= '0' && name[4] <= '9'
-                && name[5] == '\0')
-            continue;
-        // skip some lumps never loaded during gameplay, first ASCII letter number | 0x80
-        if (D_strncmp(name, "\xc5" "VIL", 8) == 0 // Evil intermission for Absolution
-                || D_strncmp(name, "\xc2" "ONUS", 8) == 0 // Bonus intermission for Expansion Pak
-                || D_strncmp(name, "\xc2" "ETA", 8) == 0 // Beta intermission for Beta 64
-                || D_strncmp(name, "\xcc" "OST", 8) == 0 // Lost intermission for Lost Levels
-                || D_strncmp(name, "\xc6" "INAL", 8) == 0 // Final ending for Absolution
-                || D_strncmp(name, "\xc6" "INLOST", 8) == 0 // Finlost ending for Lost Levels
-                || D_strncmp(name, "\xc6" "INBETA", 8) == 0 // Finbeta ending for Beta 64
-                || D_strncmp(name, "\xd4" "ITLE", 8) == 0) // Title screen graphic
-            continue;
-        int lumpsize = lumpinfo[i+1].filepos - lumpinfo[i].filepos;
-        maxcompressedsize = MAX(maxcompressedsize, lumpsize);
-    }
     lumpcache = (lumpcache_t *) Z_Malloc(numlumps * sizeof(lumpcache_t), PU_STATIC, 0);
     D_memset(lumpcache, NULL, numlumps * sizeof(lumpcache_t));
-    if (maxcompressedsize)
-        decompressbuf = Z_Malloc(maxcompressedsize, PU_STATIC, 0);
 }
 
 
@@ -224,11 +194,6 @@ int W_LumpLength(int lump) // 8002C204
 		I_Error ("W_LumpLength: lump %i out of range",lump);
 
 	return lumpinfo[lump].size;
-}
-
-boolean W_IsLumpCompressed(int lump)
-{
-    return !!(lumpinfo[lump].name[0] & 0x80);
 }
 
 /*
