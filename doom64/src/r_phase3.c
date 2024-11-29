@@ -425,14 +425,14 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
         if ((texture != globallump) || (globalcm != (cms | cmt)))
         {
             /*
-            In Doom 64 all textures are compressed with the second method (dec_d64),
+            In Doom 64 all textures are compressed with the second method (dec_none),
             in the original line it was declared that if a texture was not stored,
             it would be stored from the DOOM64.WAD and decompressed with the Jaguar Doom
             method (dec_jag) which is wrong since all the textures are previously
             loaded from the P_Init function with the second decompression method (dec_d64)
             */
-            //data = W_CacheLumpNum(texture >> 4, PU_CACHE, dec_jag); // error decomp mode
-            data = W_CacheLumpNum(texture >> 4, PU_CACHE, dec_d64); /* [GEC] FIXED */
+            //data = W_CacheLumpNum(texture >> 4, PU_CACHE); // error decomp mode
+            data = W_CacheLumpNum(texture >> 4, PU_CACHE); /* [GEC] FIXED */
 
             wshift = ((textureN64_t*)data)->wshift;
             hshift = ((textureN64_t*)data)->hshift;
@@ -524,14 +524,14 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
     if (texture != globallump)
     {
         /*
-        In Doom 64 all textures are compressed with the second method (dec_d64),
+        In Doom 64 all textures are compressed with the second method (dec_none),
         in the original line it was declared that if a texture was not stored,
         it would be stored from the DOOM64.WAD and decompressed with the Jaguar Doom
         method (dec_jag) which is wrong since all the textures are previously
         loaded from the P_Init function with the second decompression method (dec_d64)
         */
-        //data = W_CacheLumpNum(firsttex + texture, PU_CACHE, dec_jag); // error decomp mode
-        data = W_CacheLumpNum(firsttex + texture, PU_CACHE, dec_d64); /* [GEC] FIXED */
+        //data = W_CacheLumpNum(firsttex + texture, PU_CACHE); // error decomp mode
+        data = W_CacheLumpNum(firsttex + texture, PU_CACHE); /* [GEC] FIXED */
 
         wshift = ((textureN64_t*)data)->wshift;
         hshift = ((textureN64_t*)data)->hshift;
@@ -630,14 +630,14 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
     if (texture != globallump)
     {
         /*
-        In Doom 64 all textures are compressed with the second method (dec_d64),
+        In Doom 64 all textures are compressed with the second method (dec_none),
         in the original line it was declared that if a texture was not stored,
         it would be stored from the DOOM64.WAD and decompressed with the Jaguar Doom
         method (dec_jag) which is wrong since all the textures are previously
         loaded from the P_Init function with the second decompression method (dec_d64)
         */
-        //data = W_CacheLumpNum(texture >> 4, PU_CACHE, dec_jag); // error decomp mode
-        data = W_CacheLumpNum(texture >> 4, PU_CACHE, dec_d64); /* [GEC] FIXED */
+        //data = W_CacheLumpNum(texture >> 4, PU_CACHE); // error decomp mode
+        data = W_CacheLumpNum(texture >> 4, PU_CACHE); /* [GEC] FIXED */
 
         src = data + sizeof(textureN64_t);
 
@@ -886,7 +886,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
             gDPSetPrimColorD64(GFX1++, 0, vissprite_p->sector->lightlevel, thing->alpha);
             
-            data = W_CacheLumpNum(lump, PU_CACHE, dec_jag);
+            data = W_CacheLumpNum(lump, PU_CACHE);
 
             compressed = ((spriteN64_t*)data)->compressed;
             tileh = ((spriteN64_t*)data)->tileheight;
@@ -932,7 +932,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
                 if (((spriteN64_t*)data)->cmpsize & 1)
                 {
                     paldata = (byte *)(W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)) +
-                                             thing->info->palette, PU_CACHE, dec_jag)) + 8;
+                                             thing->info->palette, PU_CACHE)) + 8;
                 }
                 else
                 {
@@ -1181,7 +1181,7 @@ void R_RenderPSprites(void) // 80028f20
 			sprframe = &sprdef->spriteframes[state->frame & FF_FRAMEMASK];
 			lump = sprframe->lump[0];
 
-            data = W_CacheLumpNum(lump, PU_CACHE, dec_jag);
+            data = W_CacheLumpNum(lump, PU_CACHE);
 
             tilecnt = 0;
             tiles = ((spriteN64_t*)data)->tiles;
@@ -1230,7 +1230,7 @@ void R_RenderPSprites(void) // 80028f20
                 /* Loads the palette from the first frame of the animation,  */
                 /* which uses an odd number to get to the lump */
                     paldata = W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)),
-                                             PU_CACHE, dec_jag);
+                                             PU_CACHE);
 
                     paldata += (((spriteN64_t*)paldata)->cmpsize + sizeof(spriteN64_t));
                 }

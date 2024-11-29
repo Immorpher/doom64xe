@@ -339,22 +339,17 @@ void P_Start (void) // 80021C50
 	fb->thinker.function = T_FadeInBrightness;
 	fb->factor = 0;
 	
-    if (gamemap == 33 && demoplayback)  /* Add by default God Mode in player  */
+    if (gamemap == 33)  /* Add by default God Mode in player for title  */
     {
         players[0].cheats |= CF_GODMODE;
-		P_ActivateLineByTag(666, players[0].mo); /* autoactivate line specials */
     }
-    else if (gamemap == 32)  /* Remove by default God Mode in player  */
+    else if (gamemap == 32)  /* Remove by default God Mode in player for hectic */
     {
         players[0].cheats &= ~CF_GODMODE;
-		P_ActivateLineByTag(999, players[0].mo); /* autoactivate line specials */
-    } 
-	else
-	{
-		P_ActivateLineByTag(999, players[0].mo); /* autoactivate line specials */
-	}
+    }
 
-
+	/* autoactivate line specials */
+	P_ActivateLineByTag(999, players[0].mo);
 
 	start_time = ticon;
 

@@ -730,14 +730,6 @@ void    Z_DumpHeap(memzone_t *mainzone);
 /*WADFILE */
 /*------- */
 
-// New Doom64
-typedef enum
-{
-	dec_none,
-	dec_jag,
-	dec_d64
-} decodetype;
-
 typedef struct
 {
 	int			filepos;					/* also texture_t * for comp lumps */
@@ -763,10 +755,10 @@ int		W_GetNumForName (char *name);
 
 int		W_LumpLength(int lump);
 boolean	W_IsLumpCompressed(int lump);
-void	W_ReadLump(int lump, void *dest, decodetype dectype) HOT;
+void	W_ReadLump(int lump, void *dest) HOT;
 
-void	*W_CacheLumpNum(int lump, int tag, decodetype dectype) HOT;
-void	*W_CacheLumpName(char *name, int tag, decodetype dectype);
+void	*W_CacheLumpNum(int lump, int tag) HOT;
+void	*W_CacheLumpName(char *name, int tag);
 
 void	W_OpenMapWad(int mapnum);
 void    W_FreeMapLumps(void);
@@ -775,12 +767,6 @@ int		W_MapLumpLength(int lump);
 int		W_MapGetNumForName(char *name);
 void	*W_GetMapLump(int lump);
 void W_ReadMapLump(int lump, void *ptr);
-
-/*---------*/
-/* DECODES */
-/*---------*/
-void	DecodeD64(unsigned char *input, unsigned char *output);
-void	DecodeJaguar(unsigned char *input, unsigned char *output) HOT;
 
 /*------------*/
 /* BASE LEVEL */

@@ -2284,7 +2284,7 @@ void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
     int offset;
     byte *data;
 
-    data = (byte *)W_CacheLumpName(name, PU_CACHE, dec_jag);
+    data = (byte *)W_CacheLumpName(name, PU_CACHE);
 
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_1CYCLE);

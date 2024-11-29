@@ -241,10 +241,9 @@ boolean W_IsLumpCompressed(int lump)
 ====================
 */
 
-void W_ReadLump (int lump, void *dest, decodetype dectype) // 8002C260
+void W_ReadLump (int lump, void *dest) // 8002C260
 {
     OSIoMesg romio_msgbuf;
-	byte *input;
 	lumpinfo_t *l;
 	int lumpsize;
 
@@ -252,30 +251,6 @@ void W_ReadLump (int lump, void *dest, decodetype dectype) // 8002C260
 		I_Error ("W_ReadLump: lump %i out of range",lump);
 
 	l = &lumpinfo[lump];
-	if(dectype != dec_none)
-	{
-		if ((l->name[0] & 0x80)) /* compressed */
-		{
-			lumpsize = l[1].filepos - (l->filepos);
-			input = Z_Alloc(lumpsize, PU_STATIC, NULL);
-
-			osInvalDCache((void *)input, lumpsize);
-
-            osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
-                      (u32)_doom64_wadSegmentRomStart + l->filepos,
-                      (void *)input, lumpsize, &romcopy_msgque);
-
-            osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
-
-			if (dectype == dec_jag)
-				DecodeJaguar((byte *)input, (byte *)dest);
-			else // dec_d64
-				DecodeD64((byte *)input, (byte *)dest);
-
-			Z_Free(input);
-			return;
-		}
-	}
 
 	if (l->name[0] & 0x80)
 		lumpsize = l[1].filepos - (l->filepos);
@@ -299,7 +274,7 @@ void W_ReadLump (int lump, void *dest, decodetype dectype) // 8002C260
 ====================
 */
 
-void *W_CacheLumpNum (int lump, int tag, decodetype dectype) // 8002C430
+void *W_CacheLumpNum (int lump, int tag) // 8002C430
 {
     int lumpsize;
     lumpcache_t *lc;
@@ -311,17 +286,13 @@ void *W_CacheLumpNum (int lump, int tag, decodetype dectype) // 8002C430
 
 	if (!lc->cache)
 	{	/* read the lump in */
-	    //if (dectype == dec_d64)
             //ST_DebugPrint("W_CacheLumpNum: lump %i", lump);
 
-		if (dectype == dec_none)
-			lumpsize = lumpinfo[lump + 1].filepos - lumpinfo[lump].filepos;
-		else
-			lumpsize = lumpinfo[lump].size;
+		lumpsize = lumpinfo[lump + 1].filepos - lumpinfo[lump].filepos;
 
 		Z_Malloc(lumpsize, tag, &lc->cache);
 
-		W_ReadLump(lump, lc->cache, dectype);
+		W_ReadLump(lump, lc->cache);
 	}
 	else
     {
@@ -341,9 +312,9 @@ void *W_CacheLumpNum (int lump, int tag, decodetype dectype) // 8002C430
 ====================
 */
 
-void *W_CacheLumpName (char *name, int tag, decodetype dectype) // 8002C57C
+void *W_CacheLumpName (char *name, int tag) // 8002C57C
 {
-	return W_CacheLumpNum (W_GetNumForName(name), tag, dectype);
+	return W_CacheLumpNum (W_GetNumForName(name), tag);
 }
 
 
@@ -388,7 +359,7 @@ void W_OpenMapWad(int mapnum) // 8002C5B0
 
     mapfileptr = Z_Alloc(size, PU_STATIC, NULL);
 
-    W_ReadLump(lump, mapfileptr, dec_d64);
+    W_ReadLump(lump, mapfileptr);
 
     mapnumlumps = LONGSWAP(((wadinfo_t*)mapfileptr)->numlumps);
     infotableofs = LONGSWAP(((wadinfo_t*)mapfileptr)->infotableofs);

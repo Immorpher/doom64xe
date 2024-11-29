@@ -494,7 +494,7 @@ void R_AddSprite(subsector_t *sub) // 80024A98
             visspritehead->next = NULL;
             visspritehead->sector = sub->sector;
 
-            data = (byte *)W_CacheLumpNum(lump, PU_CACHE, dec_jag);
+            data = (byte *)W_CacheLumpNum(lump, PU_CACHE);
 
             CurSub = sub;
             if (tz < MAXZ)

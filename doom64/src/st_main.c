@@ -137,8 +137,8 @@ const int card_x[6] = {(78 << 2), (89 << 2), (100 << 2), (78 << 2), (89 << 2), (
 
 void ST_Init(void) // 80029BA0
 {
-  sfontlump = (byte *)W_CacheLumpName("SFONT",PU_STATIC,dec_jag);
-  statuslump = (byte *)W_CacheLumpName("STATUS",PU_STATIC,dec_jag);
+  sfontlump = (byte *)W_CacheLumpName("SFONT",PU_STATIC);
+  statuslump = (byte *)W_CacheLumpName("STATUS",PU_STATIC);
   symbolslump = W_GetNumForName("SYMBOLS");
 }
 
@@ -768,7 +768,7 @@ void ST_DrawSymbol(int xpos, int ypos, int index, int color) // 8002ADEC
     byte *data;
     int offset;
 
-    data = W_CacheLumpNum(symbolslump, PU_CACHE, dec_jag);
+    data = W_CacheLumpNum(symbolslump, PU_CACHE);
 
     if (symbolslump != globallump)
     {
