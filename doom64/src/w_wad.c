@@ -308,9 +308,16 @@ void W_OpenMapWad(int mapnum) // 8002C5B0
     name[0] = 'M';
     name[1] = 'A';
     name[2] = 'P';
-    name[3] = '0' + (char)(mapnum / 10);
-    name[4] = '0' + (char)(mapnum % 10);
-    name[5] = NULL;
+	if (mapnum < 100) {
+		name[3] = '0' + (char)(mapnum / 10);
+		name[4] = '0' + (char)(mapnum % 10);
+		name[5] = NULL;
+	} else {
+		name[3] = '0' + (char)(mapnum / 100);
+		name[4] = '0' + (char)((mapnum % 100)/10);
+		name[5] = '0' + (char)(mapnum % 10);
+		name[6] = NULL;
+	}
 
     lump = W_GetNumForName(name);
     size = W_LumpLength(lump);
