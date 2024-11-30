@@ -304,8 +304,8 @@ char Display_X = 0;              // 8005A7B0
 char Display_Y = 0;              // 8005A7B4
 boolean enable_messages = true; // 8005A7B8
 boolean enable_statusbar = true;// 8005A7BC
-char SfxVolume = 80;             // 8005A7C0
-char MusVolume = 80;             // 8005A7C4
+char SfxVolume = 100;             // 8005A7C0
+char MusVolume = 100;             // 8005A7C4
 char brightness = 60;             // 8005A7C8
 char M_SENSITIVITY = 27;          // 8005A7CC
 boolean FeaturesUnlocked = true; // 8005A7D0
@@ -1201,8 +1201,8 @@ int M_MenuTicker(void) // 80007E0C
                     {
                         S_StartSound(NULL, sfx_switch2);
 
-                        SfxVolume = 0x50;
-                        MusVolume = 0x50;
+                        SfxVolume = 100;
+                        MusVolume = 100;
 
                         S_SetMusicVolume(MusVolume);
                         S_SetSoundVolume(SfxVolume);

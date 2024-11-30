@@ -1021,8 +1021,8 @@ extern unsigned char lightmax[256]; // [Immorpher] - maximum brightness curve
 #include "sounds.h"
 
 void S_Init(void) COLD;
-void S_SetSoundVolume(int volume);
-void S_SetMusicVolume(int volume);
+void S_SetSoundVolume(char volume);
+void S_SetMusicVolume(char volume);
 void S_StartMusic(int mus_seq);
 void S_StopMusic(void);
 void S_PauseSound(void);

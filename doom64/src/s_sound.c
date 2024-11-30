@@ -122,14 +122,14 @@ void S_Init(void) // 80029590
 	//while(1){}
 }
 
-void S_SetSoundVolume(int volume) // 800297A8
+void S_SetSoundVolume(char volume) // 800297A8
 {
-  wess_master_sfx_vol_set((char)((volume * 85) / 100));
+  wess_master_sfx_vol_set(volume);
 }
 
-void S_SetMusicVolume(int volume) // 800297F4
+void S_SetMusicVolume(char volume) // 800297F4
 {
-  wess_master_mus_vol_set((char)((volume * 110) / 100));
+  wess_master_mus_vol_set(volume);
 }
 
 int music_sequence; // 8005b250
