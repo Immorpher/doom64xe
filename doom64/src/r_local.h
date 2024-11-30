@@ -235,6 +235,7 @@ extern	int			numsubsectors;
 extern	subsector_t	*subsectors;
 
 extern	int			numnodes;
+extern int firstnode; // First node precalculation from 3DO / FastDoom
 extern	node_t		*nodes;
 
 extern	int			numlines;

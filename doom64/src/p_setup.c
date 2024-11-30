@@ -21,6 +21,7 @@ int			numsubsectors;	//80078048
 subsector_t	*subsectors;	//80077D6C
 
 int			numnodes;		//80077FE0
+int firstnode; // First node precalculation from 3DO doom / FastDoom
 node_t		*nodes;			//80077CD0
 
 int			numlines;		//80077FF0
@@ -255,6 +256,7 @@ void P_LoadNodes (void) // 8001D64C
 	node_t		*no;
 
 	numnodes = W_MapLumpLength(ML_NODES) / sizeof(mapnode_t);
+	firstnode = numnodes - 1;
 	nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
 	bzero(nodes, numnodes*sizeof(node_t));
 

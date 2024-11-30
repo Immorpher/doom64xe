@@ -3,6 +3,15 @@
 #include "doomdef.h"
 #include "r_local.h"
 
+/*
+typedef struct
+{
+	boolean		rotate;		if false use 0 for any position
+	int			lump[8];	lump to use for view angles 0-7
+	byte		flip[8];	flip (1 = flip) to use for view angles 0-7
+} spriteframe_t;
+
+*/
 spriteframe_t spriteframes[] = { // 80054358
 {1, {398,405,412,419,426,419,412,405}, {0,0,0,0,0,1,1,1}},
 {1, {399,406,413,420,427,420,413,406}, {0,0,0,0,0,1,1,1}},
@@ -534,6 +543,14 @@ spriteframe_t spriteframes[] = { // 80054358
 {0, {968,968,968,968,968,968,968,968}, {0,0,0,0,0,0,0,0}},
 {0, {969,969,969,969,969,969,969,969}, {0,0,0,0,0,0,0,0}}
 };
+
+/*
+typedef struct
+{
+	spriteframe_t	*spriteframes;
+	int				numframes;
+} spritedef_t;
+*/
 
 spritedef_t sprites[] = { // 80059D98
 {&spriteframes[0], 22},

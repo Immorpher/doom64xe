@@ -304,16 +304,18 @@ sector_t *getNextSector(line_t *line,sector_t *sec) // 8001F96C
 fixed_t	P_FindLowestFloorSurrounding(sector_t *sec) // 8001F9AC
 {
 	int			i;
-	line_t		*check;
-	sector_t	*other;
-	fixed_t		floor = sec->floorheight;
+	line_t *check;
+	sector_t *other;
+	fixed_t floor = sec->floorheight;
 
-	for (i=0 ;i < sec->linecount ; i++)
+	for (i = 0; i < sec->linecount; i++)
 	{
 		check = sec->lines[i];
-		other = getNextSector(check,sec);
+		other = getNextSector(check, sec);
+
 		if (!other)
 			continue;
+
 		if (other->floorheight < floor)
 			floor = other->floorheight;
 	}
@@ -328,16 +330,18 @@ fixed_t	P_FindLowestFloorSurrounding(sector_t *sec) // 8001F9AC
 fixed_t	P_FindHighestFloorSurrounding(sector_t *sec) // 8001FA48
 {
 	int			i;
-	line_t		*check;
-	sector_t	*other;
-	fixed_t		floor = -500*FRACUNIT;
+	line_t *check;
+	sector_t *other;
+	fixed_t floor = -500 * FRACUNIT;
 
-	for (i=0 ;i < sec->linecount ; i++)
+	for (i = 0; i < sec->linecount; i++)
 	{
 		check = sec->lines[i];
-		other = getNextSector(check,sec);
+		other = getNextSector(check, sec);
+
 		if (!other)
 			continue;
+
 		if (other->floorheight > floor)
 			floor = other->floorheight;
 	}
@@ -349,37 +353,24 @@ fixed_t	P_FindHighestFloorSurrounding(sector_t *sec) // 8001FA48
 /*	FIND NEXT HIGHEST FLOOR IN SURROUNDING SECTORS */
 /* */
 /*================================================================== */
-fixed_t	P_FindNextHighestFloor(sector_t *sec,int currentheight) // 8001FAE4
+fixed_t	P_FindNextHighestFloor(sector_t *sec,int currentheight) // Lee Killough optimized
 {
-	int			i;
-	int			h;
-	int			min;
-	line_t		*check;
-	sector_t	*other;
-	fixed_t		height = currentheight;
-	fixed_t		heightlist[20];		/* 20 adjoining sectors max! */
+	sector_t *other;
+	int i;
 
-	bzero(heightlist, 20*sizeof(fixed_t));
-
-	for (i =0,h = 0 ;i < sec->linecount ; i++)
-	{
-		check = sec->lines[i];
-		other = getNextSector(check,sec);
-		if (!other)
-			continue;
-		if (other->floorheight > height)
-			heightlist[h++] = other->floorheight;
-	}
-
-	/* */
-	/* Find lowest height in list */
-	/* */
-	min = heightlist[0];
-	for (i = 1;i < h;i++)
-		if (heightlist[i] < min)
-			min = heightlist[i];
-
-	return min;
+	for (i = 0; i < sec->linecount; i++)
+		if ((other = getNextSector(sec->lines[i], sec)) &&
+			other->floorheight > sec->floorheight)
+		{
+			fixed_t height = other->floorheight;
+			while (++i < sec->linecount)
+				if ((other = getNextSector(sec->lines[i], sec)) &&
+					other->floorheight < height &&
+					other->floorheight > sec->floorheight)
+					height = other->floorheight;
+			return height;
+		}
+	return sec->floorheight;
 }
 
 /*================================================================== */

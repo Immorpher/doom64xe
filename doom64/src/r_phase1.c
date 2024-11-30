@@ -4,7 +4,7 @@
 #include "doomdef.h"
 #include "r_local.h"
 
-int checkcoord[12][4] =				// 8005B110
+byte checkcoord[12][4] =				// 8005B110
 {
 	{ 3, 0, 2, 1 },/* Above,Left */
 	{ 3, 0, 2, 0 },/* Above,Center */
@@ -50,11 +50,11 @@ void R_BSP(void) // 80023F30
 
     if (camviewpitch == 0)
     {
-        R_RenderBSPNode(numnodes - 1);  /* Begin traversing the BSP tree for all walls in render range */
+        R_RenderBSPNode(firstnode);  /* Begin traversing the BSP tree for all walls in render range */
     }
     else
     {
-        R_RenderBSPNodeNoClip(numnodes - 1);  /* Begin traversing the BSP tree for all walls in render range */
+        R_RenderBSPNodeNoClip(firstnode);  /* Begin traversing the BSP tree for all walls in render range */
         rendersky = true;
     }
 
@@ -152,9 +152,9 @@ void R_RenderBSPNode(int bspnum)
 
 boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
 {
-	int boxx;
-	int boxy;
-	int boxpos;
+	byte boxx;
+	byte boxy;
+	byte boxpos;
 
 	fixed_t x1, y1, x2, y2;
 	byte *solid_cols;

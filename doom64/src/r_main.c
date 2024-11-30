@@ -336,7 +336,7 @@ struct subsector_s *R_PointInSubsector(fixed_t x, fixed_t y) // 80023C44
 	if (!numnodes)				/* single subsector is a special case */
 		return subsectors;
 
-	nodenum = numnodes - 1;
+	nodenum = firstnode;
 
 	while (!(nodenum & NF_SUBSECTOR))
 	{

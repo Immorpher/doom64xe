@@ -92,7 +92,7 @@ boolean P_CheckSight(mobj_t *t1, mobj_t *t2) // 8001EBCC
 	topslope = (t2->z + t2->height) - sightzstart;
 	bottomslope = (t2->z) - sightzstart;
 
-	return PS_CrossBSPNode(numnodes - 1);
+	return PS_CrossBSPNode(firstnode);
 }
 
 /*

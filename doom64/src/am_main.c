@@ -560,7 +560,7 @@ void AM_DrawSubsectors(player_t *player, fixed_t cx, fixed_t cy, fixed_t bbox[st
     int     side;
     fixed_t    dx, dy;
     fixed_t    left, right;
-    int bspnum = numnodes - 1;
+    int bspnum = firstnode;
     int bspstack[MAX_BSP_DEPTH];
 
     gDPPipeSync(GFX1++);
