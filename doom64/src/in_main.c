@@ -246,7 +246,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT137 , 101 , 768}, // Devolving Being
     {MI_TXT138 , 96 , 256}, // Outer Outpost
     {MI_TXT139 , 111 , 512}, // Doomsday Keep
-    {MI_TXT140 , 107 , 256}, // Dark Retrospect
+    {MI_TXT140 , 107 , 356}, // Dark Retrospect
     {MI_TXT141 , 93 , 256}, // Diverged Fates
     {MI_TXT142 , 103 , 256}, // Alpha Void
     {MI_TXT143 , 110 , 512}, // Technological Terror

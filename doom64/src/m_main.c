@@ -605,8 +605,8 @@ void M_DecodeConfig()
     TextureFilter = (SavedConfig[14] >> 4) & 0x3;
     Autorun = (SavedConfig[14] >> 6) & 0x3;
 
-    S_SetMusicVolume(MusVolume);
-	S_SetSoundVolume(SfxVolume);
+    wess_master_mus_vol_set(MusVolume);
+	wess_master_sfx_vol_set(SfxVolume);
 }
 
 int M_RunTitle(void) // 80007630
@@ -1112,7 +1112,7 @@ int M_MenuTicker(void) // 80007E0C
                         if (MusVolume < 127)
                         {
 							MusVolume += 1;
-                            S_SetMusicVolume(MusVolume);
+                            wess_master_mus_vol_set(MusVolume);
                             S_StartSound(NULL, sfx_secmove);
                             return ga_nothing;
                         }
@@ -1122,7 +1122,7 @@ int M_MenuTicker(void) // 80007E0C
                         if (MusVolume > 0)
                         {
 							MusVolume -= 1;
-                            S_SetMusicVolume(MusVolume);
+                            wess_master_mus_vol_set(MusVolume);
 							S_StartSound(NULL, sfx_secmove);
 							return ga_nothing;
                         }
@@ -1135,7 +1135,7 @@ int M_MenuTicker(void) // 80007E0C
                         if (SfxVolume < 127)
                         {
 							SfxVolume += 1;
-                            S_SetSoundVolume(SfxVolume);
+                            wess_master_sfx_vol_set(SfxVolume);
 							S_StartSound(NULL, sfx_secmove);
 							return ga_nothing;
                         }
@@ -1145,7 +1145,7 @@ int M_MenuTicker(void) // 80007E0C
                         if (SfxVolume > 0)
                         {
 							SfxVolume -= 1;
-                            S_SetSoundVolume(SfxVolume);
+                            wess_master_sfx_vol_set(SfxVolume);
                             S_StartSound(NULL, sfx_secmove);
                             return ga_nothing;
                         }
@@ -1204,8 +1204,8 @@ int M_MenuTicker(void) // 80007E0C
                         SfxVolume = 100;
                         MusVolume = 100;
 
-                        S_SetMusicVolume(MusVolume);
-                        S_SetSoundVolume(SfxVolume);
+                        wess_master_mus_vol_set(MusVolume);
+                        wess_master_sfx_vol_set(SfxVolume);
 
                         return ga_nothing;
                     }

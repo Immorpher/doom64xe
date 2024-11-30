@@ -114,22 +114,12 @@ void S_Init(void) // 80029590
 	if (audioHeapEnd > AUDIO_HEAP_SIZE)
 		I_Error("S_Init: Audio heap overflow");
 
-	S_SetSoundVolume(SfxVolume);
-	S_SetMusicVolume(MusVolume);
+	wess_master_sfx_vol_set(SfxVolume);
+	wess_master_mus_vol_set(MusVolume);
 
 	//PRINTF_D(WHITE, "S_Init: End");
 
 	//while(1){}
-}
-
-void S_SetSoundVolume(char volume) // 800297A8
-{
-  wess_master_sfx_vol_set(volume);
-}
-
-void S_SetMusicVolume(char volume) // 800297F4
-{
-  wess_master_mus_vol_set(volume);
 }
 
 int music_sequence; // 8005b250
