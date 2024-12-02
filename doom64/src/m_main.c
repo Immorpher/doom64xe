@@ -97,7 +97,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT54 "Skill"
 #define M_TXT55 "Load Game"
 #define M_TXT56 "Blood Color:"
-#define M_TXT57 "Cross Color:"
+#define M_TXT57 "Colored HUD:"
 
 // [Immorpher] Additional options
 #define M_TXT58 "Video"
@@ -200,7 +200,7 @@ const menuitem_t Menu_Display[7] = // 8005AA5C
     { 34, 102, 80},    // Status Bar
 	{ 60, 102, 100},    // Map Stats
     { 56, 102, 120},    // Blood Color
-    { 57, 102, 140},    // Cross Color
+    { 57, 102, 140},    // Colored HUD
     { 13, 102, 160},    // Default Display
     {  6, 102, 180},    // Return
 };
@@ -313,9 +313,9 @@ boolean runintroduction = false; // [Immorpher] New introduction sequence!
 char TextureFilter = 0;
 char Autorun = 0;
 byte SavedConfig[16];
-boolean GreenBlood;
-boolean BlueCross; // Temporarily disabled will be replaced with palette swap
-boolean ShowStats;
+boolean GreenBlood = 0;
+boolean ColoredHUD = 0;
+boolean ShowStats = 1;
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -403,7 +403,7 @@ void M_EncodeConfig(void)
     SavedConfig[3] += (enable_statusbar & 0x1) << 2;
 	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5
     SavedConfig[3] += (GreenBlood & 0x1) << 6;// Temporarily disabled will be replaced with palette swap
-    SavedConfig[3] += (BlueCross & 0x1) << 7;
+    SavedConfig[3] += (ColoredHUD & 0x1) << 7;
 
     SavedConfig[4] = MusVolume & 0x7F; //0-127
     
@@ -511,7 +511,7 @@ void M_DecodeConfig()
     enable_statusbar = (SavedConfig[3] >> 2) & 0x1;
     ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
     GreenBlood = (SavedConfig[3] >> 6) & 0x1;
-    BlueCross = (SavedConfig[3] >> 7) & 0x1; // Temporarily disabled will be replaced with palette swap
+    ColoredHUD = (SavedConfig[3] >> 7) & 0x1;
 
     MusVolume = SavedConfig[4] & 0x7F;
 
@@ -1220,7 +1220,7 @@ int M_MenuTicker(void) // 80007E0C
                         enable_statusbar = true;
 
                         GreenBlood = 0;
-                        BlueCross = 0; // Temporarily disabled will be replaced with palette swap
+                        ColoredHUD = 0;
 						ShowStats = 0;
                         return ga_nothing;
                     }
@@ -1585,7 +1585,7 @@ int M_MenuTicker(void) // 80007E0C
                     if (truebuttons)
                     {
                         S_StartSound(NULL, sfx_switch2);
-                        BlueCross ^= true; // Temporarily disabled will be replaced with palette swap
+                        ColoredHUD ^= true; // Temporarily disabled will be replaced with palette swap
 						return ga_nothing;
                     }
                     break;
@@ -2257,9 +2257,9 @@ void M_DisplayDrawer(void) // 80009884
         {
             text = GreenBlood ? "Green" : "Red";
         }
-        else if (casepos == 57) // Medikit Color - Temporarily disabled will be replaced with palette swap
+        else if (casepos == 57) // Colored HUD
         {
-            text = BlueCross ? "Blue" : "Red";
+            text = ColoredHUD ? "On" : "Off";
         }
         else
         {

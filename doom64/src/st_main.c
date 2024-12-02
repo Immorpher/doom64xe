@@ -371,18 +371,45 @@ void ST_Drawer (void) // 80029DC0
             if (ammo < 0)
                 ammo = 0;
 
-            ST_DrawNumber(160, 215, ammo, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+			 // [Immorpher] colored hud
+			if (!ColoredHUD) { // skip the hud coloring
+				ST_DrawNumber(160, 215, ammo, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+			} else if (weaponinfo[weapon].ammo == am_clip) { // [Immorpher] clip ammo
+				ST_DrawNumber(160, 215, ammo, 0, 0x8080ab80);  // PACKRGBA(128,128,171,128)
+			} else if (weaponinfo[weapon].ammo == am_shell) { // [Immorpher] shell ammo
+				ST_DrawNumber(160, 215, ammo, 0, 0xc4204080); // PACKRGBA(196,32,64,128)
+			} else if (weaponinfo[weapon].ammo == am_cell) { // [Immorpher] cell ammo
+				ST_DrawNumber(160, 215, ammo, 0, 0x00c44080); // PACKRGBA(0,196,64,128)
+			} else { // [Immorpher] it must be rockets
+				ST_DrawNumber(160, 215, ammo, 0, 0xc4800080); // PACKRGBA(196,128,0,128)
+			}
         }
 
         /* */
         /* Health */
         /* */
+		
+		if (!ColoredHUD) { // skip the hud coloring
         ST_DrawNumber(49, 215, player->health, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+		} else if (player->health <= 64) { // [Immorpher] colored hud
+			ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(255-2*player->health,2*player->health,0,128)); // PACKRGBA(255 to 127,0 to 127,0,128)
+		} else if (player->health <= 127) { // [Immorpher] colored hud
+			ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(255-2*player->health,((3*player->health)>>1)+32,(player->health>>1)-32,128)); // PACKRGBA(127 to 1,128 to 222,0 to 63,128)
+		} else { // [Immorpher] colored hud
+			ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(0,478-2*player->health,(5*player->health-512)>>1,128)); // PACKRGBA(0, 128,64 to 244,222 to 78)
+		}
 
         /* */
         /* Armor */
         /* */
-        ST_DrawNumber(271, 215, player->armorpoints, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+		
+		if (!ColoredHUD || player->armorpoints == 0) { // [Immorpher] No armor
+			ST_DrawNumber(271, 215, player->armorpoints, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+		} else if (player->armortype == 1) { // [Immorpher] Green armor
+			ST_DrawNumber(271, 215, player->armorpoints, 0, 0x00c44080); // PACKRGBA(0,196,64,128)
+		} else { // [Immorpher] Blue armor
+			ST_DrawNumber(271, 215, player->armorpoints, 0, 0x0040ff80); // PACKRGBA(0,64,255,128)
+		}
     }
 
     #if SHOWFPS == 1

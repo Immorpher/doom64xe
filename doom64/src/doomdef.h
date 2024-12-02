@@ -869,7 +869,7 @@ extern boolean FeaturesUnlocked;    // 8005A7D0
 extern char TextureFilter;
 extern char Autorun;
 extern boolean GreenBlood;
-extern boolean BlueCross;
+extern boolean ColoredHUD;
 extern boolean ShowStats;
 extern boolean runintroduction; 	// [Immorpher] Introduction text
 
