@@ -265,7 +265,7 @@ typedef struct mobj_s
 
 	latecall_t		latecall;		/* set in p_base if more work needed */
 
-	int             tid;            /* [D64] tid value */
+	short             tid;            /* [D64] tid value */
 } mobj_t;
 
 /* each sector has a degenmobj_t in it's center for sound origin purposes */
@@ -504,9 +504,9 @@ typedef struct player_s
 	fixed_t		bob;					/* bounded/scaled total momentum */
 	fixed_t     recoilpitch;            /* [D64] new*/
 
-	int			health;					/* only used between levels, mo->health */
+	short			health;					/* only used between levels, mo->health */
 										/* is used during levels	 */
-	int			armorpoints, armortype;	/* armor type is 0-2 */
+	short			armorpoints, armortype;	/* armor type is 0-2 */
 
 	int			powers[NUMPOWERS];		/* invinc and invis are tic counters	 */
 	boolean		cards[NUMCARDS];
@@ -516,16 +516,16 @@ typedef struct player_s
 	weapontype_t	readyweapon;
 	weapontype_t	pendingweapon;		/* wp_nochange if not changing */
 	boolean		weaponowned[NUMWEAPONS];
-	int			ammo[NUMAMMO];
-	int			maxammo[NUMAMMO];
+	short			ammo[NUMAMMO];
+	short		maxammo[NUMAMMO];
 	int			attackdown, usedown;	/* true if button down last tic */
 	int			cheats;					/* bit flags */
 
 	int			refire;					/* refired shots are less accurate */
 
-	int			killcount, itemcount, secretcount;		/* for intermission */
+	unsigned short			killcount, itemcount, secretcount;		/* for intermission */
 	char		*message[NUMMESSAGES];				/* hint messages */
-	int         messagetic[NUMMESSAGES];             /* messages tic countdown*/
+	short        messagetic[NUMMESSAGES];             /* messages tic countdown*/
 	int			damagecount, bonuscount;/* for screen flashing */
 	int			bfgcount;               /* for bfg screen flashing */
 	mobj_t		*attacker;				/* who did damage (NULL for floors) */
@@ -545,13 +545,13 @@ typedef struct player_s
 
 typedef struct thingdata_s // [Immorpher] use this to store player data when the player needs to restart the level
 {
-	int			health;					/* only used between levels, mo->health */
-	int			armorpoints, armortype;	/* armor type is 0-2 */
+	short		health;					/* only used between levels, mo->health */
+	short			armorpoints, armortype;	/* armor type is 0-2 */
 	int         artifacts;              /* [d64]*/
 	boolean		backpack;
 	boolean		weaponowned[NUMWEAPONS];
-	int			ammo[NUMAMMO];
-	int			maxammo[NUMAMMO];
+	short			ammo[NUMAMMO];
+	short			maxammo[NUMAMMO];
 } thingdata_t;
 
 #define CF_NOCLIP       1       // no use
@@ -819,17 +819,17 @@ typedef void(*menufunc_t)(void);
 
 typedef struct
 {
-	int	casepos;
-	int x;
-	int y;
+	unsigned char	casepos;
+	short x;
+	short y;
 } menuitem_t;
 
 typedef struct
 {
 	const menuitem_t *menu_item;
-	int item_lines;
+	char item_lines;
 	menufunc_t menu_call;
-	int cursor_pos;
+	char cursor_pos;
 } menudata_t;
 
 extern menudata_t MenuData[8];      // 800A54F0
@@ -996,8 +996,8 @@ struct subsector_s *R_PointInSubsector (fixed_t x, fixed_t y) HOT;
 typedef struct
 {
 	char *	name;
-	int		MusicSeq;
-	int		MaxSubSectors; // Should not exceed MAXSUBSECTORS define, this improves rendering per map, good for void maps
+	short		MusicSeq;
+	short		MaxSubSectors; // Should not exceed MAXSUBSECTORS define, this improves rendering per map, good for void maps
 } mapinfo_t;
 
 extern mapinfo_t MapInfo[];
