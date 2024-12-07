@@ -298,7 +298,8 @@ int G_PlayDemoPtr (int skill, int map) // 800049D0
 {
 	int		exit;
 	int		config[13];
-	int     sensitivity;
+	unsigned char	sensitivity;
+	unsigned char	deadzone;
 
 	demobuffer = demo_p;
 
@@ -308,11 +309,13 @@ int G_PlayDemoPtr (int skill, int map) // 800049D0
 	/* set new key configuration */
 	D_memcpy(ActualConfiguration, demobuffer, sizeof(config));
 
-	/* copy analog m_sensitivity */
+	/* store player control settings */
 	sensitivity = M_SENSITIVITY;
+	deadzone = PlayDeadzone;
 
-	/* set new analog m_sensitivity */
+	/* set new analog m_sensitivity for demo compatibility */
 	M_SENSITIVITY = demobuffer[13] + 27;
+	PlayDeadzone = 10;
 
 	/* skip analog and key configuration */
 	demobuffer += 14;
@@ -327,8 +330,9 @@ int G_PlayDemoPtr (int skill, int map) // 800049D0
 	/* restore key configuration */
 	D_memcpy(ActualConfiguration, config, sizeof(config));
 
-	/* restore analog m_sensitivity */
+	/* restore player control settings */
 	M_SENSITIVITY = sensitivity;
+	PlayDeadzone = deadzone;
 
 	/* free all tags except the PU_STATIC tag */
 	Z_FreeTags(mainzone, ~PU_STATIC); // (PU_LEVEL | PU_LEVSPEC | PU_CACHE)

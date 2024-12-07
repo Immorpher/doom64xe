@@ -85,7 +85,6 @@ extern void LightGetRGB(int h,int s,int v,int *r,int *g,int *b); // 8000248C
 
 #define	FRACBITS		16
 #define	FRACUNIT		(1<<FRACBITS)
-#define PlayDeadzone    10 // Analog stick deadzone for the gameplay
 #define MenuDeadzone    20 // Analog stick deadzone for the menu
 
 typedef int fixed_t;
@@ -864,6 +863,7 @@ extern boolean enable_statusbar;    // 8005A7BC
 extern char SfxVolume;               // 8005A7C0
 extern char MusVolume;               // 8005A7C4
 extern char brightness;              // 8005A7C8
+extern char PlayDeadzone;              // new
 extern char M_SENSITIVITY;           // 8005A7CC
 extern boolean FeaturesUnlocked;    // 8005A7D0
 extern char TextureFilter;

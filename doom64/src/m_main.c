@@ -106,7 +106,8 @@ char *ControlText[] =   //8007517C
 #define M_TXT61 "Bonus Pak" // Bonus level hub
 #define M_TXT62 "Beta 64" // Antnee's Beta 64
 #define M_TXT63 "WARP TO FINAL"
-#define M_TXT64 "Credits"
+#define M_TXT64 "Credits" // Credits
+#define M_TXT65 "Deadzone:" // Analog stick deadzone
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -122,7 +123,8 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT45, M_TXT46, M_TXT47, M_TXT48, M_TXT49,
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
-	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64
+	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
+	M_TXT65
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -178,10 +180,11 @@ const menuitem_t Menu_Volume[4] = // 8005AA08
     {  6, 102, 160},    // Return
 };
 
-const menuitem_t Menu_ControlStick[3] = // 8005AA38
+const menuitem_t Menu_ControlStick[4] = // 8005AA38
 {
-    { 43, 102, 90 },    // Sensitivity
-    { 42, 102, 130},    // Default Sensitivity
+    { 43, 102, 70 },    // Sensitivity
+    { 65, 102, 110},    // Deadzone
+    { 42, 102, 130},    // Defaults
     {  6, 102, 150},    // Return
 };
 
@@ -307,7 +310,8 @@ boolean enable_statusbar = true;// 8005A7BC
 char SfxVolume = 100;             // 8005A7C0
 char MusVolume = 100;             // 8005A7C4
 char brightness = 60;             // 8005A7C8
-char M_SENSITIVITY = 27;          // 8005A7CC
+char PlayDeadzone = 10;			// Analog stick deadzone for the gameplay
+char M_SENSITIVITY = 27;          // Analog stick sensitivity
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
 char TextureFilter = 0;
@@ -394,22 +398,23 @@ int DefaultConfiguration[6][13] = // 8005A840
 
 void M_EncodeConfig(void)
 {
-    int i;
+    unsigned char i;
     int controlKey[13];
 
-	
-    SavedConfig[3] = FeaturesUnlocked & 0x1;
-    SavedConfig[3] += (enable_messages & 0x1) << 1;
-    SavedConfig[3] += (enable_statusbar & 0x1) << 2;
-	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5
-    SavedConfig[3] += (GreenBlood & 0x1) << 6;// Temporarily disabled will be replaced with palette swap
+
+	SavedConfig[3] += (PlayDeadzone>>1) & 0x7; //0-7
+	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5 - is this needed?
+    SavedConfig[3] += (GreenBlood & 0x1) << 6;
     SavedConfig[3] += (ColoredHUD & 0x1) << 7;
 
     SavedConfig[4] = MusVolume & 0x7F; //0-127
+    SavedConfig[4] += (FeaturesUnlocked & 0x1) << 7;
     
     SavedConfig[5] = SfxVolume & 0x7F; //0-127
+    SavedConfig[5] += (enable_messages & 0x1) << 7;
 
     SavedConfig[6] = (brightness) & 0x7F; //0-127
+    SavedConfig[6] += (enable_statusbar & 0x1) << 7;
 
     SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-127
 	SavedConfig[7] += (ShowStats & 0x1) << 7;
@@ -496,28 +501,29 @@ void M_EncodeConfig(void)
     SavedConfig[14] += (TextureFilter & 0x3) << 4; //0-2
     SavedConfig[14] += (Autorun & 0x3) << 6; //0-2
     
-    SavedConfig[15] = 0xCE; //valid save id
+    SavedConfig[15] = 0xDE; //valid save id
 }
 
 void M_DecodeConfig()
 {
-    int i;
+    unsigned char i;
     int controlKey[13];
 
-    if (SavedConfig[15] != 0xCE) return;
+    if (SavedConfig[15] != 0xDE) return;
 	
-    FeaturesUnlocked = SavedConfig[3] & 0x1;
-    enable_messages = (SavedConfig[3] >> 1) & 0x1;
-    enable_statusbar = (SavedConfig[3] >> 2) & 0x1;
+    PlayDeadzone = (SavedConfig[3] & 0x7)<<1;
     ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
     GreenBlood = (SavedConfig[3] >> 6) & 0x1;
     ColoredHUD = (SavedConfig[3] >> 7) & 0x1;
 
     MusVolume = SavedConfig[4] & 0x7F;
+    FeaturesUnlocked = (SavedConfig[4] >> 7) & 0x1;
 
     SfxVolume = SavedConfig[5] & 0x7F;
+    enable_messages = (SavedConfig[5] >> 7) & 0x1;
 
     brightness = SavedConfig[6] & 0x7F;
+    enable_statusbar = (SavedConfig[6] >> 7) & 0x1;
 
     M_SENSITIVITY = SavedConfig[7] & 0x7F;
 	ShowStats = (SavedConfig[7] >> 7) & 0x1;
@@ -900,7 +906,7 @@ int M_MenuTicker(void) // 80007E0C
     int exit;
     int truebuttons;
     int ret;
-    int i;
+    unsigned char i;
     mobj_t *m;
 
     /* animate skull */
@@ -1675,7 +1681,7 @@ int M_MenuTicker(void) // 80007E0C
                         M_SaveMenuData();
 
                         MenuItem = Menu_ControlStick;
-                        itemlines = 3;
+                        itemlines = 4;
                         MenuCall = M_ControlStickDrawer;
                         cursorpos = 0;
 
@@ -1948,6 +1954,27 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 					
+				case 65: // Deadzone
+                    if ((buttons ^ oldbuttons) && (buttons & PAD_RIGHT))
+                    {
+                        if (PlayDeadzone < 14)
+						{
+							PlayDeadzone += 2;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+                        }
+                    }
+                    else if ((buttons ^ oldbuttons) && (buttons & PAD_LEFT))
+                    {
+                       if (PlayDeadzone > 0)
+						{
+							PlayDeadzone -= 2;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+                        }
+                    }
+                    break;
+					
                 }
             exit = ga_nothing;
         }
@@ -1964,7 +1991,7 @@ void M_MenuClearCall(void) // 80008E6C
 void M_MenuTitleDrawer(void) // 80008E7C
 {
     const menuitem_t *item;
-    int i;
+    unsigned char i;
 
     if (MenuItem == Menu_Game || MenuItem == Menu_GameNoSave)
     {
@@ -2018,7 +2045,7 @@ void M_FeaturesDrawer(void) // 800091C0
 {
     char *text, textbuff[32];
     const menuitem_t *item;
-    int i;
+    unsigned char i;
 
     ST_DrawString(-1, 20, "Features", text_alpha | 0xff000000);
     item = MenuItem;
@@ -2135,7 +2162,7 @@ void M_FeaturesDrawer(void) // 800091C0
 void M_VolumeDrawer(void) // 800095B4
 {
     const menuitem_t *item;
-    int i;
+    unsigned char i;
 
     ST_DrawString(-1, 20, "Volume", text_alpha | 0xff000000);
     item = Menu_Volume;
@@ -2158,7 +2185,7 @@ void M_VolumeDrawer(void) // 800095B4
 void M_ControlStickDrawer(void) // 80009738
 {
     const menuitem_t *item;
-    int i;
+    unsigned char i, casepos;
 
     ST_DrawString(-1, 20, "Control Stick", text_alpha | 0xff000000);
 
@@ -2166,21 +2193,26 @@ void M_ControlStickDrawer(void) // 80009738
 
     for(i = 0; i < itemlines; i++)
     {
+		casepos = item->casepos;
+		if (casepos == 65) { // Deadzone
+            ST_DrawNumber(item->x + 140, item->y, PlayDeadzone>>1, 0, text_alpha | 0xff000000);
+        }
+		
         ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }
 
     ST_DrawSymbol(MenuItem->x - 37, MenuItem[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
-    ST_DrawSymbol(102,110,68,text_alpha | 0xffffff00);
-    ST_DrawSymbol(((101*M_SENSITIVITY)>>7) + 103, 110, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(102,90,68,text_alpha | 0xffffff00);
+    ST_DrawSymbol(((101*M_SENSITIVITY)>>7) + 103, 90, 69, text_alpha | 0xffffff00);
 }
 
 void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 {
     char *text;
     const menuitem_t *item;
-    int i, casepos;
+    unsigned char i, casepos;
 
     ST_DrawString(-1, 20, "Video", text_alpha | 0xff000000);
 
@@ -2231,7 +2263,7 @@ void M_DisplayDrawer(void) // 80009884
 {
     char *text;
     const menuitem_t *item;
-    int i, casepos;
+    unsigned char i, casepos;
 
     ST_DrawString(-1, 20, "Display", text_alpha | 0xff000000);
 
@@ -2503,7 +2535,7 @@ int M_ScreenTicker(void) // 8000A0F8
 void M_ControllerPakDrawer(void) // 8000A3E4
 {
     byte idx;
-    int i,j;
+    unsigned char i,j;
     OSPfsState *fState;
     char buffer [32];
     char *tmpbuf;
@@ -2579,7 +2611,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
 
 void M_SavePakStart(void) // 8000A6E8
 {
-    int i;
+    unsigned char i;
     int ret;
     int size;
 
@@ -2743,7 +2775,7 @@ int M_SavePakTicker(void) // 8000A804
 
 void M_SavePakDrawer(void) // 8000AB44
 {
-    int i;
+    unsigned char i;
     char buffer[36];
     byte savedata[16];
     int leveltxt, skilltxt;
@@ -2776,7 +2808,7 @@ void M_SavePakDrawer(void) // 8000AB44
     {
         for(i = linepos; i < (linepos + 6); i++)
         {
-            if (Pak_Data[(i * 32) + 15] != 0xCE)  {
+            if (Pak_Data[(i * 32) + 15] != 0xDE)  {
                 D_memmove(buffer, "empty");
             }
             else {
@@ -2828,7 +2860,7 @@ void M_SavePakDrawer(void) // 8000AB44
 
 void M_LoadPakStart(void) // 8000AEEC
 {
-    int i;
+    unsigned char i;
     int size;
 
     cursorpos = 0;
@@ -2934,7 +2966,7 @@ int M_LoadPakTicker(void) // 8000AFE4
     if (!(buttons ^ oldbuttons) || !(buttons & PAD_START))
     {
         if (!(buttons ^ oldbuttons) || buttons != PAD_A ||
-            (Pak_Data[(cursorpos * 32) + 16] == 0xCE))
+            (Pak_Data[(cursorpos * 32) + 16] == 0xDE))
         {
             exit = ga_nothing;
         }
@@ -2974,7 +3006,7 @@ int M_LoadPakTicker(void) // 8000AFE4
 
 void M_LoadPakDrawer(void) // 8000B270
 {
-    int i;
+    unsigned char i;
     char buffer[32];
     byte savedata[16];
     int leveltxt, skilltxt;
@@ -2986,7 +3018,7 @@ void M_LoadPakDrawer(void) // 8000B270
         if (FilesUsed == -1) {
             D_memmove(buffer, "-");
         }
-        else if (Pak_Data[(i * 32) + 15] != 0xCE) {
+        else if (Pak_Data[(i * 32) + 15] != 0xDE) {
             D_memmove(buffer, "no save");
         }
         else {
@@ -3095,7 +3127,7 @@ int M_ControlPadTicker(void) // 8000B694
     unsigned int buttons;
     unsigned int oldbuttons;
     int exit;
-    int i = 0;
+    unsigned char i = 0;
 
     if ((gamevbls < gametic) && ((gametic & 3U) == 0)) {
         MenuAnimationTic = (MenuAnimationTic + 1) & 7;
@@ -3222,7 +3254,7 @@ int M_ControlPadTicker(void) // 8000B694
 
 void M_ControlPadDrawer(void) // 8000B988
 {
-    int i, lpos;
+    unsigned char i, lpos;
     char **text;
     char buffer [44];
 
