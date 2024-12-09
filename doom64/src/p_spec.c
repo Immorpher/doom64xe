@@ -838,8 +838,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {
             if(!player->cards[it_bluecard] && !player->cards[it_blueskull])
             {
-                player->message[MSG_LOW] = "You need a blue key.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message[MSG_NEW] = "You need a blue key.";
+                player->messagetic[MSG_NEW] = MSGTICS;
+				player->messagecolor[MSG_NEW] = 0x2080FF00;
                 S_StartSound(thing, sfx_oof);
 
                 if (player == &players[0])
@@ -853,8 +854,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {
             if(!player->cards[it_yellowcard] && !player->cards[it_yellowskull])
             {
-                player->message[MSG_LOW] = "You need a yellow key.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message[MSG_NEW] = "You need a yellow key.";
+                player->messagetic[MSG_NEW] = MSGTICS;
+				player->messagecolor[MSG_NEW] = 0xFFFF0000;
                 S_StartSound(thing, sfx_oof);
 
                 if (player == &players[0])
@@ -868,8 +870,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {
             if(!player->cards[it_redcard] && !player->cards[it_redskull])
             {
-                player->message[MSG_LOW] = "You need a red key.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message[MSG_NEW] = "You need a red key.";
+                player->messagetic[MSG_NEW] = MSGTICS;
+				player->messagecolor[MSG_NEW] = 0xFF402000;
                 S_StartSound(thing, sfx_oof);   // ?? line missing on Doom64
 
                 if (player == &players[0])
@@ -888,8 +891,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
         {   
             if (!(player->artifacts & (1 << ((actionType + 6) & 0x1f))))
             {
-                player->message[MSG_LOW] = "You lack the ability to activate it.";
-                player->messagetic[MSG_LOW] = MSGTICS;
+                player->message[MSG_NEW] = "You lack the ability to activate it.";
+                player->messagetic[MSG_NEW] = MSGTICS;
+				player->messagecolor[MSG_NEW] = 0xFF004000;
                 S_StartSound(thing, sfx_oof);
 
                 return false;
@@ -1058,8 +1062,9 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
 			ok = EV_DoCeiling(line, silentCrushAndRaise, CEILSPEED*2);
 			break;
 		case 164: // [Immorpher] custom linedef for hub level name display
-			player->message[MSG_LOW] = MapInfo[line->tag].name;
-			player->messagetic[MSG_LOW] = MSGTICS;
+			player->message[MSG_NEW] = MapInfo[line->tag].name;
+			player->messagetic[MSG_NEW] = MSGTICS;
+			player->messagecolor[MSG_NEW] = 0xFFFFFF00;
 			break;
         case 200:       /* Set Lookat Camera */
             ok = P_SetAimCamera(line, true);

@@ -220,7 +220,7 @@ void AM_Control (player_t *player) // 800004F4
 
 void AM_Drawer (void) // 800009AC
 {
-	int			i;
+	short			i;
 	player_t	*p;
 	mobj_t		*mo;
 	mobj_t		*next;
@@ -237,8 +237,9 @@ void AM_Drawer (void) // 800009AC
     boolean     linemode;
 
 	boolean     msgticking = false;
-	int         msgpos;
-	int         j;
+	short         msgpos;
+	short         j;
+	short		ms_alpha;// message transparency
 
 	char        kills[20];
 	char        items[20];
@@ -459,12 +460,27 @@ void AM_Drawer (void) // 800009AC
     if (enable_messages)
     {
         msgpos = 20;
-        for (i = 0; i < NUMMESSAGES; i++)
+		if (p->messagetic[MSG_NEW] != p->messagetic[MSG_HIGH]) // [Immorpher] new global tic indicates new message to add
+		{	// Sequentially shift messages to lower states
+			for (i = MSG_LOW; i > 0; i--)
+			{
+				p->message[i] = p->message[i-1];
+				p->messagetic[i] = p->messagetic[i-1];
+				p->messagecolor[i] = p->messagecolor[i-1];
+			}
+		
+		}
+		
+        for (i = MSG_HIGH; i < NUMMESSAGES; i++) // only draw active messages
         {
-            if (p->messagetic[i] > 0)
+            ms_alpha = p->messagetic[i] << 3;
+            if (ms_alpha > 0)
             {
-                ST_Message(20, msgpos, p->message[i], 128 | messagecolors[i]);
-                msgpos += 10;
+                if (ms_alpha >= 128)
+                    ms_alpha = 128;
+                
+                ST_Message(20, msgpos, p->message[i], ms_alpha | p->messagecolor[i]); // select color bits in message style
+                msgpos += 10; // select line number in message style
                 for (j = 0; p->message[i][j] != '\0'; ++j)
                 {
                     if (p->message[i][j] == '\n') msgpos += 10;

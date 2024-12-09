@@ -263,12 +263,12 @@ int ArtifactLookupTable[8] = {0, 1, 1, 2, 1, 2, 2, 3}; // 8005AD60
 void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 {
 	player_t	*player;
-	int			i;
+	short			i;
 	fixed_t		delta;
 	int			sound;
 	char        *message;
 	int         artflag;
-	int         messagelevel = MSG_LOW;
+	int         messagecolor = 0xFFFFFF00; // message color defaults to white
 
 	delta = special->z - toucher->z;
 	if (delta > toucher->height || delta < -8*FRACUNIT)
@@ -280,6 +280,11 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 		return;						/* can happen with a sliding player corpse */
 
     message = NULL;
+
+	if (special->flags & MF_COUNTSECRET) // color secret pickups
+	{
+		messagecolor = 0x00FF4000;
+	}
 
 	switch (special->type)
 	{
@@ -457,33 +462,45 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
     /* leave cards for everyone */
     /* */
 	case MT_ITEM_BLUECARDKEY:
-		if (!player->cards[it_bluecard])
+		if (!player->cards[it_bluecard]) {
 			message = "You pick up a blue keycard.";
+			messagecolor = 0x2080FF00;
+		}
 		P_GiveCard(player, it_bluecard);
 		break;
     case MT_ITEM_REDCARDKEY:
-		if (!player->cards[it_redcard])
+		if (!player->cards[it_redcard]) {
 			message = "You pick up a red keycard.";
+			messagecolor = 0xFF402000;
+		}
 		P_GiveCard(player, it_redcard);
 		break;
 	case MT_ITEM_YELLOWCARDKEY:
-		if (!player->cards[it_yellowcard])
+		if (!player->cards[it_yellowcard]) {
 			message = "You pick up a yellow keycard.";
+			messagecolor = 0xFFFF0000;
+		}
 		P_GiveCard(player, it_yellowcard);
 		break;
 	case MT_ITEM_BLUESKULLKEY:
-		if (!player->cards[it_blueskull])
+		if (!player->cards[it_blueskull]) {
 			message = "You pick up a blue skull key.";
+			messagecolor = 0x2080FF00;
+		}
 		P_GiveCard(player, it_blueskull);
 		break;
     case MT_ITEM_REDSKULLKEY:
-		if (!player->cards[it_redskull])
+		if (!player->cards[it_redskull]) {
 			message = "You pick up a red skull key.";
+			messagecolor = 0xFF402000;
+		}
 		P_GiveCard(player, it_redskull);
 		break;
 	case MT_ITEM_YELLOWSKULLKEY:
-		if (!player->cards[it_yellowskull])
+		if (!player->cards[it_yellowskull]) {
 			message = "You pick up a yellow skull key.";
+			messagecolor = 0xFFFF0000;
+		}
 		P_GiveCard(player, it_yellowskull);
 		break;
 
@@ -561,8 +578,8 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
             message = "Whatever it is, it doesn't\nbelong in this world...";
         else /* ART_DOUBLE */
             message = "It must do something...";
-	
-        messagelevel = MSG_HIGH;
+
+		messagecolor = 0xFF20FF00;
         sound = sfx_powerup;
 		break;
 
@@ -578,16 +595,11 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 		break;
 	}
 
-	if (special->flags & MF_COUNTSECRET)
-	{
-        player->message[MSG_MID] = "You found a secret item!";
-        player->messagetic[MSG_MID] = MSGTICS;
-	}
-
-    if (message)
+    if (message) // If message preset set it to display
     {
-        player->message[messagelevel] = message;
-        player->messagetic[messagelevel] = MSGTICS;
+        player->message[MSG_NEW] = message;
+        player->messagetic[MSG_NEW] = MSGTICS;
+		player->messagecolor[MSG_NEW] = messagecolor;
     }
 
 	if (special->flags & MF_COUNTITEM)

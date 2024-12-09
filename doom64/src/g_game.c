@@ -80,7 +80,6 @@ void G_PlayerFinishLevel (int player) // 80004598
 	bzero(p->powers, sizeof (p->powers));
     bzero(p->cards, sizeof (p->cards));
 	p->mo->flags &= ~MF_SHADOW; /* cancel invisibility  */
-	p->extralight = 0;                      /* cancel gun flashes  */
 	p->damagecount = 0;                     /* no palette changes  */
 	p->bonuscount = 0;
     p->bfgcount = 0;

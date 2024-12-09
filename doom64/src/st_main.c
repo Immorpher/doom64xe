@@ -24,7 +24,7 @@ typedef struct
     int      h;
 } symboldata_t;
 
-static const symboldata_t symboldata[] = // 8005B260
+static const symboldata_t symboldata[] = // Data for all of the symbol locations and sizes
 {
     {120, 14,  13, 13}, // 0
     {134, 14,   9, 13}, // 1
@@ -126,13 +126,6 @@ static const symboldata_t symboldata[] = // 8005B260
     //{134, 96,   7, 13}, // Right arrow Missing On Doom 64
 };
 
-int messagecolors[NUMMESSAGES] =
-{
-    0xff000000,
-    0xffff0000,
-    0xffffff00
-};
-
 const int card_x[6] = {(78 << 2), (89 << 2), (100 << 2), (78 << 2), (89 << 2), (100 << 2)};      // 8005b870
 
 void ST_Init(void) // 80029BA0
@@ -182,7 +175,9 @@ void ST_Ticker (void) // 80029C88
     /* */
 	/* Countdown time for the message */
 	/* */
-    for (i = 0; i < NUMMESSAGES; i++) player->messagetic[i]--;
+	if (player->messagetic[MSG_NEW] > -1) { // Prevent tics from going too far negative, theoretically the first one is always the highest
+		for (i = 0; i < NUMMESSAGES; i++) player->messagetic[i]--;
+	}
 
 	/* */
 	/* Tried to open a CARD or SKULL door? */
@@ -241,9 +236,10 @@ void ST_Drawer (void) // 80029DC0
     byte        *src;
     player_t    *player;
     weapontype_t weapon;
-	int ammo, ind, ms_alpha;
+	int ammo, ind;
+	short ms_alpha;
     int i, j;
-    int pos;
+    unsigned char pos;
 
     player = &players[0];
 
@@ -253,7 +249,19 @@ void ST_Drawer (void) // 80029DC0
     if (enable_messages)
     {
         pos = 20;
-        for (i = 0; i < NUMMESSAGES; i++)
+
+		if (players[0].messagetic[MSG_NEW] != players[0].messagetic[MSG_HIGH]) // [Immorpher] new global tic indicates new message to add
+		{	// Sequentially shift messages to lower states
+			for (i = MSG_LOW; i > 0; i--)
+			{
+				players[0].message[i] = players[0].message[i-1];
+				players[0].messagetic[i] = players[0].messagetic[i-1];
+				players[0].messagecolor[i] = players[0].messagecolor[i-1];
+			}
+		
+		}
+		
+        for (i = MSG_HIGH; i < NUMMESSAGES; i++) // only draw active messages
         {
             ms_alpha = players[0].messagetic[i] << 3;
             if (ms_alpha > 0)
@@ -261,8 +269,8 @@ void ST_Drawer (void) // 80029DC0
                 if (ms_alpha >= 128)
                     ms_alpha = 128;
                 
-                ST_Message(20, pos, players[0].message[i], ms_alpha | messagecolors[i]);
-                pos += 10;
+                ST_Message(20, pos, players[0].message[i], ms_alpha | players[0].messagecolor[i]); // select color bits in message style
+                pos += 10; // select line number in message style
                 for (j = 0; players[0].message[i][j] != '\0'; ++j)
                 {
                     if (players[0].message[i][j] == '\n') pos += 10;

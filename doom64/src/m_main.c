@@ -413,7 +413,7 @@ void M_EncodeConfig(void)
     SavedConfig[5] = SfxVolume & 0x7F; //0-127
     SavedConfig[5] += (enable_messages & 0x1) << 7;
 
-    SavedConfig[6] = (brightness) & 0x7F; //0-127
+    SavedConfig[6] = brightness & 0x7F; //0-127
     SavedConfig[6] += (enable_statusbar & 0x1) << 7;
 
     SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-127

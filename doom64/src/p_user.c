@@ -382,8 +382,7 @@ void P_BuildMove (player_t *player) // 80022154
         else
         {
             /* Analyze analog stick movement (left / right) */
-            sensitivity = (int)(((buttons & 0xff00) >> 8) << 24) >> 24;
-            sensitivity = -sensitivity;
+            sensitivity = -(int)(((buttons & 0xff00) >> 8) << 24) >> 24;
 
             if(sensitivity >= PlayDeadzone || sensitivity <= -PlayDeadzone)
             {
@@ -584,8 +583,9 @@ void P_DeathThink (player_t *player) // 80022914
 	/* mocking text */
     if ((ticon - deathmocktics) > MAXMOCKTIME)
     {
-        player->messagetic[MSG_LOW] = MSGTICS;
-        player->message[MSG_LOW] = mockstrings[P_Random() % 12];
+        player->messagetic[MSG_NEW] = MSGTICS;
+        player->message[MSG_NEW] = mockstrings[P_Random() % 12];
+		player->messagecolor[MSG_NEW] = 0xFF000000;
         deathmocktics = ticon;
     }
 
@@ -631,8 +631,11 @@ void P_PlayerInSpecialSector (player_t *player, sector_t *sec) // 80022B1C
     if(sec->flags & MS_SECRET)
     {
         player->secretcount++;
-        player->message[MSG_MID] = "You found a secret area!";
-        player->messagetic[MSG_MID] = MSGTICS;
+		if (player->messagetic[MSG_NEW] != MSGTICS) { // Don't overwrite existing messages if on the same frame
+			player->message[MSG_NEW] = "You found a secret area!";
+			player->messagetic[MSG_NEW] = MSGTICS;
+		}
+		player->messagecolor[MSG_NEW] = 0x00FF4000; // Indicate that a secret was found with color
         sec->flags &= ~MS_SECRET;
     }
 
@@ -810,8 +813,9 @@ void P_PlayerThink (player_t *player) // 80022D60
 			if (!demoplayback && Autorun == 2 && player->speeddown == false)
 			{
 				player->speedtoggle = !player->speedtoggle;
-				player->message[MSG_LOW] = player->speedtoggle ? "Autorun: ON" : "Autorun: OFF";
-				player->messagetic[MSG_LOW] = MSGTICS;
+				player->message[MSG_NEW] = player->speedtoggle ? "Autorun: ON" : "Autorun: OFF";
+				player->messagetic[MSG_NEW] = MSGTICS;
+				player->messagecolor[MSG_NEW] = 0xFFFFFF00;
 				player->speeddown = true;
 			}
 		}

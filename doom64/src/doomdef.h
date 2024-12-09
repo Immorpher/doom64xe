@@ -473,13 +473,13 @@ typedef enum
 
 enum MSG_LEVELS
 {
-	MSG_HIGH,
-	MSG_MID,
-	MSG_LOW,
-	NUMMESSAGES
+	MSG_NEW, // latest message
+	MSG_HIGH, // top displayed message
+	MSG_MID, // middle displayed message
+	MSG_LOW, // bottom displayed message
+	NUMMESSAGES // message maximum (3 on screen at once)
 };
 
-extern int messagecolors[NUMMESSAGES];
 
 /*
 ================
@@ -525,10 +525,10 @@ typedef struct player_s
 	unsigned short			killcount, itemcount, secretcount;		/* for intermission */
 	char		*message[NUMMESSAGES];				/* hint messages */
 	short        messagetic[NUMMESSAGES];             /* messages tic countdown*/
-	int			damagecount, bonuscount;/* for screen flashing */
-	int			bfgcount;               /* for bfg screen flashing */
+	int			 messagecolor[NUMMESSAGES];				/* message color info (0xFFFFFF00 color) */
+	short			damagecount, bonuscount;/* for screen flashing */
+	short			bfgcount;               /* for bfg screen flashing */
 	mobj_t		*attacker;				/* who did damage (NULL for floors) */
-	int			extralight;				/* so gun flashes light up areas */
 	pspdef_t	psprites[NUMPSPRITES];	/* view sprites (gun, etc) */
 
 	void		*lastsoundsector;		/* don't flood noise every time */
