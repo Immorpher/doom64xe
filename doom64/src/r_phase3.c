@@ -41,10 +41,22 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     fixed_t yoffset;
     int numverts;
     int i;
+	short extralight = 0; // hold the sector light level and thunder flashes if present
 
     I_CheckGFX();
+	
+	// Flash sky exposed sectors when there is lightning
+	if (LightningFlash != 0 && frontsector->ceilingpic == -1) {
+		extralight = frontsector->lightlevel + (LightningFlash>>1);
+		if (extralight > 255)
+			extralight = 255; // dont exceed brightness
+	} else {
+		extralight = frontsector->lightlevel;
+	}
 
-    gDPSetPrimColor(GFX1++, 0, frontsector->lightlevel, 0, 0, 0, 255);
+
+	gDPSetPrimColor(GFX1++, 0, extralight, 0, 0, 0, 255);
+
 
     numverts = sub->numverts;
 
@@ -828,6 +840,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
     int zpos1, zpos2;
     int spos, tpos;
     int v00, v01, v02, v03;
+	short extralight = 0; // hold the sector light level and thunder flashes if present
 
     vissprite_p = sub->vissprite;
     if (vissprite_p)
@@ -883,8 +896,17 @@ void R_RenderThings(subsector_t *sub) // 80028248
             {
                 color = lights[vissprite_p->sector->colors[2]].rgba;
             }
+			
+			// Flash sky exposed SPRITES when there is lightning
+			if (LightningFlash != 0 && vissprite_p->sector->ceilingpic == -1) {
+				extralight = vissprite_p->sector->lightlevel + (LightningFlash>>1);
+				if (extralight > 255)
+					extralight = 255; // dont exceed brightness
+			} else {
+				extralight = vissprite_p->sector->lightlevel;
+			}
 
-            gDPSetPrimColorD64(GFX1++, 0, vissprite_p->sector->lightlevel, thing->alpha);
+            gDPSetPrimColorD64(GFX1++, 0, extralight, thing->alpha);
             
             data = W_CacheLumpNum(lump, PU_CACHE);
 
@@ -1150,6 +1172,7 @@ void R_RenderPSprites(void) // 80028f20
 	int             width2;
 	int             yh;
 	int             x, y;
+	short extralight = 0; // hold the sector light level and thunder flashes if present
 
 	I_CheckGFX();
 
@@ -1206,7 +1229,17 @@ void R_RenderPSprites(void) // 80028f20
 			}
 			else
 			{
-			    gDPSetPrimColorD64(GFX1, 0, frontsector->lightlevel,
+				
+				// Flash sky exposed player when there is lightning
+				if (LightningFlash != 0 && frontsector->ceilingpic == -1) {
+					extralight = frontsector->lightlevel + (LightningFlash>>1);
+					if (extralight > 255)
+						extralight = 255; // dont exceed brightness
+				} else {
+					extralight = frontsector->lightlevel;
+				}
+				
+			    gDPSetPrimColorD64(GFX1, 0, extralight,
                           lights[frontsector->colors[2]].rgba & ~255); // remove alpha value
 			}
 

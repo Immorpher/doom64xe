@@ -872,6 +872,7 @@ extern boolean GreenBlood;
 extern boolean ColoredHUD;
 extern boolean ShowStats;
 extern boolean runintroduction; 	// [Immorpher] Introduction text
+extern short LightningFlash;			// [Immorpher] Lightning flash value
 
 int M_RunTitle(void); // 80007630
 

@@ -813,6 +813,7 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 	mobjhead.next = mobjhead.prev = &mobjhead;
 
 	spawncount = 0;
+	LightningFlash = 0; // Reset any flashes from previous levels
 
 	if (skill == sk_nightmare)
 	{

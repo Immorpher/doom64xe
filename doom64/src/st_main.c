@@ -773,7 +773,7 @@ void ST_UpdateFlash(void) // 8002AC30
                 FlashEnvColor = PACKRGBA(bzc, 0, 0, 255);
             }
         }
-        /* suit flash (green/yellow) */
+        /* suit flash (green) */
         else if(plyr->powers[pw_ironfeet] >= 61 || plyr->powers[pw_ironfeet] & 8)
         {
             FlashEnvColor = 0x002004ff;  // PACKRGBA(0, 32, 4, 255)

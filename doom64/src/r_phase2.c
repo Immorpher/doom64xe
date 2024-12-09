@@ -78,6 +78,7 @@ int         SkyPicMount;        // 800A8168
 int         SkyCloudColor;      // 800A816C
 int         SkyVoidColor;       // 800A8170
 int         SkyFlags;           // 800A8174
+short		LightningFlash; // new lighting flash to brighten sectors
 
 void R_RenderSpaceSky(void) HOT;
 void R_RenderCloudSky(void) HOT;
@@ -722,22 +723,21 @@ void R_CloudThunder(void) // 80026418
                 rand = (M_Random() & 7);
                 ThunderCounter = (((rand << 4) - rand) << 2) + 60;
                 LightningCounter = 0;
+				LightningFlash = 0; // reset flash
                 return;
             }
 
             if ((LightningCounter & 1) == 0)
             {
-                *(int*)SkyCloudVertex[0].v.cn += PACKRGBA(17,17,17,0); // 0x11111100;
-                *(int*)SkyCloudVertex[1].v.cn += PACKRGBA(17,17,17,0); // 0x11111100;
-                *(int*)SkyCloudVertex[2].v.cn += PACKRGBA(17,17,17,0); // 0x11111100;
-                *(int*)SkyCloudVertex[3].v.cn += PACKRGBA(17,17,17,0); // 0x11111100;
+				LightningFlash += 30; // get brighter
+                *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(LightningFlash,LightningFlash,LightningFlash,0);
+                *(int*)SkyCloudVertex[1].v.cn = *(int*)SkyCloudVertex[0].v.cn;
             }
             else
             {
-                *(int*)SkyCloudVertex[0].v.cn -= PACKRGBA(17,17,17,0); // 0x11111100;
-                *(int*)SkyCloudVertex[1].v.cn -= PACKRGBA(17,17,17,0); // 0x11111100;
-                *(int*)SkyCloudVertex[2].v.cn -= PACKRGBA(17,17,17,0); // 0x11111100;
-                *(int*)SkyCloudVertex[3].v.cn -= PACKRGBA(17,17,17,0); // 0x11111100;
+				LightningFlash -= 30; // get darker
+                *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(LightningFlash,LightningFlash,LightningFlash,0);
+                *(int*)SkyCloudVertex[1].v.cn = *(int*)SkyCloudVertex[0].v.cn;
             }
 
             ThunderCounter = (M_Random() & 7) + 1; // Do short delay loops for lightning flickers

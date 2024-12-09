@@ -2195,7 +2195,7 @@ void M_ControlStickDrawer(void) // 80009738
     {
 		casepos = item->casepos;
 		if (casepos == 65) { // Deadzone
-            ST_DrawNumber(item->x + 140, item->y, PlayDeadzone>>1, 0, text_alpha | 0xff000000);
+            ST_DrawNumber(item->x + 110, item->y, PlayDeadzone>>1, 0, text_alpha | 0xff000000);
         }
 		
         ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
