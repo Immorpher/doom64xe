@@ -865,7 +865,8 @@ extern char MusVolume;               // 8005A7C4
 extern char brightness;              // 8005A7C8
 extern char PlayDeadzone;              // Controller deadzone adjustment
 extern char M_SENSITIVITY;           // 8005A7CC
-extern int MotionBob;				// Video motion bob - 16 pixels of bob is 0x100000
+extern int MotionBob;				// Video motion bob level - 16 pixels of bob is 0x100000
+extern char FlashLevel;				// Flash reduction parameter
 extern boolean FeaturesUnlocked;    // 8005A7D0
 extern char TextureFilter;
 extern char Autorun;

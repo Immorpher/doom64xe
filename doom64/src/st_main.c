@@ -729,9 +729,9 @@ void ST_UpdateFlash(void) // 8002AC30
     }
 
     /* invulnerability flash (white) */
-	if (plyr->powers[pw_invulnerability] >= 61 || plyr->powers[pw_invulnerability] & 8)
+	if (plyr->powers[pw_invulnerability] > 61>>FlashLevel || plyr->powers[pw_invulnerability] & 8)
 	{
-		FlashEnvColor = 0x808080ff; //PACKRGBA(128, 128, 128, 255)
+		FlashEnvColor = 0x203040ff; // Old PACKRGBA(128, 128, 128, 255)
 	}
 	/* bfg flash (green)*/
 	else if(plyr->bfgcount)
@@ -774,7 +774,7 @@ void ST_UpdateFlash(void) // 8002AC30
             }
         }
         /* suit flash (green) */
-        else if(plyr->powers[pw_ironfeet] >= 61 || plyr->powers[pw_ironfeet] & 8)
+        else if(plyr->powers[pw_ironfeet] > 61>>FlashLevel || plyr->powers[pw_ironfeet] & 8)
         {
             FlashEnvColor = 0x002004ff;  // PACKRGBA(0, 32, 4, 255)
         }
@@ -788,7 +788,7 @@ void ST_UpdateFlash(void) // 8002AC30
 
             bnc = ((cnt << 2) + cnt) << 1;
 
-            FlashEnvColor = PACKRGBA(bnc, bnc, cnt, 255);
+            FlashEnvColor = PACKRGBA(bnc>>FlashLevel, bnc>>FlashLevel, cnt>>FlashLevel, 255);
         }
         else
         {

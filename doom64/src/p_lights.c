@@ -76,9 +76,9 @@ void T_Glow(glow_t *g) // 80015820
 	{
 		case -1:		/* DOWN */
 			g->sector->lightlevel -= GLOWSPEED;
-			if (g->sector->lightlevel < g->minlight)
+			if (g->sector->lightlevel < g->minlight>>FlashLevel)
 			{
-				g->sector->lightlevel = g->minlight;
+				g->sector->lightlevel = g->minlight>>FlashLevel;
 
 				if(g->type == PULSERANDOM)
                     g->maxlight = (P_Random() & 31) + 17;
@@ -88,9 +88,9 @@ void T_Glow(glow_t *g) // 80015820
 			break;
 		case 1:			/* UP */
 			g->sector->lightlevel += GLOWSPEED;
-			if (g->maxlight < g->sector->lightlevel)
+			if (g->maxlight>>FlashLevel < g->sector->lightlevel)
 			{
-				g->sector->lightlevel = g->maxlight;
+				g->sector->lightlevel = g->maxlight>>FlashLevel;
 
 				if(g->type == PULSERANDOM)
                     g->minlight = (P_Random() & 15);
@@ -152,14 +152,14 @@ void T_LightFlash (lightflash_t *flash) // 80015A14
         return;
     }
 
-	if (flash->sector->lightlevel == 32)
+	if (flash->sector->lightlevel == 32>>FlashLevel)
 	{
 		flash->sector->lightlevel = 0;
 		flash->count = (P_Random()&7)+1;
 	}
 	else
 	{
-		flash->sector->lightlevel = 32;
+		flash->sector->lightlevel = 32>>FlashLevel;
 		flash->count = (P_Random()&32)+1;
 	}
 }
@@ -211,7 +211,7 @@ void T_StrobeFlash (strobe_t *flash) // 80015B28
 
 	if (flash->sector->lightlevel == 0)
 	{
-		flash->sector->lightlevel = flash->maxlight;
+		flash->sector->lightlevel = flash->maxlight>>FlashLevel;
 		flash->count = flash->brighttime;
 	}
 	else

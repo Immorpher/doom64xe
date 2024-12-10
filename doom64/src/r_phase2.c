@@ -729,13 +729,13 @@ void R_CloudThunder(void) // 80026418
 
             if ((LightningCounter & 1) == 0)
             {
-				LightningFlash += 30; // get brighter
+				LightningFlash += 30>>FlashLevel; // get brighter
                 *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(LightningFlash,LightningFlash,LightningFlash,0);
                 *(int*)SkyCloudVertex[1].v.cn = *(int*)SkyCloudVertex[0].v.cn;
             }
             else
             {
-				LightningFlash -= 30; // get darker
+				LightningFlash -= 30>>FlashLevel; // get darker
                 *(int*)SkyCloudVertex[0].v.cn = PACKRGBA(LightningFlash,LightningFlash,LightningFlash,0);
                 *(int*)SkyCloudVertex[1].v.cn = *(int*)SkyCloudVertex[0].v.cn;
             }

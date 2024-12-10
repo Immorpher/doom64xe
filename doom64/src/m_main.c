@@ -108,6 +108,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT63 "WARP TO FINAL"
 #define M_TXT64 "Credits" // Credits
 #define M_TXT65 "Deadzone:" // Analog stick deadzone
+#define M_TXT66 "Flash Level:" // Flash brightness
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -124,7 +125,7 @@ const char *MenuText[] =   // 8005ABA0
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
-	M_TXT65
+	M_TXT65, M_TXT66
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -188,13 +189,14 @@ const menuitem_t Menu_ControlStick[4] = // 8005AA38
     {  6, 102, 150},    // Return
 };
 
-const menuitem_t Menu_Video[5] =
+const menuitem_t Menu_Video[6] =
 {
     {  9, 102, 60 },    // Brightness
     { 32, 102, 100 },    // Center Display
     { 50, 102, 120},    // Filtering
-    { 59, 102, 140},    // Default Video
-    {  6, 102, 160},    // Return
+    { 59, 102, 140},    // Motion Bob
+    { 66, 102, 160},    // Flash Level
+    {  6, 102, 180},    // Return
 };
 
 const menuitem_t Menu_Display[7] = // 8005AA5C
@@ -313,6 +315,7 @@ char brightness = 60;             // 8005A7C8
 char PlayDeadzone = 10;			// Analog stick deadzone for the gameplay
 char M_SENSITIVITY = 27;          // Analog stick sensitivity
 int	 MotionBob = 0x100003;		// Video motion bob - 16 pixels of bob is 0x100000
+char FlashLevel = 0;				// Flash reduction parameter
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
 char TextureFilter = 0;
@@ -503,6 +506,7 @@ void M_EncodeConfig(void)
     SavedConfig[14] += (Autorun & 0x3) << 6; //0-2
     
     SavedConfig[15] = (MotionBob/0x24925) & 0x7; //0-7
+	SavedConfig[15] += (FlashLevel & 0x7) << 3; //0-7
 }
 
 void M_DecodeConfig()
@@ -611,6 +615,7 @@ void M_DecodeConfig()
     Autorun = (SavedConfig[14] >> 6) & 0x3;
 	
     MotionBob = (SavedConfig[15] & 0x7)*0x24925; //0-7
+    FlashLevel = (SavedConfig[15] >> 3) & 0x7; //0-7
 
     wess_master_mus_vol_set(MusVolume);
 	wess_master_sfx_vol_set(SfxVolume);
@@ -1854,7 +1859,7 @@ int M_MenuTicker(void) // 80007E0C
 						S_StartSound(NULL, sfx_pistol);
 						M_SaveMenuData();
                         MenuItem = Menu_Video;
-						itemlines = 5;
+						itemlines = 6;
 						MenuCall = M_VideoDrawer;
 						cursorpos = 0;
 
@@ -1979,6 +1984,26 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 					
+				case 66: // Flash Level - behind the scenes it works in opposite direction than typical
+                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
+                    {
+                        if (FlashLevel > 0)
+						{
+							FlashLevel -= 1;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+                        }
+                    }
+                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    {
+                       if (FlashLevel < 7)
+						{
+							FlashLevel += 1;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+                        }
+                    }
+                    break;					
                 }
             exit = ga_nothing;
         }
@@ -2248,10 +2273,14 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
         }
 
         if (text)
-            ST_DrawString(item->x + 120, item->y, text, text_alpha | 0xff000000);
+            ST_DrawString(item->x + 130, item->y, text, text_alpha | 0xff000000);
 		
 		if (casepos == 59) { // draw motion bob number
-			ST_DrawNumber(item->x + 130, item->y, MotionBob/0x24925, 0, text_alpha | 0xff000000);
+			ST_DrawNumber(item->x + 140, item->y, MotionBob/0x24925, 0, text_alpha | 0xff000000);
+		}
+		
+		if (casepos == 66) { // draw flash level number
+			ST_DrawNumber(item->x + 140, item->y, 7 - FlashLevel, 0, text_alpha | 0xff000000);
 		}
 
         ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xff000000);
