@@ -86,7 +86,7 @@ char *ControlText[] =   //8007517C
 
 #define M_TXT48 "COLORS"     // [GEC] NEW CHEAT CODE
 #define M_TXT49 "FULL BRIGHT"   // [GEC] NEW CHEAT CODE
-#define M_TXT50 "Filtering:"   // [GEC] NEW CHEAT CODE
+#define M_TXT50 "Filtering:"   // Now Menu feature
 
 #define M_TXT51 "Absolution"
 
@@ -101,7 +101,7 @@ char *ControlText[] =   //8007517C
 
 // [Immorpher] Additional options
 #define M_TXT58 "Video"
-#define M_TXT59 "Default" // Default video
+#define M_TXT59 "Motion Bob:" // Motion bob scaler
 #define M_TXT60 "Map Stats:" // Automap stats
 #define M_TXT61 "Bonus Pak" // Bonus level hub
 #define M_TXT62 "Beta 64" // Antnee's Beta 64
@@ -312,6 +312,7 @@ char MusVolume = 100;             // 8005A7C4
 char brightness = 60;             // 8005A7C8
 char PlayDeadzone = 10;			// Analog stick deadzone for the gameplay
 char M_SENSITIVITY = 27;          // Analog stick sensitivity
+int	 MotionBob = 0x100003;		// Video motion bob - 16 pixels of bob is 0x100000
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
 char TextureFilter = 0;
@@ -402,7 +403,7 @@ void M_EncodeConfig(void)
     int controlKey[13];
 
 
-	SavedConfig[3] += (PlayDeadzone>>1) & 0x7; //0-7
+	SavedConfig[3] = (PlayDeadzone>>1) & 0x7; //0-7
 	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5 - is this needed?
     SavedConfig[3] += (GreenBlood & 0x1) << 6;
     SavedConfig[3] += (ColoredHUD & 0x1) << 7;
@@ -501,15 +502,13 @@ void M_EncodeConfig(void)
     SavedConfig[14] += (TextureFilter & 0x3) << 4; //0-2
     SavedConfig[14] += (Autorun & 0x3) << 6; //0-2
     
-    SavedConfig[15] = 0xDE; //valid save id
+    SavedConfig[15] = (MotionBob/0x24925) & 0x7; //0-7
 }
 
 void M_DecodeConfig()
 {
     unsigned char i;
     int controlKey[13];
-
-    if (SavedConfig[15] != 0xDE) return;
 	
     PlayDeadzone = (SavedConfig[3] & 0x7)<<1;
     ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
@@ -610,6 +609,8 @@ void M_DecodeConfig()
 
     TextureFilter = (SavedConfig[14] >> 4) & 0x3;
     Autorun = (SavedConfig[14] >> 6) & 0x3;
+	
+    MotionBob = (SavedConfig[15] & 0x7)*0x24925; //0-7
 
     wess_master_mus_vol_set(MusVolume);
 	wess_master_sfx_vol_set(SfxVolume);
@@ -1863,21 +1864,24 @@ int M_MenuTicker(void) // 80007E0C
 					}
 					break;
 									
-				case 59: // Default Video
-                    if (truebuttons)
+				case 59: // Motion bob
+                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
                     {
-                        S_StartSound(NULL, sfx_switch2);
-
-                        Display_X = 0;
-                        Display_Y = 0;
-
-                        brightness = 50;
-                        I_MoveDisplay(0,0);
-                        P_RefreshBrightness();
-
-                        TextureFilter = 0;
-
-                        return ga_nothing;
+                        if (MotionBob < 0x100003)
+						{
+							MotionBob += 0x24925;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+                        }
+                    }
+                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    {
+                       if (MotionBob > 0)
+						{
+							MotionBob -= 0x24925;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+                        }
                     }
                     break;
 
@@ -1955,7 +1959,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 					
 				case 65: // Deadzone
-                    if ((buttons ^ oldbuttons) && (buttons & PAD_RIGHT))
+                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
                     {
                         if (PlayDeadzone < 14)
 						{
@@ -1964,7 +1968,7 @@ int M_MenuTicker(void) // 80007E0C
 							return ga_nothing;
                         }
                     }
-                    else if ((buttons ^ oldbuttons) && (buttons & PAD_LEFT))
+                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
                     {
                        if (PlayDeadzone > 0)
 						{
@@ -2218,11 +2222,11 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
 
     item = Menu_Video;
 
-    for(i = 0; i < 5; i++)
+    for(i = 0; i < itemlines; i++)
     {
         casepos = item->casepos;
 
-        if (casepos == 50)
+        if (casepos == 50) // Texture filtering
         {
             switch (TextureFilter)
             {
@@ -2238,14 +2242,17 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
                     break;
             }
         }
-
         else
         {
             text = NULL;
         }
 
         if (text)
-            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xff000000);
+            ST_DrawString(item->x + 120, item->y, text, text_alpha | 0xff000000);
+		
+		if (casepos == 59) { // draw motion bob number
+			ST_DrawNumber(item->x + 130, item->y, MotionBob/0x24925, 0, text_alpha | 0xff000000);
+		}
 
         ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xff000000);
 

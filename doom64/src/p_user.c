@@ -415,8 +415,6 @@ void P_BuildMove (player_t *player) // 80022154
 ===============================================================================
 */
 
-#define MAXBOB			0x100000		// 16 pixels of bob 0x100000
-
 /*
 ==================
 =
@@ -463,9 +461,9 @@ void P_CalcHeight (player_t *player) // 80022670
 	player->bob += FixedMul(val, val);
 
 	player->bob >>= 2;
-	if (player->bob > MAXBOB)
+	if (player->bob > MotionBob)
 	{
-		player->bob = MAXBOB;
+		player->bob = MotionBob;
 	}
 
 	if (!player->onground)
