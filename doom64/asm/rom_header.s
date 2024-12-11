@@ -14,7 +14,7 @@
 .word  0x00000000               /* Checksum 2 (OVERWRITTEN BY MAKEMASK)*/
 .word  0x00000000               /* Unknown */
 .word  0x00000000               /* Unknown */
-.ascii "DOOM 64             "   /* Internal ROM name (Max 20 characters) */
+.ascii "DOOM 64 XE          "   /* Internal ROM name (Max 20 characters) */
 .word  0x00000000               /* Unknown */
 /* Game ID (EXAMPLE: NSME) Begins here */
 .word  0x0000004E                /* Cartridge Type (N)*/

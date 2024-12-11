@@ -689,7 +689,7 @@ int M_ControllerPak(void) // 80007724
                 break;
             }
 
-            // Create Controller Pak Note
+            // Create Memory Pak Note
             MenuItem = Menu_CreateNote;
             itemlines = 3;
             MenuCall = M_MenuTitleDrawer;
@@ -704,7 +704,7 @@ int M_ControllerPak(void) // 80007724
                 break;
             }
 
-            // Check Memory and Files Used on Controller Pak
+            // Check Memory and Files Used on Memory Pak
             if ((Pak_Memory > 0) && (FilesUsed != 16))
             {
                 if (I_CreatePakFile() != 0)
@@ -714,7 +714,7 @@ int M_ControllerPak(void) // 80007724
                 break;
             }
 
-            // Show Controller Pak Full
+            // Show Memory Pak Full
             MenuItem = Menu_ControllerPakFull;
             itemlines = 3;
             MenuCall = M_MenuTitleDrawer;
@@ -737,7 +737,7 @@ int M_ControllerPak(void) // 80007724
                 break;
             }
 
-            // Show Controller Pak Bad
+            // Show Memory Pak Bad
         ControllerPakBad:
             MenuItem = Menu_ControllerPakBad;
             itemlines = 2;
@@ -2070,11 +2070,11 @@ void M_MenuTitleDrawer(void) // 80008E7C
         }
         else if (MenuItem == Menu_ControllerPakBad)
         {
-            ST_DrawString(-1, 20, "Controller Pak Bad", text_alpha | 0xff000000);
+            ST_DrawString(-1, 20, "Memory Pak Bad", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_ControllerPakFull)
         {
-            ST_DrawString(-1, 20, "Controller Pak Full", text_alpha | 0xff000000);
+            ST_DrawString(-1, 20, "Memory Pak Full", text_alpha | 0xff000000);
         }
         else if (MenuItem == Menu_CreateNote)
         {
@@ -2597,12 +2597,12 @@ void M_ControllerPakDrawer(void) // 8000A3E4
     char buffer [32];
     char *tmpbuf;
 
-    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
 
     if (FilesUsed == -1)
     {
         if ((MenuAnimationTic & 2) != 0)
-            ST_DrawString(-1, 114, "Controller Pak removed!", text_alpha | 0xff000000);
+            ST_DrawString(-1, 114, "Memory Pak removed!", text_alpha | 0xff000000);
 
         ST_DrawString(-1, 210, "press \x8d to exit", text_alpha | 0xffffff00);
     }
@@ -2849,13 +2849,13 @@ void M_SavePakDrawer(void) // 8000AB44
 
 	M_DrawBackground(63, 25, 128, EpisodeGraphic());
 
-    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
 
     if (FilesUsed == -1)
     {
         if (MenuAnimationTic & 2)
         {
-            ST_DrawString(-1, 100, "Controller Pak removed!", 0xc00000ff);
+            ST_DrawString(-1, 100, "Memory Pak removed!", 0xc00000ff);
             ST_DrawString(-1, 120, "Game cannot be saved.", 0xc00000ff);
         }
 
@@ -2865,35 +2865,36 @@ void M_SavePakDrawer(void) // 8000AB44
     {
         for(i = linepos; i < (linepos + 6); i++)
         {
-            if (Pak_Data[(i * 32) + 15] != 0xDE)  {
+			leveltxt = skilltxt = 0;
+			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
+			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0) == 0)  {
                 D_memmove(buffer, "empty");
             }
-            else {
-				D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
-                leveltxt = skilltxt = 0;
-                M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
-                switch (skilltxt)
-                {
-                    case 4:
-                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
-                        break;
-                    case 3:
-                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
-                        break;
-                    case 2:
-                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
-                        break;
-                    case 1:
-                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
-                        break;
-                    case 0:
-                        sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
-                        break;
-                    default:
-                        sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
-                        break;
-                }
-            }
+			else
+			{
+				switch (skilltxt)
+				{
+					case 4:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
+						break;
+					case 3:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
+						break;
+					case 2:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
+						break;
+					case 1:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
+						break;
+					case 0:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
+						break;
+					default:
+						sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
+						break;
+				}
+			}
+				
 
             ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xff000000);
         }
@@ -3022,8 +3023,7 @@ int M_LoadPakTicker(void) // 8000AFE4
 
     if (!(buttons ^ oldbuttons) || !(buttons & PAD_START))
     {
-        if (!(buttons ^ oldbuttons) || buttons != PAD_A ||
-            (Pak_Data[(cursorpos * 32) + 16] == 0xDE))
+        if (!(buttons ^ oldbuttons) || buttons != PAD_A)
         {
             exit = ga_nothing;
         }
@@ -3068,41 +3068,44 @@ void M_LoadPakDrawer(void) // 8000B270
     byte savedata[16];
     int leveltxt, skilltxt;
 
-    ST_DrawString(-1, 20, "Controller Pak", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
 
     for(i = linepos; i < (linepos + 6); i++)
     {
         if (FilesUsed == -1) {
             D_memmove(buffer, "-");
         }
-        else if (Pak_Data[(i * 32) + 15] != 0xDE) {
-            D_memmove(buffer, "no save");
-        }
         else {
-            D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
-            leveltxt = skilltxt = 0;
-            M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
-            switch (skilltxt)
-            {
-                case 4:
-                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
-                    break;
-                case 3:
-                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
-                    break;
-                case 2:
-                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
-                    break;
-                case 1:
-                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
-                    break;
-                case 0:
-                    sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
-                    break;
-                default:
-                    sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
-                    break;
+			leveltxt = skilltxt = 0;
+			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
+			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0) == 0)  {
+                D_memmove(buffer, "empty");
             }
+			else
+			{
+				M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
+				switch (skilltxt)
+				{
+					case 4:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
+						break;
+					case 3:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
+						break;
+					case 2:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
+						break;
+					case 1:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
+						break;
+					case 0:
+						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
+						break;
+					default:
+						sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
+						break;
+				}
+			}
         }
 
         ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xff000000);

@@ -139,13 +139,13 @@ void D_DrawNoPak(void) // 8002B7F4
 	
 	M_DrawBackground(0, 0, text_alpha, "SPLASH");
 
-    ST_DrawString(-1,  40, "no controller pak.", 0xffffffff);
+    ST_DrawString(-1,  40, "no memory pak.", 0xffffffff);
     ST_DrawString(-1,  60, "your game cannot", 0xffffffff);
     ST_DrawString(-1,  80, "be saved.", 0xffffffff);
     ST_DrawString(-1, 120, "please turn off your", 0xffffffff);
     ST_DrawString(-1, 140, "nintendo 64 system", 0xffffffff);
     ST_DrawString(-1, 160, "before inserting a", 0xffffffff);
-    ST_DrawString(-1, 180, "controller pak.", 0xffffffff);
+    ST_DrawString(-1, 180, "memory pak.", 0xffffffff);
 
     I_DrawFrame();
 }
@@ -209,7 +209,7 @@ void D_SplashScreen(void) // 8002B988
     }
 
     /* */
-    /* Check if the n64 controller Pak is connected */
+    /* Check if the N64 Memory Pak is connected */
     /* */
     I_CheckControllerPak();
 

@@ -161,7 +161,7 @@ u32 VtxIndex;       // 800A525C
 
 u8 gamepad_bit_pattern; // 800A5260 // one bit for each controller
 
-// Controller Pak
+// Memory Pak
 OSPfs ControllerPak;        // 800A5270
 OSPfsState FileState[16];   // 800A52D8
 s32 File_Num;   // 800A54D8

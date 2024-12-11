@@ -1054,7 +1054,7 @@ extern u32 vid_side;       // 800A5248
 
 extern u8 gamepad_bit_pattern; // 800A5260 // one bit for each controller
 
-// Controller Pak
+// Memory Pak
 extern OSPfsState FileState[16];    // 800A52D8
 extern s32 File_Num;   // 800A54D8
 extern s32 Pak_Size;   // 800A54DC
