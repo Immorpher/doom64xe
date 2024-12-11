@@ -45,7 +45,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT09 "Brightness"
 #define M_TXT10 "Resume"
 #define M_TXT11 "Options"
-#define M_TXT12 "Default"
+#define M_TXT12 "Default" // Default Audio
 #define M_TXT13 "Default" // Default Display
 #define M_TXT14 "New Game"
 #define M_TXT15 "Be Gentle!"
@@ -109,6 +109,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT64 "Credits" // Credits
 #define M_TXT65 "Deadzone:" // Analog stick deadzone
 #define M_TXT66 "Flash Level:" // Flash brightness
+#define M_TXT67 "Default" // Video default settings
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -125,7 +126,7 @@ const char *MenuText[] =   // 8005ABA0
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
-	M_TXT65, M_TXT66
+	M_TXT65, M_TXT66, M_TXT67
 };
 
 const menuitem_t Menu_Title[3] = // 8005A978
@@ -189,14 +190,15 @@ const menuitem_t Menu_ControlStick[4] = // 8005AA38
     {  6, 102, 150},    // Return
 };
 
-const menuitem_t Menu_Video[6] =
+const menuitem_t Menu_Video[7] =
 {
     {  9, 102, 60 },    // Brightness
     { 32, 102, 100 },    // Center Display
     { 50, 102, 120},    // Filtering
     { 59, 102, 140},    // Motion Bob
     { 66, 102, 160},    // Flash Level
-    {  6, 102, 180},    // Return
+    { 67, 102, 180},    // Video default
+    {  6, 102, 200},    // Return
 };
 
 const menuitem_t Menu_Display[7] = // 8005AA5C
@@ -323,7 +325,7 @@ char Autorun = 0;
 byte SavedConfig[16];
 boolean GreenBlood = 0;
 boolean ColoredHUD = 0;
-boolean ShowStats = 1;
+boolean ShowStats = 0;
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -1208,7 +1210,7 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 
-                case 12: // Default Volume
+                case 12: // Default Audio
                     if (truebuttons)
                     {
                         S_StartSound(NULL, sfx_switch2);
@@ -1234,6 +1236,7 @@ int M_MenuTicker(void) // 80007E0C
                         GreenBlood = 0;
                         ColoredHUD = 0;
 						ShowStats = 0;
+						
                         return ga_nothing;
                     }
                     break;
@@ -1698,11 +1701,12 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 
-                case 42: // Default Sensitivity
+                case 42: // Default Control Stick
                     if (truebuttons)
                     {
                         S_StartSound(NULL, sfx_switch2);
                         M_SENSITIVITY = 27;
+						PlayDeadzone = 10;
                     }
                     break;
 
@@ -1859,7 +1863,7 @@ int M_MenuTicker(void) // 80007E0C
 						S_StartSound(NULL, sfx_pistol);
 						M_SaveMenuData();
                         MenuItem = Menu_Video;
-						itemlines = 6;
+						itemlines = 7;
 						MenuCall = M_VideoDrawer;
 						cursorpos = 0;
 
@@ -2003,7 +2007,24 @@ int M_MenuTicker(void) // 80007E0C
 							return ga_nothing;
                         }
                     }
-                    break;					
+                    break;		
+
+				case 67: // Default Video
+                    if (truebuttons)
+                    {
+                        S_StartSound(NULL, sfx_switch2);
+                        Display_X = 0;
+                        Display_Y = 0;
+                        brightness = 60;
+                        I_MoveDisplay(0,0);
+                        P_RefreshBrightness();
+                        TextureFilter = 0;
+						MotionBob = 0x100003;
+						FlashLevel = 0;
+                        return ga_nothing;
+                    }
+                    break;
+					
                 }
             exit = ga_nothing;
         }
