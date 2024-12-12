@@ -285,11 +285,11 @@ const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 };
 
 menudata_t MenuData[8]; // 800A54F0
-int MenuAnimationTic;   // 800a5570
-int cursorpos;          // 800A5574
+short MenuAnimationTic;   // 800a5570
+short cursorpos;          // 800A5574
 int m_vframe1;          // 800A5578
 const menuitem_t *MenuItem;   // 800A5578
-int itemlines;          // 800A5580
+short itemlines;          // 800A5580
 menufunc_t MenuCall;    // 800A5584
 
 unsigned char linepos;            // 800A5588
@@ -305,7 +305,7 @@ boolean EnableMemPak;       // 800A55A8
 //-----------------------------------------
 
 unsigned char MenuIdx = 0;                // 8005A7A4
-int text_alpha = 255;           // 8005A7A8
+short text_alpha = 255;           // 8005A7A8
 unsigned char ConfgNumb = 0;              // 8005A7AC
 char Display_X = 0;              // 8005A7B0
 char Display_Y = 0;              // 8005A7B4
@@ -895,11 +895,14 @@ void M_MenuGameDrawer(void) // 80007C48
         gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
         gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 		
-		M_DrawBackground(0, 0, 255, "TITLE");
-
+		M_DrawBackground(0, 0, 255, "TITLEBG"); // draw star background
+		
         if ((MenuItem != Menu_Title && MenuItem != Menu_TitleNoSave) || MenuCall != M_MenuTitleDrawer) {
-            M_DrawOverlay(0, 0, 320, 240, 191);
+            M_DrawOverlay(0, 0, 320, 240, text_alpha>>2);
         }
+		else {
+			M_DrawBackground(40, 15, text_alpha, "TITLE"); // draw title
+		}
 
         MenuCall();
         I_DrawFrame();

@@ -834,11 +834,11 @@ typedef struct
 extern menudata_t MenuData[8];      // 800A54F0
 extern const menuitem_t Menu_Game[5];     // 8005AAA4
 extern const menuitem_t Menu_GameNoSave[4];
-extern int MenuAnimationTic;        // 800a5570
-extern int cursorpos;               // 800A5574
+extern short MenuAnimationTic;        // 800a5570
+extern short cursorpos;               // 800A5574
 extern int m_vframe1;               // 800A5578
 extern const menuitem_t *MenuItem;        // 800A5578
-extern int itemlines;               // 800A5580
+extern short itemlines;               // 800A5580
 extern menufunc_t MenuCall;         // 800A5584
 
 extern unsigned char linepos;                 // 800A5588
@@ -854,7 +854,7 @@ extern boolean EnableMemPak;            // 800A55A8
 //-----------------------------------------
 
 extern unsigned char MenuIdx;                 // 8005A7A4
-extern int text_alpha;              // 8005A7A8
+extern short text_alpha;              // 8005A7A8
 extern unsigned char ConfgNumb;               // 8005A7AC
 extern char Display_X;               // 8005A7B0
 extern char Display_Y;               // 8005A7B4
