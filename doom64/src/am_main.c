@@ -461,7 +461,12 @@ void AM_Drawer (void) // 800009AC
     {
         msgpos = 20;
 		if (p->messagetic[MSG_NEW] != p->messagetic[MSG_HIGH]) // [Immorpher] new global tic indicates new message to add
-		{	// Sequentially shift messages to lower states
+		{
+			// If colored HUD is off make all messages white
+			if (ColoredHUD == 0)
+				p->messagecolor[MSG_NEW] = 0xFFFFFF00; // white
+			
+			// Sequentially shift messages to lower states
 			for (i = MSG_LOW; i > 0; i--)
 			{
 				p->message[i] = p->message[i-1];

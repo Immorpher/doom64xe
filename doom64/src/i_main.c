@@ -202,8 +202,8 @@ char Pak_Table[256] = // 8005A620
 
 char Game_Name[16] = // 8005A790
 {
-    0x1D, 0x28, 0x28, 0x26, 0x0F, 0x16, 0x14, 0x00, // (doom 64) byte index from Pak_Table
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    0x1D, 0x28, 0x28, 0x26, 0x0F, 0x16, 0x14, 0x0F, // (doom 64 xe) byte index from Pak_Table
+    0x31, 0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
 boolean disabledrawing = false; // 8005A720
@@ -1103,8 +1103,8 @@ int I_SavePakFile(int filenumb, int flag, byte *data, int size) // 80007308
     return ret;
 }
 
-#define COMPANY_CODE 0x3544     // 5D
-#define GAME_CODE 0x4e444d45    // NDME
+#define COMPANY_CODE 0x494D     // IM 
+#define GAME_CODE 0x4E445845    // NDXE - Custom game code to not overlap with other games
 
 int I_ReadPakFile(void) // 800073B8
 {

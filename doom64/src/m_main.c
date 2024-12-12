@@ -619,8 +619,11 @@ void M_DecodeConfig()
     MotionBob = (SavedConfig[15] & 0x7)*0x24925; //0-7
     FlashLevel = (SavedConfig[15] >> 3) & 0x7; //0-7
 
+	// Set audio volumes
     wess_master_mus_vol_set(MusVolume);
 	wess_master_sfx_vol_set(SfxVolume);
+	
+	P_RefreshBrightness(); // [Immorpher] - refresh brightness for new video options
 }
 
 int M_RunTitle(void) // 80007630
@@ -1080,7 +1083,7 @@ int M_MenuTicker(void) // 80007E0C
                             return ga_nothing;
                         }
 
-                        return 5;//ga_exitdemo;
+                        return ga_exitdemo;//ga_exitdemo;
                     }
                     break;
 
@@ -1337,7 +1340,7 @@ int M_MenuTicker(void) // 80007E0C
                     if (truebuttons)
                     {
                         S_StartSound(NULL, sfx_pistol);
-                        return 5; //ga_exitdemo;
+                        return ga_exitdemo; //ga_exitdemo;
                     }
                     break;
 
@@ -1876,21 +1879,23 @@ int M_MenuTicker(void) // 80007E0C
 				case 59: // Motion bob
                     if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
                     {
-                        if (MotionBob < 0x100003)
-						{
+						S_StartSound(NULL, sfx_switch2);
+                        if (MotionBob >= 0x100003)
+							MotionBob = 0;
+						else
 							MotionBob += 0x24925;
-							S_StartSound(NULL, sfx_switch2);
-							return ga_nothing;
-                        }
+						
+						return ga_nothing;
                     }
                     else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
                     {
-                       if (MotionBob > 0)
-						{
+						S_StartSound(NULL, sfx_switch2);
+						if (MotionBob < 0x24925)
+							MotionBob = 0x100003;
+                        else
 							MotionBob -= 0x24925;
-							S_StartSound(NULL, sfx_switch2);
-							return ga_nothing;
-                        }
+						
+						return ga_nothing;
                     }
                     break;
 
@@ -1970,42 +1975,48 @@ int M_MenuTicker(void) // 80007E0C
 				case 65: // Deadzone
                     if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
                     {
-                        if (PlayDeadzone < 14)
+						PlayDeadzone += 2;
+						S_StartSound(NULL, sfx_switch2);
+						
+                        if (PlayDeadzone > 14)
 						{
-							PlayDeadzone += 2;
-							S_StartSound(NULL, sfx_switch2);
-							return ga_nothing;
+							PlayDeadzone = 0;
                         }
+						
+						return ga_nothing;
                     }
                     else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
                     {
-                       if (PlayDeadzone > 0)
+						PlayDeadzone -= 2;
+						S_StartSound(NULL, sfx_switch2);
+						if (PlayDeadzone < 0)
 						{
-							PlayDeadzone -= 2;
-							S_StartSound(NULL, sfx_switch2);
-							return ga_nothing;
+							PlayDeadzone = 14;
                         }
+						return ga_nothing;
                     }
                     break;
 					
 				case 66: // Flash Level - behind the scenes it works in opposite direction than typical
                     if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
                     {
-                        if (FlashLevel > 0)
+						FlashLevel -= 1;
+						S_StartSound(NULL, sfx_switch2);
+                        if (FlashLevel < 0)
 						{
-							FlashLevel -= 1;
-							S_StartSound(NULL, sfx_switch2);
-							return ga_nothing;
+							FlashLevel = 7;
                         }
+						return ga_nothing;
                     }
                     else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
                     {
-                       if (FlashLevel < 7)
+						FlashLevel += 1;
+						S_StartSound(NULL, sfx_switch2);
+						if (FlashLevel > 7)
 						{
-							FlashLevel += 1;
-							S_StartSound(NULL, sfx_switch2);
-							return ga_nothing;
+							FlashLevel = 0;
                         }
+						return ga_nothing;
                     }
                     break;		
 
@@ -2614,7 +2625,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
         {
             if (fState->file_size == 0)
             {
-                D_memmove(buffer, "empty");
+                D_memmove(buffer, "no save");
             }
             else
             {
@@ -2868,7 +2879,7 @@ void M_SavePakDrawer(void) // 8000AB44
 			leveltxt = skilltxt = 0;
 			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
 			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0) == 0)  {
-                D_memmove(buffer, "empty");
+                D_memmove(buffer, "no save");
             }
 			else
 			{
@@ -3029,10 +3040,6 @@ int M_LoadPakTicker(void) // 8000AFE4
         }
         else
         {
-            // load configuration
-            D_memcpy(&SavedConfig, &Pak_Data[cursorpos * 32], 16);
-            M_DecodeConfig();
-			P_RefreshBrightness(); // [Immorpher] - refresh brightness for new video options
             // load the password data in text format
             D_memcpy(&Passwordbuff, &Pak_Data[((cursorpos * 32) + 16)], 16);
 
@@ -3043,6 +3050,10 @@ int M_LoadPakTicker(void) // 8000AFE4
             }
             else
             {
+				// load configuration
+				D_memcpy(&SavedConfig, &Pak_Data[cursorpos * 32], 16);
+				M_DecodeConfig();
+			
                 doPassword = true;
                 CurPasswordSlot = 16;
 
@@ -3079,7 +3090,7 @@ void M_LoadPakDrawer(void) // 8000B270
 			leveltxt = skilltxt = 0;
 			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
 			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0) == 0)  {
-                D_memmove(buffer, "empty");
+                D_memmove(buffer, "no save");
             }
 			else
 			{
@@ -3282,9 +3293,10 @@ int M_ControlPadTicker(void) // 8000B694
                 }
                 else
                 {
-                    ConfgNumb -= 1;
-                    if (ConfgNumb < 0)
+                    if (ConfgNumb == 0)
                         ConfgNumb = 5;
+					else
+						ConfgNumb -= 1;
                 }
 
                 if ((buttons & (ALL_BUTTONS|ALL_JPAD)) != 0)

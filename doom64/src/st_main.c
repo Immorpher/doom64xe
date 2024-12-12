@@ -251,7 +251,11 @@ void ST_Drawer (void) // 80029DC0
         pos = 20;
 
 		if (players[0].messagetic[MSG_NEW] != players[0].messagetic[MSG_HIGH]) // [Immorpher] new global tic indicates new message to add
-		{	// Sequentially shift messages to lower states
+		{
+			if (ColoredHUD == 0) // if colored hud is off make messages white
+				players[0].messagecolor[MSG_NEW] = 0xFFFFFF00; // white
+			
+			// Sequentially shift messages to lower states
 			for (i = MSG_LOW; i > 0; i--)
 			{
 				players[0].message[i] = players[0].message[i-1];
