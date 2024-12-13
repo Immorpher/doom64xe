@@ -901,7 +901,7 @@ void M_MenuGameDrawer(void) // 80007C48
             M_DrawOverlay(0, 0, 320, 240, text_alpha>>2);
         }
 		else {
-			M_DrawBackground(40, 15, text_alpha, "TITLE"); // draw title
+			M_DrawBackground(40, 15, (7*text_alpha)>>3, "TITLE"); // draw title
 		}
 
         MenuCall();
