@@ -398,10 +398,36 @@ void P_SpawnPuff (fixed_t x, fixed_t y, fixed_t z) // 80019218
 ================
 */
 
-void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage) // 800192B8
+void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char MoType) // 800192B8
 {
 	mobj_t	*th;
-	int i;
+	unsigned char i;
+	short BloodState = S_494; // Default blood type is red
+	
+	// change blood style based on monster
+	if (BloodStyle == 1) // always green blood
+	{
+		BloodState = S_797;
+	}
+	else if (BloodStyle == 2)
+	{
+		BloodState = S_490; // always dust
+	}
+	else if (BloodStyle == 3)  // Combo - change blood type based on settings or monster type
+	{
+		if (MoType == MT_POSSESSED2 || MoType == MT_BRUISER2 || MoType == MT_DEMON2) // green blood type monsters
+			BloodState = S_797;
+			
+		if (MoType == MT_SKULL) // dust blood type monsters
+			BloodState = S_490;
+	}
+	
+	// Sort blood amount by damage
+	if (damage < 9) // low damageBloodState
+		BloodState = BloodState + 2; // lessen blood most
+	else if (damage < 13) // medium damage
+		BloodState = BloodState + 1; // lessen blood
+	// else full damage blood
 
 	for(i = 0; i < 3; i++)
     {
@@ -414,19 +440,8 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage) // 800192B8
         if (th->tics<1)
             th->tics = 1;
 
-		 // if green blood
-        if (damage <= 12 && damage >= 9)
-		{
-            P_SetMobjState (th, GreenBlood ? S_798 : S_495);
-		}
-        else if (damage < 9)
-		{
-            P_SetMobjState (th, GreenBlood ? S_799 : S_496);
-		}
-		else if (GreenBlood)
-		{
-			P_SetMobjState (th, S_797);
-		}
+		// set blood state
+		P_SetMobjState (th, BloodState);
     }
 }
 

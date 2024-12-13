@@ -870,7 +870,7 @@ extern char FlashLevel;				// Flash reduction parameter
 extern boolean FeaturesUnlocked;    // 8005A7D0
 extern char TextureFilter;
 extern char Autorun;
-extern boolean GreenBlood;
+extern char BloodStyle;
 extern boolean ColoredHUD;
 extern boolean ShowStats;
 extern boolean runintroduction; 	// [Immorpher] Introduction text

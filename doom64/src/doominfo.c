@@ -590,7 +590,7 @@ state_t	states[NUMSTATES] = // 8004D3F4
 	{ SPR_PUFF,3,3,NULL,S_492 },		/*S_491*/
 	{ SPR_PUFF,4,3,NULL,S_493 },		/*S_492*/
 	{ SPR_PUFF,5,3,NULL,S_000 },		/*S_493*/
-	{ SPR_BLUD,0,6,NULL,S_495 },		/*S_494*/
+	{ SPR_BLUD,0,6,NULL,S_495 },		/* Red Blood Start*/
 	{ SPR_BLUD,1,6,NULL,S_496 },		/*S_495*/
 	{ SPR_BLUD,2,6,NULL,S_497 },		/*S_496*/
 	{ SPR_BLUD,3,6,NULL,S_000 },		/*S_497*/
@@ -1036,7 +1036,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = // 80051238
         255,	/* alpha */
     },
 
-    {	/* MT_DEMON2 */
+    {	/* MT_DEMON2 / Spectre */
         58,	/* doomednum */
         S_044,	/* spawnstate */
         150,	/* spawnhealth */
@@ -1117,7 +1117,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = // 80051238
         255,	/* alpha */
     },
 
-    {	/* MT_POSSESSED2 */
+    {	/* MT_POSSESSED2 / Shotgun guy */
         9,	/* doomednum */
         S_127,	/* spawnstate */
         30,	/* spawnhealth */
@@ -1225,7 +1225,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = // 80051238
         255,	/* alpha */
     },
 
-    {	/* MT_BRUISER1 */
+    {	/* MT_BRUISER1 / Baron */
         3003,	/* doomednum */
         S_212,	/* spawnstate */
         1000,	/* spawnhealth */
@@ -1252,7 +1252,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = // 80051238
         255,	/* alpha */
     },
 
-    {	/* MT_BRUISER2 */
+    {	/* MT_BRUISER2 / Hell Knight */
         69,	/* doomednum */
         S_233,	/* spawnstate */
         500,	/* spawnhealth */

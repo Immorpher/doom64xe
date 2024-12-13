@@ -299,7 +299,7 @@ boolean PTR_ShootTraverse(intercept_t* in) // 800177A8
     }
     else
     {
-        P_SpawnBlood(x, y, z, la_damage);
+        P_SpawnBlood(x, y, z, la_damage, in->d.thing->type);
     }
 
     if(la_damage)

@@ -133,7 +133,7 @@ boolean PIT_ChangeSector (mobj_t *thing) // 80010234
             mo->momx = (P_Random() - P_Random())<<12;
             mo->momy = (P_Random() - P_Random())<<12;
 			// Set green blood if enabled
-            if (GreenBlood)
+            if (BloodStyle)
             {
                 P_SetMobjState (mo, S_797);
             }

@@ -90,22 +90,22 @@ char *ControlText[] =   //8007517C
 
 #define M_TXT51 "Absolution"
 
-// Early CE Options
+// Early CE Menu Texts
 
 #define M_TXT52 "Lost Levels"
 #define M_TXT53 "Artifacts"
 #define M_TXT54 "Skill"
 #define M_TXT55 "Load Game"
-#define M_TXT56 "Blood Color:"
+#define M_TXT56 "Blood Style:"
 #define M_TXT57 "Colored HUD:"
 
-// [Immorpher] Additional options
+// [Immorpher] Additional Texts
 #define M_TXT58 "Video"
 #define M_TXT59 "Motion Bob:" // Motion bob scaler
 #define M_TXT60 "Map Stats:" // Automap stats
 #define M_TXT61 "Bonus Pak" // Bonus level hub
 #define M_TXT62 "Beta 64" // Antnee's Beta 64
-#define M_TXT63 "WARP TO FINAL"
+#define M_TXT63 "WARP TO FINAL" // Final map warp
 #define M_TXT64 "Credits" // Credits
 #define M_TXT65 "Deadzone:" // Analog stick deadzone
 #define M_TXT66 "Flash Level:" // Flash brightness
@@ -317,13 +317,13 @@ char brightness = 60;             // 8005A7C8
 char PlayDeadzone = 10;			// Analog stick deadzone for the gameplay
 char M_SENSITIVITY = 27;          // Analog stick sensitivity
 int	 MotionBob = 0x100003;		// Video motion bob - 16 pixels of bob is 0x100000
-char FlashLevel = 0;				// Flash reduction parameter
+char FlashLevel = 0;				// Flash reduction parameter, 0 is maximum flash brightness
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence!
 char TextureFilter = 0;
 char Autorun = 0;
 byte SavedConfig[16];
-boolean GreenBlood = 0;
+char BloodStyle = 0;
 boolean ColoredHUD = 0;
 boolean ShowStats = 0;
 
@@ -408,22 +408,21 @@ void M_EncodeConfig(void)
     int controlKey[13];
 
 
-	SavedConfig[3] = (PlayDeadzone>>1) & 0x7; //0-7
-	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5 - is this needed?
-    SavedConfig[3] += (GreenBlood & 0x1) << 6;
-    SavedConfig[3] += (ColoredHUD & 0x1) << 7;
+	SavedConfig[3] = (PlayDeadzone>>1) & 0x7; //0-7 - 3 bits
+	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5 - is this needed? - 3 bits
+    SavedConfig[3] += (BloodStyle & 0x3) << 6; //0-3 - 2 bits
 
-    SavedConfig[4] = MusVolume & 0x7F; //0-127
-    SavedConfig[4] += (FeaturesUnlocked & 0x1) << 7;
+    SavedConfig[4] = MusVolume & 0x7F; //0-127 - 7 bits
+    SavedConfig[4] += (FeaturesUnlocked & 0x1) << 7; // 1 bit
     
-    SavedConfig[5] = SfxVolume & 0x7F; //0-127
-    SavedConfig[5] += (enable_messages & 0x1) << 7;
+    SavedConfig[5] = SfxVolume & 0x7F; //0-127 - 7 bits
+    SavedConfig[5] += (enable_messages & 0x1) << 7; // 1 bit
 
-    SavedConfig[6] = brightness & 0x7F; //0-127
-    SavedConfig[6] += (enable_statusbar & 0x1) << 7;
+    SavedConfig[6] = brightness & 0x7F; //0-127 - 7 bits
+    SavedConfig[6] += (enable_statusbar & 0x1) << 7; // 1 bit
 
-    SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-127
-	SavedConfig[7] += (ShowStats & 0x1) << 7;
+    SavedConfig[7] = M_SENSITIVITY & 0x7F; //0-127 - 7 bits
+	SavedConfig[7] += (ShowStats & 0x1) << 7; // 1 bit
 
     for (i = 0; i < 13; i++)
     {
@@ -507,8 +506,9 @@ void M_EncodeConfig(void)
     SavedConfig[14] += (TextureFilter & 0x3) << 4; //0-2
     SavedConfig[14] += (Autorun & 0x3) << 6; //0-2
     
-    SavedConfig[15] = (MotionBob/0x24925) & 0x7; //0-7
-	SavedConfig[15] += (FlashLevel & 0x7) << 3; //0-7
+    SavedConfig[15] = (MotionBob/0x24925) & 0x7; //0-7 - 3 bits
+	SavedConfig[15] += (FlashLevel & 0x7) << 3; //0-7 - 3 bits
+    SavedConfig[15] += (ColoredHUD & 0x1) << 6; // 0-1 - 1bit - 1 bit left here
 }
 
 void M_DecodeConfig()
@@ -518,8 +518,7 @@ void M_DecodeConfig()
 	
     PlayDeadzone = (SavedConfig[3] & 0x7)<<1;
     ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
-    GreenBlood = (SavedConfig[3] >> 6) & 0x1;
-    ColoredHUD = (SavedConfig[3] >> 7) & 0x1;
+    BloodStyle = (SavedConfig[3] >> 6) & 0x3;
 
     MusVolume = SavedConfig[4] & 0x7F;
     FeaturesUnlocked = (SavedConfig[4] >> 7) & 0x1;
@@ -618,6 +617,7 @@ void M_DecodeConfig()
 	
     MotionBob = (SavedConfig[15] & 0x7)*0x24925; //0-7
     FlashLevel = (SavedConfig[15] >> 3) & 0x7; //0-7
+    ColoredHUD = (SavedConfig[15] >> 6) & 0x1; //0-1
 
 	// Set audio volumes
     wess_master_mus_vol_set(MusVolume);
@@ -1239,7 +1239,7 @@ int M_MenuTicker(void) // 80007E0C
                         enable_messages = true;
                         enable_statusbar = true;
 
-                        GreenBlood = 0;
+                        BloodStyle = 0;
                         ColoredHUD = 0;
 						ShowStats = 0;
 						
@@ -1593,11 +1593,30 @@ int M_MenuTicker(void) // 80007E0C
                     }
                     break;
 
-                case 56: // Blood Color
-                    if (truebuttons)
+                case 56: // Blood Style
+                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
                     {
-                        S_StartSound(NULL, sfx_switch2);
-                        GreenBlood ^= true;
+						BloodStyle += 1;
+						S_StartSound(NULL, sfx_switch2);
+						
+                        if (BloodStyle > 3)
+						{
+							BloodStyle = 0;
+                        }
+						
+						return ga_nothing;
+                    }
+                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    {
+						S_StartSound(NULL, sfx_switch2);
+						if (BloodStyle == 0)
+						{
+							BloodStyle = 3;
+                        }
+						else
+						{
+							BloodStyle -= 1;
+						}
 						return ga_nothing;
                     }
                     break;
@@ -2356,9 +2375,25 @@ void M_DisplayDrawer(void) // 80009884
         {
             text = ShowStats ? "On" : "Off";
         }
-        else if (casepos == 56) // BloodColor
+        else if (casepos == 56) // BloodStyle
         {
-            text = GreenBlood ? "Green" : "Red";
+            text = BloodStyle ? "Green" : "Red";
+			switch (BloodStyle)
+            {
+                case 3:
+                    text = "Combo";
+                    break;
+                case 2:
+                    text = "Dust";
+                    break;
+                case 1:
+                    text = "Green";
+                    break;
+                case 0:
+                default:
+                    text = "Red";
+                    break;
+            }
         }
         else if (casepos == 57) // Colored HUD
         {

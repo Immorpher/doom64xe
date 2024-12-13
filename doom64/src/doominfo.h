@@ -630,7 +630,7 @@ typedef enum
     S_492,
     S_493,
     S_494,
-    S_495,
+    S_495, // Red Blood Start
     S_496,
     S_497,
     S_498,

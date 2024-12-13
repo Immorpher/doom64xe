@@ -121,7 +121,7 @@ boolean	P_SetMobjState (mobj_t *mobj, statenum_t state);
 void 	P_MobjThinker (mobj_t *mobj) HOT;
 
 void	P_SpawnPuff (fixed_t x, fixed_t y, fixed_t z);
-void 	P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage);
+void 	P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char MoType);
 
 mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yoffs, fixed_t heightoffs, mobjtype_t type) HOT;
 
