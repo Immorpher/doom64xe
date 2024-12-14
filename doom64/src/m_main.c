@@ -319,13 +319,13 @@ char M_SENSITIVITY = 27;          // Analog stick sensitivity
 int	 MotionBob = 0x100003;		// Video motion bob - 16 pixels of bob is 0x100000
 char FlashLevel = 0;				// Flash reduction parameter, 0 is maximum flash brightness
 boolean FeaturesUnlocked = true; // 8005A7D0
-boolean runintroduction = false; // [Immorpher] New introduction sequence!
+boolean runintroduction = false; // [Immorpher] New introduction sequence which gets turned on only when starting a new campaign
 char TextureFilter = 0;
 char Autorun = 0;
 byte SavedConfig[16];
-char BloodStyle = 0;
-boolean ColoredHUD = 0;
-boolean ShowStats = 0;
+char BloodStyle = 3; // Blood style: red, green, dust, combo
+boolean ColoredHUD = 1; // Hud color
+boolean ShowStats = 1; // Automap stats
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -1239,9 +1239,9 @@ int M_MenuTicker(void) // 80007E0C
                         enable_messages = true;
                         enable_statusbar = true;
 
-                        BloodStyle = 0;
-                        ColoredHUD = 0;
-						ShowStats = 0;
+                        BloodStyle = 3;
+                        ColoredHUD = 1;
+						ShowStats = 1;
 						
                         return ga_nothing;
                     }
