@@ -886,7 +886,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
             if (thing->flags & MF_NIGHTMARE)
             {
-                color = 0x40ff80ff; //PACKRGBA(64, 255, 128, 255)
+                color = 0x20ffffff; //PACKRGBA(32, 255, 255, 255)
             }
             else if (thing->frame & FF_FULLBRIGHT)
             {

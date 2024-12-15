@@ -398,13 +398,14 @@ void P_SpawnPuff (fixed_t x, fixed_t y, fixed_t z) // 80019218
 ================
 */
 
-void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char MoType) // 800192B8
+void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char MoType, boolean nightmare) // 800192B8
 {
 	mobj_t	*th;
 	unsigned char i;
 	short BloodState = S_494; // Default blood type is red
 	
 	// change blood style based on monster
+
 	if (BloodStyle == 1) // always green blood
 	{
 		BloodState = S_797;
@@ -418,9 +419,10 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char Mo
 		if (MoType == MT_POSSESSED2 || MoType == MT_BRUISER2 || MoType == MT_DEMON2) // green blood type monsters
 			BloodState = S_797;
 			
-		if (MoType == MT_SKULL) // dust blood type monsters
+		if (MoType == MT_SKULL || nightmare) // dust blood type monsters
 			BloodState = S_490;
 	}
+	// else always red blood
 	
 	// Sort blood amount by damage
 	if (damage < 9) // low damageBloodState
@@ -437,6 +439,10 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char Mo
         th = P_SpawnMobj (x,y,z, MT_BLOOD);
         th->momz = FRACUNIT*2;
         th->tics -= P_Random()&1;
+		
+		if (BloodStyle == 3 && nightmare)
+			th->flags |= MF_NIGHTMARE; // set to nightmare rendering for nightmare enemy
+		
         if (th->tics<1)
             th->tics = 1;
 
@@ -512,7 +518,7 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
     an >>= ANGLETOFINESHIFT;
     speed = th->info->speed;
 
-	if (source->flags & MF_NIGHTMARE)
+	if (source->flags & MF_NIGHTMARE) // if nightmare enemy, spawn nightmare projectile
 	{
         th->flags |= MF_NIGHTMARE;
         speed *= 2;

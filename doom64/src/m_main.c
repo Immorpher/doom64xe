@@ -2377,7 +2377,6 @@ void M_DisplayDrawer(void) // 80009884
         }
         else if (casepos == 56) // BloodStyle
         {
-            text = BloodStyle ? "Green" : "Red";
 			switch (BloodStyle)
             {
                 case 3:
