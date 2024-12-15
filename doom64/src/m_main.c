@@ -1127,7 +1127,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 
                 case 7: // Music Volume
-                    if (buttons & PAD_RIGHT)
+                    if (buttons & ALL_FORWARD)
                     {
                         if (MusVolume < 127)
                         {
@@ -1137,7 +1137,7 @@ int M_MenuTicker(void) // 80007E0C
                             return ga_nothing;
                         }
                     }
-                    else if (buttons & PAD_LEFT)
+                    else if (buttons & ALL_BACK)
                     {
                         if (MusVolume > 0)
                         {
@@ -1150,7 +1150,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 
                 case 8: // Sound Volume
-                    if (buttons & PAD_RIGHT)
+                    if (buttons & ALL_FORWARD)
                     {
                         if (SfxVolume < 127)
                         {
@@ -1160,7 +1160,7 @@ int M_MenuTicker(void) // 80007E0C
 							return ga_nothing;
                         }
                     }
-                    else if (buttons & PAD_LEFT)
+                    else if (buttons & ALL_BACK)
                     {
                         if (SfxVolume > 0)
                         {
@@ -1173,7 +1173,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 
                 case 9: // Brightness
-                    if (buttons & PAD_RIGHT)
+                    if (buttons & ALL_FORWARD)
                     {
                         if (brightness < 127)
                         {
@@ -1183,7 +1183,7 @@ int M_MenuTicker(void) // 80007E0C
                             return ga_nothing;
                         }
                     }
-                    else if (buttons & PAD_LEFT)
+                    else if (buttons & ALL_BACK)
                     {
                         if (brightness > 0)
                         {
@@ -1594,7 +1594,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 
                 case 56: // Blood Style
-                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
+                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
                     {
 						BloodStyle += 1;
 						S_StartSound(NULL, sfx_switch2);
@@ -1606,7 +1606,7 @@ int M_MenuTicker(void) // 80007E0C
 						
 						return ga_nothing;
                     }
-                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
                     {
 						S_StartSound(NULL, sfx_switch2);
 						if (BloodStyle == 0)
@@ -1736,7 +1736,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 
                 case 43: // Sensitivity
-                    if (buttons & PAD_RIGHT)
+                    if (buttons & ALL_FORWARD)
                     {
                         if (M_SENSITIVITY < 127)
 						{
@@ -1745,7 +1745,7 @@ int M_MenuTicker(void) // 80007E0C
 							return ga_nothing;
                         }
                     }
-                    else if (buttons & PAD_LEFT)
+                    else if (buttons & ALL_BACK)
                     {
                        if (M_SENSITIVITY > 0)
 						{
@@ -1822,7 +1822,7 @@ int M_MenuTicker(void) // 80007E0C
                 case 54: // SKILL
                     if (buttons ^ oldbuttons)
                     {
-                        if (buttons & PAD_LEFT)
+                        if (buttons & ALL_FORWARD)
                         {
                             if (gameskill > sk_baby || startskill > sk_baby)
                             {
@@ -1832,7 +1832,7 @@ int M_MenuTicker(void) // 80007E0C
                                 return ga_nothing;
                             }
                         }
-                        else if (buttons & PAD_RIGHT)
+                        else if (buttons & ALL_BACK)
                         {
                             if (gameskill < sk_nightmare || startskill < sk_nightmare)
                             {
@@ -1899,7 +1899,7 @@ int M_MenuTicker(void) // 80007E0C
 					break;
 									
 				case 59: // Motion bob
-                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
+                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
                     {
 						S_StartSound(NULL, sfx_switch2);
                         if (MotionBob >= 0x100003)
@@ -1909,7 +1909,7 @@ int M_MenuTicker(void) // 80007E0C
 						
 						return ga_nothing;
                     }
-                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
                     {
 						S_StartSound(NULL, sfx_switch2);
 						if (MotionBob < 0x24925)
@@ -1995,7 +1995,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 					
 				case 65: // Deadzone
-                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
+                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
                     {
 						PlayDeadzone += 2;
 						S_StartSound(NULL, sfx_switch2);
@@ -2007,7 +2007,7 @@ int M_MenuTicker(void) // 80007E0C
 						
 						return ga_nothing;
                     }
-                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
                     {
 						PlayDeadzone -= 2;
 						S_StartSound(NULL, sfx_switch2);
@@ -2020,7 +2020,7 @@ int M_MenuTicker(void) // 80007E0C
                     break;
 					
 				case 66: // Flash Level - behind the scenes it works in opposite direction than typical
-                    if (((buttons ^ oldbuttons) && (buttons & PAD_RIGHT)) || ((buttons ^ oldbuttons) && (buttons & PAD_A)))
+                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
                     {
 						FlashLevel -= 1;
 						S_StartSound(NULL, sfx_switch2);
@@ -2030,7 +2030,7 @@ int M_MenuTicker(void) // 80007E0C
                         }
 						return ga_nothing;
                     }
-                    else if (((buttons ^ oldbuttons) && (buttons & PAD_LEFT)) || ((buttons ^ oldbuttons) && (buttons & PAD_B)))
+                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
                     {
 						FlashLevel += 1;
 						S_StartSound(NULL, sfx_switch2);
