@@ -416,7 +416,7 @@ void P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage, unsigned char Mo
 	}
 	else if (BloodStyle == 3)  // Combo - change blood type based on settings or monster type
 	{
-		if (MoType == MT_POSSESSED2 || MoType == MT_BRUISER2 || MoType == MT_DEMON2) // green blood type monsters
+		if (MoType == MT_POSSESSED2 || MoType == MT_BRUISER2 || MoType == MT_DEMON2 || MoType == MT_IMP2) // green blood type monsters
 			BloodState = S_797;
 			
 		if (MoType == MT_SKULL || nightmare) // dust blood type monsters
