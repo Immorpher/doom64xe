@@ -78,7 +78,6 @@ boolean P_ThingHeightClip (mobj_t *thing) // 80010180
 
 boolean PIT_ChangeSector (mobj_t *thing) // 80010234
 {
-	mobj_t		*mo;
 
 	if (P_ThingHeightClip (thing))
 		return true;		/* keep checking */
@@ -128,15 +127,8 @@ boolean PIT_ChangeSector (mobj_t *thing) // 80010234
         if (crushchange && !(gametic&3) )
         {
             P_DamageMobj(thing,NULL,NULL,10);
-            /* spray blood in a random direction */
-            mo = P_SpawnMobj (thing->x, thing->y, thing->z + thing->height/2, MT_BLOOD);
-            mo->momx = (P_Random() - P_Random())<<12;
-            mo->momy = (P_Random() - P_Random())<<12;
-			// Set green blood if enabled
-            if (BloodStyle)
-            {
-                P_SetMobjState (mo, S_797);
-            }
+            /* spray blood in a random direction - this has been changed and will affect demo compatibility*/
+			P_SpawnBlood(thing->x, thing->y, thing->z + thing->height/2, P_Random()>>3, thing->type, thing->flags & MF_NIGHTMARE);
         }
     }
 

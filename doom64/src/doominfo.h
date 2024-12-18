@@ -1104,8 +1104,8 @@ typedef struct {
 	short	xdeathstate;
 	short	deathsound;
 	unsigned char	speed;
-	int	radius;
-	int	height;
+	int		radius;
+	int		height;
 	short	mass;
 	unsigned char	damage;
 	short	activesound;

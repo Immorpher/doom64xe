@@ -27,7 +27,7 @@ char *passFeatures[3] =
 
 // [GEC] NEW FLAGS
 #define MAPUP       0x20 // Increase map upper limit
-#define NIGHTMARE	0x40 // Enable nightmare difficulty in armor slot
+#define MERCILESS	0x40 // Enable nightmare difficulty in armor slot
 
 void M_EncodePassword(byte *buff) // 8000BC10
 {
@@ -39,17 +39,9 @@ void M_EncodePassword(byte *buff) // 8000BC10
     int xbit1, xbit2, xbit3;
     int maxclip, maxshell, maxcell, maxmisl;
     player_t* player;
-	int skillnightmare;
 
     player = &players[0];
     bzero(encode, sizeof(encode));
-
-	//Check the nightmare difficulty
-	skillnightmare = 0;
-	if(gameskill == sk_nightmare)
-    {
-        skillnightmare = sk_nightmare;
-    }
 
     //
     // Map and Skill
@@ -146,10 +138,9 @@ void M_EncodePassword(byte *buff) // 8000BC10
     //
     encode[5] |= (player->artifacts << 2);
 
-	//[GEC] I used the ArmorType space to add the 0x40 flag to identify that the difficulty is nightmare
-	if(skillnightmare != 0) {
-        encode[5] |= NIGHTMARE;
-    }
+	//[GEC/Immorpher] I used the ArmorType space to add the 0x40 flag to set Merciless Mode
+	if(MercilessMode)
+        encode[5] |= MERCILESS;
 	
     if (nextmap >= 64)
     {
@@ -229,7 +220,7 @@ void M_EncodePassword(byte *buff) // 8000BC10
     }
 }
 
-int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) // 8000C194
+int M_DecodePassword(byte *inbuff, unsigned char *levelnum, unsigned char *skill, boolean *skmerciless, player_t *player) // 8000C194
 {
     byte data[16];
     byte decode[10];
@@ -335,21 +326,25 @@ int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player) 
     }
 
     //
-    // Get Skill
+    // Get Skills
     //
     *skill = (decode[0] & 3);
 
-    //Check that the flag is 0x40, add the nightmare difficulty and remove the flag 0x80
-    if (decode[5] & NIGHTMARE)
+    //Check that the flag is 0x40, add the nightmare difficulty and remove the flag 0x80, then enable merciless mode
+    if (decode[5] & MERCILESS)
     {
-        decode[5] &= ~NIGHTMARE;
-        *skill = sk_nightmare;
+        decode[5] &= ~MERCILESS;
+        *skmerciless = true;
     }
+	else
+	{
+		*skmerciless = false;
+	}
 
     //
     // Verify Skill
     //
-    if(*skill > sk_nightmare)
+    if(*skill > sk_hard)
     {
         return false;
     }
@@ -512,8 +507,8 @@ int M_PasswordTicker(void) // 8000C774
     unsigned int oldbuttons;
     boolean playsound;
     int exit;
-    int skill;
-    int levelnum;
+    unsigned char skill, levelnum;
+	boolean skmerciless;
     int i;
 
     if (last_ticon)
@@ -660,7 +655,7 @@ int M_PasswordTicker(void) // 8000C774
                         }
                     }
 
-                    if (M_DecodePassword(Passwordbuff, &levelnum, &skill, NULL) == 0)
+                    if (M_DecodePassword(Passwordbuff, &levelnum, &skill, &skmerciless, NULL) == 0)
                     {
                         PassInvalidTic = 16;
                     }
@@ -670,6 +665,7 @@ int M_PasswordTicker(void) // 8000C774
                         startmap = gamemap = levelnum;
                         startskill = gameskill = skill;
                         last_ticon = ticon;
+						MercilessMode = MercilessMenu = skmerciless; // Set merciless mode and menu
                     }
                 }
             }

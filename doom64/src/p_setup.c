@@ -796,6 +796,7 @@ void P_GroupLines (void) // 8001E614
 void P_SetupLevel(int map, skill_t skill) // 8001E974
 {
 	int		memory;
+	unsigned char i;
 
 	/* free all tags except the PU_STATIC tag */
 	Z_FreeTags(mainzone, ~PU_STATIC); // (PU_LEVEL | PU_LEVSPEC | PU_CACHE)
@@ -814,34 +815,32 @@ void P_SetupLevel(int map, skill_t skill) // 8001E974
 
 	spawncount = 0;
 	LightningFlash = 0; // Reset any flashes from previous levels
+	
+	MercilessMode = MercilessMenu; // Enable/Disable merciless mode only when loading a level
 
-	if (skill == sk_nightmare)
+	if (MercilessMode) // Increase speeds
 	{
 		states[S_054].tics = 4; // S_SARG_ATK1
 		states[S_055].tics = 4; // S_SARG_ATK2
 		states[S_056].tics = 4; // S_SARG_ATK3
-		mobjinfo[MT_DEMON1].speed = 17; // MT_SERGEANT
-		mobjinfo[MT_DEMON2].speed = 17; // MT_SERGEANT2
-
-		mobjinfo[MT_PROJ_BRUISER1].speed = 20; // MT_BRUISERSHOT
-		mobjinfo[MT_PROJ_BRUISER2].speed = 20; // MT_BRUISERSHOT2
-		mobjinfo[MT_PROJ_HEAD].speed = 30; // MT_HEADSHOT value like Doom 64 Ex
-		mobjinfo[MT_PROJ_IMP1].speed = 20; // MT_TROOPSHOT
-		mobjinfo[MT_PROJ_IMP2].speed = 35; // MT_TROOPSHOT2 value like Doom 64 Ex
+		
+		for (i=0 ; i<8 ; i++)
+		{
+			xspeed[i] = (3*xspeednormal[i])>>1;
+			yspeed[i] = (3*yspeednormal[i])>>1;
+		}
 	}
 	else
 	{
 		states[S_054].tics = 8; // S_SARG_ATK1
 		states[S_055].tics = 8; // S_SARG_ATK2
 		states[S_056].tics = 8; // S_SARG_ATK3
-		mobjinfo[MT_DEMON1].speed = 12; // MT_SERGEANT
-		mobjinfo[MT_DEMON2].speed = 12; // MT_SERGEANT2
-
-		mobjinfo[MT_PROJ_BRUISER1].speed = 15; // MT_BRUISERSHOT
-		mobjinfo[MT_PROJ_BRUISER2].speed = 15; // MT_BRUISERSHOT2
-		mobjinfo[MT_PROJ_HEAD].speed = 20; // MT_HEADSHOT
-		mobjinfo[MT_PROJ_IMP1].speed = 10; // MT_TROOPSHOT
-		mobjinfo[MT_PROJ_IMP2].speed = 20; // MT_TROOPSHOT2
+		
+		for (i=0 ; i<8 ; i++)
+		{
+			xspeed[i] = xspeednormal[i];
+			yspeed[i] = yspeednormal[i];
+		}
 	}
 
 	W_OpenMapWad(map);

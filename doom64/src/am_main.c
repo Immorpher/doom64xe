@@ -495,7 +495,7 @@ void AM_Drawer (void) // 800009AC
         }
         if (!msgticking)
         {
-            sprintf(map_name, "LEVEL %d: %s", gamemap, MapInfo[gamemap].name);
+            sprintf(map_name, "MAP %d: %s", gamemap, MapInfo[gamemap].name);
             ST_Message(20, 20, map_name, 0xffffff80);
         }
     }

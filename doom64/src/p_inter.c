@@ -56,8 +56,8 @@ boolean P_GiveAmmo (player_t *player, ammotype_t ammo, int num) // 800143E0
         num = num/2;
     }
 
-    if (gameskill == sk_baby || gameskill == sk_nightmare)
-		num <<= 1;			/* give double ammo in easy and nightmare mode */
+    if (gameskill == sk_baby)
+		num <<= 1;			/* give double ammo in easy mode */
 
 	oldammo = player->ammo[ammo];
 	player->ammo[ammo] += num;
@@ -367,7 +367,7 @@ void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 	case MT_AMMO_SHELL:
 		if (!P_GiveAmmo (player, am_shell,1))
 			return;
-        if (gameskill == sk_baby || gameskill == sk_nightmare)
+        if (gameskill == sk_baby)
             message = "Picked up 8 shotgun shells.";
         else
             message = "Picked up 4 shotgun shells.";
@@ -837,7 +837,7 @@ void P_DamageMobj (mobj_t *target, mobj_t *inflictor, mobj_t *source, int damage
 		return;
 	}
 
-	if ( (P_Random () < target->info->painchance) && !(target->flags&MF_SKULLFLY) )
+	if ( (P_Random () < (target->info->painchance>>MercilessMode)) && !(target->flags&MF_SKULLFLY) ) // Reduce pain chance for merciless mode
 	{
 		target->flags |= MF_JUSTHIT;		/* fight back! */
 		if(target->info->painstate)
@@ -845,7 +845,7 @@ void P_DamageMobj (mobj_t *target, mobj_t *inflictor, mobj_t *source, int damage
 	}
 
 	target->reactiontime = 0;		/* we're awake now...	 */
-	if (!target->threshold && source && (source->flags & MF_SHOOTABLE) && !(target->flags & MF_NOINFIGHTING))
+	if (!target->threshold && source && (source->flags & MF_SHOOTABLE) && !(target->flags & MF_NOINFIGHTING) && !MercilessMode)
 	{	/* if not intent on another player, chase after this one */
 		target->target = source;
 		target->threshold = BASETHRESHOLD;

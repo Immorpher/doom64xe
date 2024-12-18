@@ -52,28 +52,28 @@ char *ControlText[] =   //8007517C
 #define M_TXT16 "Bring it on!"
 #define M_TXT17 "I own Doom!"
 #define M_TXT18 "Watch me die!"
-#define M_TXT19 "Hardcore!"
+#define M_TXT19 "Merciless:" // Optional merciless difficulty to add to each difficulty
 #define M_TXT20 "Yes"
 #define M_TXT21 "No"
 #define M_TXT22 "Features"
-#define M_TXT23 "WARP TO LEVEL"
-#define M_TXT24 "INVULNERABLE"
-#define M_TXT25 "HEALTH BOOST"
-#define M_TXT26 "SECURITY KEYS"
-#define M_TXT27 "WEAPONS"
+#define M_TXT23 "WARP TO LEVEL:"
+#define M_TXT24 "INVULNERABLE:"
+#define M_TXT25 "HEALTH BOOST:"
+#define M_TXT26 "SECURITY KEYS:"
+#define M_TXT27 "WEAPONS:"
 #define M_TXT28 "Exit"
-#define M_TXT29 "DEBUG"
-#define M_TXT30 "TEXTURE TEST"
-#define M_TXT31 "WALL BLOCKING"
+#define M_TXT29 "DEBUG:"
+#define M_TXT30 "TEXTURE TEST:"
+#define M_TXT31 "WALL BLOCKING:"
 #define M_TXT32 "Center Video"
 #define M_TXT33 "Messages:"
 #define M_TXT34 "Status Bar:"
-#define M_TXT35 "LOCK MONSTERS"
-#define M_TXT36 "SCREENSHOT"
-#define M_TXT37 "MAP EVERYTHING"
-#define M_TXT38 "MACRO PEEK"
-#define M_TXT39 "MUSIC TEST"
-#define M_TXT40 "WARP TO FUN"
+#define M_TXT35 "LOCK MONSTERS:"
+#define M_TXT36 "SCREENSHOT:"
+#define M_TXT37 "MAP EVERYTHING:"
+#define M_TXT38 "MACRO PEEK:"
+#define M_TXT39 "MUSIC TEST:"
+#define M_TXT40 "WARP TO FUN:"
 #define M_TXT41 "Control Stick"
 #define M_TXT42 "Default"
 #define M_TXT43 "Sensitivity"
@@ -84,8 +84,8 @@ char *ControlText[] =   //8007517C
 
 // Doom 64 RE options
 
-#define M_TXT48 "COLORS"     // [GEC] NEW CHEAT CODE
-#define M_TXT49 "FULL BRIGHT"   // [GEC] NEW CHEAT CODE
+#define M_TXT48 "COLORS:"     // [GEC] NEW CHEAT CODE
+#define M_TXT49 "FULL BRIGHT:"   // [GEC] NEW CHEAT CODE
 #define M_TXT50 "Filtering:"   // Now Menu feature
 
 #define M_TXT51 "Absolution"
@@ -93,8 +93,8 @@ char *ControlText[] =   //8007517C
 // Early CE Menu Texts
 
 #define M_TXT52 "Lost Levels"
-#define M_TXT53 "Artifacts"
-#define M_TXT54 "Skill"
+#define M_TXT53 "Artifacts:"
+#define M_TXT54 "Skill:"
 #define M_TXT55 "Load Game"
 #define M_TXT56 "Blood Style:"
 #define M_TXT57 "Colored HUD:"
@@ -105,7 +105,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT60 "Map Stats:" // Automap stats
 #define M_TXT61 "Bonus Pak" // Bonus level hub
 #define M_TXT62 "Beta 64" // Antnee's Beta 64
-#define M_TXT63 "WARP TO FINAL" // Final map warp
+#define M_TXT63 "WARP TO FINAL:" // Final map warp
 #define M_TXT64 "Credits" // Credits
 #define M_TXT65 "Deadzone:" // Analog stick deadzone
 #define M_TXT66 "Flash Level:" // Flash brightness
@@ -149,8 +149,8 @@ menuitem_t Menu_Skill[6] = // 8005A990
     { 16, 102, 90},    // Bring it on!
     { 17, 102, 110},    // I own Doom!
     { 18, 102, 130},    // Watch me die!
-    { 19, 102, 150},    // Be merciless!
-    { 6, 102, 180},    	// Return
+    { 19, 102, 160},    // Merciless Mode Toggle
+    { 6, 102, 200},    	// Return
 };
 
 const menuitem_t Menu_Episode[5] =
@@ -159,7 +159,7 @@ const menuitem_t Menu_Episode[5] =
     { 52, 102, 100},    // The Lost Levels
     { 62, 102, 120},    // Beta 64
     { 61, 102, 140},    // Bonus Pak
-    { 6, 102, 170},    	// Return
+    { 6, 102, 200},    	// Return
 };
 
 menuitem_t Menu_Options[8] = // 8005A9C0
@@ -179,7 +179,7 @@ const menuitem_t Menu_Volume[4] = // 8005AA08
     {  7, 102, 60 },    // Music Volume
     {  8, 102, 100},    // Sound Volume
     { 12, 102, 140},    // Default Volume
-    {  6, 102, 160},    // Return
+    {  6, 102, 200},    // Return
 };
 
 const menuitem_t Menu_ControlStick[4] = // 8005AA38
@@ -187,7 +187,7 @@ const menuitem_t Menu_ControlStick[4] = // 8005AA38
     { 43, 102, 70 },    // Sensitivity
     { 65, 102, 110},    // Deadzone
     { 42, 102, 130},    // Defaults
-    {  6, 102, 150},    // Return
+    {  6, 102, 200},    // Return
 };
 
 const menuitem_t Menu_Video[7] =
@@ -209,7 +209,7 @@ const menuitem_t Menu_Display[7] = // 8005AA5C
     { 56, 102, 120},    // Blood Color
     { 57, 102, 140},    // Colored HUD
     { 13, 102, 160},    // Default Display
-    {  6, 102, 180},    // Return
+    {  6, 102, 200},    // Return
 };
 
 const menuitem_t Menu_Game[5] = // 8005AAA4
@@ -261,27 +261,23 @@ const menuitem_t Menu_CreateNote[3] = // 8005AB40
     { 44, 110, 130},    // Manage Pak
 };
 
-#define MAXFEATURES 13
+#define MAXFEATURES 14
 const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 {
     { 23, 40, 50},      // WARP TO LEVEL
-    { 24, 40, 60},      // INVULNERABLE
-    { 25, 40, 70},      // HEALTH BOOST
-    { 27, 40, 80},      // WEAPONS
-    { 37, 40, 90},      // MAP EVERYTHING
-    //
-    { 53, 40, 100},      // ARTIFACTS
-    { 54, 40, 110},      // SKILL
-    //
+    { 54, 40, 60},      // SKILL
+    { 19, 40, 70},      // Merciless mode
+    { 24, 40, 80},      // INVULNERABLE
+    { 25, 40, 90},      // HEALTH BOOST
+    { 27, 40, 100},      // WEAPONS
+    { 37, 40, 110},      // MAP EVERYTHING
     { 26, 40, 120},      // SECURITY KEYS
-    { 31, 40, 130},      // WALL BLOCKING
-    { 35, 40, 140},      // LOCK MONSTERS
-    { 39, 40, 150},      // MUSIC TEST
-    //
-    { 48, 40, 160},      // COLORS [GEC] NEW CHEAT CODE
-    { 49, 40, 170},      // FULL BRIGHT [GEC] NEW CHEAT CODE
-
-
+    { 53, 40, 130},      // ARTIFACTS
+    { 31, 40, 140},      // WALL BLOCKING
+    { 35, 40, 150},      // LOCK MONSTERS
+    { 39, 40, 160},      // MUSIC TEST
+    { 48, 40, 170},      // COLORS [GEC] NEW CHEAT CODE
+    { 49, 40, 180},      // FULL BRIGHT [GEC] NEW CHEAT CODE
 };
 
 menudata_t MenuData[8]; // 800A54F0
@@ -320,12 +316,14 @@ int	 MotionBob = 0x100003;		// Video motion bob - 16 pixels of bob is 0x100000
 char FlashLevel = 0;				// Flash reduction parameter, 0 is maximum flash brightness
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence which gets turned on only when starting a new campaign
+boolean MercilessMode = false; // [Immorpher] Returning merciless difficulty from Doom 64 Merciless Edition!
+boolean MercilessMenu = false; // Current menu setting for merciless mode, not necessarily enabled in menu
 char TextureFilter = 0;
 char Autorun = 0;
 byte SavedConfig[16];
 char BloodStyle = 3; // Blood style: red, green, dust, combo
-boolean ColoredHUD = 1; // Hud color
-boolean ShowStats = 1; // Automap stats
+boolean ColoredHUD = true; // Hud color
+boolean ShowStats = true; // Automap stats
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -992,1073 +990,1080 @@ int M_MenuTicker(void) // 80007E0C
         }
         else
         {
-                truebuttons = (0 < (buttons ^ oldbuttons));
+			truebuttons = (0 < (buttons ^ oldbuttons));
 
-                if (truebuttons)
-                    truebuttons = (0 < (buttons & ALL_BUTTONS));
+			if (truebuttons)
+				truebuttons = (0 < (buttons & ALL_BUTTONS));
 
-                switch(MenuItem[cursorpos].casepos)
-                {
+			switch(MenuItem[cursorpos].casepos)
+			{
 
-                case 0: // Control Pad
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
+			case 0: // Control Pad
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
 
-                        MenuCall = M_ControlPadDrawer;
-                        cursorpos = 0;
-                        linepos = 0;
+					MenuCall = M_ControlPadDrawer;
+					cursorpos = 0;
+					linepos = 0;
 
-                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_ControlPadTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData(true);
-                        return ga_nothing;
-                    }
-                    break;
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_ControlPadTicker,M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+					return ga_nothing;
+				}
+				break;
 
-                case 1: // Volume
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
+			case 1: // Volume
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
 
-                        MenuItem = Menu_Volume;
-                        itemlines = 4;
-                        MenuCall = M_VolumeDrawer;
-                        cursorpos = 0;
+					MenuItem = Menu_Volume;
+					itemlines = 4;
+					MenuCall = M_VolumeDrawer;
+					cursorpos = 0;
 
-                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData(true);
-                        return ga_nothing;
-                    }
-                    break;
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+					return ga_nothing;
+				}
+				break;
 
-                case 2: // Display
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
+			case 2: // Display
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
 
-                        MenuItem = Menu_Display;
-                        itemlines = 7;
-                        MenuCall = M_DisplayDrawer;
-                        cursorpos = 0;
+					MenuItem = Menu_Display;
+					itemlines = 7;
+					MenuCall = M_DisplayDrawer;
+					cursorpos = 0;
 
-                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData(true);
-                        return ga_nothing;
-                    }
-                    break;
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+					return ga_nothing;
+				}
+				break;
 
-                case 3: // Password
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
+			case 3: // Password
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
 
-                        MenuCall = M_PasswordDrawer;
-                        exit = MiniLoop(M_PasswordStart,M_PasswordStop,M_PasswordTicker,M_MenuGameDrawer);
+					MenuCall = M_PasswordDrawer;
+					exit = MiniLoop(M_PasswordStart,M_PasswordStop,M_PasswordTicker,M_MenuGameDrawer);
 
-                        if (exit == ga_exit)
-                        {
-                            M_RestoreMenuData(true);
-                            return ga_nothing;
-                        }
+					if (exit == ga_exit)
+					{
+						M_RestoreMenuData(true);
+						return ga_nothing;
+					}
 
-                        return exit;
-                    }
-                    break;
+					return exit;
+				}
+				break;
 
-                case 4: // Main Menu
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
+			case 4: // Main Menu
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
 
-                        MenuItem = Menu_Quit;
-                        itemlines = 2;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 1;
+					MenuItem = Menu_Quit;
+					itemlines = 2;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 1;
 
-                        exit = MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-                        if (exit == ga_exit) {
-                            return ga_nothing;
-                        }
+					exit = MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					if (exit == ga_exit) {
+						return ga_nothing;
+					}
 
-                        return ga_exitdemo;//ga_exitdemo;
-                    }
-                    break;
+					return ga_exitdemo;//ga_exitdemo;
+				}
+				break;
 
-                case 5: // [Immorpher] Updated restart level so player can change difficulty at will
-                    if (truebuttons)
-                    {
-						
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
+			case 5: // Restart Level - [Immorpher] Updated restart level so player can change difficulty at will
+				if (truebuttons)
+				{
+					
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
 
-                        MenuItem = Menu_Skill;
-                        itemlines = 6;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = gameskill;  // Set default to current difficulty
+					MenuItem = Menu_Skill;
+					itemlines = 6;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = gameskill;  // Set default to current difficulty
 
-                        exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
+					exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
 
-                        if (exit == ga_exit && cursorpos == 5) { // [Immorpher] 5th to exit menu
-							M_RestoreMenuData((exit == ga_exit));
-                            return ga_nothing;
+					if (exit == ga_exit && cursorpos > 3) { // If not on a difficulty exit to menu
+						M_RestoreMenuData((exit == ga_exit));
+						return ga_nothing;
+					}
+					
+					gameskill = cursorpos;
+					
+					startmap = gamemap;
+					startskill = gameskill;
+					
+					return ga_warped;
+				}
+				break;
+
+			case 6: // Return
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					return ga_exit;
+				}
+				break;
+
+			case 7: // Music Volume
+				if (buttons & ALL_FORWARD)
+				{
+					if (MusVolume < 127)
+					{
+						MusVolume += 1;
+						wess_master_mus_vol_set(MusVolume);
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				else if (buttons & ALL_BACK)
+				{
+					if (MusVolume > 0)
+					{
+						MusVolume -= 1;
+						wess_master_mus_vol_set(MusVolume);
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				break;
+
+			case 8: // Sound Volume
+				if (buttons & ALL_FORWARD)
+				{
+					if (SfxVolume < 127)
+					{
+						SfxVolume += 1;
+						wess_master_sfx_vol_set(SfxVolume);
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				else if (buttons & ALL_BACK)
+				{
+					if (SfxVolume > 0)
+					{
+						SfxVolume -= 1;
+						wess_master_sfx_vol_set(SfxVolume);
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				break;
+
+			case 9: // Brightness
+				if (buttons & ALL_FORWARD)
+				{
+					if (brightness < 127)
+					{
+						brightness += 1;
+						P_RefreshBrightness();
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				else if (buttons & ALL_BACK)
+				{
+					if (brightness > 0)
+					{
+						brightness -= 1;
+						P_RefreshBrightness();
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				break;
+
+			case 11: // Options
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_Options;
+					itemlines = 8;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 0;
+
+					exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+
+					if (exit == ga_exit)
+						return ga_nothing;
+
+					return exit;
+				}
+				break;
+
+			case 12: // Default Audio
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+
+					SfxVolume = 100;
+					MusVolume = 100;
+
+					wess_master_mus_vol_set(MusVolume);
+					wess_master_sfx_vol_set(SfxVolume);
+
+					return ga_nothing;
+				}
+				break;
+
+			case 13: // Default Display
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+
+					enable_messages = true;
+					enable_statusbar = true;
+
+					BloodStyle = 3;
+					ColoredHUD = 1;
+					ShowStats = 1;
+					
+					return ga_nothing;
+				}
+				break;
+
+			case 14: // New Game
+				if (truebuttons)
+				{
+
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					// Check ControllerPak
+					EnableMemPak = (M_ControllerPak() == 0);
+
+					MenuItem = Menu_Episode;
+					itemlines = 5;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 0;
+
+					exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					
+					if (exit == ga_exit)
+						return ga_nothing;
+
+					return exit;
+				}
+				break;
+
+			case 51: // DOOM 64
+				if (truebuttons)
+				{
+					startmap = MenuItem[cursorpos].casepos == 52 ? 34 : 1;
+					
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_Skill;
+					itemlines = 6;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 2;
+
+					exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					
+					if (exit == ga_exit)
+						return ga_nothing;
+					
+					nextmap = 1; // [Immorpher] For running introduction for Doom 64
+					runintroduction = true; // [Immorpher] turn introduction on
+
+					return exit;
+				}
+				break;
+			case 52: // The Lost Levels
+				if (truebuttons)
+				{
+					startmap = MenuItem[cursorpos].casepos == 52 ? 34 : 1;
+					
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_Skill;
+					itemlines = 6;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 2;
+
+					exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					
+					if (exit == ga_exit)
+						return ga_nothing;
+					
+					nextmap = LOSTLEVEL; // [Immorpher] For running introduction for Lost Levels
+					runintroduction = true; // [Immorpher] turn introduction on
+					
+					return exit;
+				}
+				break;
+
+			case 15: // Be Gentle!
+			case 16: // Bring it on!
+			case 17: // I own Doom!
+			case 18: // Watch me die!
+				if (truebuttons)
+				{
+					startskill = MenuItem[cursorpos].casepos - 15;
+					S_StartSound(NULL, sfx_pistol);
+					return ga_restart;
+				}
+				break;
+				
+			case 19: // Merciless mode
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					MercilessMenu ^= true; // Enable/disable merciless mode on next level load
+					return ga_nothing;
+				}
+				break;
+
+			case 20: // Yes
+			case 46: // Try again
+			case 47: // Create game note
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					return ga_exitdemo; //ga_exitdemo;
+				}
+				break;
+
+			case 21: // No
+			case 45: // Do not use Pak
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					return ga_exit;
+				}
+				break;
+
+			case 22: // Features
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					players[0].cheats &= 0xffff1fff;
+
+					MenuItem = Menu_Features;
+					itemlines = MAXFEATURES;
+					MenuCall = M_FeaturesDrawer;
+					cursorpos = 0;
+					m_actualmap = gamemap;
+
+					exit = MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+					M_RestoreMenuData((exit == 8));
+
+					if (exit == 8)
+						return ga_nothing;
+
+					return exit;
+				}
+				break;
+
+			case 23: // WARP TO LEVEL
+				if (buttons ^ oldbuttons)
+				{
+					if (buttons & PAD_LEFT)
+					{
+						if (m_actualmap > 0)
+						{
+							m_actualmap -= 1;
+							S_StartSound(NULL, sfx_switch2);
 						}
-						
-                        gameskill = cursorpos;
-						
-						startmap = gamemap;
-						startskill = gameskill;
-						
+						return ga_nothing;
+					}
+					else if (buttons & PAD_RIGHT)
+					{
+						m_actualmap += 1;
+						if (m_actualmap > LASTLEVEL)
+						{
+							m_actualmap = LASTLEVEL;
+						}
+						else
+						{
+							S_StartSound(NULL, sfx_switch2);
+						}
+						return ga_nothing;
+					}
+					else if (buttons & ALL_CBUTTONS)
+					{
+						gamemap = m_actualmap;
+						startmap = m_actualmap;
 						return ga_warped;
-                    }
-                    break;
-
-                case 6: // Return
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        return ga_exit;
-                    }
-                    break;
-
-                case 7: // Music Volume
-                    if (buttons & ALL_FORWARD)
-                    {
-                        if (MusVolume < 127)
-                        {
-							MusVolume += 1;
-                            wess_master_mus_vol_set(MusVolume);
-                            S_StartSound(NULL, sfx_secmove);
-                            return ga_nothing;
-                        }
-                    }
-                    else if (buttons & ALL_BACK)
-                    {
-                        if (MusVolume > 0)
-                        {
-							MusVolume -= 1;
-                            wess_master_mus_vol_set(MusVolume);
-							S_StartSound(NULL, sfx_secmove);
-							return ga_nothing;
-                        }
-                    }
-                    break;
-
-                case 8: // Sound Volume
-                    if (buttons & ALL_FORWARD)
-                    {
-                        if (SfxVolume < 127)
-                        {
-							SfxVolume += 1;
-                            wess_master_sfx_vol_set(SfxVolume);
-							S_StartSound(NULL, sfx_secmove);
-							return ga_nothing;
-                        }
-                    }
-                    else if (buttons & ALL_BACK)
-                    {
-                        if (SfxVolume > 0)
-                        {
-							SfxVolume -= 1;
-                            wess_master_sfx_vol_set(SfxVolume);
-                            S_StartSound(NULL, sfx_secmove);
-                            return ga_nothing;
-                        }
-                    }
-                    break;
-
-                case 9: // Brightness
-                    if (buttons & ALL_FORWARD)
-                    {
-                        if (brightness < 127)
-                        {
-							brightness += 1;
-                            P_RefreshBrightness();
-                            S_StartSound(NULL, sfx_secmove);
-                            return ga_nothing;
-                        }
-                    }
-                    else if (buttons & ALL_BACK)
-                    {
-                        if (brightness > 0)
-                        {
-							brightness -= 1;
-                            P_RefreshBrightness();
-                            S_StartSound(NULL, sfx_secmove);
-                            return ga_nothing;
-                        }
-                    }
-                    break;
-
-                case 11: // Options
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuItem = Menu_Options;
-                        itemlines = 8;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 0;
-
-                        exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-
-                        if (exit == ga_exit)
-                            return ga_nothing;
-
-                        return exit;
-                    }
-                    break;
-
-                case 12: // Default Audio
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-
-                        SfxVolume = 100;
-                        MusVolume = 100;
-
-                        wess_master_mus_vol_set(MusVolume);
-                        wess_master_sfx_vol_set(SfxVolume);
-
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 13: // Default Display
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-
-                        enable_messages = true;
-                        enable_statusbar = true;
-
-                        BloodStyle = 3;
-                        ColoredHUD = 1;
-						ShowStats = 1;
-						
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 14: // New Game
-                    if (truebuttons)
-                    {
-
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        // Check ControllerPak
-                        EnableMemPak = (M_ControllerPak() == 0);
-
-                        MenuItem = Menu_Episode;
-                        itemlines = 5;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 0;
-
-                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-                        
-                        if (exit == ga_exit)
-                            return ga_nothing;
-
-                        return exit;
-                    }
-                    break;
-
-                case 51: // DOOM 64
-                    if (truebuttons)
-                    {
-                        startmap = MenuItem[cursorpos].casepos == 52 ? 34 : 1;
-                        
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuItem = Menu_Skill;
-                        itemlines = 6;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 2;
-
-                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-                        
-                        if (exit == ga_exit)
-                            return ga_nothing;
-						
-						nextmap = 1; // [Immorpher] For running introduction for Doom 64
-						runintroduction = true; // [Immorpher] turn introduction on
-
-                        return exit;
-                    }
-                    break;
-                case 52: // The Lost Levels
-                    if (truebuttons)
-                    {
-                        startmap = MenuItem[cursorpos].casepos == 52 ? 34 : 1;
-                        
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuItem = Menu_Skill;
-                        itemlines = 6;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 2;
-
-                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-                        
-                        if (exit == ga_exit)
-                            return ga_nothing;
-						
-						nextmap = LOSTLEVEL; // [Immorpher] For running introduction for Lost Levels
-						runintroduction = true; // [Immorpher] turn introduction on
-						
-                        return exit;
-                    }
-                    break;
-
-                case 15: // Be Gentle!
-                case 16: // Bring it on!
-                case 17: // I own Doom!
-                case 18: // Watch me die!
-				case 19: // Nightmare!
-                
-                    if (truebuttons)
-                    {
-                        startskill = MenuItem[cursorpos].casepos - 15;
-                        S_StartSound(NULL, sfx_pistol);
-                        return ga_restart;
-                    }
-                    break;
-
-                case 20: // Yes
-                case 46: // Try again
-                case 47: // Create game note
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        return ga_exitdemo; //ga_exitdemo;
-                    }
-                    break;
-
-                case 21: // No
-                case 45: // Do not use Pak
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        return ga_exit;
-                    }
-                    break;
-
-                case 22: // Features
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        players[0].cheats &= 0xffff1fff;
-
-                        MenuItem = Menu_Features;
-                        itemlines = MAXFEATURES;
-                        MenuCall = M_FeaturesDrawer;
-                        cursorpos = 0;
-                        m_actualmap = gamemap;
-
-                        exit = MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == 8));
-
-                        if (exit == 8)
-                            return ga_nothing;
-
-                        return exit;
-                    }
-                    break;
-
-                case 23: // WARP TO LEVEL
-                    if (buttons ^ oldbuttons)
-                    {
-                        if (buttons & PAD_LEFT)
-                        {
-							if (m_actualmap > 0)
-							{
-								m_actualmap -= 1;
-								S_StartSound(NULL, sfx_switch2);
-							}
-							return ga_nothing;
-                        }
-                        else if (buttons & PAD_RIGHT)
-                        {
-							m_actualmap += 1;
-							if (m_actualmap > LASTLEVEL)
-							{
-								m_actualmap = LASTLEVEL;
-							}
-							else
-							{
-								S_StartSound(NULL, sfx_switch2);
-							}
-							return ga_nothing;
-                        }
-                        else if (buttons & ALL_CBUTTONS)
-                        {
-                            gamemap = m_actualmap;
-                            startmap = m_actualmap;
-                            return ga_warped;
-                        }
-                    } else if (m_actualmap > LASTLEVEL) { // [Immorpher] If at bonus pak reset to hub
-						m_actualmap = 0;
 					}
-                    break;
+				} else if (m_actualmap > LASTLEVEL) { // [Immorpher] If at bonus pak reset to hub
+					m_actualmap = 0;
+				}
+				break;
 
-                case 24: // INVULNERABLE
-                    if (((gamemap != 32) & truebuttons))
-                    {
-                        players[0].cheats ^= CF_GODMODE;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
+			case 24: // INVULNERABLE
+				if (((gamemap != 32) & truebuttons))
+				{
+					players[0].cheats ^= CF_GODMODE;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
 
-                case 25: // HEALTH BOOST
-                    if (truebuttons)
-                    {
-                        players[0].cheats |= CF_HEALTH;
-                        players[0].health = 100;
-                        players[0].mo->health = 100;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
+			case 25: // HEALTH BOOST
+				if (truebuttons)
+				{
+					players[0].cheats |= CF_HEALTH;
+					players[0].health = 100;
+					players[0].mo->health = 100;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
 
-                case 26: // SECURITY KEYS
-                    /* Not available in the release code */
-                    /*
-                    Reconstructed code based on Psx Doom
-                    */
-                    if (truebuttons)
-                    {
-                        players[0].cheats |= CF_ALLKEYS;
+			case 26: // SECURITY KEYS
+				/* Not available in the release code */
+				/*
+				Reconstructed code based on Psx Doom
+				*/
+				if (truebuttons)
+				{
+					players[0].cheats |= CF_ALLKEYS;
 
-                        for (m = mobjhead.next; m != &mobjhead; m = m->next)
-                        {
-                            switch (m->type)
-                            {
-                            case MT_ITEM_BLUECARDKEY:
-                                players[0].cards[it_bluecard] = true;
-                                break;
-                            case MT_ITEM_REDCARDKEY:
-                                players[0].cards[it_redcard] = true;
-                                break;
-                            case MT_ITEM_YELLOWCARDKEY:
-                                players[0].cards[it_yellowcard] = true;
-                                break;
-                            case MT_ITEM_YELLOWSKULLKEY:
-                                players[0].cards[it_yellowskull] = true;
-                                break;
-                            case MT_ITEM_REDSKULLKEY:
-                                players[0].cards[it_redskull] = true;
-                                break;
-                            case MT_ITEM_BLUESKULLKEY:
-                                players[0].cards[it_blueskull] = true;
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        for (i = 0; i < spawncount; i++)
-                        {
-                            switch (spawnlist[i].type)
-                            {
-                            case 5:
-                                players[0].cards[it_bluecard] = true;
-                                break;
-                            case 13:
-                                players[0].cards[it_redcard] = true;
-                                break;
-                            case 6:
-                                players[0].cards[it_yellowcard] = true;
-                                break;
-                            case 39:
-                                players[0].cards[it_yellowskull] = true;
-                                break;
-                            case 38:
-                                players[0].cards[it_redskull] = true;
-                                break;
-                            case 40:
-                                players[0].cards[it_blueskull] = true;
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 27: // WEAPONS
-                    if (truebuttons)
-                    {
-                        players[0].cheats |= CF_WEAPONS;
-
-                        for(i = 0; i < NUMWEAPONS; i++) {
-                            players[0].weaponowned[i] = true;
-                        }
-
-                        for(i = 0; i < NUMAMMO; i++) {
-                            players[0].ammo[i] = players[0].maxammo[i];
-                        }
-
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 28: // Exit
-                    /* nothing special */
-                    break;
-
-                case 29: // DEBUG
-                    /* Not available in the release code */
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_DEBUG;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 30: // TEXTURE TEST
-                    /* Not available in the release code */
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_TEX_TEST;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 31: // WALL BLOCKING
-                    /* Not available in the release code */
-                    /*
-                    In my opinion it must have been the NOCLIP cheat code
-                    */
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_WALLBLOCKING;
-                        players[0].mo->flags ^= MF_NOCLIP;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 32: // Center Display
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuCall = M_CenterDisplayDrawer;
-
-                        MiniLoop(M_FadeInStart,M_FadeOutStart,M_CenterDisplayTicker,M_MenuGameDrawer);
-                        M_RestoreMenuData(true);
-
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 33: // Messages
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        enable_messages ^= true;
-						return ga_nothing;
-                    }
-                    break;
-
-                case 34: // Status Bar
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        enable_statusbar ^= true;
-						return ga_nothing;
-                    }
-                    break;
-
-                case 56: // Blood Style
-                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
-                    {
-						BloodStyle += 1;
-						S_StartSound(NULL, sfx_switch2);
-						
-                        if (BloodStyle > 3)
+					for (m = mobjhead.next; m != &mobjhead; m = m->next)
+					{
+						switch (m->type)
 						{
-							BloodStyle = 0;
-                        }
-						
-						return ga_nothing;
-                    }
-                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
-                    {
-						S_StartSound(NULL, sfx_switch2);
-						if (BloodStyle == 0)
-						{
-							BloodStyle = 3;
-                        }
-						else
-						{
-							BloodStyle -= 1;
+						case MT_ITEM_BLUECARDKEY:
+							players[0].cards[it_bluecard] = true;
+							break;
+						case MT_ITEM_REDCARDKEY:
+							players[0].cards[it_redcard] = true;
+							break;
+						case MT_ITEM_YELLOWCARDKEY:
+							players[0].cards[it_yellowcard] = true;
+							break;
+						case MT_ITEM_YELLOWSKULLKEY:
+							players[0].cards[it_yellowskull] = true;
+							break;
+						case MT_ITEM_REDSKULLKEY:
+							players[0].cards[it_redskull] = true;
+							break;
+						case MT_ITEM_BLUESKULLKEY:
+							players[0].cards[it_blueskull] = true;
+							break;
+						default:
+							break;
 						}
-						return ga_nothing;
-                    }
-                    break;
+					}
 
-                case 57: // Cross Color
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        ColoredHUD ^= true; // Temporarily disabled will be replaced with palette swap
-						return ga_nothing;
-                    }
-                    break;
-
-                case 35: // LOCK MONSTERS
-                    /* Not available in the release code */
-                    /*
-                    Reconstructed code based on Doom 64 Ex
-                    */
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_LOCKMOSTERS;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 36: // SCREENSHOT
-                    /* Not available in the release code */
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_SCREENSHOT;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 37: // MAP EVERYTHING
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_ALLMAP;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 38: // MACRO PEEK
-                    /* Not available in the release code */
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_MACROPEEK;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 39: // MUSIC TEST
-                    /* Not available in the release code */
-                    /*
-                    Reconstructed code in my interpretation
-                    */
-                    if (buttons ^ oldbuttons)
-                    {
-                        if (buttons & PAD_LEFT)
-                        {
-                            MusicID -= 1;
-                            if (MusicID > 0)
-                            {
-                                S_StartSound(NULL, sfx_switch2);
-                                return ga_nothing;
-                            }
-                            MusicID = 1;
-                        }
-                        else if (buttons & PAD_RIGHT)
-                        {
-                            MusicID += 1;
-                            if (MusicID < 25)
-                            {
-                                S_StartSound(NULL, sfx_switch2);
-                                return ga_nothing;
-                            }
-                            MusicID = 24;
-                        }
-                        else if (buttons & ALL_CBUTTONS)
-                        {
-                            S_StopMusic();
-                            S_StartMusic(MusicID+(NUMSFX-1));
-                            return ga_nothing;
-                        }
-                    }
-                    break;
-
-                case 41: // Control Stick
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuItem = Menu_ControlStick;
-                        itemlines = 4;
-                        MenuCall = M_ControlStickDrawer;
-                        cursorpos = 0;
-
-                        MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData(true);
-
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 42: // Default Control Stick
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        M_SENSITIVITY = 27;
-						PlayDeadzone = 10;
-                    }
-                    break;
-
-                case 43: // Sensitivity
-                    if (buttons & ALL_FORWARD)
-                    {
-                        if (M_SENSITIVITY < 127)
-						{
-							M_SENSITIVITY += 1;
-							S_StartSound(NULL, sfx_secmove);
-							return ga_nothing;
-                        }
-                    }
-                    else if (buttons & ALL_BACK)
-                    {
-                       if (M_SENSITIVITY > 0)
-						{
-							M_SENSITIVITY -= 1;
-							S_StartSound(NULL, sfx_secmove);
-							return ga_nothing;
-                        }
-                    }
-                    break;
-
-                case 44: // Manage Pak
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuCall = M_ControllerPakDrawer;
-                        linepos = 0;
-                        cursorpos = 0;
-
-                        exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_ScreenTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == 8));
-
-                        if (exit == 8)
-                            return ga_nothing;
-
-                        return exit;
-                    }
-                    break;
-
-                case 48: // COLORS [GEC] NEW CHEAT CODE
-                    if (truebuttons)
-                    {
-                    players[0].cheats ^= CF_NOCOLORS;
-                    gobalcheats ^= CF_NOCOLORS;
-                    P_RefreshBrightness();
-                    S_StartSound(NULL, sfx_switch2);
-                    return ga_nothing;
-                    }
-                    break;
-
-                case 49: // FULL BRIGHT [GEC] NEW CHEAT CODE
-                    if (truebuttons)
-                    {
-                        players[0].cheats ^= CF_FULLBRIGHT;
-                        gobalcheats ^= CF_FULLBRIGHT;
-                        P_RefreshBrightness();
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 50: // FILTER [GEC] NEW CHEAT CODE
-                    if (truebuttons)
-                    {
-                        TextureFilter += TextureFilter < 2 ? 1 : -2;
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 53: // ARTIFACTS
-                    if (truebuttons)
-                    {
-                        players[0].artifacts |= 4;
-                        players[0].artifacts |= 2;
-                        players[0].artifacts |= 1;
-
-                        S_StartSound(NULL, sfx_switch2);
-                        return ga_nothing;
-                    }
-                    break;
-
-                case 54: // SKILL
-                    if (buttons ^ oldbuttons)
-                    {
-                        if (buttons & ALL_FORWARD)
-                        {
-                            if (gameskill > sk_baby || startskill > sk_baby)
-                            {
-                                startskill -= 1;
-                                gameskill -= 1;
-                                S_StartSound(NULL, sfx_switch2);
-                                return ga_nothing;
-                            }
-                        }
-                        else if (buttons & ALL_BACK)
-                        {
-                            if (gameskill < sk_nightmare || startskill < sk_nightmare)
-                            {
-                                startskill += 1;
-                                gameskill += 1;
-                                S_StartSound(NULL, sfx_switch2);
-                                return ga_nothing;
-                            }
-                        }
-                    }
-                    break;
-
-                case 55: // LOAD GAME
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        ret = I_CheckControllerPak();
-                        exit = ga_exit;
-
-                        if (ret == 0)
-                        {
-                            if (I_ReadPakFile() == 0)
-                            {
-                                EnableMemPak = 1;
-                                MenuCall = M_LoadPakDrawer;
-                                exit = MiniLoop(M_LoadPakStart,M_LoadPakStop,M_LoadPakTicker,M_MenuGameDrawer);
-                            }
-                            else
-                                exit = ga_exit;
-                        }
-
-                        if (exit == ga_exit)
-                        {
-                            M_RestoreMenuData(true);
-                            return ga_nothing;
-                        }
-
-                        if (EnableMemPak != 0)
-                        {
-                            return exit;
-                        }
-
-                        EnableMemPak = (M_ControllerPak() == 0);
-                        return exit;
-                    }
-					break;
-					
-				case 58: // Video
-					if (truebuttons)
+					for (i = 0; i < spawncount; i++)
 					{
-						S_StartSound(NULL, sfx_pistol);
-						M_SaveMenuData();
-                        MenuItem = Menu_Video;
-						itemlines = 7;
-						MenuCall = M_VideoDrawer;
-						cursorpos = 0;
+						switch (spawnlist[i].type)
+						{
+						case 5:
+							players[0].cards[it_bluecard] = true;
+							break;
+						case 13:
+							players[0].cards[it_redcard] = true;
+							break;
+						case 6:
+							players[0].cards[it_yellowcard] = true;
+							break;
+						case 39:
+							players[0].cards[it_yellowskull] = true;
+							break;
+						case 38:
+							players[0].cards[it_redskull] = true;
+							break;
+						case 40:
+							players[0].cards[it_blueskull] = true;
+							break;
+						default:
+							break;
+						}
+					}
 
-						MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
-						M_RestoreMenuData(true);
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 27: // WEAPONS
+				if (truebuttons)
+				{
+					players[0].cheats |= CF_WEAPONS;
+
+					for(i = 0; i < NUMWEAPONS; i++) {
+						players[0].weaponowned[i] = true;
+					}
+
+					for(i = 0; i < NUMAMMO; i++) {
+						players[0].ammo[i] = players[0].maxammo[i];
+					}
+
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 28: // Exit
+				/* nothing special */
+				break;
+
+			case 29: // DEBUG
+				/* Not available in the release code */
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_DEBUG;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 30: // TEXTURE TEST
+				/* Not available in the release code */
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_TEX_TEST;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 31: // WALL BLOCKING
+				/* Not available in the release code */
+				/*
+				In my opinion it must have been the NOCLIP cheat code
+				*/
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_WALLBLOCKING;
+					players[0].mo->flags ^= MF_NOCLIP;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 32: // Center Display
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuCall = M_CenterDisplayDrawer;
+
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_CenterDisplayTicker,M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+
+					return ga_nothing;
+				}
+				break;
+
+			case 33: // Messages
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					enable_messages ^= true;
+					return ga_nothing;
+				}
+				break;
+
+			case 34: // Status Bar
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					enable_statusbar ^= true;
+					return ga_nothing;
+				}
+				break;
+
+			case 56: // Blood Style
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
+				{
+					BloodStyle += 1;
+					S_StartSound(NULL, sfx_switch2);
+					
+					if (BloodStyle > 3)
+					{
+						BloodStyle = 0;
+					}
+					
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					S_StartSound(NULL, sfx_switch2);
+					if (BloodStyle == 0)
+					{
+						BloodStyle = 3;
+					}
+					else
+					{
+						BloodStyle -= 1;
+					}
+					return ga_nothing;
+				}
+				break;
+
+			case 57: // Colored HUD
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					ColoredHUD ^= true; // Turn colored HUD on or off
+					return ga_nothing;
+				}
+				break;
+
+			case 35: // LOCK MONSTERS
+				/* Not available in the release code */
+				/*
+				Reconstructed code based on Doom 64 Ex
+				*/
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_LOCKMOSTERS;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 36: // SCREENSHOT
+				/* Not available in the release code */
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_SCREENSHOT;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 37: // MAP EVERYTHING
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_ALLMAP;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 38: // MACRO PEEK
+				/* Not available in the release code */
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_MACROPEEK;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 39: // MUSIC TEST
+				/* Not available in the release code */
+				/*
+				Reconstructed code in my interpretation
+				*/
+				if (buttons ^ oldbuttons)
+				{
+					if (buttons & PAD_LEFT)
+					{
+						MusicID -= 1;
+						if (MusicID > 0)
+						{
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+						}
+						MusicID = 1;
+					}
+					else if (buttons & PAD_RIGHT)
+					{
+						MusicID += 1;
+						if (MusicID < 25)
+						{
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+						}
+						MusicID = 24;
+					}
+					else if (buttons & ALL_CBUTTONS)
+					{
+						S_StopMusic();
+						S_StartMusic(MusicID+(NUMSFX-1));
 						return ga_nothing;
 					}
-					break;
-									
-				case 59: // Motion bob
-                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
-                    {
-						S_StartSound(NULL, sfx_switch2);
-                        if (MotionBob >= 0x100003)
-							MotionBob = 0;
+				}
+				break;
+
+			case 41: // Control Stick
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_ControlStick;
+					itemlines = 4;
+					MenuCall = M_ControlStickDrawer;
+					cursorpos = 0;
+
+					MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+
+					return ga_nothing;
+				}
+				break;
+
+			case 42: // Default Control Stick
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					M_SENSITIVITY = 27;
+					PlayDeadzone = 10;
+				}
+				break;
+
+			case 43: // Sensitivity
+				if (buttons & ALL_FORWARD)
+				{
+					if (M_SENSITIVITY < 127)
+					{
+						M_SENSITIVITY += 1;
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				else if (buttons & ALL_BACK)
+				{
+				   if (M_SENSITIVITY > 0)
+					{
+						M_SENSITIVITY -= 1;
+						S_StartSound(NULL, sfx_secmove);
+						return ga_nothing;
+					}
+				}
+				break;
+
+			case 44: // Manage Pak
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuCall = M_ControllerPakDrawer;
+					linepos = 0;
+					cursorpos = 0;
+
+					exit = MiniLoop(M_FadeInStart, M_FadeOutStart, M_ScreenTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == 8));
+
+					if (exit == 8)
+						return ga_nothing;
+
+					return exit;
+				}
+				break;
+
+			case 48: // COLORS [GEC] NEW CHEAT CODE
+				if (truebuttons)
+				{
+				players[0].cheats ^= CF_NOCOLORS;
+				gobalcheats ^= CF_NOCOLORS;
+				P_RefreshBrightness();
+				S_StartSound(NULL, sfx_switch2);
+				return ga_nothing;
+				}
+				break;
+
+			case 49: // FULL BRIGHT [GEC] NEW CHEAT CODE
+				if (truebuttons)
+				{
+					players[0].cheats ^= CF_FULLBRIGHT;
+					gobalcheats ^= CF_FULLBRIGHT;
+					P_RefreshBrightness();
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 50: // FILTER [GEC] NEW CHEAT CODE
+				if (truebuttons)
+				{
+					TextureFilter += TextureFilter < 2 ? 1 : -2;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 53: // ARTIFACTS
+				if (truebuttons)
+				{
+					players[0].artifacts |= 4;
+					players[0].artifacts |= 2;
+					players[0].artifacts |= 1;
+
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
+			case 54: // SKILL
+				if (buttons ^ oldbuttons)
+				{
+					if (buttons & ALL_FORWARD)
+					{
+						if (gameskill > sk_baby || startskill > sk_baby)
+						{
+							startskill -= 1;
+							gameskill -= 1;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+						}
+					}
+					else if (buttons & ALL_BACK)
+					{
+						if (gameskill < sk_hard || startskill < sk_hard)
+						{
+							startskill += 1;
+							gameskill += 1;
+							S_StartSound(NULL, sfx_switch2);
+							return ga_nothing;
+						}
+					}
+				}
+				break;
+
+			case 55: // LOAD GAME
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					ret = I_CheckControllerPak();
+					exit = ga_exit;
+
+					if (ret == 0)
+					{
+						if (I_ReadPakFile() == 0)
+						{
+							EnableMemPak = 1;
+							MenuCall = M_LoadPakDrawer;
+							exit = MiniLoop(M_LoadPakStart,M_LoadPakStop,M_LoadPakTicker,M_MenuGameDrawer);
+						}
 						else
-							MotionBob += 0x24925;
-						
-						return ga_nothing;
-                    }
-                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
-                    {
-						S_StartSound(NULL, sfx_switch2);
-						if (MotionBob < 0x24925)
-							MotionBob = 0x100003;
-                        else
-							MotionBob -= 0x24925;
-						
-						return ga_nothing;
-                    }
-                    break;
+							exit = ga_exit;
+					}
 
-				case 60: // Show Stats
-					if (truebuttons)
+					if (exit == ga_exit)
 					{
-						S_StartSound(NULL, sfx_switch2);
-						ShowStats ^= true;
-						
+						M_RestoreMenuData(true);
 						return ga_nothing;
 					}
-					break;
+
+					if (EnableMemPak != 0)
+					{
+						return exit;
+					}
+
+					EnableMemPak = (M_ControllerPak() == 0);
+					return exit;
+				}
+				break;
+				
+			case 58: // Video
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+					MenuItem = Menu_Video;
+					itemlines = 7;
+					MenuCall = M_VideoDrawer;
+					cursorpos = 0;
+
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+					return ga_nothing;
+				}
+				break;
+								
+			case 59: // Motion bob
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
+				{
+					S_StartSound(NULL, sfx_switch2);
+					if (MotionBob >= 0x100003)
+						MotionBob = 0;
+					else
+						MotionBob += 0x24925;
 					
-                case 61: // Bonus Pak
-                    if (truebuttons)
-                    {
-                        startmap = MenuItem[cursorpos].casepos == 61 ? 0 : 1;
-                        
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuItem = Menu_Skill;
-                        itemlines = 6;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 2;
-
-                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-                        
-                        if (exit == ga_exit)
-                            return ga_nothing;
-						
-						nextmap = 0; // [Immorpher] For running introduction for Bonus Pak
-						runintroduction = true; // [Immorpher] turn introduction on
-
-                        return exit;
-                    }
-                    break;
-					
-				case 62: // Beta 64
-                    if (truebuttons)
-                    {
-                        startmap = MenuItem[cursorpos].casepos == 62 ? 41 : 1;
-                        
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-
-                        MenuItem = Menu_Skill;
-                        itemlines = 6;
-                        MenuCall = M_MenuTitleDrawer;
-                        cursorpos = 2;
-
-                        exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
-                        M_RestoreMenuData((exit == ga_exit));
-                        
-                        if (exit == ga_exit)
-                            return ga_nothing;
-
-						nextmap = BETALEVEL; // [Immorpher] For running introduction for Lost Levels
-						runintroduction = true; // [Immorpher] turn introduction on
-						
-                        return exit;
-                    }
-                    break;
-
-				case 64: // Credits
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_pistol);
-                        M_SaveMenuData();
-                        exit = D_Credits();
-						M_RestoreMenuData(true);
-                        return ga_nothing;
-                    }
-                    break;
-					
-				case 65: // Deadzone
-                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
-                    {
-						PlayDeadzone += 2;
-						S_StartSound(NULL, sfx_switch2);
-						
-                        if (PlayDeadzone > 14)
-						{
-							PlayDeadzone = 0;
-                        }
-						
-						return ga_nothing;
-                    }
-                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
-                    {
-						PlayDeadzone -= 2;
-						S_StartSound(NULL, sfx_switch2);
-						if (PlayDeadzone < 0)
-						{
-							PlayDeadzone = 14;
-                        }
-						return ga_nothing;
-                    }
-                    break;
-					
-				case 66: // Flash Level - behind the scenes it works in opposite direction than typical
-                    if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
-                    {
-						FlashLevel -= 1;
-						S_StartSound(NULL, sfx_switch2);
-                        if (FlashLevel < 0)
-						{
-							FlashLevel = 7;
-                        }
-						return ga_nothing;
-                    }
-                    else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
-                    {
-						FlashLevel += 1;
-						S_StartSound(NULL, sfx_switch2);
-						if (FlashLevel > 7)
-						{
-							FlashLevel = 0;
-                        }
-						return ga_nothing;
-                    }
-                    break;		
-
-				case 67: // Default Video
-                    if (truebuttons)
-                    {
-                        S_StartSound(NULL, sfx_switch2);
-                        Display_X = 0;
-                        Display_Y = 0;
-                        brightness = 60;
-                        I_MoveDisplay(0,0);
-                        P_RefreshBrightness();
-                        TextureFilter = 0;
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					S_StartSound(NULL, sfx_switch2);
+					if (MotionBob < 0x24925)
 						MotionBob = 0x100003;
-						FlashLevel = 0;
-                        return ga_nothing;
-                    }
-                    break;
+					else
+						MotionBob -= 0x24925;
 					
-                }
+					return ga_nothing;
+				}
+				break;
+
+			case 60: // Show Stats
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					ShowStats ^= true;
+					
+					return ga_nothing;
+				}
+				break;
+				
+			case 61: // Bonus Pak
+				if (truebuttons)
+				{
+					startmap = MenuItem[cursorpos].casepos == 61 ? 0 : 1;
+					
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_Skill;
+					itemlines = 6;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 2;
+
+					exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					
+					if (exit == ga_exit)
+						return ga_nothing;
+					
+					nextmap = 0; // [Immorpher] For running introduction for Bonus Pak
+					runintroduction = true; // [Immorpher] turn introduction on
+
+					return exit;
+				}
+				break;
+				
+			case 62: // Beta 64
+				if (truebuttons)
+				{
+					startmap = MenuItem[cursorpos].casepos == 62 ? 41 : 1;
+					
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_Skill;
+					itemlines = 6;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 2;
+
+					exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					
+					if (exit == ga_exit)
+						return ga_nothing;
+
+					nextmap = BETALEVEL; // [Immorpher] For running introduction for Lost Levels
+					runintroduction = true; // [Immorpher] turn introduction on
+					
+					return exit;
+				}
+				break;
+
+			case 64: // Credits
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+					exit = D_Credits();
+					M_RestoreMenuData(true);
+					return ga_nothing;
+				}
+				break;
+				
+			case 65: // Deadzone
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
+				{
+					PlayDeadzone += 2;
+					S_StartSound(NULL, sfx_switch2);
+					
+					if (PlayDeadzone > 14)
+					{
+						PlayDeadzone = 0;
+					}
+					
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					PlayDeadzone -= 2;
+					S_StartSound(NULL, sfx_switch2);
+					if (PlayDeadzone < 0)
+					{
+						PlayDeadzone = 14;
+					}
+					return ga_nothing;
+				}
+				break;
+				
+			case 66: // Flash Level - behind the scenes it works in opposite direction than typical
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
+				{
+					FlashLevel -= 1;
+					S_StartSound(NULL, sfx_switch2);
+					if (FlashLevel < 0)
+					{
+						FlashLevel = 7;
+					}
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					FlashLevel += 1;
+					S_StartSound(NULL, sfx_switch2);
+					if (FlashLevel > 7)
+					{
+						FlashLevel = 0;
+					}
+					return ga_nothing;
+				}
+				break;		
+
+			case 67: // Default Video
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_switch2);
+					Display_X = 0;
+					Display_Y = 0;
+					brightness = 60;
+					I_MoveDisplay(0,0);
+					P_RefreshBrightness();
+					TextureFilter = 0;
+					MotionBob = 0x100003;
+					FlashLevel = 0;
+					return ga_nothing;
+				}
+				break;
+				
+			}
             exit = ga_nothing;
         }
     }
@@ -2073,13 +2078,15 @@ void M_MenuClearCall(void) // 80008E6C
 
 void M_MenuTitleDrawer(void) // 80008E7C
 {
+	char *text;
     const menuitem_t *item;
-    unsigned char i;
+    unsigned char i, casepos;
 
     if (MenuItem == Menu_Game || MenuItem == Menu_GameNoSave)
     {
         ST_DrawString(-1, 20, "Pause", text_alpha | 0xff000000);
             ST_DrawString(-1, 200, "press \x8d to resume", text_alpha | 0xffffff00);
+			MercilessMenu = MercilessMode; // Restore merciless mode option
         }
         else if (MenuItem == Menu_Skill)
         {
@@ -2116,10 +2123,22 @@ void M_MenuTitleDrawer(void) // 80008E7C
 
         item = MenuItem;
         for(i = 0; i < itemlines; i++)
-    {
-        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
-        item++;
-    }
+		{        
+			casepos = item->casepos;
+			if (casepos == 19) // Merciless Mode
+			{
+				text = MercilessMenu ? "On" : "Off";
+			} else
+			{
+				text = NULL;
+			}
+			
+			if (text)
+				ST_DrawString(item->x + 110, item->y, text, text_alpha | 0xff000000);
+			
+			ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
+			item++;
+		}
 
     ST_DrawSymbol(MenuItem[0].x -37, MenuItem[cursorpos].y -9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
@@ -2153,6 +2172,9 @@ void M_FeaturesDrawer(void) // 800091C0
         text = textbuff;
         switch(item->casepos)
         {
+            case 19: /* Merciless Mode */
+                text = (!MercilessMenu) ? "OFF": "ON";
+                break;
             case 23: /* WARP TO LEVEL */
                 sprintf(textbuff, "%s", MapInfo[m_actualmap].name);
                 break;
@@ -2211,9 +2233,6 @@ void M_FeaturesDrawer(void) // 800091C0
             case 54: /* SKILL */
                 switch (gameskill)
                 {
-                    case 4:
-                        text = M_TXT19;
-                        break;
                     case 3:
                         text = M_TXT18;
                         break;
@@ -2883,7 +2902,8 @@ void M_SavePakDrawer(void) // 8000AB44
     unsigned char i;
     char buffer[36];
     byte savedata[16];
-    int leveltxt, skilltxt;
+    unsigned char leveltxt, skilltxt;
+	boolean mercilesstxt;
 
     I_ClearFrame();
 
@@ -2914,32 +2934,35 @@ void M_SavePakDrawer(void) // 8000AB44
         for(i = linepos; i < (linepos + 6); i++)
         {
 			leveltxt = skilltxt = 0;
+			mercilesstxt = 0;
 			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
-			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0) == 0)  {
+			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, &mercilesstxt, 0) == 0)  {
                 D_memmove(buffer, "no save");
             }
 			else
 			{
 				switch (skilltxt)
 				{
-					case 4:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
-						break;
 					case 3:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "WMD");
 						break;
 					case 2:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "IOD");
 						break;
 					case 1:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BIO");
 						break;
 					case 0:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BG");
 						break;
 					default:
-						sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
+						sprintf(buffer, "Map: %02d  Skill: %d", leveltxt, skilltxt);
 						break;
+				}
+				
+				if (mercilesstxt)
+				{
+					sprintf(buffer, "%s %s", buffer, "Merciless");
 				}
 			}
 				
@@ -3016,8 +3039,8 @@ int M_LoadPakTicker(void) // 8000AFE4
     unsigned int buttons;
     unsigned int oldbuttons;
     int size;
-    int skill;
-    int levelnum;
+    unsigned char skill, levelnum;
+	boolean skmerciless;
     int exit;
 
     if ((gamevbls < gametic) && ((gametic & 3U) == 0)) {
@@ -3080,7 +3103,7 @@ int M_LoadPakTicker(void) // 8000AFE4
             // load the password data in text format
             D_memcpy(&Passwordbuff, &Pak_Data[((cursorpos * 32) + 16)], 16);
 
-            if (M_DecodePassword(Passwordbuff, &levelnum, &skill, 0) == 0)
+            if (M_DecodePassword(Passwordbuff, &levelnum, &skill, &skmerciless, 0) == 0)
             {
                 CurPasswordSlot = 0;
                 exit = ga_exit;
@@ -3096,6 +3119,7 @@ int M_LoadPakTicker(void) // 8000AFE4
 
                 startmap = gamemap = levelnum;
                 startskill = gameskill = skill;
+				MercilessMode = MercilessMenu = skmerciless; // set merciless mode and menu indicator
 
                 exit = ga_warped;
             }
@@ -3114,7 +3138,8 @@ void M_LoadPakDrawer(void) // 8000B270
     unsigned char i;
     char buffer[32];
     byte savedata[16];
-    int leveltxt, skilltxt;
+    unsigned char leveltxt, skilltxt;
+	boolean mercilesstxt;
 
     ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
 
@@ -3125,33 +3150,35 @@ void M_LoadPakDrawer(void) // 8000B270
         }
         else {
 			leveltxt = skilltxt = 0;
+			mercilesstxt = 0;
 			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
-			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0) == 0)  {
+			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, &mercilesstxt, 0) == 0)  {
                 D_memmove(buffer, "no save");
             }
 			else
 			{
-				M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, 0);
 				switch (skilltxt)
 				{
-					case 4:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT19);
-						break;
 					case 3:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT18);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "WMD");
 						break;
 					case 2:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT17);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "IOD");
 						break;
 					case 1:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT16);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BIO");
 						break;
 					case 0:
-						sprintf(buffer, "Level: %02d Skill: %s", leveltxt, M_TXT15);
+						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BG");
 						break;
 					default:
-						sprintf(buffer, "Level: %02d Skill: %d", leveltxt, skilltxt);
+						sprintf(buffer, "Map: %02d  Skill: %d", leveltxt, skilltxt);
 						break;
+				}
+				
+				if (mercilesstxt) // if merciless mode used add it here
+				{
+					sprintf(buffer, "%s %s", buffer, "Merciless");
 				}
 			}
         }

@@ -108,6 +108,10 @@ boolean P_CheckMissileRange (mobj_t *actor) // 80010C10
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};// 8005ACC0
 fixed_t yspeed[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};// 8005ACE0
 
+fixed_t	xspeednormal[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};// Normal speed
+fixed_t yspeednormal[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};// Normal speed
+
+
 extern	line_t *blockline; // 800A5D9C
 
 boolean P_Move (mobj_t *actor) // 80010D08
@@ -515,11 +519,11 @@ void A_Chase (mobj_t *actor) // 8001146C
 	/* */
 	/* check for missile attack */
 	/* */
-	if ((gameskill == sk_nightmare || !actor->movecount) && actor->info->missilestate
+	if ((MercilessMode || !actor->movecount) && actor->info->missilestate
 	&& P_CheckMissileRange (actor))
 	{
 		P_SetMobjState (actor, actor->info->missilestate);
-		if (gameskill != sk_nightmare)
+		if (!MercilessMode)
 			actor->flags |= MF_JUSTATTACKED;
 		return;
 	}

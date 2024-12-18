@@ -43,6 +43,13 @@ mobj_t *P_SpawnMobj (fixed_t x, fixed_t y, fixed_t z, mobjtype_t type) // 80018a
 	mobj->health = info->spawnhealth;
 	mobj->reactiontime = info->reactiontime;
 	mobj->alpha = info->alpha;
+	
+	if (type > 0 && type <= MT_RESURRECTOR && MercilessMode) // select only enemies and merciless mode
+	{
+		mobj->radius = (3*info->radius)>>2; // make enemies thinner, so they can move better and harder to hit
+		mobj->reactiontime = (P_Random()*info->reactiontime)>>8; // randomize reaction times
+	}
+
 
 	/* do not set the state with P_SetMobjState, because action routines can't */
 	/* be called yet */
@@ -115,8 +122,6 @@ mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
 
 	if (gameskill == sk_baby)
 		bit = 1;
-	else if (gameskill == sk_nightmare)
-		bit = 4;
 	else
 		bit = 1<<(gameskill-1);
 
@@ -186,7 +191,7 @@ mobj_t *P_SpawnMapThing (mapthing_t *mthing) // 80018C24
     if (mthing->options & MTF_ONDEATH)
 		mobj->flags |= MF_TRIGDEATH;
 
-	if (mthing->options & MTF_NIGHTMARE) {
+	if (mthing->options & MTF_NIGHTMARE) { // Nightmare enemies have twice the health and lower transparency
 		mobj->health *= 2;
 		mobj->flags |= MF_NIGHTMARE;
 		mobj->alpha = mobj->alpha>>1;
@@ -219,9 +224,9 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 	player_t	*p;
 	fixed_t		x,y,z;
 	mobj_t		*mobj;
-	int	i;
-	int levelnum;
-	int skill;
+	unsigned char	i;
+	unsigned char levelnum, skill;
+	boolean skmerciless;
 
 	//if (!playeringame[mthing->type-1])
 		//return;						/* not playing */
@@ -271,7 +276,7 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 
     if (doPassword != 0)
     {
-        M_DecodePassword(Passwordbuff, &levelnum, &skill, p);
+        M_DecodePassword(Passwordbuff, &levelnum, &skill, &skmerciless, p);
         doPassword = false;
     }
 	
@@ -502,9 +507,16 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
 	th->target = source;		/* where it came from */
 
 	if ((type == MT_PROJ_BABY) || (type == MT_PROJ_DART)) /* no aim projectile */
+	{
 		an = source->angle;
+	}
 	else if (dest)
-		an = R_PointToAngle2(x, y, dest->x, dest->y);
+	{
+		if (!MercilessMode)
+			an = R_PointToAngle2(x, y, dest->x, dest->y);
+		else
+			an = R_PointToAngle2(x, y, dest->x - (dest->radius>>1) + ((P_Random()*dest->radius)>>8), dest->y - (dest->radius>>1) + ((P_Random()*dest->radius)>>8));
+	}
 
 	if (dest && (dest->flags & MF_SHADOW))
 	{
@@ -523,6 +535,10 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
         th->flags |= MF_NIGHTMARE;
         speed *= 2;
     }
+	else if (MercilessMode) // all projectiles in merciless mode are randmly faster
+	{
+        speed += (P_Random()*speed)>>8;
+	}
 
     th->momx = speed * finecosine[an];
     th->momy = speed * finesine[an];
@@ -533,7 +549,14 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
         dist = dist / (th->info->speed << FRACBITS);
         if (dist < 1)
             dist = 1;
-        th->momz = ((dest->z + (dest->height >> 1)) - z) / dist;
+		if (!MercilessMode)
+		{
+			th->momz = ((dest->z + (dest->height >> 1)) - z) / dist;
+		}
+		else // Randomize height of attack for merciless mode for ledge players
+		{
+			th->momz = ((dest->z + ((P_Random()*dest->height) >> 8)) - z) / dist;
+		}
     }
 
 	if (!P_TryMove(th, th->x, th->y))

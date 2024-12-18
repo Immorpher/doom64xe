@@ -104,6 +104,10 @@ typedef unsigned angle_t;
 
 extern fixed_t		finesine[5*FINEANGLES/4];
 extern fixed_t		*finecosine;
+extern fixed_t		xspeed[8];
+extern fixed_t		yspeed[8];
+extern fixed_t		xspeednormal[8];
+extern fixed_t		yspeednormal[8];
 
 static INLINE_ALWAYS fixed_t FixedDiv2(fixed_t a, fixed_t b)
 {
@@ -154,8 +158,7 @@ typedef enum
 	sk_baby,
 	sk_easy,
 	sk_medium,
-	sk_hard,
-	sk_nightmare
+	sk_hard
 } skill_t;
 
 typedef enum
@@ -341,7 +344,7 @@ typedef struct laser_s
 /* Doom 64 New Flags */
 #define	MF_COUNTSECRET  0x8000000   /* [d64] Count as secret when picked up (for intermissions) */
 #define	MF_RENDERLASER  0x10000000  /* [d64] Exclusive to MT_LASERMARKER only */
-#define	MF_NIGHTMARE    0x20000000  /* [kex] Enables nightmare mode */
+#define	MF_NIGHTMARE    0x20000000  /* [kex] Make thing a nightmare variant */
 #define	MF_SHADOW       0x40000000  /* temporary player invisibility powerup. */
 #define	MF_NOINFIGHTING 0x80000000  /* [d64] Do not switch targets */
 
@@ -868,11 +871,13 @@ extern char M_SENSITIVITY;           // 8005A7CC
 extern int MotionBob;				// Video motion bob level - 16 pixels of bob is 0x100000
 extern char FlashLevel;				// Flash reduction parameter
 extern boolean FeaturesUnlocked;    // 8005A7D0
+extern boolean MercilessMode; // [Immorpher] Returning merciless difficulty from Doom 64 Merciless Edition!
+extern boolean MercilessMenu; // Current menu setting for merciless mode, not necessarily enabled in menu
 extern char TextureFilter;
 extern char Autorun;
-extern char BloodStyle;
-extern boolean ColoredHUD;
-extern boolean ShowStats;
+extern char BloodStyle;	// Blood color option
+extern boolean ColoredHUD; // Colored HUD option
+extern boolean ShowStats; // Show map stats on automap
 extern boolean runintroduction; 	// [Immorpher] Introduction text
 extern short LightningFlash;			// [Immorpher] Lightning flash value
 
@@ -933,7 +938,7 @@ extern boolean doPassword;      // 8005ACB8
 extern int CurPasswordSlot;     // 8005ACBC
 
 void M_EncodePassword(byte *buff);//8000BC10
-int M_DecodePassword(byte *inbuff, int *levelnum, int *skill, player_t *player); // 8000C194
+int M_DecodePassword(byte *inbuff, unsigned char *levelnum, unsigned char *skill, boolean *skmerciless, player_t *player); // 8000C194
 void M_PasswordStart(void); // 8000C710
 void M_PasswordStop(void); // 8000C744
 int M_PasswordTicker(void); // 8000C774
@@ -1332,7 +1337,6 @@ Swap Values
 #define PAD_DOWN_C      0x00040000
 #define PAD_UP_C        0x00080000
 #define PAD_R_TRIG      0x00100000
-
 #define PAD_L_TRIG      0x00200000
 
 #define ALL_JPAD        (PAD_UP|PAD_DOWN|PAD_LEFT|PAD_RIGHT)
