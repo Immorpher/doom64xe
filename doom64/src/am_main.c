@@ -354,7 +354,7 @@ void AM_Drawer (void) // 800009AC
 
         M_ClearBox(screen_box);
 
-        for (int i = 0; i < 2; i++)
+        for (unsigned char i = 0; i < 2; i++)
         {
             tx = i ? -cx : cx;
             x = ((s64) tx * (s64) tc + (s64) cy * (s64) ts) >> FRACBITS;

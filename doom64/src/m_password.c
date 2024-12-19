@@ -32,7 +32,7 @@ char *passFeatures[3] =
 void M_EncodePassword(byte *buff) // 8000BC10
 {
     byte encode[10];
-    int i;
+    unsigned char i;
     int bit;
     short decodebit[3];
     int passBit;
@@ -225,7 +225,7 @@ int M_DecodePassword(byte *inbuff, unsigned char *levelnum, unsigned char *skill
     byte data[16];
     byte decode[10];
     int bit;
-    int i, j;
+    short i, j;
     short xbit1, xbit2, xbit3;
     short x, y;
     int passBit;
@@ -509,7 +509,7 @@ int M_PasswordTicker(void) // 8000C774
     int exit;
     unsigned char skill, levelnum;
 	boolean skmerciless;
-    int i;
+    unsigned char i;
 
     if (last_ticon)
     {

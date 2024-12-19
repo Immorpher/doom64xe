@@ -439,7 +439,8 @@ int IN_Ticker(void) // 80004E24
 
 void IN_Drawer(void) // 80005164
 {
-	int i, c;
+	short i;
+	int c;
 	char password[32];
 	char *pbuff;
 

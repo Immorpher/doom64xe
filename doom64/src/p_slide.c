@@ -287,7 +287,7 @@ void P_SlideMove(void)//L8002553C()
 {
     fixed_t dx, dy, rx, ry;
     fixed_t frac, slide;
-    int i;
+    unsigned char i;
 
 	dx = slidething->momx;
 	dy = slidething->momy;

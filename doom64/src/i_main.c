@@ -653,7 +653,8 @@ void I_CheckGFX(void) // 800060E8
 	Gfx **Gfx_Blocks;
 	Vtx **Vtx_Blocks;
 
-	int i, index;
+	unsigned char i;
+	int index;
 	int block_idx;
 
 	index = (int)((int)GFX1 - (int)GFX2) / sizeof(Gfx);

@@ -644,7 +644,7 @@ void P_SetMovingCamera(line_t *line) // 8000F2F8
 void P_RefreshBrightness(void) // 8000f410
 {
     int factor = 100;
-	int i;
+	unsigned char i;
 	float curve, scale;
 
 	scale = (float)brightness/127;

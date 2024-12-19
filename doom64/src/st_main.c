@@ -238,7 +238,7 @@ void ST_Drawer (void) // 80029DC0
     weapontype_t weapon;
 	int ammo, ind;
 	short ms_alpha;
-    int i, j;
+    short i, j;
     unsigned char pos;
 
     player = &players[0];

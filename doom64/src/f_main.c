@@ -849,7 +849,8 @@ int F_TickerIntermission(void) // 80002E44
 
 void F_DrawerIntermission(void) // 80002F14
 {
-    int i, ypos;
+    unsigned char i;
+	short ypos;
     I_ClearFrame();
 
     gDPPipeSync(GFX1++);
@@ -1241,7 +1242,9 @@ int F_Ticker(void) // 80003258
 */
 void F_Drawer(void) // 800039DC
 {
-	int i, type, alpha, ypos;
+	unsigned char i;
+	int type, alpha;
+	short ypos;
 
 	I_ClearFrame();
 
