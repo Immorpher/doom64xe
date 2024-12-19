@@ -109,7 +109,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT64 "Credits" // Credits
 #define M_TXT65 "Deadzone:" // Analog stick deadzone
 #define M_TXT66 "Flash Level:" // Flash brightness
-#define M_TXT67 "Default" // Video default settings
+#define M_TXT67 "Bright Boost:" // Brightness boost using the gamma correct option
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -193,11 +193,11 @@ const menuitem_t Menu_ControlStick[4] = // 8005AA38
 const menuitem_t Menu_Video[7] =
 {
     {  9, 102, 60 },    // Brightness
-    { 32, 102, 100 },    // Center Display
-    { 50, 102, 120},    // Filtering
-    { 59, 102, 140},    // Motion Bob
-    { 66, 102, 160},    // Flash Level
-    { 67, 102, 180},    // Video default
+    { 67, 102, 100 },    // Brightness boost
+    { 32, 102, 120 },    // Center Display
+    { 50, 102, 140},    // Filtering
+    { 59, 102, 160},    // Motion Bob
+    { 66, 102, 180},    // Flash Level
     {  6, 102, 200},    // Return
 };
 
@@ -317,6 +317,7 @@ char FlashLevel = 0;				// Flash reduction parameter, 0 is maximum flash brightn
 boolean FeaturesUnlocked = true; // 8005A7D0
 boolean runintroduction = false; // [Immorpher] New introduction sequence which gets turned on only when starting a new campaign
 boolean MercilessMode = false; // [Immorpher] Returning merciless difficulty from Doom 64 Merciless Edition!
+boolean BrightBoost = 0; // Brightness boost from the "gamma correct" video mode
 boolean MercilessMenu = false; // Current menu setting for merciless mode, not necessarily enabled in menu
 char TextureFilter = 0;
 char Autorun = 0;
@@ -506,7 +507,8 @@ void M_EncodeConfig(void)
     
     SavedConfig[15] = (MotionBob/0x24925) & 0x7; //0-7 - 3 bits
 	SavedConfig[15] += (FlashLevel & 0x7) << 3; //0-7 - 3 bits
-    SavedConfig[15] += (ColoredHUD & 0x1) << 6; // 0-1 - 1bit - 1 bit left here
+    SavedConfig[15] += (ColoredHUD & 0x1) << 6; // 0-1 - 1bit
+    SavedConfig[15] += (BrightBoost & 0x1) << 7; // 0-1 - 1bit
 }
 
 void M_DecodeConfig()
@@ -616,10 +618,17 @@ void M_DecodeConfig()
     MotionBob = (SavedConfig[15] & 0x7)*0x24925; //0-7
     FlashLevel = (SavedConfig[15] >> 3) & 0x7; //0-7
     ColoredHUD = (SavedConfig[15] >> 6) & 0x1; //0-1
+    BrightBoost = (SavedConfig[15] >> 7) & 0x1; //0-1
 
 	// Set audio volumes
     wess_master_mus_vol_set(MusVolume);
 	wess_master_sfx_vol_set(SfxVolume);
+	
+	// Set brightness boost if enabled
+	if (BrightBoost)
+		osViSetSpecialFeatures(OS_VI_GAMMA_ON|OS_VI_GAMMA_DITHER_ON|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);
+	else
+		osViSetSpecialFeatures(OS_VI_GAMMA_OFF|OS_VI_GAMMA_DITHER_OFF|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);
 	
 	P_RefreshBrightness(); // [Immorpher] - refresh brightness for new video options
 }
@@ -2047,18 +2056,17 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;		
 
-			case 67: // Default Video
+			case 67: // Brightness Boost
 				if (truebuttons)
 				{
 					S_StartSound(NULL, sfx_switch2);
-					Display_X = 0;
-					Display_Y = 0;
-					brightness = 60;
-					I_MoveDisplay(0,0);
-					P_RefreshBrightness();
-					TextureFilter = 0;
-					MotionBob = 0x100003;
-					FlashLevel = 0;
+					BrightBoost ^= true; // Turn colored HUD on or off
+					
+					if (BrightBoost)
+						osViSetSpecialFeatures(OS_VI_GAMMA_ON|OS_VI_GAMMA_DITHER_ON|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);
+					else
+						osViSetSpecialFeatures(OS_VI_GAMMA_OFF|OS_VI_GAMMA_DITHER_OFF|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);
+					
 					return ga_nothing;
 				}
 				break;
@@ -2340,13 +2348,17 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
                     break;
             }
         }
+		else if (casepos == 67) // Bright Boost
+        {
+            text = BrightBoost ? "On" : "Off";
+        }
         else
         {
             text = NULL;
         }
 
         if (text)
-            ST_DrawString(item->x + 130, item->y, text, text_alpha | 0xff000000);
+            ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xff000000);
 		
 		if (casepos == 59) { // draw motion bob number
 			ST_DrawNumber(item->x + 140, item->y, MotionBob/0x24925, 0, text_alpha | 0xff000000);

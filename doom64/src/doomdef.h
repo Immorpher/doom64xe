@@ -873,8 +873,9 @@ extern char FlashLevel;				// Flash reduction parameter
 extern boolean FeaturesUnlocked;    // 8005A7D0
 extern boolean MercilessMode; // [Immorpher] Returning merciless difficulty from Doom 64 Merciless Edition!
 extern boolean MercilessMenu; // Current menu setting for merciless mode, not necessarily enabled in menu
-extern char TextureFilter;
-extern char Autorun;
+extern char TextureFilter; // Texture/sky 3-point filtering
+extern char Autorun; // Autorun mode for digital inputs
+extern boolean BrightBoost; // Brightness boost from the "gamma correct" video mode
 extern char BloodStyle;	// Blood color option
 extern boolean ColoredHUD; // Colored HUD option
 extern boolean ShowStats; // Show map stats on automap
