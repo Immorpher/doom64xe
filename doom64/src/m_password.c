@@ -686,25 +686,24 @@ void M_PasswordDrawer(void) // 8000CAF0
 
     ST_DrawString(-1, 20, "Password", text_alpha | 0xff000000);
 
-    for(cnt = 0; cnt < 32; cnt++)
+    for(cnt = 0; cnt < 32; cnt++) // Draw symbol grid for password entry
     {
         pos1 = cnt;
         if (cnt < 0) {
             pos1 = cnt + 7;
         }
         pos1 >>= 3;
-        ypos = (pos1 * 20) + 60;
+        ypos = (pos1 * 20) + 62;
 
         if ((cnt == PassCodePos) && (ticon & 8))
             continue;
 
         c = passwordChar[cnt];
-        if ((byte)(c - 'a') < 26)
+        if ((byte)(c - 'a') < 26) // display letters
         {
-            texid = (byte)(c - 55);
-            ypos = (pos1 * 20) + 63;
+            texid = (byte)(c - 81);
         }
-        else if ((byte)(c - '0') < 10)
+        else if ((byte)(c - '0') < 10) // display numbers
         {
             texid = (byte)(c - '0');
         }
@@ -739,7 +738,7 @@ void M_PasswordDrawer(void) // 8000CAF0
 
     ST_DrawSymbol(xpos, ypos, 79, text_alpha | 0xffffff00);
 
-    xpos = 47;
+    xpos = 31;
     cnt = 0;
     if ((PassInvalidTic & 4) == 0)
     {
@@ -751,7 +750,10 @@ void M_PasswordDrawer(void) // 8000CAF0
             }
 
             if (cnt < CurPasswordSlot) {
-                pass[0] = passwordChar[Passwordbuff[cnt]];
+				if ((byte)(passwordChar[Passwordbuff[cnt]] - 'a') < 26) // display letters
+					pass[0] = passwordChar[Passwordbuff[cnt]]-32;
+				else // display numbers 
+					pass[0] = passwordChar[Passwordbuff[cnt]];
             }
             else {
                 pass[0] = '.';
@@ -759,7 +761,7 @@ void M_PasswordDrawer(void) // 8000CAF0
 
             ST_DrawString(xpos, 160, (char *)pass, text_alpha | 0xff000000);
 
-            xpos += 13;
+            xpos += 15;
             cnt += 1;
         } while (cnt != 16);
     }

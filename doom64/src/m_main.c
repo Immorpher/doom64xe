@@ -9,21 +9,21 @@ extern void P_RefreshBrightness(void);
 //intermission
 int DrawerStatus;
 
-#define CT_TXT00	"default: %d"
-#define CT_TXT01	"right"
-#define CT_TXT02	"left"
-#define CT_TXT03	"forward"
-#define CT_TXT04	"backward"
-#define CT_TXT05	"attack"
-#define CT_TXT06	"use"
-#define CT_TXT07	"map"
-#define CT_TXT08	"speed"
-#define CT_TXT09	"strafe on"
-#define CT_TXT10	"strafe left"
-#define CT_TXT11	"strafe right"
-#define CT_TXT12	"weapon backward"
-#define CT_TXT13	"weapon forward"
-#define CT_TXT14    "autorun: %s"
+#define CT_TXT00	"Default: %d"
+#define CT_TXT01	"Right"
+#define CT_TXT02	"Left"
+#define CT_TXT03	"Forward"
+#define CT_TXT04	"Backward"
+#define CT_TXT05	"Attack"
+#define CT_TXT06	"Use"
+#define CT_TXT07	"Map"
+#define CT_TXT08	"Speed"
+#define CT_TXT09	"Strafe On"
+#define CT_TXT10	"Strafe Left"
+#define CT_TXT11	"Strafe Right"
+#define CT_TXT12	"Weapon Backward"
+#define CT_TXT13	"Weapon Forward"
+#define CT_TXT14    "Autorun: %s"
 
 char *ControlText[] =   //8007517C
 {
@@ -49,9 +49,9 @@ char *ControlText[] =   //8007517C
 #define M_TXT13 "Default" // Default Display
 #define M_TXT14 "New Game"
 #define M_TXT15 "Be Gentle!"
-#define M_TXT16 "Bring it on!"
-#define M_TXT17 "I own Doom!"
-#define M_TXT18 "Watch me die!"
+#define M_TXT16 "Bring It On!"
+#define M_TXT17 "I Own Doom!"
+#define M_TXT18 "Watch Me Die!"
 #define M_TXT19 "Merciless:" // Optional merciless difficulty to add to each difficulty
 #define M_TXT20 "Yes"
 #define M_TXT21 "No"
@@ -2266,7 +2266,7 @@ void M_FeaturesDrawer(void) // 800091C0
         item++;
     }
 
-    ST_DrawSymbol(MenuItem->x -10, MenuItem[cursorpos].y -1, 78, text_alpha | 0xffffff00);
+    ST_DrawSymbol(MenuItem->x -10, MenuItem[cursorpos].y -2, 78, text_alpha | 0xffffff00);
 }
 
 void M_VolumeDrawer(void) // 800095B4

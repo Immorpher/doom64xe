@@ -510,6 +510,12 @@ void IN_Drawer(void) // 80005164
 			*pbuff++ = passwordChar[Passwordbuff[i]];
 		}
 		*pbuff = 0;
+		
+		for (i = 0; password[i]!='\0'; i++) {
+			if(password[i] >= 'a' && password[i] <= 'z') {
+				password[i] = password[i] - 32;
+			}
+		}
 
 		if (nextmap != 0) { // [Immorpher] Dont show password for bonus pak
 			ST_DrawString(-1, 187, "Password", PACKRGBA(255, 255, 255, text_alpha));

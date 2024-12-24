@@ -26,7 +26,7 @@ typedef struct
 
 static const symboldata_t symboldata[] = // Data for all of the symbol locations and sizes
 {
-    {120, 14,  13, 13}, // 0
+    {120, 14,  13, 13}, // 0 - 0
     {134, 14,   9, 13}, // 1
     {144, 14,  14, 13}, // 2
     {159, 14,  14, 13}, // 3
@@ -36,7 +36,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     {219, 14,  14, 13}, // 7
     {234, 14,  14, 13}, // 8
     {  0, 29,  13, 13}, // 9
-    { 67, 28,  14, 13}, // -
+    { 67, 28,  14, 13}, // - - 10
     { 36, 28,  15, 14}, // %
     { 28, 28,   7, 14}, // !
     { 14, 29,   6, 13}, // .
@@ -46,7 +46,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     { 14,  0,  13, 13}, // B
     { 28,  0,  13, 13}, // C
     { 42,  0,  14, 13}, // D
-    { 57,  0,  14, 13}, // E
+    { 57,  0,  14, 13}, // E - 20
     { 72,  0,  14, 13}, // F
     { 87,  0,  15, 13}, // G
     {103,  0,  15, 13}, // H
@@ -56,7 +56,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     {155,  0,  11, 13}, // L
     {167,  0,  15, 13}, // M
     {183,  0,  16, 13}, // N
-    {200,  0,  15, 13}, // O
+    {200,  0,  15, 13}, // O - 30
     {216,  0,  13, 13}, // P
     {230,  0,  15, 13}, // Q
     {246,  0,  13, 13}, // R
@@ -66,7 +66,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     { 44, 14,  15, 13}, // V
     { 60, 14,  15, 13}, // W
     { 76, 14,  15, 13}, // X
-    { 92, 14,  13, 13}, // Y
+    { 92, 14,  13, 13}, // Y - 40
     {106, 14,  13, 13}, // Z
     { 83, 31,  10, 11}, // a
     { 93, 31,  10, 11}, // b
@@ -76,7 +76,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     {136, 31,  11, 11}, // f
     {147, 31,  12, 11}, // g
     {159, 31,  12, 11}, // h
-    {171, 31,   4, 11}, // i
+    {171, 31,   4, 11}, // i - 50
     {175, 31,  10, 11}, // j
     {185, 31,  11, 11}, // k
     {196, 31,   9, 11}, // l
@@ -86,7 +86,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     {242, 31,  11, 11}, // p
     {  0, 43,  12, 11}, // q
     { 12, 43,  11, 11}, // r
-    { 23, 43,  11, 11}, // s
+    { 23, 43,  11, 11}, // s - 60
     { 34, 43,  10, 11}, // t
     { 44, 43,  11, 11}, // u
     { 55, 43,  12, 11}, // v
@@ -96,7 +96,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     {103, 43,  11, 11}, // z
     {  0, 95, 108, 11}, // Slider bar
     {108, 95,   6, 11}, // Slider gem
-    {  0, 54,  32, 26}, // Skull 1
+    {  0, 54,  32, 26}, // Skull 1 - 70
     { 32, 54,  32, 26}, // Skull 2
     { 64, 54,  32, 26}, // Skull 3
     { 96, 54,  32, 26}, // Skull 4
