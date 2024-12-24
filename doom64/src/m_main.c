@@ -2831,7 +2831,6 @@ int M_SavePakTicker(void) // 8000A804
         }
 
         cursorpos = 0;
-        linepos = 0;
     }
 
     if (!(buttons & ALL_JPAD)) {
@@ -2856,9 +2855,6 @@ int M_SavePakTicker(void) // 8000A804
                 else
                     S_StartSound(NULL, sfx_switch1);
 
-
-                if ((linepos + 5) < cursorpos)
-                    linepos += 1;
             }
             else if (buttons & PAD_UP)
             {
@@ -2869,8 +2865,6 @@ int M_SavePakTicker(void) // 8000A804
                 else
                     S_StartSound(NULL, sfx_switch1);
 
-                if(cursorpos < linepos)
-                    linepos -= 1;
             }
         }
     }
@@ -2943,7 +2937,7 @@ void M_SavePakDrawer(void) // 8000AB44
     }
     else
     {
-        for(i = linepos; i < (linepos + 6); i++)
+		for(i = 0; i < Pak_Size/32; i++)
         {
 			leveltxt = skilltxt = 0;
 			mercilesstxt = 0;
@@ -2955,20 +2949,20 @@ void M_SavePakDrawer(void) // 8000AB44
 			{
 				switch (skilltxt)
 				{
-					case 3:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "WMD");
+					case 3: // Watch me die
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "WMD");
 						break;
-					case 2:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "IOD");
+					case 2: 
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "IOD");
 						break;
 					case 1:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BIO");
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BIO");
 						break;
-					case 0:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BG");
+					case 0: // Be gentle
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BG");
 						break;
 					default:
-						sprintf(buffer, "Map: %02d  Skill: %d", leveltxt, skilltxt);
+						sprintf(buffer, "Map:%02d Skill:%d", leveltxt, skilltxt);
 						break;
 				}
 				
@@ -2979,18 +2973,11 @@ void M_SavePakDrawer(void) // 8000AB44
 			}
 				
 
-            ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xff000000);
+            ST_Message(48, i * 9 + 42, buffer, text_alpha | 0xff000000);
         }
 
-        if (linepos != 0) {
-            ST_DrawString(23, 50, "\x8f more...", text_alpha | 0xffffff00);
-        }
 
-        if ((linepos + 6) <= ((Pak_Size >> 5) - 1)) {
-            ST_DrawString(23, 155, "\x8e more...", text_alpha | 0xffffff00);
-        }
-
-        ST_DrawSymbol(11, (cursorpos - linepos) * 15 + 66, 78, text_alpha | 0xffffff00);
+        ST_DrawSymbol(37, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
 
         ST_DrawString(-1, 195, "press \x8d to exit", text_alpha | 0xffffff00);
         ST_DrawString(-1, 210, "press \x8a to save", text_alpha | 0xffffff00);
@@ -3005,7 +2992,6 @@ void M_LoadPakStart(void) // 8000AEEC
     int size;
 
     cursorpos = 0;
-    linepos = 0;
 
     size = Pak_Size / 32;
 
@@ -3024,11 +3010,6 @@ void M_LoadPakStart(void) // 8000AEEC
     if (i < size)
     {
         cursorpos = i;
-
-        if (!(size < (i+6)))
-            linepos = i;
-        else
-            linepos = (size-6);
     }
 
     M_FadeInStart();
@@ -3085,9 +3066,6 @@ int M_LoadPakTicker(void) // 8000AFE4
                 else
                     S_StartSound(NULL, sfx_switch1);
 
-                if ((linepos + 5) < cursorpos)
-                    linepos += 1;
-
             }
             else if (buttons & PAD_UP)
             {
@@ -3098,8 +3076,6 @@ int M_LoadPakTicker(void) // 8000AFE4
                 else
                     S_StartSound(NULL, sfx_switch1);
 
-                if(cursorpos < linepos)
-                    linepos -= 1;
             }
         }
     }
@@ -3155,7 +3131,7 @@ void M_LoadPakDrawer(void) // 8000B270
 
     ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
 
-    for(i = linepos; i < (linepos + 6); i++)
+    for(i = 0; i < Pak_Size/32; i++)
     {
         if (FilesUsed == -1) {
             D_memmove(buffer, "-");
@@ -3171,20 +3147,20 @@ void M_LoadPakDrawer(void) // 8000B270
 			{
 				switch (skilltxt)
 				{
-					case 3:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "WMD");
+					case 3: // Watch me die
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "WMD");
 						break;
-					case 2:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "IOD");
+					case 2: 
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "IOD");
 						break;
 					case 1:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BIO");
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BIO");
 						break;
-					case 0:
-						sprintf(buffer, "Map: %02d  Skill: %s", leveltxt, "BG");
+					case 0: // Be gentle
+						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BG");
 						break;
 					default:
-						sprintf(buffer, "Map: %02d  Skill: %d", leveltxt, skilltxt);
+						sprintf(buffer, "Map:%02d Skill:%d", leveltxt, skilltxt);
 						break;
 				}
 				
@@ -3195,18 +3171,10 @@ void M_LoadPakDrawer(void) // 8000B270
 			}
         }
 
-        ST_DrawString(23, (i - linepos) * 15 + 65, buffer, text_alpha | 0xff000000);
+        ST_Message(48, i * 9 + 42, buffer, text_alpha | 0xff000000);
     }
 
-    if (linepos != 0) {
-        ST_DrawString(23, 50, "\x8f more...", text_alpha | 0xffffff00);
-    }
-
-    if ((linepos + 6) <= ((Pak_Size >> 5) - 1)) {
-        ST_DrawString(23, 155, "\x8e more...", text_alpha | 0xffffff00);
-    }
-
-    ST_DrawSymbol(11, (cursorpos - linepos) * 15 + 66, 78, text_alpha | 0xffffff00);
+    ST_DrawSymbol(37, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
 
     ST_DrawString(-1, 195, "press \x8D to exit", text_alpha | 0xffffff00);
     ST_DrawString(-1, 210, "press \x8a to load", text_alpha | 0xffffff00);

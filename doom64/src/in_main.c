@@ -511,7 +511,7 @@ void IN_Drawer(void) // 80005164
 		}
 		*pbuff = 0;
 		
-		for (i = 0; password[i]!='\0'; i++) {
+		for (i = 0; password[i]!='\0'; i++) { // display text as uppercase
 			if(password[i] >= 'a' && password[i] <= 'z') {
 				password[i] = password[i] - 32;
 			}
