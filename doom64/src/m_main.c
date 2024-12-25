@@ -2943,26 +2943,26 @@ void M_SavePakDrawer(void) // 8000AB44
 			mercilesstxt = 0;
 			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
 			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, &mercilesstxt, 0) == 0)  {
-                D_memmove(buffer, "no save");
+                sprintf(buffer, "%02d) no save", i+1);
             }
 			else
 			{
 				switch (skilltxt)
 				{
 					case 3: // Watch me die
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "WMD");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "WMD");
 						break;
 					case 2: 
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "IOD");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "IOD");
 						break;
 					case 1:
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BIO");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "BIO");
 						break;
 					case 0: // Be gentle
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BG");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "BG");
 						break;
 					default:
-						sprintf(buffer, "Map:%02d Skill:%d", leveltxt, skilltxt);
+						sprintf(buffer, "%02d) Map:%02d Skill:%d", i+1, leveltxt, skilltxt);
 						break;
 				}
 				
@@ -2973,11 +2973,11 @@ void M_SavePakDrawer(void) // 8000AB44
 			}
 				
 
-            ST_Message(48, i * 9 + 42, buffer, text_alpha | 0xff000000);
+            ST_Message(45, i * 9 + 42, buffer, text_alpha | 0xff000000);
         }
 
 
-        ST_DrawSymbol(37, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
+        ST_DrawSymbol(34, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
 
         ST_DrawString(-1, 195, "press \x8d to exit", text_alpha | 0xffffff00);
         ST_DrawString(-1, 210, "press \x8a to save", text_alpha | 0xffffff00);
@@ -3141,26 +3141,26 @@ void M_LoadPakDrawer(void) // 8000B270
 			mercilesstxt = 0;
 			D_memcpy(savedata, &Pak_Data[(i * 32) + 16], 16);
 			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, &mercilesstxt, 0) == 0)  {
-                D_memmove(buffer, "no save");
+                sprintf(buffer, "%02d) no save", i+1);
             }
 			else
 			{
 				switch (skilltxt)
 				{
 					case 3: // Watch me die
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "WMD");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "WMD");
 						break;
 					case 2: 
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "IOD");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "IOD");
 						break;
 					case 1:
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BIO");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "BIO");
 						break;
 					case 0: // Be gentle
-						sprintf(buffer, "Map:%02d Skill:%s", leveltxt, "BG");
+						sprintf(buffer, "%02d) Map:%02d Skill:%s", i+1, leveltxt, "BG");
 						break;
 					default:
-						sprintf(buffer, "Map:%02d Skill:%d", leveltxt, skilltxt);
+						sprintf(buffer, "%02d) Map:%02d Skill:%d", i+1, leveltxt, skilltxt);
 						break;
 				}
 				
@@ -3171,10 +3171,10 @@ void M_LoadPakDrawer(void) // 8000B270
 			}
         }
 
-        ST_Message(48, i * 9 + 42, buffer, text_alpha | 0xff000000);
+        ST_Message(45, i * 9 + 42, buffer, text_alpha | 0xff000000);
     }
 
-    ST_DrawSymbol(37, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
+    ST_DrawSymbol(34, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
 
     ST_DrawString(-1, 195, "press \x8D to exit", text_alpha | 0xffffff00);
     ST_DrawString(-1, 210, "press \x8a to load", text_alpha | 0xffffff00);
