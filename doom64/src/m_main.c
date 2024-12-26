@@ -23,17 +23,15 @@ int DrawerStatus;
 #define CT_TXT11	"Strafe Right"
 #define CT_TXT12	"Weapon Backward"
 #define CT_TXT13	"Weapon Forward"
-#define CT_TXT14    "Autorun: %s"
 
 char *ControlText[] =   //8007517C
 {
-    CT_TXT14, 
     CT_TXT00, CT_TXT01, CT_TXT02, CT_TXT03, CT_TXT04,
 	CT_TXT05, CT_TXT06, CT_TXT07, CT_TXT08, CT_TXT09,
 	CT_TXT10, CT_TXT11, CT_TXT12, CT_TXT13
 };
 
-#define M_TXT00	"Control Pad"
+#define M_TXT00	"Bindings"
 #define M_TXT01	"Volume"
 #define M_TXT02	"Display"
 #define M_TXT03	"Password"
@@ -74,7 +72,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT38 "MACRO PEEK:"
 #define M_TXT39 "MUSIC TEST:"
 #define M_TXT40 "WARP TO FUN:"
-#define M_TXT41 "Control Stick"
+#define M_TXT41 "Controls"
 #define M_TXT42 "Default"
 #define M_TXT43 "Sensitivity"
 #define M_TXT44 "Manage Pak"
@@ -110,6 +108,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT65 "Deadzone:" // Analog stick deadzone
 #define M_TXT66 "Flash Level:" // Flash brightness
 #define M_TXT67 "Bright Boost:" // Brightness boost using the gamma correct option
+#define M_TXT68 "Autorun:" // Autorun toggle
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -126,24 +125,24 @@ const char *MenuText[] =   // 8005ABA0
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
-	M_TXT65, M_TXT66, M_TXT67
+	M_TXT65, M_TXT66, M_TXT67, M_TXT68
 };
 
-const menuitem_t Menu_Title[3] = // 8005A978
+const menuitem_t Menu_Title[3] = // Title menu without controller pak save
 {
     { 14, 115, 170 },   // New Game
     { 55, 115, 190 },   // Load Game
 	{ 11, 115, 210 },   // Options
 };
 
-const menuitem_t Menu_TitleNoSave[3] =
+const menuitem_t Menu_TitleNoSave[3] = // Title menu with controller pak save
 {
     { 14, 115, 170 },   // New Game
     {  3, 115, 190},    // Password
 	{ 11, 115, 210 },   // Options
 };
 
-menuitem_t Menu_Skill[6] = // 8005A990
+menuitem_t Menu_Skill[6] = // Skill select menu
 {
     { 15, 102, 70 },    // Be Gentle!
     { 16, 102, 90},    // Bring it on!
@@ -153,7 +152,7 @@ menuitem_t Menu_Skill[6] = // 8005A990
     { 6, 102, 200},    	// Return
 };
 
-const menuitem_t Menu_Episode[5] =
+const menuitem_t Menu_Episode[5] = // Episode select menu
 {
     { 51, 102, 80 },    // Doom 64
     { 52, 102, 100},    // The Lost Levels
@@ -162,19 +161,18 @@ const menuitem_t Menu_Episode[5] =
     { 6, 102, 200},    	// Return
 };
 
-menuitem_t Menu_Options[8] = // 8005A9C0
+menuitem_t Menu_Options[7] = // Options menu
 {
-    {  0, 102, 60 },    // Control Pad
-    { 41, 102, 80 },    // Control Stick
-    {  1, 102, 100},    // Volume
-    {  58, 102, 120},    // Video
-    {  2, 102, 140},    // Display
-    {  3, 102, 160},    // Password
-    { 64, 102, 180},    // Credits
+    { 41, 102, 60 },    // Controls
+    {  1, 102, 80},    // Volume
+    {  58, 102, 100},    // Video
+    {  2, 102, 120},    // Display
+    {  3, 102, 140},    // Password
+    { 64, 102, 160},    // Credits
     {  6, 102, 200},    // Return
 };
 
-const menuitem_t Menu_Volume[4] = // 8005AA08
+const menuitem_t Menu_Volume[4] = // Audio menu
 {
     {  7, 102, 60 },    // Music Volume
     {  8, 102, 100},    // Sound Volume
@@ -182,11 +180,13 @@ const menuitem_t Menu_Volume[4] = // 8005AA08
     {  6, 102, 200},    // Return
 };
 
-const menuitem_t Menu_ControlStick[4] = // 8005AA38
+const menuitem_t Menu_Controls[6] = // Controls menu
 {
-    { 43, 102, 70 },    // Sensitivity
-    { 65, 102, 110},    // Deadzone
-    { 42, 102, 130},    // Defaults
+    {  0, 102, 60 },    // Control bindings
+    { 68, 102, 80 },    // Autorun
+    { 43, 102, 100 },    // Sensitivity
+    { 65, 102, 140},    // Deadzone
+    { 42, 102, 160},    // Defaults
     {  6, 102, 200},    // Return
 };
 
@@ -1007,17 +1007,17 @@ int M_MenuTicker(void) // 80007E0C
 			switch(MenuItem[cursorpos].casepos)
 			{
 
-			case 0: // Control Pad
+			case 0: // Controller Bindings
 				if (truebuttons)
 				{
 					S_StartSound(NULL, sfx_pistol);
 					M_SaveMenuData();
 
-					MenuCall = M_ControlPadDrawer;
+					MenuCall = M_BindingsDrawer;
 					cursorpos = 0;
 					linepos = 0;
 
-					MiniLoop(M_FadeInStart,M_FadeOutStart,M_ControlPadTicker,M_MenuGameDrawer);
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_BindingsTicker,M_MenuGameDrawer);
 					M_RestoreMenuData(true);
 					return ga_nothing;
 				}
@@ -1209,7 +1209,7 @@ int M_MenuTicker(void) // 80007E0C
 					M_SaveMenuData();
 
 					MenuItem = Menu_Options;
-					itemlines = 8;
+					itemlines = 7;
 					MenuCall = M_MenuTitleDrawer;
 					cursorpos = 0;
 
@@ -1728,9 +1728,9 @@ int M_MenuTicker(void) // 80007E0C
 					S_StartSound(NULL, sfx_pistol);
 					M_SaveMenuData();
 
-					MenuItem = Menu_ControlStick;
-					itemlines = 4;
-					MenuCall = M_ControlStickDrawer;
+					MenuItem = Menu_Controls;
+					itemlines = 6;
+					MenuCall = M_ControlsDrawer;
 					cursorpos = 0;
 
 					MiniLoop(M_FadeInStart, M_FadeOutStart, M_MenuTicker, M_MenuGameDrawer);
@@ -1812,11 +1812,27 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;
 
-			case 50: // FILTER [GEC] NEW CHEAT CODE
-				if (truebuttons)
+			case 50: // Texture Filter
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
 				{
-					TextureFilter += TextureFilter < 2 ? 1 : -2;
+					TextureFilter += 1;
 					S_StartSound(NULL, sfx_switch2);
+					
+					if (TextureFilter > 2)
+					{
+						TextureFilter = 0;
+					}
+					
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					TextureFilter -= 1;
+					S_StartSound(NULL, sfx_switch2);
+					if (TextureFilter < 0)
+					{
+						TextureFilter = 2;
+					}
 					return ga_nothing;
 				}
 				break;
@@ -2071,6 +2087,30 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;
 				
+			case 68: // Autorun
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
+				{
+					Autorun += 1;
+					S_StartSound(NULL, sfx_switch2);
+					
+					if (Autorun > 2)
+					{
+						Autorun = 0;
+					}
+					
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					Autorun -= 1;
+					S_StartSound(NULL, sfx_switch2);
+					if (Autorun < 0)
+					{
+						Autorun = 2;
+					}
+					return ga_nothing;
+				}
+				break;
 			}
             exit = ga_nothing;
         }
@@ -2292,14 +2332,15 @@ void M_VolumeDrawer(void) // 800095B4
     ST_DrawSymbol(((101*SfxVolume)>>7) + 103, 120, 69, text_alpha | 0xffffff00);
 }
 
-void M_ControlStickDrawer(void) // 80009738
+void M_ControlsDrawer(void) // 80009738
 {
+    char *text;
     const menuitem_t *item;
     unsigned char i, casepos;
 
-    ST_DrawString(-1, 20, "Control Stick", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Controls", text_alpha | 0xff000000);
 
-    item = Menu_ControlStick;
+    item = Menu_Controls;
 
     for(i = 0; i < itemlines; i++)
     {
@@ -2308,14 +2349,32 @@ void M_ControlStickDrawer(void) // 80009738
             ST_DrawNumber(item->x + 110, item->y, PlayDeadzone>>1, 0, text_alpha | 0xff000000);
         }
 		
+        if (casepos == 68) // Autorun
+        {
+			switch (Autorun)
+			{
+				case 2:
+					text = "Toggle";
+					break;
+				case 1:
+					text = "On";
+					break;
+				case 0:
+				default:
+					text = "Off";
+					break;
+			}
+            ST_DrawString(item->x + 100, item->y, text, text_alpha | 0xff000000);
+        }
+		
         ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }
 
     ST_DrawSymbol(MenuItem->x - 37, MenuItem[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 
-    ST_DrawSymbol(102,90,68,text_alpha | 0xffffff00);
-    ST_DrawSymbol(((101*M_SENSITIVITY)>>7) + 103, 90, 69, text_alpha | 0xffffff00);
+    ST_DrawSymbol(102,120,68,text_alpha | 0xffffff00);
+    ST_DrawSymbol(((101*M_SENSITIVITY)>>7) + 103, 120, 69, text_alpha | 0xffffff00);
 }
 
 void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
@@ -3237,7 +3296,7 @@ void M_CenterDisplayDrawer(void) // 8000B604
     ST_DrawString(-1, 210, "press \x8d to exit", text_alpha | 0xffffff00);
 }
 
-int M_ControlPadTicker(void) // 8000B694
+int M_BindingsTicker(void) // 8000B694
 {
     unsigned int buttons;
     unsigned int oldbuttons;
@@ -3264,10 +3323,10 @@ int M_ControlPadTicker(void) // 8000B694
             if (buttons & PAD_DOWN)
             {
                 cursorpos += 1;
-                if (cursorpos < 15)
+                if (cursorpos < 14)
                     S_StartSound(NULL, sfx_switch1);
                 else
-                    cursorpos = 14;
+                    cursorpos = 13;
 
                 if (cursorpos > (linepos + 6))
                     linepos += 1;
@@ -3309,27 +3368,6 @@ int M_ControlPadTicker(void) // 8000B694
                 {
                     if (buttons & (PAD_DOWN|PAD_RIGHT|ALL_BUTTONS))
                     {
-                        Autorun += 1;
-                        if (Autorun > 2) Autorun = 0;
-                    }
-                }
-                else
-                {
-                    Autorun -= 1;
-                    if (Autorun < 0) Autorun = 2;
-                }
-                if ((buttons & (ALL_BUTTONS|ALL_JPAD)) != 0)
-                {
-                    S_StartSound(NULL, sfx_switch2);
-                    return 0;
-                }
-            }
-            else if (cursorpos == 1) // Set Default Configuration
-            {
-                if (!(buttons & (PAD_UP|PAD_LEFT)))
-                {
-                    if (buttons & (PAD_DOWN|PAD_RIGHT|ALL_BUTTONS))
-                    {
                         ConfgNumb += 1;
                         if(ConfgNumb > 5)
                             ConfgNumb = 0;
@@ -3356,7 +3394,7 @@ int M_ControlPadTicker(void) // 8000B694
                 {
                     if ((buttons & TempConfiguration[i]) != 0)
                     {
-                        ActualConfiguration[cursorpos - 2] = TempConfiguration[i];
+                        ActualConfiguration[cursorpos - 1] = TempConfiguration[i];
                         S_StartSound(NULL,sfx_switch2);
                         return 0;
                     }
@@ -3368,54 +3406,37 @@ int M_ControlPadTicker(void) // 8000B694
     return exit;
 }
 
-void M_ControlPadDrawer(void) // 8000B988
+void M_BindingsDrawer(void) // 8000B988
 {
     unsigned char i, lpos;
     char **text;
     char buffer [44];
 
-    ST_DrawString(-1, 20, "Control Pad", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Bindings", text_alpha | 0xff000000);
 
-    if (linepos < (linepos + 6))
+    if (linepos < (linepos + 7))
     {
         text = &ControlText[linepos];
         lpos = linepos;
         do
         {
-            if (lpos == 0)
-            {
-                switch (Autorun)
-                {
-                    case 2:
-                        sprintf(buffer, *text, "Toggle");
-                        break;
-                    case 1:
-                        sprintf(buffer, *text, "On");
-                        break;
-                    case 0:
-                    default:
-                        sprintf(buffer, *text, "Off");
-                        break;
-                }   
-            }
-            else if (lpos >= 1)
-            {
-                if (lpos > 1)
-                {
-                    if(lpos != cursorpos || ((ticon & 8U) == 0))
-                    {
-                        for (i = 0; i < 13; i++)
-                        {
-                            if (ActualConfiguration[lpos - 2] == TempConfiguration[i])
-                            {
-                                break;
-                            }
-                        }
-                        ST_DrawSymbol(60, ((lpos - linepos) * 18) + 59, i + 80, text_alpha | 0xffffff00);
-                    }
-                }
-                sprintf(buffer, *text, ConfgNumb + 1);
-            }
+
+			if (lpos > 0)
+			{
+				if(lpos != cursorpos || ((ticon & 8U) == 0))
+				{
+					for (i = 0; i < 13; i++)
+					{
+						if (ActualConfiguration[lpos - 1] == TempConfiguration[i])
+						{
+							break;
+						}
+					}
+					ST_DrawSymbol(60, ((lpos - linepos) * 18) + 58, i + 80, text_alpha | 0xffffff00);
+				}
+			}
+			sprintf(buffer, *text, ConfgNumb + 1);
+    
 
             ST_DrawString(80, ((lpos - linepos) * 18) + 59, buffer, text_alpha | 0xff000000);
 
@@ -3428,7 +3449,7 @@ void M_ControlPadDrawer(void) // 8000B988
         ST_DrawString(80, 41, "\x8f more...", text_alpha | 0xffffff00);
     }
 
-    if ((linepos + 6) < 14) {
+    if ((linepos + 7) < 14) {
         ST_DrawString(80, 185, "\x8e more...", text_alpha | 0xffffff00);
     }
 

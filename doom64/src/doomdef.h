@@ -902,7 +902,7 @@ void M_MenuClearCall(void); // 80008E6C
 void M_MenuTitleDrawer(void); // 80008E7C
 void M_FeaturesDrawer(void); // 800091C0
 void M_VolumeDrawer(void); // 800095B4
-void M_ControlStickDrawer(void); // 80009738
+void M_ControlsDrawer(void); // 80009738
 void M_VideoDrawer(void); // [Immorpher] new menu for extra video options
 void M_DisplayDrawer(void); // 80009884
 
@@ -926,8 +926,8 @@ void M_LoadPakDrawer(void); // 8000B270
 int M_CenterDisplayTicker(void); // 8000B4C4
 void M_CenterDisplayDrawer(void); // 8000B604
 
-int M_ControlPadTicker(void); // 8000B694
-void M_ControlPadDrawer(void); // 8000B988
+int M_BindingsTicker(void); // 8000B694
+void M_BindingsDrawer(void); // 8000B988
 
 /*----------*/
 /* PASSWORD */
