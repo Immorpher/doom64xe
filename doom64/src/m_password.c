@@ -5,8 +5,9 @@
 #include "st_main.h"
 #include "r_local.h"
 
-char *passwordChar = "bcdfghjklmnpqrstvwxyz0123456789?";    // 8005AC60
-int passwordTable[10] = { 1, 8, 9, 5, 6, 2, 7, 0, 4, 3 };   // 8005AC80
+char *passwordChar = "BCDFGHJKLMNPQRSTVWXYZ0123456789?";    // List of password characters in order by their corresponding value
+
+int passwordTable[10] = { 1, 8, 9, 5, 6, 2, 7, 0, 4, 3 };   // Password table for scrambling the passwords
 
 char *hectic_demo = "rvnh3ct1cd3m0???"; // 8005ACA8
 boolean run_hectic_demo = false;        // 8005A7A0
@@ -699,9 +700,9 @@ void M_PasswordDrawer(void) // 8000CAF0
             continue;
 
         c = passwordChar[cnt];
-        if ((byte)(c - 'a') < 26) // display letters
+        if ((byte)(c - 'A') < 26) // display letters
         {
-            texid = (byte)(c - 81);
+            texid = (byte)(c - 49);
         }
         else if ((byte)(c - '0') < 10) // display numbers
         {
@@ -750,10 +751,7 @@ void M_PasswordDrawer(void) // 8000CAF0
             }
 
             if (cnt < CurPasswordSlot) {
-				if ((byte)(passwordChar[Passwordbuff[cnt]] - 'a') < 26) // display letters
-					pass[0] = passwordChar[Passwordbuff[cnt]]-32;
-				else // display numbers 
-					pass[0] = passwordChar[Passwordbuff[cnt]];
+				pass[0] = passwordChar[Passwordbuff[cnt]];
             }
             else {
                 pass[0] = '.';
