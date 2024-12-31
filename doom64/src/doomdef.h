@@ -902,8 +902,9 @@ void M_MenuClearCall(void); // 80008E6C
 void M_MenuTitleDrawer(void); // 80008E7C
 void M_FeaturesDrawer(void); // 800091C0
 void M_VolumeDrawer(void); // 800095B4
+void M_MemoryPakDrawer(void); // Memory pak menu
 void M_ControlsDrawer(void); // 80009738
-void M_VideoDrawer(void); // [Immorpher] new menu for extra video options
+void M_VideoDrawer(void); // New menu for extra video options
 void M_DisplayDrawer(void); // 80009884
 
 void M_DrawBackground(int x, int y, int color, char *name); // 80009A68

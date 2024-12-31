@@ -109,6 +109,10 @@ char *ControlText[] =   //8007517C
 #define M_TXT66 "Flash Level:" // Flash brightness
 #define M_TXT67 "Bright Boost:" // Brightness boost using the gamma correct option
 #define M_TXT68 "Autorun:" // Autorun toggle
+#define M_TXT69 "Memory Pak" // Memory Pak menu to manage pak
+#define M_TXT70 "HUD Margin" // Adjust the HUD margin (not implemented yet)
+#define M_TXT71 "Load Settings" // Load settings from memory pak slot
+#define M_TXT72 "Save Settings" // Save settings into memory pak slot
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -125,7 +129,9 @@ const char *MenuText[] =   // 8005ABA0
 	M_TXT50, M_TXT51, M_TXT52, M_TXT53, M_TXT54,
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
-	M_TXT65, M_TXT66, M_TXT67, M_TXT68
+	M_TXT65, M_TXT66, M_TXT67, M_TXT68, M_TXT69,
+	M_TXT70, M_TXT71, M_TXT72
+	
 };
 
 const menuitem_t Menu_Title[3] = // Title menu without controller pak save
@@ -161,7 +167,19 @@ const menuitem_t Menu_Episode[5] = // Episode select menu
     { 6, 102, 200},    	// Return
 };
 
-menuitem_t Menu_Options[7] = // Options menu
+menuitem_t Menu_Options[8] = // Options menu
+{
+    { 41, 102, 60 },    // Controls
+    {  1, 102, 80},    // Volume
+    {  58, 102, 100},    // Video
+    {  2, 102, 120},    // Display
+    {  3, 102, 140},    // Password
+    { 69, 102, 160},    // Memory Pak
+    { 64, 102, 180},    // Credits
+    {  6, 102, 200},    // Return
+};
+
+menuitem_t Menu_OptionsNoPak[7] = // Options menu
 {
     { 41, 102, 60 },    // Controls
     {  1, 102, 80},    // Volume
@@ -169,6 +187,14 @@ menuitem_t Menu_Options[7] = // Options menu
     {  2, 102, 120},    // Display
     {  3, 102, 140},    // Password
     { 64, 102, 160},    // Credits
+    {  6, 102, 200},    // Return
+};
+
+const menuitem_t Menu_MemoryPak[4] = // Memory Pak Menu
+{
+    { 44, 102, 60 },    // Manage Pak
+    { 71, 102, 80},    // Load Settings
+    { 72, 102, 100},    // Save settings
     {  6, 102, 200},    // Return
 };
 
@@ -307,9 +333,9 @@ char Display_X = 0;              // 8005A7B0
 char Display_Y = 0;              // 8005A7B4
 boolean enable_messages = true; // 8005A7B8
 boolean enable_statusbar = true;// 8005A7BC
-char SfxVolume = 100;             // 8005A7C0
-char MusVolume = 100;             // 8005A7C4
-char brightness = 60;             // 8005A7C8
+char SfxVolume = 96;             // Sound effect volume
+char MusVolume = 96;             // Music volume
+char brightness = 60;             // Gradient brightness now adjustable by tracing the circle
 char PlayDeadzone = 10;			// Analog stick deadzone for the gameplay
 char M_SENSITIVITY = 27;          // Analog stick sensitivity
 int	 MotionBob = 0x100003;		// Video motion bob - 16 pixels of bob is 0x100000
@@ -319,12 +345,13 @@ boolean runintroduction = false; // [Immorpher] New introduction sequence which 
 boolean MercilessMode = false; // [Immorpher] Returning merciless difficulty from Doom 64 Merciless Edition!
 boolean BrightBoost = 0; // Brightness boost from the "gamma correct" video mode
 boolean MercilessMenu = false; // Current menu setting for merciless mode, not necessarily enabled in menu
-char TextureFilter = 0;
-char Autorun = 0;
-byte SavedConfig[16];
+char TextureFilter = 0; // To have 3-point, nearest, or a combination of filters
+char Autorun = 0; //  To have autorun on, off, or toggle
+byte SavedConfig[16]; // For the controller configuration
 char BloodStyle = 3; // Blood style: red, green, dust, combo
 boolean ColoredHUD = true; // Hud color
 boolean ShowStats = true; // Automap stats
+boolean SettingsMode = false; // Turn on settings mode when trying to save settings
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -904,7 +931,7 @@ void M_MenuGameDrawer(void) // 80007C48
 		
 		M_DrawBackground(0, 0, 255, "TITLEBG"); // draw star background
 		
-        if ((MenuItem != Menu_Title && MenuItem != Menu_TitleNoSave) || MenuCall != M_MenuTitleDrawer) {
+        if ((MenuItem != Menu_Title && MenuItem != Menu_TitleNoSave) || MenuCall != M_MenuTitleDrawer) { // darken when not on title
             M_DrawOverlay(0, 0, 320, 240, text_alpha>>2);
         }
 		else {
@@ -924,9 +951,8 @@ extern int gobalcheats; // [GEC]
 int M_MenuTicker(void) // 80007E0C
 {
     unsigned int buttons, oldbuttons;
-    int exit;
-    int truebuttons;
-    int ret;
+    int exit, truebuttons, ret;
+	boolean hasPak = false;
     unsigned char i;
     mobj_t *m;
 
@@ -1207,9 +1233,12 @@ int M_MenuTicker(void) // 80007E0C
 				{
 					S_StartSound(NULL, sfx_pistol);
 					M_SaveMenuData();
+					
+					// Check if memory pak is in and change options menu accordingly
+					hasPak = I_CheckControllerPak() == 0;
 
-					MenuItem = Menu_Options;
-					itemlines = 7;
+					MenuItem = hasPak ? Menu_Options : Menu_OptionsNoPak;
+					itemlines = hasPak ? 8 : 7;
 					MenuCall = M_MenuTitleDrawer;
 					cursorpos = 0;
 
@@ -2111,6 +2140,103 @@ int M_MenuTicker(void) // 80007E0C
 					return ga_nothing;
 				}
 				break;
+				
+			case 69: // Memory Pak menu
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_MemoryPak;
+					itemlines = 4;
+					MenuCall = M_MemoryPakDrawer;
+					cursorpos = 0;
+
+					MiniLoop(M_FadeInStart,M_FadeOutStart,M_MenuTicker,M_MenuGameDrawer);
+					M_RestoreMenuData(true);
+					return ga_nothing;
+				}
+				break;
+				
+			case 71: // Load Settings
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					EnableMemPak = (M_ControllerPak() == 0); // check if Doom 64 XE note exists, if not ask if one should be made
+					
+					ret = I_CheckControllerPak();
+					exit = ga_exit;
+
+					if (ret == 0)
+					{
+						if (I_ReadPakFile() == 0)
+						{
+							SettingsMode = true; // set to settings loading mode
+							EnableMemPak = 1;
+							MenuCall = M_LoadPakDrawer;
+							exit = MiniLoop(M_LoadPakStart,M_LoadPakStop,M_LoadPakTicker,M_MenuGameDrawer);
+						}
+						else
+							exit = ga_exit;
+					}
+
+					if (exit == ga_exit)
+					{
+						SettingsMode = false; // return to normal mode
+						M_RestoreMenuData(true);
+						return ga_nothing;
+					}
+
+					if (EnableMemPak != 0)
+					{
+						return exit;
+					}
+
+					return exit;
+				}
+				break;
+				
+			case 72: // Save settings
+				if (truebuttons)
+				{
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+					
+					EnableMemPak = (M_ControllerPak() == 0); // check if Doom 64 XE note exists, if not ask if one should be made
+
+					ret = I_CheckControllerPak();
+					exit = ga_exit;
+
+					if (ret == 0)
+					{
+						if (I_ReadPakFile() == 0)
+						{
+							SettingsMode = true; // set to settings saving mode
+							EnableMemPak = 1;
+							MenuCall = M_SavePakDrawer;
+							exit = MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_MenuGameDrawer);
+						}
+						else
+							exit = ga_exit;
+					}
+
+					if (exit == ga_exit)
+					{
+						SettingsMode = false; // return to normal mode
+						M_RestoreMenuData(true);
+						return ga_nothing;
+					}
+
+					if (EnableMemPak != 0)
+					{
+						return exit;
+					}
+
+					return exit;
+				}
+				break;
 			}
             exit = ga_nothing;
         }
@@ -2144,7 +2270,7 @@ void M_MenuTitleDrawer(void) // 80008E7C
         {
             ST_DrawString(-1, 20, "Choose Campaign", text_alpha | 0xff000000);
         }
-        else if (MenuItem == Menu_Options)
+        else if ((MenuItem == Menu_Options) || (MenuItem == Menu_OptionsNoPak))
         {
             ST_DrawString(-1, 20, "Options", text_alpha | 0xff000000);
         }
@@ -2330,6 +2456,23 @@ void M_VolumeDrawer(void) // 800095B4
 
     ST_DrawSymbol(102, 120, 68, text_alpha | 0xffffff00);
     ST_DrawSymbol(((101*SfxVolume)>>7) + 103, 120, 69, text_alpha | 0xffffff00);
+}
+
+void M_MemoryPakDrawer(void) // 800095B4
+{
+    const menuitem_t *item;
+    unsigned char i;
+
+    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
+    item = Menu_MemoryPak;
+
+    for(i = 0; i < itemlines; i++)
+    {
+        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
+        item++;
+    }
+
+    ST_DrawSymbol(MenuItem->x - 37, MenuItem[cursorpos].y - 9, MenuAnimationTic + 70, text_alpha | 0xffffff00);
 }
 
 void M_ControlsDrawer(void) // 80009738
@@ -2664,8 +2807,6 @@ int M_ScreenTicker(void) // 8000A0F8
                 else
                     cursorpos = 15;
 
-                if ((linepos + 5) < cursorpos)
-                    linepos += 1;
             }
             else if (buttons & PAD_UP)
             {
@@ -2676,8 +2817,6 @@ int M_ScreenTicker(void) // 8000A0F8
                 else
                     S_StartSound(NULL, sfx_switch1);
 
-                if(cursorpos < linepos)
-                    linepos -= 1;
             }
         }
     }
@@ -2735,7 +2874,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
     char buffer [32];
     char *tmpbuf;
 
-    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Manage Pak", text_alpha | 0xff000000);
 
     if (FilesUsed == -1)
     {
@@ -2748,7 +2887,7 @@ void M_ControllerPakDrawer(void) // 8000A3E4
     {
         fState = &FileState[linepos];
 
-        for(i = linepos; i < (linepos + 6); i++)
+        for(i = 0; i < 16; i++)
         {
             if (fState->file_size == 0)
             {
@@ -2779,25 +2918,15 @@ void M_ControllerPakDrawer(void) // 8000A3E4
                 *tmpbuf = '\0';
             }
 
-            ST_DrawString(60, (i - linepos) * 15 + 60, buffer, text_alpha | 0xff000000);
+			ST_Message(48, i * 9 + 42, buffer, text_alpha | 0xff000000);
 
             fState++;
         }
 
-        if (linepos != 0)
-        {
-            ST_DrawString(60, 45, "\x8F more...", text_alpha | 0xffffff00);
-        }
+        sprintf(buffer, "Pages Used:%d  Pages Free:%d", FileState[cursorpos].file_size >> 8, Pak_Memory);
 
-        if ((linepos + 6) < 16)
-        {
-            ST_DrawString(60, 150, "\x8E more...", text_alpha | 0xffffff00);
-        }
-
-        sprintf(buffer, "pages used: %d   free: %d", FileState[cursorpos].file_size >> 8, Pak_Memory);
-
-        ST_DrawString(-1, 170, buffer, text_alpha | 0xff000000);
-        ST_DrawSymbol(23, (cursorpos - linepos) * 15 + 51, MenuAnimationTic + 70, text_alpha | 0xffffff00);
+        ST_Message(48, 188, buffer, text_alpha | 0xffffff00);
+		ST_DrawSymbol(37, cursorpos * 9 + 40, 78, text_alpha | 0xffffff00);
 
         ST_DrawString(-1, 200, "press \x8d to exit", text_alpha | 0xffffff00);
         ST_DrawString(-1, 215, "press \x8a to delete", text_alpha | 0xffffff00);
@@ -2836,11 +2965,6 @@ void M_SavePakStart(void) // 8000A6E8
             if (i < size)
             {
                 cursorpos = i;
-
-                if (!(size < (i+6)))
-                    linepos = i;
-                else
-                    linepos = (size-6);
             }
         }
     }
@@ -2848,6 +2972,8 @@ void M_SavePakStart(void) // 8000A6E8
     {
         FilesUsed = -1;
     }
+	if (SettingsMode) // If settings mode, fade in from menu
+		M_FadeInStart();
 }
 
 void M_SavePakStop(void) // 8000A7B4
@@ -2866,6 +2992,7 @@ int M_SavePakTicker(void) // 8000A804
     unsigned int buttons;
     unsigned int oldbuttons;
     int size;
+	const byte PassSettings[16] = {0,3,31,31,30,0,7,31,31,28,0,15,30,0,7,31}; // Password used to save settings
 
     if ((gamevbls < gametic) && ((gametic & 3U) == 0)) {
         MenuAnimationTic = (MenuAnimationTic + 1) & 7;
@@ -2938,7 +3065,10 @@ int M_SavePakTicker(void) // 8000A804
             D_memcpy(&Pak_Data[cursorpos * 32], &SavedConfig, 16);
 			
             // save the next password data in text format
-            D_memcpy(&Pak_Data[(cursorpos * 32) + 16], &Passwordbuff, 16);
+			if (!SettingsMode) // not in settings mode save as normal
+				D_memcpy(&Pak_Data[(cursorpos * 32) + 16], &Passwordbuff, 16);
+			else // use a default settings password
+				D_memcpy(&Pak_Data[(cursorpos * 32) + 16], &PassSettings, 16);
 
             if (I_SavePakFile(File_Num, PFS_WRITE, Pak_Data, Pak_Size) == 0) {
                 last_ticon = ticon;
@@ -2969,20 +3099,27 @@ void M_SavePakDrawer(void) // 8000AB44
     byte savedata[16];
     unsigned char leveltxt, skilltxt;
 	boolean mercilesstxt;
+	
+	if (!SettingsMode) // Check if its game or settings being saved
+	{
+		I_ClearFrame();
 
-    I_ClearFrame();
+		gDPPipeSync(GFX1++);
+		gDPSetCycleType(GFX1++, G_CYC_FILL);
+		gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
+		gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
+		// Fill borders with black
+		gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
+		gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-    gDPPipeSync(GFX1++);
-    gDPSetCycleType(GFX1++, G_CYC_FILL);
-    gDPSetRenderMode(GFX1++,G_RM_NOOP,G_RM_NOOP2);
-    gDPSetColorImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_32b, SCREEN_WD, OS_K0_TO_PHYSICAL(cfb[vid_side]));
-    // Fill borders with black
-    gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
-    gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
+		M_DrawBackground(63, 25, 128, EpisodeGraphic());
 
-	M_DrawBackground(63, 25, 128, EpisodeGraphic());
-
-    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
+		ST_DrawString(-1, 20, "Save Game", text_alpha | 0xff000000);
+	}
+	else
+	{
+		ST_DrawString(-1, 20, "Save Settings", text_alpha | 0xff000000);
+	}
 
     if (FilesUsed == -1)
     {
@@ -3004,6 +3141,9 @@ void M_SavePakDrawer(void) // 8000AB44
 			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, &mercilesstxt, 0) == 0)  {
                 sprintf(buffer, "%02d) no save", i+1);
             }
+			else if (leveltxt == 0) { // Level 0 used to save settings
+				sprintf(buffer, "%02d) Settings", i+1);
+			}
 			else
 			{
 				switch (skilltxt)
@@ -3041,8 +3181,9 @@ void M_SavePakDrawer(void) // 8000AB44
         ST_DrawString(-1, 195, "press \x8d to exit", text_alpha | 0xffffff00);
         ST_DrawString(-1, 210, "press \x8a to save", text_alpha | 0xffffff00);
     }
-
-    I_DrawFrame();
+	
+	if (!SettingsMode) // Check if its game or settings being saved
+		I_DrawFrame();
 }
 
 void M_LoadPakStart(void) // 8000AEEC
@@ -3155,6 +3296,14 @@ int M_LoadPakTicker(void) // 8000AFE4
                 CurPasswordSlot = 0;
                 exit = ga_exit;
             }
+			else if (levelnum == 0 || SettingsMode) // If level number is 0 or settings mode active only load settings
+			{
+				// load configuration
+				D_memcpy(&SavedConfig, &Pak_Data[cursorpos * 32], 16);
+				M_DecodeConfig();
+                CurPasswordSlot = 0;
+                exit = ga_exit;
+			}
             else
             {
 				// load configuration
@@ -3188,7 +3337,10 @@ void M_LoadPakDrawer(void) // 8000B270
     unsigned char leveltxt, skilltxt;
 	boolean mercilesstxt;
 
-    ST_DrawString(-1, 20, "Memory Pak", text_alpha | 0xff000000);
+	if (!SettingsMode) // check if settings mode is active
+		ST_DrawString(-1, 20, "Load Game", text_alpha | 0xff000000);
+	else
+		ST_DrawString(-1, 20, "Load Settings", text_alpha | 0xff000000);
 
     for(i = 0; i < Pak_Size/32; i++)
     {
@@ -3202,6 +3354,9 @@ void M_LoadPakDrawer(void) // 8000B270
 			if (M_DecodePassword((byte*)&savedata, &leveltxt, &skilltxt, &mercilesstxt, 0) == 0)  {
                 sprintf(buffer, "%02d) no save", i+1);
             }
+			else if (leveltxt == 0) { // Level 0 used to save settings
+				sprintf(buffer, "%02d) Settings", i+1);
+			}
 			else
 			{
 				switch (skilltxt)
