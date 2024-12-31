@@ -498,7 +498,7 @@ void P_SpawnQuake(int tics) // 8000EE7C
     quake->thinker.function = T_Quake;
     quake->tics = tics;
 
-    S_StopSound(NULL, sfx_quake);
+    S_StartSound(NULL, sfx_quake);
 }
 
 int P_RandomLineTrigger(line_t *line,mobj_t *thing) // 8000EEE0
