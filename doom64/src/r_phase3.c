@@ -46,7 +46,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     I_CheckGFX();
 	
 	// Flash sky exposed sectors when there is lightning
-	if (LightningFlash != 0 && frontsector->ceilingpic == -1) {
+	if (LightningFlash != 0 && (frontsector->ceilingpic == -1 || frontsector->ceilingpic == 87 || frontsector->ceilingpic == 96 || frontsector->ceilingpic == 64 || frontsector->ceilingpic == 396 || frontsector->ceilingpic == 294 || frontsector->ceilingpic == 320)) {
 		extralight = frontsector->lightlevel + (LightningFlash>>1);
 		if (extralight > 255)
 			extralight = 255; // dont exceed brightness
