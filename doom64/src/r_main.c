@@ -46,7 +46,7 @@ int			validcount;		/* increment every time a check is made */ // 800A6900
 /* */
 boolean     rendersky; // 800A68A8
 
-byte        solidcols[320];                     // 800A6348
+byte        solidcols[640];                     // 800A6348
 subsector_t *solidsubsectors[MAXSUBSECTORS];	// 800A6488  /* List of valid ranges to scan through */
 subsector_t **endsubsector;				        // 800A6888    /* Pointer to the first free entry */
 int numdrawsubsectors;                          // 800A68AC
