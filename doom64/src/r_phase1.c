@@ -46,7 +46,7 @@ void R_BSP(void) // 80023F30
     visspritehead = vissprites;
 
 	endsubsector = solidsubsectors; /* Init the free memory pointer */
-	bzero(solidcols, 640);
+	bzero(solidcols, 320);
 
     if (camviewpitch == 0)
     {
@@ -221,17 +221,17 @@ boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
         vy2 = vx2;
     }
 	
-	fixed_t vxovery1 = FixedDiv2(vx1, vy1) >> 8;
-	fixed_t vxovery2 = FixedDiv2(vx2, vy2) >> 8;
+	fixed_t vxovery1 = FixedDiv2(vx1, vy1);
+	fixed_t vxovery2 = FixedDiv2(vx2, vy2);
 
-	Xstart = ((vxovery1 + (vxovery1 >> 2))) + 320;
-	Xend = ((vxovery2 + (vxovery2 >> 2))) + 320;
+	Xstart = (((vxovery1 >> 9) + (vxovery1 >> 11))) + 160;
+	Xend   = (((vxovery2 >> 9) + (vxovery2 >> 11))) + 160;
 
     if (Xstart < 0)
         Xstart = 0;
 
-    if (Xend >= 640)
-        Xend = 640;
+    if (Xend >= 320)
+        Xend = 320;
 
     solid_cols = &solidcols[Xstart];
     while (Xstart < Xend)
@@ -358,17 +358,17 @@ void R_AddLine(seg_t *line) // 80024604
         y2 = (8*FRACUNIT);
     }
 
-	fixed_t xovery1 = FixedDiv2(x1, y1) >> 8;
-	fixed_t xovery2 = FixedDiv2(x2, y2) >> 8;
+	fixed_t xovery1 = FixedDiv2(x1, y1);
+	fixed_t xovery2 = FixedDiv2(x2, y2);
 
-	Xstart = ((xovery1 + (xovery1 >> 2))) + 320;
-	Xend = ((xovery2 + (xovery2 >> 2))) + 320;
+	Xstart = (((xovery1 >> 9) + (xovery1 >> 11))) + 160;
+	Xend   = (((xovery2 >> 9) + (xovery2 >> 11))) + 160;
 
     if (Xstart < 0)
         Xstart = 0;
 
-    if (Xend >= 640)
-        Xend = 640;
+    if (Xend >= 320)
+        Xend = 320;
 
     if (Xstart != Xend)
     {
