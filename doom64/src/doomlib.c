@@ -41,33 +41,61 @@ void D_memmove(void *dest, const void *src) // 800019F0
 
 void D_memset(void *dest, int val, int count) // 80001A20
 {
-	byte	*p;
-	int		*lp;
-	int     v;
-
-	/* round up to nearest word */
-	p = dest;
-	while ((int)p & WORDMASK)
-	{
-		if (--count < 0)
-            return;
-		*p++ = (char)val;
-	}
-
-	/* write 8 bytes at a time */
-	lp = (int *)p;
-	v = (int)(val << 24) | (val << 16) | (val << 8) | val;
-	while (count >= 8)
-	{
-		lp[0] = lp[1] = v;
-		lp += 2;
-		count -= 8;
-	}
-
-	/* finish up */
-	p = (byte *)lp;
-	while (count--)
-		*p++ = (char)val;
+    void *end = dest + count;
+    if ((((u32) dest) & 7) == 0)
+    {
+        void *alignend = (void*)(((u32) dest) + (count & ~31));
+        if (alignend > dest)
+        {
+            u64 val64;
+            val = val & 0xff;
+            asm volatile(
+            ".set noreorder                     \n\t"
+            ".set nomacro                       \n\t"
+            ".set gp=64                         \n\t"
+            "dsll %[val64], %[val], 8           \n\t"
+            "or   %[val64], %[val64], %[val]    \n\t"
+            "dsll %[val], %[val64], 16          \n\t"
+            "or   %[val], %[val64], %[val]      \n\t"
+            "dsll %[val64], %[val], 32          \n\t"
+            "or   %[val64], %[val64], %[val]    \n\t"
+            "1:                                 \n\t"
+            "sd      %[val64], 0(%[dest])       \n\t"
+            "sd      %[val64], 8(%[dest])       \n\t"
+            "sd      %[val64], 16(%[dest])      \n\t"
+            "sd      %[val64], 24(%[dest])      \n\t"
+            "addiu   %[dest], %[dest], 32       \n\t"
+            "bnel    %[dest], %[end], 1b        \n\t"
+            "nop                                \n\t"
+            ".set gp=32                         \n\t"
+            ".set macro                         \n\t"
+            ".set reorder                       \n\t"
+            : [val64] "=&r" (val64), [val] "+&r" (val), [dest] "+&r" (dest)
+            : [end] "r" (alignend)
+               : "memory");
+        }
+    }
+    if ((((u32) dest) & 3) == 0)
+    {
+        void *alignend = (void*)(((u32) end) & ~3);
+        if (alignend > dest)
+        {
+            val = val & 0xff;
+            val = (val<<8)|val;
+            val = (val<<16)|val;
+            do
+            {
+                *(u32*)dest = val;
+                dest += sizeof(u32);
+            }
+            while (dest != alignend);
+        }
+    }
+    while (dest != end)
+    {
+        *(u8*)dest = val;
+        dest++;
+    }
 }
 
 /*
@@ -227,3 +255,27 @@ int D_strlen(char *s) // 80001CC0
 
     return len;
 }
+
+asm(
+    ".set gp=64                     \n\t"
+    ".set noreorder                 \n\t"
+    ".set nomacro                   \n\t"
+    ".globl  __udivdi3              \n\t"
+    ".ent    __udivdi3              \n\t"
+"__udivdi3:                         \n\t"
+    ".frame  $sp, 0, $ra            \n\t"
+    "dsll    $a0, $a0, 32           \n\t"
+    "add     $a1, $a0, $a1          \n\t"
+    "dsll    $a2, $a2, 32           \n\t"
+    "add     $a3, $a2, $a3          \n\t"
+    "ddivu   $zero, $a1, $a3        \n\t"
+    "mflo    $v1                    \n\t"
+    "dsrl    $v0, $v1, 32           \n\t"
+    "dsll    $v1, $v1, 32           \n\t"
+    "jr      $ra                    \n\t"
+    "dsrl    $v1, $v1, 32           \n\t"
+    ".end    __udivdi3              \n\t"
+    ".set macro                     \n\t"
+    ".set reorder                   \n\t"
+    ".set gp=32                     \n\t"
+);
