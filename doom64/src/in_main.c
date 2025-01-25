@@ -294,8 +294,8 @@ void IN_Start(void) // 80004AF0
 
     time = (unsigned int)(end_time - start_time) / 60;
 
-    if ((time / 60) < 60) {
-        sprintf(timetext, "%2.2d:%2.2d", (time / 60), (time % 60));
+    if ((time / 60) < 99) {
+        sprintf(timetext, "%02d:%02d", (time / 60), (time % 60));
     }
     else {
         D_memmove(timetext, "--:--");
