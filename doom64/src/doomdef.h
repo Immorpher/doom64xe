@@ -599,8 +599,8 @@ extern	boolean		gamepaused;
 
 extern	int DrawerStatus;
 
-int MiniLoop ( void (*start)(void),  void (*stop)()
-		,  int (*ticker)(void), void (*drawer)(void) ) HOT;
+int MiniLoop (void (*start)(void), void (*stop)(), int (*ticker)(void), void (*drawer)(void)) __attribute__((optimize("-O1")));
+// optimize set to lower level from Doom 64 Dreamcast to prevent miniloops from deeply nesting and freezing between menu changes (needs testing)
 
 int	G_Ticker (void);
 void G_Drawer (void);

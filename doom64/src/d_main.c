@@ -177,8 +177,7 @@ void M_ClearRandom(void) // 80002980
 ===============
 */
 
-int MiniLoop(void(*start)(void), void(*stop)(),
-             int(*ticker)(void), void(*drawer)(void)) // 80002998
+int MiniLoop(void(*start)(void), void(*stop)(), int(*ticker)(void), void(*drawer)(void)) // 80002998
 {
 	int		exit;
 	int		buttons;
