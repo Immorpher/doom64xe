@@ -647,7 +647,7 @@ void P_RefreshBrightness(void) // 8000f410
 	unsigned char i;
 	float curve, scale;
 
-	scale = (float)brightness/127;
+	scale = (float)brightness/127.0f;
 	scale /= 256-(float)lightmax[2*brightness]; // 256 to prevent divide by 0
 	
 	for (i = 1; i < 255; i++) { // [Immorpher] New brightness adjustment by "tracing out the circle"
@@ -710,9 +710,11 @@ void P_SetLightFactor(int lightfactor) // 8000F458
 
         v = (int)l_flt;
         
-        if (v > 255) {
+		// ensure proper bounds
+        if (v > 255)
             v = 255;
-        }
+		else if  (v < 0)
+			v = 0;
 		
 		v = lightcurve[v]; // [Immorpher] - Non-linearly boost brightness
 

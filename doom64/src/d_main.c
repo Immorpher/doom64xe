@@ -128,7 +128,7 @@ unsigned char lightcurve[256] = { // [Immorpher] - table to optionally boost bri
 	255, 255, 255, 255, 255, 255, 255, 255
 };
 
-unsigned char lightmax[256] = { // [Immorpher] - table for maximum light curve that is a quarter of a circle
+const unsigned char lightmax[256] = { // [Immorpher] - table for maximum light curve that is a quarter of a circle
 	0, 23, 32, 39, 45, 50, 55, 59, 63, 67, 71, 74, 77, 80, 83, 86, 89, 92,
 	94, 97, 99, 101, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124,
 	125, 127, 129, 131, 132, 134, 136, 137, 139, 140, 142, 143, 145, 146,

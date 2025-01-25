@@ -1021,7 +1021,7 @@ void M_AddToBox (fixed_t *box, fixed_t x, fixed_t y) HOT;
 boolean M_BoxIntersect(fixed_t a[static 4], fixed_t b[static 4]);
 
 extern unsigned char lightcurve[256]; // [Immorpher] - brightness table
-extern unsigned char lightmax[256]; // [Immorpher] - maximum brightness curve
+extern const unsigned char lightmax[256]; // [Immorpher] - maximum brightness curve
 
 /*---------*/
 /* S_SOUND */
