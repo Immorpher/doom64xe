@@ -969,8 +969,6 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
                 gDPLoadSync(GFX1++);
                 gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 255);
-
-                gDPPipeSync(GFX1++);
             }
             else
             {
@@ -991,9 +989,9 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
                 gDPLoadSync(GFX1++);
                 gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 15);
-
-                gDPPipeSync(GFX1++);
             }
+			
+			gDPPipeSync(GFX1++);
 
             ypos = (thing->z >> FRACBITS) + ((spriteN64_t*)data)->yoffs;
 
@@ -1022,36 +1020,23 @@ void R_RenderThings(subsector_t *sub) // 80028248
             {
                 do
                 {
-                    if (compressed < 0)
-                    {
-                        // Load Image Data (8bit)
-                        gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
-                        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
-
-                        gDPLoadSync(GFX1++);
-                        gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0, (tilew >> 1) - 1, 0);
-
-                        gDPPipeSync(GFX1++);
-                        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b, (width >> 3), 0,
-                                   G_TX_RENDERTILE , 0, 0, 0, 0, 0, 0, 0);
-
-                        gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, tpos << 2, ((width - 1) << 2), (tpos + tileh - 1) << 2);
-                    }
-                    else
-                    {
-                        // Load Image Data (4bit)
-                        gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
-                        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
-
-                        gDPLoadSync(GFX1++);
-                        gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0, (tilew >> 1) - 1, 0);
-
-                        gDPPipeSync(GFX1++);
-                        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_4b, (width >> 4), 0,
-                                   G_TX_RENDERTILE , 0, 0, 0, 0, 0, 0, 0);
-
-                        gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, tpos << 2, ((width - 1) << 2), (tpos + tileh - 1) << 2);
-                    }
+					gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
+					gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+					gDPLoadSync(GFX1++);
+					
+					gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0, (tilew >> 1) - 1, 0);
+					gDPPipeSync(GFX1++);
+					
+                    if (compressed < 0) // Load Image Data (8bit)
+					{
+                        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b, (width >> 3), 0, G_TX_RENDERTILE , 0, 0, 0, 0, 0, 0, 0);
+					}
+                    else // Load Image Data (4bit)
+					{
+						gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_4b, (width >> 4), 0, G_TX_RENDERTILE , 0, 0, 0, 0, 0, 0, 0);
+					}
+					
+					gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, tpos << 2, ((width - 1) << 2), (tpos + tileh - 1) << 2);
 
                     tpos += tileh;
                     ypos -= tileh;
