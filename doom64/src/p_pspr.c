@@ -20,7 +20,7 @@ extern void P_Thrust (player_t *player, angle_t angle, fixed_t move);
 #define LASERAIMHEIGHT      (40*FRACUNIT)
 #define LASERDISTANCE       (30)
 
-extern int ArtifactLookupTable[8];
+extern const int ArtifactLookupTable[8];
 
 /*============================================================================= */
 

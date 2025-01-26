@@ -169,7 +169,7 @@ s32 Pak_Size;   // 800A54DC
 u8 *Pak_Data;   // 800A54E0
 s32 Pak_Memory; // 800A54E4
 
-char Pak_Table[256] = // 8005A620
+const char Pak_Table[256] = // 8005A620
 {
       '\0',// 0
       ' ', ' ', ' ', ' ', ' ',// 1
@@ -200,7 +200,7 @@ char Pak_Table[256] = // 8005A620
       ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' // 246
 };
 
-char Game_Name[16] = // 8005A790
+const char Game_Name[16] = // 8005A790
 {
     0x1D, 0x28, 0x28, 0x26, 0x0F, 0x16, 0x14, 0x0F, // (doom 64 xe) byte index from Pak_Table
     0x31, 0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00

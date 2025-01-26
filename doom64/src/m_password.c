@@ -5,9 +5,9 @@
 #include "st_main.h"
 #include "r_local.h"
 
-char *passwordChar = "BCDFGHJKLMNPQRSTVWXYZ0123456789?";    // List of password characters in order by their corresponding value
+const char *passwordChar = "BCDFGHJKLMNPQRSTVWXYZ0123456789?";    // List of password characters in order by their corresponding value
 
-int passwordTable[10] = { 1, 8, 9, 5, 6, 2, 7, 0, 4, 3 };   // Password table for scrambling the passwords
+const int passwordTable[10] = { 1, 8, 9, 5, 6, 2, 7, 0, 4, 3 };   // Password table for scrambling the passwords
 
 char *hectic_demo = "rvnh3ct1cd3m0???"; // 8005ACA8
 boolean run_hectic_demo = false;        // 8005A7A0
@@ -27,8 +27,8 @@ char *passFeatures[3] =
 };
 
 // [GEC] NEW FLAGS
-#define MAPUP       0x20 // Increase map upper limit
-#define MERCILESS	0x40 // Enable nightmare difficulty in armor slot
+#define MAPUP       0x20 // Double map upper limit
+#define MERCILESS	0x40 // Enable merciless difficulty in armor slot
 
 void M_EncodePassword(byte *buff) // 8000BC10
 {

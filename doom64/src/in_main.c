@@ -294,11 +294,11 @@ void IN_Start(void) // 80004AF0
 
     time = (unsigned int)(end_time - start_time) / 60;
 
-    if ((time / 60) < 99) {
+    if ((time / 60) < 100) {
         sprintf(timetext, "%02d:%02d", (time / 60), (time % 60));
     }
     else {
-        D_memmove(timetext, "--:--");
+        D_memmove(timetext, "99:99");
     }
 
     nextstage = 0;

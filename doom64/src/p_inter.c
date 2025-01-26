@@ -258,7 +258,7 @@ boolean P_GivePower (player_t *player, powertype_t power) // 8001472C
 ==================
 */
 
-int ArtifactLookupTable[8] = {0, 1, 1, 2, 1, 2, 2, 3}; // 8005AD60
+const int ArtifactLookupTable[8] = {0, 1, 1, 2, 1, 2, 2, 3}; // 8005AD60
 
 void P_TouchSpecialThing (mobj_t *special, mobj_t *toucher) // 80014810
 {
