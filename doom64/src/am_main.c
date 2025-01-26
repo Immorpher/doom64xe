@@ -231,7 +231,7 @@ void AM_Drawer (void) // 800009AC
 	int			color;
 	int			scale;
 	int         artflag;
-	char        map_name[48];
+	char        buf[48]; // buffer for automap text
 	fixed_t     screen_box[4];
     fixed_t     boxscale;
     boolean     linemode;
@@ -241,9 +241,6 @@ void AM_Drawer (void) // 800009AC
 	short         j;
 	short		ms_alpha;// message transparency
 
-	char        kills[20];
-	char        items[20];
-	char        secrets[20];
 
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_FILL);
@@ -495,20 +492,21 @@ void AM_Drawer (void) // 800009AC
         }
         if (!msgticking)
         {
-            sprintf(map_name, "MAP %d: %s", gamemap, MapInfo[gamemap].name);
-            ST_Message(20, 20, map_name, 0xffffff80);
+            sprintf(buf, "MAP %d: %s", gamemap, MapInfo[gamemap].name);
+            ST_Message(20, 20, buf, 0xffffff80);
         }
     }
 
     if (ShowStats)
     {
-        sprintf(kills, "KILLS: %d/%d", players[0].killcount, totalkills);
-        sprintf(items, "ITEMS: %d/%d", players[0].itemcount, totalitems);
-        sprintf(secrets, "SECRETS: %d/%d", players[0].secretcount, totalsecret);
-
-        ST_Message(20, 200, kills, 0xffffff80);		
-		ST_Message(20, 210, items, 0xffffff80);
-		ST_Message(20, 220, secrets, 0xffffff80);
+        sprintf(buf, "KILLS: %d/%d", players[0].killcount, totalkills);
+        ST_Message(20, 200, buf, 0xffffff80);
+		
+        sprintf(buf, "ITEMS: %d/%d", players[0].itemcount, totalitems);
+		ST_Message(20, 210, buf, 0xffffff80);
+		
+        sprintf(buf, "SECRETS: %d/%d", players[0].secretcount, totalsecret);
+		ST_Message(20, 220, buf, 0xffffff80);
     }
 
     xpos = 280;
