@@ -809,6 +809,9 @@ boolean PB_CheckThing(mobj_t *thing) // 8000DC70
 boolean PB_BlockThingsIterator(int x, int y) // 8000DDD4
 {
 	mobj_t *mobj;
+	
+	if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
+		return true;
 
 	for (mobj = blocklinks[y*bmapwidth+x]; mobj; mobj = mobj->bnext)
 	{

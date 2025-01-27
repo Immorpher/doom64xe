@@ -196,7 +196,7 @@ boolean P_BlockThingsIterator (int x, int y, boolean(*func)(mobj_t*) ) // 800181
 {
 	mobj_t		*mobj;
 
-	if (x<0 || y<0 || x>=bmapwidth || y>=bmapheight)
+	if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
 		return true;
 
 	for (mobj = blocklinks[y*bmapwidth+x] ; mobj ; mobj = mobj->bnext)

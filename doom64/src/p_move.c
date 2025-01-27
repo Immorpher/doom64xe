@@ -736,6 +736,9 @@ boolean PM_BlockLinesIterator(int x, int y) // 8001A710
 boolean PM_BlockThingsIterator(int x, int y) // 8001A810
 {
 	mobj_t *mobj;
+	
+	if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
+		return true;
 
 	for (mobj = blocklinks[y * bmapwidth + x]; mobj; mobj = mobj->bnext)
 	{
