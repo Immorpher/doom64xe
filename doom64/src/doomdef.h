@@ -599,7 +599,7 @@ extern	boolean		gamepaused;
 
 extern	int DrawerStatus;
 
-int MiniLoop (void (*start)(void), void (*stop)(), int (*ticker)(void), void (*drawer)(void)) __attribute__((optimize("-O1")));
+int MiniLoop (void (*start)(void), void (*stop)(int), int (*ticker)(void), void (*drawer)(void)) __attribute__((optimize("-O1")));
 // optimize set to lower level from Doom 64 Dreamcast to prevent miniloops from deeply nesting and freezing between menu changes (needs testing)
 
 int	G_Ticker (void);
@@ -809,7 +809,7 @@ void P_Drawer (void) HOT;
 /*---------*/
 
 void IN_Start (void);
-void IN_Stop (void);
+void IN_Stop (int exit);
 int IN_Ticker (void);
 void IN_Drawer (void);
 
@@ -897,7 +897,7 @@ void M_SaveMenuData(void); // 80007B2C
 void M_RestoreMenuData(boolean alpha_in); // 80007BB8
 void M_MenuGameDrawer(void); // 80007C48
 int M_MenuTicker(void); // 80007E0C
-void M_MenuClearCall(void); // 80008E6C
+void M_MenuClearCall(int exit); // 80008E6C
 
 void M_MenuTitleDrawer(void); // 80008E7C
 void M_FeaturesDrawer(void); // 800091C0
@@ -915,12 +915,12 @@ int M_ScreenTicker(void); // 8000A0F8
 void M_ControllerPakDrawer(void); // 8000A3E4
 
 void M_SavePakStart(void); // 8000A6E8
-void M_SavePakStop(void); // 8000A7B4
+void M_SavePakStop(int exit); // 8000A7B4
 int M_SavePakTicker(void); // 8000A804
 void M_SavePakDrawer(void); // 8000AB44
 
 void M_LoadPakStart(void); // 8000AEEC
-void M_LoadPakStop(void); // 8000AF8C
+void M_LoadPakStop(int exit); // 8000AF8C
 int M_LoadPakTicker(void); // 8000AFE4
 void M_LoadPakDrawer(void); // 8000B270
 
@@ -942,7 +942,7 @@ extern int CurPasswordSlot;     // 8005ACBC
 void M_EncodePassword(byte *buff);//8000BC10
 int M_DecodePassword(byte *inbuff, unsigned char *levelnum, unsigned char *skill, boolean *skmerciless, player_t *player); // 8000C194
 void M_PasswordStart(void); // 8000C710
-void M_PasswordStop(void); // 8000C744
+void M_PasswordStop(int exit); // 8000C744
 int M_PasswordTicker(void); // 8000C774
 void M_PasswordDrawer(void); // 8000CAF0
 
@@ -951,12 +951,12 @@ void M_PasswordDrawer(void); // 8000CAF0
 /*--------*/
 
 void F_StartIntermission (void);
-void F_StopIntermission (void);
+void F_StopIntermission (int exit);
 int F_TickerIntermission (void);
 void F_DrawerIntermission (void);
 
 void F_Start (void);
-void F_Stop (void);
+void F_Stop (int exit);
 int F_Ticker (void);
 void F_Drawer (void);
 

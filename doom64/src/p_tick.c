@@ -193,7 +193,7 @@ void P_CheckCheats (void) // 8002187C
     exit = M_MenuTicker();
 
     if (exit)
-        M_MenuClearCall();
+        M_MenuClearCall(ga_nothing);
 
     if (exit == ga_warped) {
         gameaction = ga_warped;

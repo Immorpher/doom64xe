@@ -493,7 +493,7 @@ void M_PasswordStart(void) // 8000C710
     M_FadeInStart();
 }
 
-void M_PasswordStop(void) // 8000C744
+void M_PasswordStop(int exit) // 8000C744
 {
     S_StartSound(NULL, sfx_pistol);
     M_FadeOutStart(8);

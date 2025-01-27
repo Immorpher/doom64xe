@@ -2245,7 +2245,7 @@ int M_MenuTicker(void) // 80007E0C
     return exit;
 }
 
-void M_MenuClearCall(void) // 80008E6C
+void M_MenuClearCall(int exit) // 80008E6C
 {
     MenuCall = NULL;
 }
@@ -2976,7 +2976,7 @@ void M_SavePakStart(void) // 8000A6E8
 		M_FadeInStart();
 }
 
-void M_SavePakStop(void) // 8000A7B4
+void M_SavePakStop(int exit) // 8000A7B4
 {
     S_StartSound(NULL, sfx_pistol);
 
@@ -3215,10 +3215,10 @@ void M_LoadPakStart(void) // 8000AEEC
     M_FadeInStart();
 }
 
-void M_LoadPakStop(void) // 8000AF8C
+void M_LoadPakStop(int exit) // 8000AF8C
 {
     S_StartSound(NULL, sfx_pistol);
-    M_FadeOutStart(ga_exit);
+    M_FadeOutStart(exit);
 
     if (Pak_Data)
     {

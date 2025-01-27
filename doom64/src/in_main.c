@@ -315,7 +315,7 @@ void IN_Start(void) // 80004AF0
 	S_StartMusic(mus_complete);
 }
 
-void IN_Stop(void) // 80004DB0
+void IN_Stop(int exit) // 80004DB0
 {
 
     if ((nextmap > 0) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap)) // No memory pak on fun levels
