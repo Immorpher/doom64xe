@@ -25,7 +25,6 @@ int             displayplayer;          /* view being displayed  */
 int             totalkills, totalitems, totalsecret;    /* for intermission  */
 
 //char            demoname[32];
-boolean         demorecording;          // 800633A4
 boolean         demoplayback;           // 800633A8
 int		        *demo_p = NULL, *demobuffer = NULL;   // 8005A180, 8005a184
 
@@ -196,7 +195,6 @@ void G_InitNew (skill_t skill, int map, gametype_t gametype) // 800046F4
 	bzero(&emptymobj, sizeof(emptymobj));
 	players[0].mo = &emptymobj;	/* for net consistancy checks */
 
-	demorecording = false;
 	demoplayback = false;
 
 	BT_DATA[0] = (buttons_t *)ActualConfiguration;
@@ -342,36 +340,4 @@ int G_PlayDemoPtr (int skill, int map) // 800049D0
 	Z_FreeTags(mainzone, ~PU_STATIC); // (PU_LEVEL | PU_LEVSPEC | PU_CACHE)
 
 	return exit;
-}
-
-/*
-=================
-=
-= G_RecordDemo
-=
-=================
-*/
-
-void G_RecordDemo (void)//80013D0C
-{
-    #if 0
-	demo_p = demobuffer = Z_Malloc (0x8000, PU_STATIC, NULL);
-
-	*demo_p++ = startskill;
-	*demo_p++ = startmap;
-
-	G_InitNew (startskill, startmap, gt_single);
-	G_DoLoadLevel ();
-	demorecording = true;
-	MiniLoop (P_Start, P_Stop, P_Ticker, P_Drawer);
-	demorecording = false;
-
-	D_printf ("w %x,%x",demobuffer,demo_p);
-
-	while (1)
-	{
-		G_PlayDemoPtr (demobuffer);
-	D_printf ("w %x,%x",demobuffer,demo_p);
-	}
-    #endif
 }

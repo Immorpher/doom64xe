@@ -49,30 +49,27 @@ int P_SetAimCamera(line_t *line, boolean aim) // 8000DF20
     aimcamera_t *camera;
     mobj_t *mo;
 
-    if (demorecording == false)
-    {
-        for (mo = mobjhead.next; mo != &mobjhead; mo = mo->next)
-        {
-            if((line->tag != mo->tid))
-                continue;   /* not matching the tid */
+	for (mo = mobjhead.next; mo != &mobjhead; mo = mo->next)
+	{
+		if((line->tag != mo->tid))
+			continue;   /* not matching the tid */
 
-            if(line->tag == cameratarget->tid)
-                continue; /* skip if cameratarget matches tag */
+		if(line->tag == cameratarget->tid)
+			continue; /* skip if cameratarget matches tag */
 
-            cameratarget = mo;
-            if ((cameratarget != players[0].mo) && (aim))
-            {
-                mo->angle = R_PointToAngle2(mo->x, mo->y, players[0].mo->x, players[0].mo->y);
+		cameratarget = mo;
+		if ((cameratarget != players[0].mo) && (aim))
+		{
+			mo->angle = R_PointToAngle2(mo->x, mo->y, players[0].mo->x, players[0].mo->y);
 
-                camera = Z_Malloc(sizeof(*camera), PU_LEVSPEC, NULL);
-                P_AddThinker(&camera->thinker);
-                camera->thinker.function = T_AimCamera;
-                camera->viewmobj = mo;
-            }
+			camera = Z_Malloc(sizeof(*camera), PU_LEVSPEC, NULL);
+			P_AddThinker(&camera->thinker);
+			camera->thinker.function = T_AimCamera;
+			camera->viewmobj = mo;
+		}
 
-            return 1;
-        }
-    }
+		return 1;
+	}
 
     return 0;
 }

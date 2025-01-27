@@ -207,8 +207,8 @@ int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*dra
 		buttons = I_GetControllerData();
 		ticbuttons[0] = buttons;
 
-		//Read|Write demos
-		if (demorecording || demoplayback)
+		//Read demos
+		if (demoplayback)
         {
             if (demoplayback)
             {
@@ -220,11 +220,6 @@ int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*dra
 
                 buttons = *demobuffer++;
                 ticbuttons[0] = buttons;
-            }
-
-            if (demorecording)
-            {
-                *demobuffer++ = buttons;
             }
 
             if ((buttons & PAD_START) || ((((int)demobuffer - (int)demo_p) >> 2) >= 4000))

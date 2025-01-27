@@ -169,7 +169,6 @@ typedef enum
 	ga_secretexit,// no used
 	ga_warped,
 	ga_exitdemo,
-	//News
 	//ga_recorddemo,// not used
 	ga_timeout,
 	ga_restart,
@@ -783,12 +782,11 @@ void D_DoomMain (void);
 /* GAME */
 /*------*/
 
-extern	boolean	demoplayback, demorecording;
+extern	boolean	demoplayback;
 extern	int		*demo_p, *demobuffer;
 
 void G_InitNew (skill_t skill, int map, gametype_t gametype);
 void G_CompleteLevel (void);
-void G_RecordDemo (void);
 int G_PlayDemoPtr (int skill, int map);
 
 /*------*/

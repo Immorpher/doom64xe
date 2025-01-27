@@ -467,7 +467,7 @@ void I_SystemTicker(void *arg) // 80005730
 
                         SystemTickerStatus &= ~16;
 
-                        if (demoplayback || demorecording)
+                        if (demoplayback)
                         {
                             vsync = drawsync2 + 2;
                         }
