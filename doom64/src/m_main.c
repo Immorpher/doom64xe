@@ -2105,7 +2105,7 @@ int M_MenuTicker(void) // 80007E0C
 				if (truebuttons)
 				{
 					S_StartSound(NULL, sfx_switch2);
-					BrightBoost ^= true; // Turn colored HUD on or off
+					BrightBoost ^= true; // Turn brightness boost on or off
 					
 					if (BrightBoost)
 						osViSetSpecialFeatures(OS_VI_GAMMA_ON|OS_VI_GAMMA_DITHER_ON|OS_VI_DIVOT_OFF|OS_VI_DITHER_FILTER_OFF);
