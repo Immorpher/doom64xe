@@ -126,7 +126,7 @@ static const symboldata_t symboldata[] = // Data for all of the symbol locations
     //{134, 96,   7, 13}, // Right arrow Missing On Doom 64
 };
 
-const int card_x[6] = {(78 << 2), (89 << 2), (100 << 2), (78 << 2), (89 << 2), (100 << 2)};      // 8005b870
+const int card_x[6] = {(49 << 2), (60 << 2), (71 << 2), (49 << 2), (60 << 2), (71 << 2)};      // 8005b870
 
 void ST_Init(void) // 80029BA0
 {
@@ -248,7 +248,7 @@ void ST_Drawer (void) // 80029DC0
 	/* */
     if (enable_messages)
     {
-        pos = 20;
+        pos = HUDMargin-5;
 
 		if (players[0].messagetic[MSG_NEW] != players[0].messagetic[MSG_HIGH]) // [Immorpher] new global tic indicates new message to add
 		{
@@ -273,7 +273,7 @@ void ST_Drawer (void) // 80029DC0
                 if (ms_alpha >= 128)
                     ms_alpha = 128;
                 
-                ST_Message(20, pos, players[0].message[i], ms_alpha | players[0].messagecolor[i]); // select color bits in message style
+                ST_Message(HUDMargin, pos, players[0].message[i], ms_alpha | players[0].messagecolor[i]); // select color bits in message style
                 pos += 10; // select line number in message style
                 for (j = 0; players[0].message[i][j] != '\0'; ++j)
                 {
@@ -331,8 +331,8 @@ void ST_Drawer (void) // 80029DC0
         /* */
         /* Health */
         /* */
-        gSPTextureRectangle(GFX1++, (29 << 2), (203 << 2),
-                                    (69 << 2), (209 << 2),
+        gSPTextureRectangle(GFX1++, ((HUDMargin) << 2), ((220-HUDMargin) << 2),
+                                    ((40+HUDMargin) << 2), ((226-HUDMargin) << 2),
                                     G_TX_RENDERTILE,
                                     (0 << 5), (0 << 5),
                                     (1 << 10), (1 << 10));
@@ -340,8 +340,8 @@ void ST_Drawer (void) // 80029DC0
         /* */
         /* Armor */
         /* */
-        gSPTextureRectangle(GFX1++, (253 << 2), (203 << 2),
-                                    (289 << 2), (209 << 2),
+        gSPTextureRectangle(GFX1++, ((282-HUDMargin) << 2), ((220-HUDMargin) << 2),
+                                    ((318-HUDMargin) << 2), ((226-HUDMargin) << 2),
                                     G_TX_RENDERTILE,
                                     (40 << 5), (0 << 5),
                                     (1 << 10), (1 << 10));
@@ -361,8 +361,8 @@ void ST_Drawer (void) // 80029DC0
                 /* */
                 /* Draw Keys Graphics */
                 /* */
-                gSPTextureRectangle(GFX1++, card_x[ind], (216 << 2),
-                                            card_x[ind]+(9 << 2), (226 << 2),
+                gSPTextureRectangle(GFX1++, card_x[ind]+(HUDMargin<<2), ((231-HUDMargin) << 2),
+                                            card_x[ind]+((9+HUDMargin) << 2), ((241-HUDMargin) << 2),
                                             G_TX_RENDERTILE,
                                             ((ind * 9) << 5), (6 << 5),
                                             (1 << 10), (1 << 10));
@@ -385,15 +385,15 @@ void ST_Drawer (void) // 80029DC0
 
 			 // [Immorpher] colored hud
 			if (!ColoredHUD) { // skip the hud coloring
-				ST_DrawNumber(160, 215, ammo, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+				ST_DrawNumber(160, 230-HUDMargin, ammo, 0, 0xff000080); // PACKRGBA(255,0,0,128)
 			} else if (weaponinfo[weapon].ammo == am_clip) { // [Immorpher] clip ammo
-				ST_DrawNumber(160, 215, ammo, 0, 0x8080ab80);  // PACKRGBA(128,128,171,128)
+				ST_DrawNumber(160, 230-HUDMargin, ammo, 0, 0x8080ab80);  // PACKRGBA(128,128,171,128)
 			} else if (weaponinfo[weapon].ammo == am_shell) { // [Immorpher] shell ammo
-				ST_DrawNumber(160, 215, ammo, 0, 0xc4204080); // PACKRGBA(196,32,64,128)
+				ST_DrawNumber(160, 230-HUDMargin, ammo, 0, 0xc4204080); // PACKRGBA(196,32,64,128)
 			} else if (weaponinfo[weapon].ammo == am_cell) { // [Immorpher] cell ammo
-				ST_DrawNumber(160, 215, ammo, 0, 0x00c44080); // PACKRGBA(0,196,64,128)
+				ST_DrawNumber(160, 230-HUDMargin, ammo, 0, 0x00c44080); // PACKRGBA(0,196,64,128)
 			} else { // [Immorpher] it must be rockets
-				ST_DrawNumber(160, 215, ammo, 0, 0xc4800080); // PACKRGBA(196,128,0,128)
+				ST_DrawNumber(160, 230-HUDMargin, ammo, 0, 0xc4800080); // PACKRGBA(196,128,0,128)
 			}
         }
 
@@ -402,13 +402,13 @@ void ST_Drawer (void) // 80029DC0
         /* */
 		
 		if (!ColoredHUD) { // skip the hud coloring
-        ST_DrawNumber(49, 215, player->health, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+        ST_DrawNumber(20+HUDMargin, 230-HUDMargin, player->health, 0, 0xff000080); // PACKRGBA(255,0,0,128)
 		} else if (player->health <= 64) { // [Immorpher] colored hud
-			ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(255-2*player->health,2*player->health,0,128)); // PACKRGBA(255 to 127,0 to 127,0,128)
+			ST_DrawNumber(20+HUDMargin, 230-HUDMargin, player->health, 0, PACKRGBA(255-2*player->health,2*player->health,0,128)); // PACKRGBA(255 to 127,0 to 127,0,128)
 		} else if (player->health <= 127) { // [Immorpher] colored hud
-			ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(255-2*player->health,((3*player->health)>>1)+32,(player->health>>1)-32,128)); // PACKRGBA(127 to 1,128 to 222,0 to 63,128)
+			ST_DrawNumber(20+HUDMargin, 230-HUDMargin, player->health, 0, PACKRGBA(255-2*player->health,((3*player->health)>>1)+32,(player->health>>1)-32,128)); // PACKRGBA(127 to 1,128 to 222,0 to 63,128)
 		} else { // [Immorpher] colored hud
-			ST_DrawNumber(49, 215, player->health, 0, PACKRGBA(0,478-2*player->health,(5*player->health-512)>>1,128)); // PACKRGBA(0, 128,64 to 244,222 to 78)
+			ST_DrawNumber(20+HUDMargin, 230-HUDMargin, player->health, 0, PACKRGBA(0,478-2*player->health,(5*player->health-512)>>1,128)); // PACKRGBA(0, 128,64 to 244,222 to 78)
 		}
 
         /* */
@@ -416,20 +416,13 @@ void ST_Drawer (void) // 80029DC0
         /* */
 		
 		if (!ColoredHUD || player->armorpoints == 0) { // [Immorpher] No armor
-			ST_DrawNumber(271, 215, player->armorpoints, 0, 0xff000080); // PACKRGBA(255,0,0,128)
+			ST_DrawNumber(300-HUDMargin, 230-HUDMargin, player->armorpoints, 0, 0xff000080); // PACKRGBA(255,0,0,128)
 		} else if (player->armortype == 1) { // [Immorpher] Green armor
-			ST_DrawNumber(271, 215, player->armorpoints, 0, 0x00c44080); // PACKRGBA(0,196,64,128)
+			ST_DrawNumber(300-HUDMargin, 230-HUDMargin, player->armorpoints, 0, 0x00c44080); // PACKRGBA(0,196,64,128)
 		} else { // [Immorpher] Blue armor
-			ST_DrawNumber(271, 215, player->armorpoints, 0, 0x0040ff80); // PACKRGBA(0,64,255,128)
+			ST_DrawNumber(300-HUDMargin, 230-HUDMargin, player->armorpoints, 0, 0x0040ff80); // PACKRGBA(0,64,255,128)
 		}
     }
-
-    #if SHOWFPS == 1
-    //fps = (60-((fps)/60));
-    //fps = fps > 0? fps:0;
-    //D_DebugSetPrintPos(10, 10);
-    //D_DebugPrint("fps %d", fps);
-    #endif // SHOWFPS
 
     if(debug)
     {

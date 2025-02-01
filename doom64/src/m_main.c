@@ -110,7 +110,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT67 "Bright Boost:" // Brightness boost using the gamma correct option
 #define M_TXT68 "Autorun:" // Autorun toggle
 #define M_TXT69 "Memory Pak" // Memory Pak menu to manage pak
-#define M_TXT70 "HUD Margin" // Adjust the HUD margin (not implemented yet)
+#define M_TXT70 "HUD Margin:" // Adjust the HUD margin
 #define M_TXT71 "Load Settings" // Load settings from memory pak slot
 #define M_TXT72 "Save Settings" // Save settings into memory pak slot
 
@@ -227,14 +227,15 @@ const menuitem_t Menu_Video[7] =
     {  6, 102, 200},    // Return
 };
 
-const menuitem_t Menu_Display[7] = // 8005AA5C
+const menuitem_t Menu_Display[8] = // 8005AA5C
 {
     { 33, 102, 60},    // Messages
     { 34, 102, 80},    // Status Bar
 	{ 60, 102, 100},    // Map Stats
     { 56, 102, 120},    // Blood Color
     { 57, 102, 140},    // Colored HUD
-    { 13, 102, 160},    // Default Display
+    { 70, 102, 160},    // HUD Margin
+    { 13, 102, 180},    // Default Display
     {  6, 102, 200},    // Return
 };
 
@@ -352,6 +353,7 @@ char BloodStyle = 3; // Blood style: red, green, dust, combo
 boolean ColoredHUD = true; // Hud color
 boolean ShowStats = true; // Automap stats
 boolean SettingsMode = false; // Turn on settings mode when trying to save settings
+char HUDMargin = 20;			// [Immorpher] Margin for HUD
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -435,7 +437,7 @@ void M_EncodeConfig(void)
 
 
 	SavedConfig[3] = (PlayDeadzone>>1) & 0x7; //0-7 - 3 bits
-	SavedConfig[3] += (ConfgNumb & 0x7) << 3; //0-5 - is this needed? - 3 bits
+	SavedConfig[3] += (((HUDMargin-5)/5) & 0x3) << 3; //0-3 - 2 bits (1 bit free!)
     SavedConfig[3] += (BloodStyle & 0x3) << 6; //0-3 - 2 bits
 
     SavedConfig[4] = MusVolume & 0x7F; //0-127 - 7 bits
@@ -544,7 +546,7 @@ void M_DecodeConfig()
     int controlKey[13];
 	
     PlayDeadzone = (SavedConfig[3] & 0x7)<<1;
-    ConfgNumb = (SavedConfig[3] >> 3) & 0x7;
+    HUDMargin = ((SavedConfig[3] >> 3) & 0x3)*5 + 5;
     BloodStyle = (SavedConfig[3] >> 6) & 0x3;
 
     MusVolume = SavedConfig[4] & 0x7F;
@@ -1073,7 +1075,7 @@ int M_MenuTicker(void) // 80007E0C
 					M_SaveMenuData();
 
 					MenuItem = Menu_Display;
-					itemlines = 7;
+					itemlines = 8;
 					MenuCall = M_DisplayDrawer;
 					cursorpos = 0;
 
@@ -1278,6 +1280,7 @@ int M_MenuTicker(void) // 80007E0C
 					BloodStyle = 3;
 					ColoredHUD = 1;
 					ShowStats = 1;
+					HUDMargin = 20;
 					
 					return ga_nothing;
 				}
@@ -2158,6 +2161,35 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;
 				
+			case 70: // HUD Margin - Increments by 5
+				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
+				{
+					S_StartSound(NULL, sfx_switch2);
+					if (HUDMargin > 15)
+					{
+						HUDMargin = 5;
+					}
+					else
+					{
+						HUDMargin += 5;
+					}
+					return ga_nothing;
+				}
+				else if ((buttons ^ oldbuttons) && (buttons & ALL_BACK))
+				{
+					S_StartSound(NULL, sfx_switch2);
+					if (HUDMargin < 10)
+					{
+						HUDMargin = 20;
+					}
+					else
+					{
+						HUDMargin -= 5;
+					}
+					return ga_nothing;
+				}
+				break;	
+				
 			case 71: // Load Settings
 				if (truebuttons)
 				{
@@ -2563,11 +2595,11 @@ void M_VideoDrawer(void) // [Immorpher] Video menu for additional options
             ST_DrawString(item->x + 140, item->y, text, text_alpha | 0xff000000);
 		
 		if (casepos == 59) { // draw motion bob number
-			ST_DrawNumber(item->x + 140, item->y, MotionBob/0x24925, 0, text_alpha | 0xff000000);
+			ST_DrawNumber(item->x + 147, item->y, MotionBob/0x24925, 0, text_alpha | 0xff000000);
 		}
 		
 		if (casepos == 66) { // draw flash level number
-			ST_DrawNumber(item->x + 140, item->y, 7 - FlashLevel, 0, text_alpha | 0xff000000);
+			ST_DrawNumber(item->x + 147, item->y, 7 - FlashLevel, 0, text_alpha | 0xff000000);
 		}
 
         ST_DrawString(item->x, item->y, MenuText[casepos], text_alpha | 0xff000000);
@@ -2592,9 +2624,13 @@ void M_DisplayDrawer(void) // 80009884
 
     item = Menu_Display;
 
-    for(i = 0; i < 7; i++)
+    for(i = 0; i < 8; i++)
     {
         casepos = item->casepos;
+		
+		if (casepos == 70) { // HUD Margin
+            ST_DrawNumber(item->x + 147, item->y, HUDMargin/5, 0, text_alpha | 0xff000000);
+        }
 
         if (casepos == 33) // Messages:
         {

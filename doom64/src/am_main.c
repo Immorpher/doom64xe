@@ -456,7 +456,7 @@ void AM_Drawer (void) // 800009AC
 
     if (enable_messages)
     {
-        msgpos = 20;
+        msgpos = HUDMargin-5;
 		if (p->messagetic[MSG_NEW] != p->messagetic[MSG_HIGH]) // [Immorpher] new global tic indicates new message to add
 		{
 			// If colored HUD is off make all messages white
@@ -481,7 +481,7 @@ void AM_Drawer (void) // 800009AC
                 if (ms_alpha >= 128)
                     ms_alpha = 128;
                 
-                ST_Message(20, msgpos, p->message[i], ms_alpha | p->messagecolor[i]); // select color bits in message style
+                ST_Message(HUDMargin, msgpos, p->message[i], ms_alpha | p->messagecolor[i]); // select color bits in message style
                 msgpos += 10; // select line number in message style
                 for (j = 0; p->message[i][j] != '\0'; ++j)
                 {
@@ -493,23 +493,23 @@ void AM_Drawer (void) // 800009AC
         if (!msgticking)
         {
             sprintf(buf, "MAP %d: %s", gamemap, MapInfo[gamemap].name);
-            ST_Message(20, 20, buf, 0xffffff80);
+            ST_Message(HUDMargin, HUDMargin-5, buf, 0xffffff80);
         }
     }
 
     if (ShowStats)
     {
         sprintf(buf, "KILLS: %d/%d", players[0].killcount, totalkills);
-        ST_Message(20, 200, buf, 0xffffff80);
+        ST_Message(HUDMargin, 215 - HUDMargin, buf, 0xffffff80);
 		
         sprintf(buf, "ITEMS: %d/%d", players[0].itemcount, totalitems);
-		ST_Message(20, 210, buf, 0xffffff80);
+		ST_Message(HUDMargin, 225 - HUDMargin, buf, 0xffffff80);
 		
         sprintf(buf, "SECRETS: %d/%d", players[0].secretcount, totalsecret);
-		ST_Message(20, 220, buf, 0xffffff80);
+		ST_Message(HUDMargin, 235 - HUDMargin, buf, 0xffffff80);
     }
 
-    xpos = 280;
+    xpos = 300 - HUDMargin;
     artflag = 4;
     do
     {
@@ -517,15 +517,15 @@ void AM_Drawer (void) // 800009AC
         {
             if (artflag == 4)
             {
-                BufferedDrawSprite(MT_ITEM_ARTIFACT3, &states[S_559], 0, 0xffffff80, xpos, 255);
+                BufferedDrawSprite(MT_ITEM_ARTIFACT3, &states[S_559], 0, 0xffffff80, xpos, 269 - HUDMargin);
             }
             else if (artflag == 2)
             {
-                BufferedDrawSprite(MT_ITEM_ARTIFACT2, &states[S_551], 0, 0xffffff80, xpos, 255);
+                BufferedDrawSprite(MT_ITEM_ARTIFACT2, &states[S_551], 0, 0xffffff80, xpos, 269 - HUDMargin);
             }
             else if (artflag == 1)
             {
-                BufferedDrawSprite(MT_ITEM_ARTIFACT1, &states[S_543], 0, 0xffffff80, xpos, 255);
+                BufferedDrawSprite(MT_ITEM_ARTIFACT1, &states[S_543], 0, 0xffffff80, xpos, 269 - HUDMargin);
             }
 
             xpos -= 40;
