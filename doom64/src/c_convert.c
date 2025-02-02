@@ -54,8 +54,8 @@ void LightGetHSV(int r,int g,int b,int *h,int *s,int *v) // 800020BC
         min = b;
     }
 
-    deltamin = (float)((double)min / (double)255.0);
-    deltamax = deltamin - (float)((double)max / (double)255.0);
+    deltamin = (float)((double)min * (double)0.0039215686274509803921568627451); // division by 255
+    deltamax = deltamin - (float)((double)max * (double)0.0039215686274509803921568627451); // division by 255
 
     if((double)deltamin == 0.0) {
         j = 0.0;
@@ -66,9 +66,9 @@ void LightGetHSV(int r,int g,int b,int *h,int *s,int *v) // 800020BC
 
     if((double)j != 0.0)
     {
-        xr = (float)((double)r / (double)255.0);
-        xg = (float)((double)g / (double)255.0);
-        xb = (float)((double)b / (double)255.0);
+        xr = (float)((double)r * (double)0.0039215686274509803921568627451); // division by 255
+        xg = (float)((double)g * (double)0.0039215686274509803921568627451); // division by 255
+        xb = (float)((double)b * (double)0.0039215686274509803921568627451); // division by 255
 
         if(xr != deltamin)
         {
@@ -111,7 +111,7 @@ void LightGetHSV(int r,int g,int b,int *h,int *s,int *v) // 800020BC
 	// _Disable_ unimplemented operation exception for floating point.
 	__osSetFpcCsr(fpstatset);
 
-    *h = (int)(((double)x / (double)360.0) * (double)255.0);
+    *h = (int)((double)x * (double)0.708333333333333333333333333333); // 255/360
 
     // fetch the current floating-point control/status register
     fpstat = __osGetFpcCsr();
@@ -151,15 +151,15 @@ void LightGetRGB(int h,int s,int v,int *r,int *g,int *b) // 8000248C
     float xr = 0;
     float xg = 0;
     float xb = 0;
-
-    j = (float)(((double)h / (double)255.0) * (double)360.0);
+									
+    j = (float)((double)h * (double)1.411764705882352941176470588236); // 360/255
 
     if((double)360.0 <= (double)j) {
         j = (float)((double)j - (double)360.0);
     }
 
-    x = ((double)s / (double)255.0);
-    i = ((double)v / (double)255.0);
+    x = ((double)s * (double)0.0039215686274509803921568627451); // divide by 255
+    i = ((double)v * (double)0.0039215686274509803921568627451); // divide by 255
 
     if(x != 0.0)
     {

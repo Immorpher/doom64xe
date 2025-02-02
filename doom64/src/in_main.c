@@ -177,7 +177,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT68 , 99 , 768}, // Regret
     {MI_TXT69, 101 , 256}, // Rage
     {MI_TXT70 , 102 , 640}, // The Beyond
-    {MI_TXT71 , 103 , 256}, // Irradiated
+    {MI_TXT71 , 103 , 384}, // Irradiated
     {MI_TXT72 , 104 , 256}, // Dark Secrets
     {MI_TXT73 , 95 , 256}, // Sorrow
     {T_NULL , 0 , 256},
