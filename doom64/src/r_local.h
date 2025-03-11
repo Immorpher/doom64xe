@@ -65,24 +65,24 @@ struct subsector_s;
 typedef	struct
 {
 	fixed_t		floorheight, ceilingheight;
-	VINT		floorpic, ceilingpic;	/* if ceilingpic == -1,draw sky */
+	int		floorpic, ceilingpic;	/* if ceilingpic == -1,draw sky */
 	int		    colors[5];			// Doom 64 New
 	int		    lightlevel;
-	VINT		special, tag;
+	int		special, tag;
 
-	VINT        xoffset, yoffset;   // Doom 64 New
+	int        xoffset, yoffset;   // Doom 64 New
 
-	VINT		soundtraversed;		/* 0 = untraversed, 1,2 = sndlines -1 */
+	int		soundtraversed;		/* 0 = untraversed, 1,2 = sndlines -1 */
 	mobj_t		*soundtarget;		/* thing that made a sound (or null) */
 
-	VINT	    flags;	            // Psx Doom / Doom 64 New
-	VINT		blockbox[4];		/* mapblock bounding box for height changes */
+	int	    flags;	            // Psx Doom / Doom 64 New
+	int		blockbox[4];		/* mapblock bounding box for height changes */
 	degenmobj_t	soundorg;			/* for any sounds played by the sector */
 
 	int			validcount;			/* if == validcount, already checked */
 	mobj_t		*thinglist;			/* list of mobjs in sector */
 	void		*specialdata;		/* thinker_t for reversable actions */
-	VINT		linecount;
+	int		linecount;
 	struct line_s	**lines;			/* [linecount] size */
 } sector_t;
 
@@ -90,7 +90,7 @@ typedef struct
 {
 	fixed_t		textureoffset;		/* add this to the calculated texture col */
 	fixed_t		rowoffset;			/* add this to the calculated texture top */
-	VINT		toptexture, bottomtexture, midtexture;
+	int		toptexture, bottomtexture, midtexture;
 	sector_t	*sector;
 } side_t;
 
@@ -100,9 +100,9 @@ typedef struct line_s
 {
 	vertex_t	*v1, *v2;
 	fixed_t		dx,dy;				/* v2 - v1 for side checking */
-	VINT		flags;
-	VINT		special, tag;
-	VINT		sidenum[2];			/* sidenum[1] will be -1 if one sided */
+	int		flags;
+	int		special, tag;
+	int		sidenum[2];			/* sidenum[1] will be -1 if one sided */
 	fixed_t		bbox[4];
 	slopetype_t	slopetype;			/* to aid move clipping */
 	sector_t	*frontsector, *backsector;

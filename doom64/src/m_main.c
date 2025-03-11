@@ -113,6 +113,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT70 "HUD Margin:" // Adjust the HUD margin
 #define M_TXT71 "Load Settings" // Load settings from memory pak slot
 #define M_TXT72 "Save Settings" // Save settings into memory pak slot
+#define M_TXT73 "Vehemence" // Vehemence community map jam
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -130,7 +131,7 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
 	M_TXT65, M_TXT66, M_TXT67, M_TXT68, M_TXT69,
-	M_TXT70, M_TXT71, M_TXT72
+	M_TXT70, M_TXT71, M_TXT72, M_TXT73
 	
 };
 
@@ -158,12 +159,13 @@ menuitem_t Menu_Skill[6] = // Skill select menu
     { 6, 102, 200},    	// Return
 };
 
-const menuitem_t Menu_Episode[5] = // Episode select menu
+const menuitem_t Menu_Episode[6] = // Episode select menu
 {
     { 51, 102, 80 },    // Doom 64
     { 52, 102, 100},    // The Lost Levels
     { 62, 102, 120},    // Beta 64
-    { 61, 102, 140},    // Bonus Pak
+    { 73, 102, 140},    // Vehemence
+    { 61, 102, 160},    // Bonus Pak
     { 6, 102, 200},    	// Return
 };
 
@@ -1297,7 +1299,7 @@ int M_MenuTicker(void) // 80007E0C
 					EnableMemPak = (M_ControllerPak() == 0);
 
 					MenuItem = Menu_Episode;
-					itemlines = 5;
+					itemlines = 6;
 					MenuCall = M_MenuTitleDrawer;
 					cursorpos = 0;
 
@@ -1339,7 +1341,7 @@ int M_MenuTicker(void) // 80007E0C
 			case 52: // The Lost Levels
 				if (truebuttons)
 				{
-					startmap = MenuItem[cursorpos].casepos == 52 ? 34 : 1;
+					startmap = MenuItem[cursorpos].casepos == 52 ? LOSTLEVEL : 1;
 					
 					S_StartSound(NULL, sfx_pistol);
 					M_SaveMenuData();
@@ -1355,7 +1357,7 @@ int M_MenuTicker(void) // 80007E0C
 					if (exit == ga_exit)
 						return ga_nothing;
 					
-					nextmap = LOSTLEVEL; // [Immorpher] For running introduction for Lost Levels
+					nextmap = LOSTLEVEL; // [Immorpher] For running introduction
 					runintroduction = true; // [Immorpher] turn introduction on
 					
 					return exit;
@@ -2022,7 +2024,7 @@ int M_MenuTicker(void) // 80007E0C
 			case 62: // Beta 64
 				if (truebuttons)
 				{
-					startmap = MenuItem[cursorpos].casepos == 62 ? 41 : 1;
+					startmap = MenuItem[cursorpos].casepos == 62 ? BETALEVEL : 1;
 					
 					S_StartSound(NULL, sfx_pistol);
 					M_SaveMenuData();
@@ -2038,7 +2040,7 @@ int M_MenuTicker(void) // 80007E0C
 					if (exit == ga_exit)
 						return ga_nothing;
 
-					nextmap = BETALEVEL; // [Immorpher] For running introduction for Lost Levels
+					nextmap = BETALEVEL; // [Immorpher] For running introduction
 					runintroduction = true; // [Immorpher] turn introduction on
 					
 					return exit;
@@ -2269,6 +2271,33 @@ int M_MenuTicker(void) // 80007E0C
 					return exit;
 				}
 				break;
+				
+			case 73: // Vehemence
+				if (truebuttons)
+				{
+					startmap = MenuItem[cursorpos].casepos == 73 ? VEHEMENCELEVEL : 1;
+					
+					S_StartSound(NULL, sfx_pistol);
+					M_SaveMenuData();
+
+					MenuItem = Menu_Skill;
+					itemlines = 6;
+					MenuCall = M_MenuTitleDrawer;
+					cursorpos = 2;
+
+					exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
+					M_RestoreMenuData((exit == ga_exit));
+					
+					if (exit == ga_exit)
+						return ga_nothing;
+
+					nextmap = VEHEMENCELEVEL; // [Immorpher] For running introduction
+					runintroduction = true; // [Immorpher] turn introduction on
+					
+					return exit;
+				}
+				break;
+				
 			}
             exit = ga_nothing;
         }

@@ -208,7 +208,7 @@ void R_SetupSky(void) // 80025060
             break;
 
         case 8:
-			if (gamemap >= BETALEVEL && gamemap <= LASTLEVEL)
+			if (gamemap >= BETALEVEL && gamemap <= VEHEMENCELEVEL)
 			{
 				FogNear = 975;
 				SkyFlags = SKF_CLOUD;
@@ -232,7 +232,7 @@ void R_SetupSky(void) // 80025060
             break;
 
         case 11:
-			if (gamemap >= BETALEVEL && gamemap <= LASTLEVEL)
+			if (gamemap >= BETALEVEL && gamemap <= VEHEMENCELEVEL)
 			{
 				SkyFlags = (SKF_CLOUD|SKF_THUNDER);
 				FogNear = 985;

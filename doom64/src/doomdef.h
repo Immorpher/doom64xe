@@ -1,7 +1,5 @@
 /* DoomDef.h */
 
-#define	VINT	int
-
 /* ULTRA64 LIBRARIES */
 #include <ultra64.h>
 #include "ultratypes.h"
@@ -176,10 +174,11 @@ typedef enum
 } gameaction_t;
 
 
-#define LASTLEVEL 73 // end of normal levels
-#define LOSTLEVEL 34 // [Immorpher] Define where lost levels begin
-#define BETALEVEL 41 // [Immorpher] Define where beta 64 levels begin
-#define BONUSLEVEL 128 // [Immorpher] Define where bonus pak levels begin
+#define LASTLEVEL 89 // End of normal levels
+#define LOSTLEVEL 34 // Define where lost levels begin
+#define BETALEVEL 41 // Define where beta 64 levels begin
+#define VEHEMENCELEVEL 74 // Define where vehemence levels begin
+#define BONUSLEVEL 128 // Define where bonus pak levels begin
 #define FUNLEVEL(map)	((map == 25 || map == 26 || map == 27 || map == 33 || map == 40 || map == 66 || map == 67 || map == 68 || map == 69 || map == 73)) // specific fun levels
 #define FINLEVEL(map)	((map == 28 || map == 39 || map == 65)) // specific final levels
 
@@ -238,26 +237,26 @@ typedef struct mobj_s
 	struct mobj_s   *tracer;        /* Thing being chased/attacked for tracers. */
 
 	angle_t			angle;
-	VINT			sprite;				/* used to find patch_t and flip value */
-	VINT			frame;				/* might be ord with FF_FULLBRIGHT */
+	int			sprite;				/* used to find patch_t and flip value */
+	int			frame;				/* might be ord with FF_FULLBRIGHT */
 	fixed_t			floorz, ceilingz;	/* closest together of contacted secs */
 	fixed_t			radius, height;		/* for movement checking */
 	fixed_t			momx, momy, momz;	/* momentums */
 
 	mobjtype_t		type;
 	mobjinfo_t		*info;				/* &mobjinfo[mobj->type] */
-	VINT			tics;				/* state tic counter	 */
+	int			tics;				/* state tic counter	 */
 	state_t			*state;
 
-	VINT			health;
-	VINT			movedir;		/* 0-7 */
-	VINT			movecount;		/* when 0, select a new dir */
+	int			health;
+	int			movedir;		/* 0-7 */
+	int			movecount;		/* when 0, select a new dir */
 
 									/* also the originator for missiles */
-	VINT			reactiontime;	/* if non 0, don't attack yet */
+	int			reactiontime;	/* if non 0, don't attack yet */
 									/* used by player to freeze a bit after */
 									/* teleporting */
-	VINT			threshold;		/* if >0, the target will be chased */
+	int			threshold;		/* if >0, the target will be chased */
 									/* no matter what (even if shot) */
 
     int             alpha;          /* [D64] alpha value */
@@ -544,7 +543,7 @@ typedef struct player_s
 	boolean		speeddown;				/* true if button down last tic */
 } player_t;
 
-typedef struct thingdata_s // [Immorpher] use this to store player data when the player needs to restart the level
+typedef struct thingdata_s // use this to store player data when the player needs to restart the level
 {
 	short		health;					/* only used between levels, mo->health */
 	short			armorpoints, armortype;	/* armor type is 0-2 */
@@ -625,7 +624,7 @@ typedef enum
 //extern	int			consoleplayer;		/* player taking events and displaying */
 //extern	int			displayplayer;
 extern	player_t	players[MAXPLAYERS];
-extern	thingdata_t playdata[MAXPLAYERS]; // [Immorpher] store player data for reload
+extern	thingdata_t playdata[MAXPLAYERS]; // store player data for reload
 
 extern	skill_t		gameskill;
 extern	unsigned char			gamemap;
@@ -650,9 +649,6 @@ long LongSwap(long dat);
 fixed_t	FixedMul (fixed_t a, fixed_t b);
 fixed_t FixedDiv (fixed_t a, fixed_t b);
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
-
-//extern fixed_t FixedMul2 (fixed_t a, fixed_t b);// ASM MIPS CODE
-//extern fixed_t FixedDiv3 (fixed_t a, fixed_t b);// ASM MIPS CODE
 
 #ifdef __BIG_ENDIAN__
 #define __BIG_ENDIAN__
@@ -869,7 +865,7 @@ extern char M_SENSITIVITY;           // 8005A7CC
 extern int MotionBob;				// Video motion bob level - 16 pixels of bob is 0x100000
 extern char FlashLevel;				// Flash reduction parameter
 extern boolean FeaturesUnlocked;    // 8005A7D0
-extern boolean MercilessMode; // [Immorpher] Returning merciless difficulty from Doom 64 Merciless Edition!
+extern boolean MercilessMode; // Returning merciless difficulty from Doom 64 Merciless Edition!
 extern boolean MercilessMenu; // Current menu setting for merciless mode, not necessarily enabled in menu
 extern char TextureFilter; // Texture/sky 3-point filtering
 extern char Autorun; // Autorun mode for digital inputs
@@ -877,9 +873,9 @@ extern boolean BrightBoost; // Brightness boost from the "gamma correct" video m
 extern char BloodStyle;	// Blood color option
 extern boolean ColoredHUD; // Colored HUD option
 extern boolean ShowStats; // Show map stats on automap
-extern boolean runintroduction; 	// [Immorpher] Introduction text
-extern short LightningFlash;			// [Immorpher] Lightning flash value
-extern char HUDMargin;			// [Immorpher] Margin for HUD
+extern boolean runintroduction; 	// Introduction text
+extern short LightningFlash;			// Lightning flash value
+extern char HUDMargin;			// Margin for HUD
 
 int M_RunTitle(void); // 80007630
 
@@ -973,7 +969,7 @@ void AM_Drawer (void);
 /* D_SCREENS */
 /*-----------*/
 
-char* EpisodeGraphic(); // [Immorpher] Custom episode graphics
+char* EpisodeGraphic(); // Custom episode graphics
 int D_RunDemo(char *name, skill_t skill, int map); // 8002B2D0
 int D_TitleMap(void);           // 8002B358
 int D_WarningTicker(void);      // 8002B3E8
@@ -1006,7 +1002,6 @@ typedef struct
 {
 	char *	name;
 	short		MusicSeq;
-	short		MaxSubSectors; // Should not exceed MAXSUBSECTORS define, this improves rendering per map, good for void maps
 } mapinfo_t;
 
 extern mapinfo_t MapInfo[];
@@ -1019,8 +1014,8 @@ void M_ClearBox (fixed_t *box) HOT;
 void M_AddToBox (fixed_t *box, fixed_t x, fixed_t y) HOT;
 boolean M_BoxIntersect(fixed_t a[static 4], fixed_t b[static 4]);
 
-extern unsigned char lightcurve[256]; // [Immorpher] - brightness table
-extern const unsigned char lightmax[256]; // [Immorpher] - maximum brightness curve
+extern unsigned char lightcurve[256]; // - brightness table
+extern const unsigned char lightmax[256]; // - maximum brightness curve
 
 /*---------*/
 /* S_SOUND */

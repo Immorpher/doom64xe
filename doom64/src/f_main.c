@@ -9,7 +9,7 @@ extern void P_CheckCheats (void);
 
 #define T_NULL	        ""
 
-// [Immorpher] Doom 64 introduction text adapted from Doom 64 Reloaded
+// Doom 64 introduction text adapted from Doom 64 Reloaded
 #define C_INTR1_TXT01	"Surviving the poison of evil has"
 #define C_INTR1_TXT02	"pushed sanity to an edge. The"
 #define C_INTR1_TXT03	"doctors' treatments are of little"
@@ -31,7 +31,7 @@ extern void P_CheckCheats (void);
 #define C_INTR1_TXT19	" "
 #define C_INTR1_TXT20	"MERCILESS EXTERMINATION!"
 
-// [Immorpher] Lost Levels introduction text adapted from Doom 64 CE
+// Lost Levels introduction text adapted from Doom 64 CE
 #define C_INTR2_TXT01	"The mother demon's lifeless stench"
 #define C_INTR2_TXT02	"is sharp as a dagger in the mind."
 #define C_INTR2_TXT03	"With their mother dead, the demons"
@@ -53,7 +53,7 @@ extern void P_CheckCheats (void);
 #define C_INTR2_TXT19	"You must return to hell. Your path"
 #define C_INTR2_TXT20	"of extermination shall not end!"
 
-// [Immorpher] Beta 64 introduction text adapted from Doom 64 CE
+// Beta 64 introduction text adapted from Doom 64 CE
 #define C_INTR3_TXT01	"The moon of Io was chosen by the"
 #define C_INTR3_TXT02	"U.A.C. to resume portal testing."
 #define C_INTR3_TXT03	"We were prepared for any demon who"
@@ -75,7 +75,7 @@ extern void P_CheckCheats (void);
 #define C_INTR3_TXT19	"to rest until I end what the demons"
 #define C_INTR3_TXT20	"are doing... I must return to Io!"
 
-// [Immorpher] Bonus Pak Introduction
+// Bonus Pak Introduction
 #define C_INTR4_TXT01	"Of many worlds, the demons infect."
 #define C_INTR4_TXT02	"Even after death, their mother"
 #define C_INTR4_TXT03	"will resurrect. They bring"
@@ -96,6 +96,13 @@ extern void P_CheckCheats (void);
 #define C_INTR4_TXT18	"the demons their doom. Choose any"
 #define C_INTR4_TXT19	"destination, as it is time for"
 #define C_INTR4_TXT20	"merciless extermination!"
+
+
+// Vehemence Introduction
+#define C_INTR5_TXT01	"Let the vehemence commence!"
+
+
+// Absolution texts
 
 #define C_END1_TXT01	"You cackle as the"
 #define C_END1_TXT02	"familiarity of the"
@@ -282,7 +289,7 @@ extern void P_CheckCheats (void);
 
 // Introduction Texts
 
-char *introcluster1[] =   // [Immorpher] Doom 64 intro text adapted from Doom 64 Manual and Doom 64 Reloaded
+char *introcluster1[] =   // Doom 64 intro text adapted from Doom 64 Manual and Doom 64 Reloaded
 {
     C_INTR1_TXT01,
 	C_INTR1_TXT02,
@@ -307,7 +314,7 @@ char *introcluster1[] =   // [Immorpher] Doom 64 intro text adapted from Doom 64
 	T_NULL
 };
 
-char *introcluster2[] =   // [Immorpher] Lost Levels intro text adapted from Doom 64 CE
+char *introcluster2[] =   // Lost Levels intro text adapted from Doom 64 CE
 {
     C_INTR2_TXT01,
 	C_INTR2_TXT02,
@@ -332,7 +339,7 @@ char *introcluster2[] =   // [Immorpher] Lost Levels intro text adapted from Doo
 	T_NULL
 };
 
-char *introcluster3[] =   // [Immorpher] Beta 64 intro text adapted from Doom 64 CE
+char *introcluster3[] =   // Beta 64 intro text adapted from Doom 64 CE
 {
     C_INTR3_TXT01,
 	C_INTR3_TXT02,
@@ -357,7 +364,7 @@ char *introcluster3[] =   // [Immorpher] Beta 64 intro text adapted from Doom 64
 	T_NULL
 };
 
-char *introcluster4[] =   // [Immorpher] Bonus Pak intro text
+char *introcluster4[] =   // Bonus Pak intro text
 {
     C_INTR4_TXT01,
 	C_INTR4_TXT02,
@@ -379,6 +386,12 @@ char *introcluster4[] =   // [Immorpher] Bonus Pak intro text
 	C_INTR4_TXT18,
 	C_INTR4_TXT19,
 	C_INTR4_TXT20,
+	T_NULL
+};
+
+char *introcluster5[] =   // Vehemence intro text
+{
+    C_INTR5_TXT01,
 	T_NULL
 };
 
@@ -717,8 +730,11 @@ void F_StartIntermission(void) // 80002CD0
     {
         text = introcluster3;
         textypos = 20;
-    }
-    else if (nextmap == 9)
+    } else if (nextmap == VEHEMENCELEVEL)
+    {
+        text = introcluster5;
+        textypos = 20;
+    } else if (nextmap == 9)
     {
         text = endcluster1;
         textypos = 15;
@@ -773,7 +789,7 @@ void F_StartIntermission(void) // 80002CD0
     textline = 0;
     textalpha = 0;
 	
-	S_StartMusic(mus_title); // [Immorpher] Play menu music for intermission
+	S_StartMusic(mus_title); // Play menu music for intermission
 }
 
 /*
@@ -786,7 +802,7 @@ void F_StartIntermission(void) // 80002CD0
 
 void F_StopIntermission(int exit) // 80002E14
 {
-	S_StopMusic(); // [Immorpher] stop intermission music
+	S_StopMusic(); // stop intermission music
     gamepaused = false;
     DrawerStatus = 0;
     I_WIPE_FadeOutScreen();
@@ -829,7 +845,7 @@ int F_TickerIntermission(void) // 80002E44
             exit = ga_exit;
         }
 		
-		 // [Immorpher] Speed up text intermission by pressing buttons
+		 // Speed up text intermission by pressing buttons
 		if (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B))
         {
             textalpha = 256;
@@ -995,7 +1011,7 @@ int F_Ticker(void) // 80003258
                 finalestage = F_STAGE_SCROLLTEXT;
             }
 			
-			// [Immorpher] Speed up text intermission by pressing buttons
+			// Speed up text intermission by pressing buttons
 			if (buttons & (ALL_CBUTTONS|ALL_TRIG|PAD_A|PAD_B))
 			{
 				textalpha = 256;
