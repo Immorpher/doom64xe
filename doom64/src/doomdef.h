@@ -174,7 +174,7 @@ typedef enum
 } gameaction_t;
 
 
-#define LASTLEVEL 89 // End of normal levels
+#define LASTLEVEL 99 // End of normal levels
 #define LOSTLEVEL 34 // Define where lost levels begin
 #define BETALEVEL 41 // Define where beta 64 levels begin
 #define VEHEMENCELEVEL 74 // Define where vehemence levels begin

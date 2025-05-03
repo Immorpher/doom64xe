@@ -369,24 +369,6 @@ void T_FadeThinker(fade_t *fade) // 8000EACC
         if (fade->destAlpha == 0)
             P_RemoveMobj(mo);
     }
-
-    /*if (fade->amount <= 0)
-    {
-        if (mo->alpha <= fade->destAlpha)
-        {
-            mo->alpha = fade->destAlpha;
-            P_RemoveThinker(&fade->thinker);
-
-            if (fade->destAlpha == 0)
-                P_RemoveMobj(mo);
-        }
-    }
-    else if (mo->alpha >= fade->destAlpha)
-    {
-        mo->alpha = fade->destAlpha;
-        mo->flags |= fade->flagReserve;
-        P_RemoveThinker(&fade->thinker);
-    }*/
 }
 
 extern mobj_t *P_SpawnMapThing (mapthing_t *mthing);
