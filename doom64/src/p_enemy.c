@@ -1304,14 +1304,14 @@ void A_PainShootSkull(mobj_t *actor, angle_t angle) // 8001267C
         {
             count++;
 
-            // if there are allready 17 skulls on the level,
+            // if there are already 17 skulls on the level,
             // don't spit another one
             if (count >= 17)
                 return;
         }
 	}
 
-	// okay, there's playe for another one
+	// okay, there's place for another one
 	an = angle >> ANGLETOFINESHIFT;
 
 	prestep = (mobjinfo[MT_SKULL].radius + (4 * FRACUNIT) + actor->info->radius) >> FRACBITS;
@@ -1327,7 +1327,7 @@ void A_PainShootSkull(mobj_t *actor, angle_t angle) // 8001267C
         !P_TryMove(newmobj, newmobj->x, newmobj->y))
 	{
 		// kill it immediately
-		P_DamageMobj(newmobj, actor, actor, 10000);
+		P_DamageMobj(newmobj, actor, actor, 60); // give more reasonable damage? Was 10000
         P_RadiusAttack(newmobj, newmobj, 128);
 		return;
 	}

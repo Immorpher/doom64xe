@@ -105,7 +105,7 @@ extern unsigned char nextmap;
 #define MI_TXT89	"Immorphium Storage"
 #define MI_TXT90	"The Descent"
 #define MI_TXT91	"Foreboding Pestilence"
-#define MI_TXT92	"Eclipsing"
+#define MI_TXT92	"Shadows"
 #define MI_TXT93	"Play With Mom"
 #define MI_TXT94	"Blue Castle"
 #define MI_TXT95	"Pumping Station"
@@ -113,6 +113,9 @@ extern unsigned char nextmap;
 #define MI_TXT97	"Ubiquitous"
 #define MI_TXT98	"CyberPac"
 #define MI_TXT99	"The Twilight Scream"
+#define MI_TXT100	"Stormy Maze"
+#define MI_TXT101	"PE Test"
+#define MI_TXT102	"Emergency Escape"
 
 
 // Bonus Pak Maps
@@ -236,7 +239,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT89 , 100}, // Immorphium Storage
     {MI_TXT90 , 100}, // The Descent
     {MI_TXT91 , 100}, // Foreboding Pestilence
-    {MI_TXT92 , 100}, // Eclipsing
+    {MI_TXT92 , 100}, // Shadows
     {MI_TXT93 , 100}, // Play With Mom
     {MI_TXT94 , 100}, // Blue Castle
     {MI_TXT95 , 100}, // Pumping Station
@@ -244,9 +247,9 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT97 , 100}, // Ubiquitous
     {MI_TXT98 , 100}, // CyberPac
     {MI_TXT99 , 100}, // The Twilight Scream
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
+    {MI_TXT100 , 100}, // Stormy Maze
+    {MI_TXT101 , 100}, // PE Test
+    {MI_TXT102 , 100}, // Emergency Escape
     {T_NULL , 0},
     {T_NULL , 0},
     {T_NULL , 0},

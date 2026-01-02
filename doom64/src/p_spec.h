@@ -437,7 +437,7 @@ typedef struct
 	sector_t	*sector;
 	fixed_t		topheight;
 	fixed_t		bottomheight;   // D64 new
-	boolean     initceiling;    // D64 new
+	fixed_t     initceiling;    // D64 new
 	fixed_t		speed;
 	int			direction;		/* 1 = up, 0 = waiting at top, -1 = down */
 	int			topwait;		/* tics to wait at the top */
