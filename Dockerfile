@@ -10,7 +10,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y \
         binutils-mips-n64 \
-        gcc-mips-n64=12.2.0-1 \
+        gcc-mips-n64 \
         makemask \
         n64sdk \
         newlib-mips-n64 \
