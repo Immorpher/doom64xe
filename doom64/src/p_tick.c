@@ -227,6 +227,50 @@ void G_DoReborn (int playernum);//extern
 void P_CheckSights (void);
 void P_RunMobjBase (void);
 
+#ifdef FREEZE_DEBUG
+/*
+===================
+=
+= P_FreezeDebugCheck
+=
+= Debug-only (build with -DFREEZE_DEBUG). The game thread has no fault
+= handler, so a bad pointer or an endless loop looks like "frozen picture,
+= music still playing". This turns the usual suspects into an I_Error
+= screen that says what was wrong instead.
+=
+===================
+*/
+static void P_FreezeDebugCheck (void)
+{
+	mobj_t *m;
+	int n;
+
+	Z_CheckZone(mainzone);	/* heap headers intact? */
+
+	n = 0;
+	for (m = mobjhead.next; m != &mobjhead; m = m->next)
+	{
+		if (++n > 20000)
+			I_Error("mobj list: cycle (>%d)", n);
+
+		if (!m->next || !m->prev || m->next->prev != m || m->prev->next != m)
+			I_Error("mobj list: bad link #%d type %d", n, m->type);
+
+		if ((unsigned)m->type >= NUMMOBJTYPES)
+			I_Error("mobj #%d: bad type %d", n, m->type);
+
+		if (m->state < &states[0] || m->state >= &states[NUMSTATES])
+			I_Error("mobj #%d type %d: bad state", n, m->type);
+
+		if (m->subsector < &subsectors[0] || m->subsector >= &subsectors[numsubsectors])
+			I_Error("mobj #%d type %d: bad subsector", n, m->type);
+
+		if (m->target && (!m->target->next || m->target->next->prev != m->target))
+			I_Error("mobj type %d: stale target (type %d)", m->type, m->target->type);
+	}
+}
+#endif
+
 int P_Ticker (void)//80021A00
 {
 	player_t *pl;
@@ -243,6 +287,9 @@ int P_Ticker (void)//80021A00
 	    P_RunThinkers();
 		P_CheckSights();
 		P_RunMobjBase();
+#ifdef FREEZE_DEBUG
+		P_FreezeDebugCheck();
+#endif
 
 		P_UpdateSpecials();
 		P_RunMacros();

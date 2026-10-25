@@ -310,12 +310,54 @@ void P_SpawnPlayer(/*mapthing_t *mthing*/) // 80018F94
 
 void P_RemoveMobj (mobj_t *mobj) // 80019130
 {
+	mobj_t *m;
+
+	/* Z_Free2 does not detect double frees. A second removal would unlink
+	   through stale neighbour pointers and corrupt the mobj/sector/block
+	   lists (which can later show up as a hang), so make it a no-op. */
+	if (!mobj->next || !mobj->prev)
+	{
+#ifdef FREEZE_DEBUG
+		I_Error("P_RemoveMobj: double remove, type %d", mobj->type);
+#endif
+		return;
+	}
+
+	/* Lost Souls, Pain Elementals and barrels instead of leaving corpses are
+		deleted. Anything that still points at one (infighting target, spawned
+		skull inheriting the PE's target, missile tracer, player->attacker)
+		would read freed zone memory, which the zone allocator can hand out
+		again (e.g. as a display list block). */
+	if ((mobj->flags & MF_COUNTKILL) || mobj->type == MT_PROP_BARREL)
+	{
+		for (m = mobjhead.next; m != &mobjhead; m = m->next)
+		{
+			if (m->target == mobj)
+			{
+#ifdef FREEZE_DEBUG_DANGLING
+				I_Error("dangling target: type %d -> type %d", m->type, mobj->type);
+#endif
+				m->target = NULL;
+			}
+
+			if (m->tracer == mobj)
+				m->tracer = NULL;
+		}
+
+		if (players[0].attacker == mobj)
+			players[0].attacker = NULL;
+	}
+
 	/* unlink from sector and block lists */
 	P_UnsetThingPosition (mobj);
 
 	/* unlink from mobj list */
 	mobj->next->prev = mobj->prev;
 	mobj->prev->next = mobj->next;
+
+	/* mark as unlinked so a stale second removal is detectable */
+	mobj->next = mobj->prev = NULL;
+
 	Z_Free (mobj);
 }
 
