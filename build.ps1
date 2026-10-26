@@ -1,4 +1,4 @@
-$image="doom64ce/n64sdkmod:1"
+$image="doom64ce/n64sdkmod:2"
 
 if (!(docker images -q $image 2> $null)) { 
   docker build --no-cache -t $image .

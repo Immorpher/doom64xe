@@ -6,9 +6,6 @@
 extern void SeqEngine(void);
 extern void process_function_queue(void);
 
-extern void __ll_mul(s32 a, u32 b, s32 c, u32 d);
-extern void __ull_div(s32 a, u32 b, s32 c, u32 d);
-
 #ifndef NOUSEWESSCODE
 extern void(*DrvFunctions[36])(track_status *);
 extern void(*drv_cmds[19])(track_status *);
@@ -141,22 +138,19 @@ short GetIntsPerSec(void) // 800353DC
 
 unsigned long CalcPartsPerInt(short ips, short ppq, short qpm) // 800353E4
 {
-	register unsigned long arg0 = 0;
-	register unsigned long ppi = 0;
-
-    __ll_mul((s32) qpm >> 31, qpm, 0, (1<<16));
-    asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
-    __ll_mul(arg0, (u32) ppi, (s32) ppq >> 31, ppq);
-    asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
-    __ull_div(arg0, (u32) ppi, 0, 60);
-    asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
-	__ull_div(arg0, (u32) ppi, (s32) ips >> 31, ips);
-	asm("move	%0,$2":"=r"(arg0) :"r"(arg0),"r"(ppi) );
-	asm("move	%0,$3":"=r"(ppi) :"r"(arg0),"r"(ppi) );
-    return (u32) ppi;
+	/*
+	   The original code called __ll_mul/__ull_div from libultra and then scraped
+	   the 64-bit result out of $v0/$v1 with inline asm. That only works if the
+	   compiler leaves the call alone and schedules nothing in between, which
+	   link time optimization does not guarantee (it can inline libultra's
+	   __ll_mul/__ull_div into this function). Same math in plain C, bit-exact:
+	   ((qpm << 16) * ppq) / 60 / ips, done in 64 bits, low 32 bits returned.
+	*/
+	u64 ppi = (u64) ((s64) qpm << 16);
+	ppi *= (u64) (s64) ppq;
+	ppi /= 60;
+	ppi /= (u64) (s64) ips;
+	return (u32) ppi;
 }
 
 long WessInterruptHandler(void) // 80035458

@@ -17,6 +17,13 @@ endif
 # Whether to colorize build messages
 COLOR ?= 1
 
+# Link time optimization (make LTO=0 to go back to the old non-LTO build).
+# Game code is always built with LTO when this is on. To also optimize across
+# the libultra boundary, libultra_rom.a must have been built with
+# -flto -ffat-lto-objects (see ../build-libultra-lto.sh; the Dockerfile does it).
+# A stock libultra still links fine, it just stays opaque to the optimizer.
+LTO ?= 1
+
 #==============================================================================#
 # Target Executable and Sources                                                #
 #==============================================================================#
@@ -65,6 +72,15 @@ DEF_INC_CFLAGS := $(C_INCLUDES) $(C_DEFINES)
 CFLAGS = -Wall -mno-check-zero-division -march=vr4300 -mtune=vr4300 -D_LANGUAGE_C -D_ULTRA64 -D__EXTENSIONS__ -fno-common -G0 -Os -finline-functions-called-once -ffast-math -falign-functions=32 -D_MIPS_SZLONG=32 -D_MIPS_SZINT=32 -g -mabi=32 -ffreestanding -mfix4300 $(DEF_INC_CFLAGS)
 ASFLAGS     := -mno-check-zero-division -march=vr4300 -mabi=32 $(C_INCLUDES)
 # $(foreach d,$(DEFINES),--defsym $(d))
+
+ifeq ($(LTO),1)
+  CFLAGS += -flto=auto
+  # The LTO code generation step runs at link time, so the target and
+  # optimization flags have to be repeated on the link command line.
+  LTO_LDFLAGS := -flto=auto -fuse-linker-plugin \
+                 -march=vr4300 -mtune=vr4300 -mabi=32 -G0 -mfix4300 -mno-check-zero-division \
+                 -Os -finline-functions-called-once -ffast-math -falign-functions=32 -ffreestanding
+endif
 
 # C preprocessor flags
 CPPFLAGS := -P -Wno-trigraphs $(DEF_INC_CFLAGS)
@@ -127,9 +143,19 @@ $(BOOT_OBJ): $(BOOT)
 	$(V)$(OBJCOPY) -I binary -B mips -O elf32-bigmips $< $@
 
 # Link final ELF file
+ifeq ($(LTO),1)
+# LTO has to go through the gcc driver so the LTO plugin gets loaded. The
+# driver must not add the default startfiles/libc (we only want libultra + libgcc).
+$(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
+	@$(PRINT) "$(GREEN)Linking ELF file (LTO):  $(BLUE)$@ $(NO_COL)\n"
+	$(V)$(CC) $(LTO_LDFLAGS) -nostdlib -nostartfiles \
+		-Wl,-T,$(BUILD_DIR)/$(LD_SCRIPT) -Wl,-Map,$(BUILD_DIR)/$(TARGET).map -Wl,--no-check-sections \
+		-L$(BUILD_DIR) -o $@ $(O_FILES) -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
+else
 $(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	@$(PRINT) "$(GREEN)Linking ELF file:  $(BLUE)$@ $(NO_COL)\n"
 	$(V)$(LD) -L $(BUILD_DIR) -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/$(TARGET).map -o $@ $(O_FILES) --no-check-sections -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
+endif
 
 # Build ROM
 $(ROM): $(ELF)

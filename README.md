@@ -25,6 +25,15 @@ If you are running on a Linux distribution supported by the [Modern N64 SDK](htt
 
 If you prefer to run the build inside a container, a Dockerfile is included that builds an image with only the files required to build this project (~460MB). You can then mount the `doom64` directory and run `make-rom.sh`. Alternatively, you can run `build.sh` or `build.ps1` (for Windows users) to do it automatically.
 
+### Link time optimization (LTO)
+
+The build uses LTO (`-flto=auto`) by default. Two things are needed for it to work:
+
+- **Game code**: nothing to do, `doom64/Makefile` handles it and links through the gcc driver so the LTO plugin is used. `make LTO=0` restores the old non-LTO build.
+- **libultra**: for the optimizer to see across the game/libultra boundary, `libultra_rom.a` has to be rebuilt with `-flto -ffat-lto-objects`. The Dockerfile does this automatically (the image tag is `:2` so an old non-LTO image is not reused). Outside Docker, run `./build-libultra-lto.sh` once as root; it installs the LTO build over `/usr/lib/n64/libultra_rom.a` and keeps the original as `libultra_rom.nolto.a`. With a stock libultra the game still builds, only libultra stays opaque to the optimizer.
+
+If the build was previously done in a different directory, run `make clean` first (`make-rom.sh` already does).
+
 If using gdb to debug `doom64.elf`, change the `DISCARD` section inside `doom64.ld` from `*(*);` to `*(.MIPS.abiflags);` before building the rom.
 
 ## Configuration

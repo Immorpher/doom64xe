@@ -46,7 +46,7 @@ SECTIONS
       _gp = ALIGN(16) + 0x8000;
       *.o(.sdata);
       *.o(.text.hot);
-      *.ltrans.o(.text);
+      *.ltrans.o(.text);   /* LTO output: gcc's temporary ltransN.ltrans.o files */
       BUILD_DIR/src*.o(.text);
       *.o(.text.unlikely);
 
@@ -59,6 +59,7 @@ SECTIONS
       /usr/lib/n64/PR/aspMain.o(.text);
 
       /* data */
+      *.ltrans.o(.data*);
       BUILD_DIR/src*.o(.data*);
 
       */libultra_rom.a:*.o(.data*);
@@ -69,6 +70,7 @@ SECTIONS
       /usr/lib/n64/PR/aspMain.o(.data*);
 
       /* rodata */
+      *.ltrans.o(.*rodata*);
       BUILD_DIR/src*.o(.*rodata*);
 
       */libultra_rom.a:*.o(.*rodata*);
@@ -80,6 +82,9 @@ SECTIONS
    
    BEGIN_NOLOAD(code)
    {
+      *.ltrans.o(.*bss*);
+      *.ltrans.o(COMMON);
+      *.ltrans.o(.scommon);
       BUILD_DIR/src*.o(.*bss*);
 
       */libultra_rom.a:*.o(COMMON);

@@ -34,20 +34,16 @@ sudo apt-get install ./makemask.deb
 ----------------------------------------------
 LTO Stuff
 
-git clone https://github.com/ModernN64SDK/libultra_modern
+Run the helper script from the repository root (needs git, python3 and the SDK installed above):
 
-cd libultra_modern
+sudo ./build-libultra-lto.sh
 
-in this folder add -ffat-lto-objects -flto=auto to the OPT_FLAGS of Makefile
+It clones ModernN64SDK/libultra_modern, builds libultra_rom with -flto=auto -ffat-lto-objects,
+and installs it over /usr/lib/n64/libultra_rom.a (original kept as libultra_rom.nolto.a).
 
-sudo apt install build-essential python3
+Then build the ROM as usual:
 
-https://github.com/ModernN64SDK/libultra_modern?tab=readme-ov-file
-
-// Use this when building with LTO so it can find link time optimization
-PATH=$PATH:/opt/crashsdk/bin; export PATH
-
-make
-
-then to build the ROM go to doom64
+cd doom64
 ./make-rom.sh
+
+(make-rom.sh already puts /opt/crashsdk/bin in PATH, which is where the gcc LTO plugin wrappers live.)

@@ -22,4 +22,4 @@ mips-n64-gcc -c -G0 -Os -finline-functions-called-once -ffast-math -falign-funct
 mips-n64-gcc -c -G0 -Os -finline-functions-called-once -ffast-math -falign-functions=32 -g -mabi=32 -ffreestanding -mfix4300 -I/usr/include/n64 -I/usr/include/n64/PR -Iinclude -Ibuild -Ibuild/include -Isrc \
 -D_FINALROM=1 -DNDEBUG=1 -DF3DEX_GBI_2=1 -MMD -MF build/audio_heap.d  -o build/audio_heap.o audio_heap.c
 
-make
+make -j"$(nproc)"
