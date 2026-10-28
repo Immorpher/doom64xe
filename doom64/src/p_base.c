@@ -44,8 +44,10 @@ void P_RunMobjBase(void) // 8000CDE0
     mobj_t *mo;
     mobj_t *next;
 
-	for (mo = mobjhead.next; mo != &mobjhead; mo = mo->next)
+	for (mo = mobjhead.next; mo != &mobjhead; mo = next)
 	{
+	    next = mo->next;	/* P_MobjThinker may remove mo */
+
 	    /* Based on Doom 64 Ex */
 	    /*-----------------------------------------------------------------------------------*/
         if((players[0].cheats & CF_LOCKMOSTERS) && !mo->player && mo->flags & MF_COUNTKILL) {
@@ -778,7 +780,7 @@ boolean PB_CheckThing(mobj_t *thing) // 8000DC70
 		if (mo->z + mo->height < thing->z)
 			return true;		// underneath
 
-		if (mo->target->type == thing->type)	// don't hit same species as originator
+		if (mo->target && mo->target->type == thing->type)	// don't hit same species as originator
         {
 			if (thing == mo->target)
 				return true;	// don't explode on shooter

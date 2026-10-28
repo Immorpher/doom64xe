@@ -647,7 +647,7 @@ boolean PIT_CheckThing(mobj_t *thing) // 8001A560
 			return true;		// overhead
 		if (tmthing->z+tmthing->height < thing->z)
 			return true;		// underneath
-		if (tmthing->target->type == thing->type) // don't hit same species as originator
+		if (tmthing->target && tmthing->target->type == thing->type) // don't hit same species as originator
 		{
 			if (thing == tmthing->target)
 				return true;

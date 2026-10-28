@@ -265,7 +265,7 @@ static void P_FreezeDebugCheck (void)
 		if (m->subsector < &subsectors[0] || m->subsector >= &subsectors[numsubsectors])
 			I_Error("mobj #%d type %d: bad subsector", n, m->type);
 
-		if (m->target && (!m->target->next || m->target->next->prev != m->target))
+		if (m->target && (!m->target->prev || m->target->next->prev != m->target))
 			I_Error("mobj type %d: stale target (type %d)", m->type, m->target->type);
 	}
 }

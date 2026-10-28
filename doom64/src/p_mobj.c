@@ -315,7 +315,7 @@ void P_RemoveMobj (mobj_t *mobj) // 80019130
 	/* Z_Free2 does not detect double frees. A second removal would unlink
 	   through stale neighbour pointers and corrupt the mobj/sector/block
 	   lists (which can later show up as a hang), so make it a no-op. */
-	if (!mobj->next || !mobj->prev)
+	if (!mobj->prev)
 	{
 #ifdef FREEZE_DEBUG
 		I_Error("P_RemoveMobj: double remove, type %d", mobj->type);
@@ -355,8 +355,10 @@ void P_RemoveMobj (mobj_t *mobj) // 80019130
 	mobj->next->prev = mobj->prev;
 	mobj->prev->next = mobj->next;
 
-	/* mark as unlinked so a stale second removal is detectable */
-	mobj->next = mobj->prev = NULL;
+	/* mark as unlinked so a stale second removal is detectable.
+	   Only prev is cleared: next must stay valid, because loops such as
+	   P_RunMobjBase read mo->next after a thinker removed mo. */
+	mobj->prev = NULL;
 
 	Z_Free (mobj);
 }

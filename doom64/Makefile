@@ -3,7 +3,7 @@
 TARGET_STRING := doom64
 TARGET := $(TARGET_STRING)
 
-# Preprocessor definitions
+# Preprocessor definitions - add FREEZE_DEBUG=1 to check for freezes
 DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1
 
 SRC_DIRS :=
