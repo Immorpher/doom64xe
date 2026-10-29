@@ -53,7 +53,7 @@ static void W_GetRomData(u32 offset, void *dest, u32 len)
     osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
             (u32)_doom64_wadSegmentRomStart + offset,
             dest, len, &romcopy_msgque);
-    osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
+    I_RecvMesgWD(&romcopy_msgque, NULL, 1);
 }
 
 /*
@@ -228,7 +228,7 @@ void W_ReadLump (int lump, void *dest) // 8002C260
               (u32)_doom64_wadSegmentRomStart + l->filepos,
               (void *)dest, lumpsize, &romcopy_msgque);
 
-	osRecvMesg(&romcopy_msgque, NULL, OS_MESG_BLOCK);
+	I_RecvMesgWD(&romcopy_msgque, NULL, 2);
 }
 
 /*

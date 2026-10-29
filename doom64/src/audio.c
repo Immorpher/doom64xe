@@ -3,6 +3,8 @@
 
 #include "graph.h"
 
+extern void I_RecvMesgWD(OSMesgQueue *mq, OSMesg *msg, int where);
+
 //------------
 extern void N64_wdd_location(char *wdd_location);
 extern void N64_set_output_rate(u32 rate);
@@ -87,7 +89,7 @@ int wess_rom_copy(char *src, char *dest, int len) // 8002E334
 	{
 		osInvalDCache((void *)dest, (s32)len);
 		osPiStartDma(&DMAIoMesgBuf, OS_MESG_PRI_HIGH, OS_READ, (u32)src, (void *)dest, (u32)len, &wess_dmaMessageQ);
-		osRecvMesg(&wess_dmaMessageQ, &dummyMesg, OS_MESG_BLOCK);
+		I_RecvMesgWD(&wess_dmaMessageQ, &dummyMesg, 3);
 
 		return len;
 	}

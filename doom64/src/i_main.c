@@ -208,15 +208,15 @@ const char Game_Name[16] = // 8005A790
 
 boolean disabledrawing = false; // 8005A720
 
-s32 vsync = 0;              // 8005A724
-s32 drawsync2 = 0;          // 8005A728
-s32 drawsync1 = 0;          // 8005A72C
+volatile s32 vsync = 0;              // 8005A724
+volatile s32 drawsync2 = 0;          // 8005A728
+volatile s32 drawsync1 = 0;          // 8005A72C
 u32 NextFrameIdx = 0;       // 8005A730
 
-s32 ControllerPakStatus = 1; // 8005A738
-s32 gamepad_system_busy = 0; // 8005A73C
+volatile s32 ControllerPakStatus = 1; // 8005A738
+volatile s32 gamepad_system_busy = 0; // 8005A73C
 s32 FilesUsed = -1;                 // 8005A740
-u32 SystemTickerStatus = 0;  // 8005a744
+volatile u32 SystemTickerStatus = 0;  // 8005a744
 
 Gfx Gfx_base[2][MAX_GFX];    // 800653E0
 Mtx Mtx_base[2][MAX_MTX];    // 800793E0
@@ -247,6 +247,32 @@ void I_Start(void)  // 80005620
     osStartThread(&idle_thread);
 }
 
+#ifdef FREEZE_DEBUG
+/* Debug only: a CPU exception in the main thread (bad pointer, bad jump...)
+   stops that thread silently and the game just freezes with audio running.
+   This thread waits for libultra's fault event and shows where it happened. */
+extern OSThread *__osFaultedThread;
+
+static OSThread fault_thread;
+static u64 fault_stack[0x2000/sizeof(u64)];
+static OSMesgQueue fault_msgque;
+static OSMesg fault_msgbuf[1];
+
+static void I_FaultThread(void *arg)
+{
+    OSMesg m;
+    OSThread *t;
+
+    osSetEventMesg(OS_EVENT_FAULT, &fault_msgque, (OSMesg)1);
+    osRecvMesg(&fault_msgque, &m, OS_MESG_BLOCK);
+
+    t = __osFaultedThread;
+    I_Error("CPU FAULT thread %d\npc %08x ra %08x\ncause %08x badv %08x\nsr %08x",
+            t->id, (u32)t->context.pc, (u32)t->context.ra,
+            (u32)t->context.cause, (u32)t->context.badvaddr, (u32)t->context.sr);
+}
+#endif
+
 void I_IdleGameThread(void *arg) // 8000567C
 {
     /* Create and start the Pi manager... */
@@ -257,6 +283,13 @@ void I_IdleGameThread(void *arg) // 8000567C
     osCreateThread(&main_thread, SYS_THREAD_ID_MAIN, I_Main, (void *)0,
                    main_stack + SYS_MAIN_STACKSIZE/sizeof(u64), 10);
     osStartThread(&main_thread);
+
+#ifdef FREEZE_DEBUG
+    osCreateMesgQueue(&fault_msgque, fault_msgbuf, 1);
+    osCreateThread(&fault_thread, 4, I_FaultThread, (void *)0,
+                   fault_stack + sizeof(fault_stack)/sizeof(u64), 12);
+    osStartThread(&fault_thread);
+#endif
 
     osSetThreadPri(&idle_thread, (OSPri)OS_PRIORITY_IDLE);
 
@@ -631,7 +664,7 @@ void I_Error(char *error, ...) // 80005F30
         gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,0) << 16 | GPACK_RGBA5551(0,0,0,0)) ;
         gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, SCREEN_HT-1);
 
-        ST_Message(err_text_x, err_text_y, buffer, 0xffffffff);
+        ST_Message(err_text_x + 8, err_text_y, buffer, 0xffffffff); /* +8: first column was cut off */
         I_DrawFrame();
     }
 }
@@ -774,6 +807,32 @@ void I_ClearFrame(void) // 8000637C
     globalcm = 0;
 }
 
+/* Blocking receive that, with FREEZE_DEBUG, gives up after ~3 s and shows an
+   error screen saying which wait was stuck (where) and the ticker state. */
+void I_RecvMesgWD(OSMesgQueue *mq, OSMesg *msg, int where)
+{
+#ifdef FREEZE_DEBUG
+    OSTimer wd_timer;
+    OSMesg wd_msg;
+
+    osSetTimer(&wd_timer, (OSTime)46875000 * 3, 0, mq, (OSMesg)0x7777);
+    osRecvMesg(mq, &wd_msg, OS_MESG_BLOCK);
+    osStopTimer(&wd_timer);
+
+    if (wd_msg == (OSMesg)0x7777)
+    {
+        I_Error("WAIT TIMEOUT %d st %d\nvs %d ds2 %d\nq2 %d q3 %d q4 %d", where,
+                (int)SystemTickerStatus, (int)vsync, (int)drawsync2,
+                sys_msgque_vbi2.validCount, sys_msgque_vbi3.validCount, sys_msgque_vbi4.validCount);
+    }
+
+    if (msg)
+        *msg = wd_msg;
+#else
+    osRecvMesg(mq, msg, OS_MESG_BLOCK);
+#endif
+}
+
 void I_DrawFrame(void)  // 80006570
 {
     int index;
@@ -793,14 +852,54 @@ void I_DrawFrame(void)  // 80006570
     vid_task->t.data_size = (u32)((((int)((int)GFX1 - (int)GFX2) / sizeof(Gfx)) + GfxIndex) * sizeof(Gfx));
 
     osSendMesg(&sys_msgque_vbi3,(OSMesg) vid_task, OS_MESG_NOBLOCK);
+#ifdef FREEZE_DEBUG
+    {
+        /* Watchdog: if the ticker thread never answers with KICKSTART the
+           game sits on a black/frozen screen forever. After ~3 s dump the
+           pipeline state to an error screen instead (resetting it first so
+           the error screen itself can be drawn). */
+        static OSTimer wd_timer;
+        static int wd_fired = 0;
+        OSMesg wd_msg;
+
+        if (!wd_fired)
+        {
+            osSetTimer(&wd_timer, (OSTime)46875000 * 3, 0, &sys_msgque_vbi2, (OSMesg)0x7777);
+            osRecvMesg(&sys_msgque_vbi2, &wd_msg, OS_MESG_BLOCK);
+            osStopTimer(&wd_timer);
+
+            if (wd_msg == (OSMesg)0x7777)
+            {
+                int st = (int)SystemTickerStatus;
+                int vs = (int)vsync, d2 = (int)drawsync2, d1 = (int)drawsync1;
+                int q3 = sys_msgque_vbi3.validCount, q4 = sys_msgque_vbi4.validCount, q2 = sys_msgque_vbi2.validCount;
+                int cur = (int)osViGetCurrentFramebuffer() == (int)cfb[0] ? 0 : 1;
+                int nxt = (int)osViGetNextFramebuffer() == (int)cfb[0] ? 0 : 1;
+
+                wd_fired = 1;
+                SystemTickerStatus = 0;
+                while (osRecvMesg(&sys_msgque_vbi3, NULL, OS_MESG_NOBLOCK) != -1) {}
+                while (osRecvMesg(&sys_msgque_vbi4, NULL, OS_MESG_NOBLOCK) != -1) {}
+                osJamMesg(&sys_msgque_vbi2, (OSMesg)VID_MSG_KICKSTART, OS_MESG_NOBLOCK);
+
+                I_Error("WATCHDOG st %d vs %d\nds2 %d ds1 %d\nq2 %d q3 %d q4 %d\ncur %d nxt %d", st, vs, d2, d1, q2, q3, q4, cur, nxt);
+            }
+        }
+        else
+        {
+            osRecvMesg(&sys_msgque_vbi2, NULL, OS_MESG_BLOCK);
+        }
+    }
+#else
     osRecvMesg(&sys_msgque_vbi2, NULL, OS_MESG_BLOCK);//retraceMessageQ
+#endif
     vid_side ^= 1;
 }
 
 void I_GetScreenGrab(void) // 800066C0
 {
     if ((SystemTickerStatus & ~32) || (sys_msgque_vbi3.validCount != 0)) {
-        osRecvMesg(&sys_msgque_vbi2, (OSMesg *)0, OS_MESG_BLOCK);
+        I_RecvMesgWD(&sys_msgque_vbi2, NULL, 4);
         osJamMesg(&sys_msgque_vbi2, (OSMesg)VID_MSG_KICKSTART, OS_MESG_NOBLOCK);
     }
 }

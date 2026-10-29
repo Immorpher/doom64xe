@@ -1066,9 +1066,9 @@ extern const char Pak_Table[256]; // 8005A620
 extern const char Game_Name[16]; // 8005A790
 
 extern boolean disabledrawing; // 8005A720
-extern s32 vsync;              // 8005A724
-extern s32 drawsync2;          // 8005A728
-extern s32 drawsync1;          // 8005A72C
+extern volatile s32 vsync;              // 8005A724
+extern volatile s32 drawsync2;          // 8005A728
+extern volatile s32 drawsync1;          // 8005A72C
 extern u32 NextFrameIdx;       // 8005A730
 extern s32 FilesUsed;          // 8005A740
 
@@ -1097,6 +1097,7 @@ int I_GetControllerData(void); // 800060D0
 void I_CheckGFX(void) HOT; // 800060E8
 void I_ClearFrame(void) HOT; // 8000637C
 void I_DrawFrame(void) HOT;  // 80006570
+void I_RecvMesgWD(OSMesgQueue *mq, OSMesg *msg, int where);
 void I_GetScreenGrab(void); // 800066C0
 
 void I_MoveDisplay(int x,int y); // 80006790

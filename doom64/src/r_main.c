@@ -184,7 +184,7 @@ void R_RenderPlayerView(void) // 80023448
 	gDPSetEnvColorD64(GFX1++, FlashEnvColor);
 
 	// Phase 2
-	if (rendersky)
+	if (rendersky && R_RenderSKY) /* R_RenderSKY stays NULL for sky types R_SetupSky has no case for */
     {
         if (TextureFilter == 2) gDPSetTextureFilter(GFX1++, G_TF_BILERP);
         R_RenderSKY();
