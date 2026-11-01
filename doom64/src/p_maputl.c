@@ -195,12 +195,17 @@ boolean P_BlockLinesIterator (int x, int y, boolean(*func)(line_t*) ) // 80017FE
 boolean P_BlockThingsIterator (int x, int y, boolean(*func)(mobj_t*) ) // 8001811C
 {
 	mobj_t		*mobj;
+	mobj_t		*next;
 
 	if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
 		return true;
 
-	for (mobj = blocklinks[y*bmapwidth+x] ; mobj ; mobj = mobj->bnext)
+	/* func may remove mobj (e.g. PIT_ChangeSector crushing items/skulls). Its
+	   memory can be reused by a spawn later in the same pass, so read bnext
+	   before the call instead of from the freed block. */
+	for (mobj = blocklinks[y*bmapwidth+x] ; mobj ; mobj = next)
     {
+		next = mobj->bnext;
 		if (!func( mobj ) )
 			return false;
     }

@@ -12,8 +12,25 @@ extern char _doom64_wddSegmentRomStart[], _doom64_wddSegmentRomEnd[];
 
 #define SYS_FRAMES_PER_SEC 30
 
+volatile char *S_LastAudioError;
+volatile int S_AudioErrorCount;
+volatile int S_AudioErr[3]; /* MAXRSPCMDS, DMAPTRNULL, DMANOTDONE */
+
 void S_Error_Callback_Routine(char *errstring, int errnum1, int errnum2) // 80029580
 {
+    /* I_Error draws via I_DrawFrame, which needs the ticker thread to kick
+       the frame. When the error is raised from the ticker thread itself
+       (audio DMA callbacks) that deadlocks the whole game, so just note it
+       and let the audio code recover. */
+    if (osGetThreadId(NULL) == 3)
+    {
+        S_LastAudioError = errstring;
+        S_AudioErrorCount++;
+        if (errstring[0] == 'M') S_AudioErr[0]++;
+        else if (errstring[3] == 'P') S_AudioErr[1]++;
+        else S_AudioErr[2]++;
+        return;
+    }
     I_Error(errstring, errnum1, errnum2);
 }
 

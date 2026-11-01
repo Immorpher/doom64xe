@@ -248,6 +248,204 @@ void I_Start(void)  // 80005620
 }
 
 #ifdef FREEZE_DEBUG
+#include "stdarg.h"
+
+/* ---- CPU-drawn debug screen --------------------------------------------
+   Writes text straight into the framebuffer with the CPU, so it still works
+   when the RSP/RDP are hung (the normal I_Error screen is drawn by the RDP
+   and can't appear then). 5x7 font drawn at 2x. Stops the ticker thread
+   first so nothing swaps the framebuffer back. Never returns. */
+static const char dbg_chars[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:-.";
+static const u8 dbg_font[][7] = {
+    {0x0E, 0x11, 0x13, 0x15, 0x19, 0x11, 0x0E}, /* 0 */
+    {0x04, 0x0C, 0x04, 0x04, 0x04, 0x04, 0x0E}, /* 1 */
+    {0x0E, 0x11, 0x01, 0x02, 0x04, 0x08, 0x1F}, /* 2 */
+    {0x0E, 0x11, 0x01, 0x06, 0x01, 0x11, 0x0E}, /* 3 */
+    {0x02, 0x06, 0x0A, 0x12, 0x1F, 0x02, 0x02}, /* 4 */
+    {0x1F, 0x10, 0x1E, 0x01, 0x01, 0x11, 0x0E}, /* 5 */
+    {0x06, 0x08, 0x10, 0x1E, 0x11, 0x11, 0x0E}, /* 6 */
+    {0x1F, 0x01, 0x02, 0x04, 0x08, 0x08, 0x08}, /* 7 */
+    {0x0E, 0x11, 0x11, 0x0E, 0x11, 0x11, 0x0E}, /* 8 */
+    {0x0E, 0x11, 0x11, 0x0F, 0x01, 0x02, 0x0C}, /* 9 */
+    {0x0E, 0x11, 0x11, 0x1F, 0x11, 0x11, 0x11}, /* A */
+    {0x1E, 0x11, 0x11, 0x1E, 0x11, 0x11, 0x1E}, /* B */
+    {0x0E, 0x11, 0x10, 0x10, 0x10, 0x11, 0x0E}, /* C */
+    {0x1C, 0x12, 0x11, 0x11, 0x11, 0x12, 0x1C}, /* D */
+    {0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x1F}, /* E */
+    {0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x10}, /* F */
+    {0x0E, 0x11, 0x10, 0x17, 0x11, 0x11, 0x0F}, /* G */
+    {0x11, 0x11, 0x11, 0x1F, 0x11, 0x11, 0x11}, /* H */
+    {0x0E, 0x04, 0x04, 0x04, 0x04, 0x04, 0x0E}, /* I */
+    {0x07, 0x02, 0x02, 0x02, 0x02, 0x12, 0x0C}, /* J */
+    {0x11, 0x12, 0x14, 0x18, 0x14, 0x12, 0x11}, /* K */
+    {0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x1F}, /* L */
+    {0x11, 0x1B, 0x15, 0x15, 0x11, 0x11, 0x11}, /* M */
+    {0x11, 0x19, 0x15, 0x13, 0x11, 0x11, 0x11}, /* N */
+    {0x0E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E}, /* O */
+    {0x1E, 0x11, 0x11, 0x1E, 0x10, 0x10, 0x10}, /* P */
+    {0x0E, 0x11, 0x11, 0x11, 0x15, 0x12, 0x0D}, /* Q */
+    {0x1E, 0x11, 0x11, 0x1E, 0x14, 0x12, 0x11}, /* R */
+    {0x0F, 0x10, 0x10, 0x0E, 0x01, 0x01, 0x1E}, /* S */
+    {0x1F, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04}, /* T */
+    {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E}, /* U */
+    {0x11, 0x11, 0x11, 0x11, 0x11, 0x0A, 0x04}, /* V */
+    {0x11, 0x11, 0x11, 0x15, 0x15, 0x1B, 0x11}, /* W */
+    {0x11, 0x11, 0x0A, 0x04, 0x0A, 0x11, 0x11}, /* X */
+    {0x11, 0x11, 0x0A, 0x04, 0x04, 0x04, 0x04}, /* Y */
+    {0x1F, 0x01, 0x02, 0x04, 0x08, 0x10, 0x1F}, /* Z */
+    {0x00, 0x04, 0x04, 0x00, 0x04, 0x04, 0x00}, /* : */
+    {0x00, 0x00, 0x00, 0x1F, 0x00, 0x00, 0x00}, /* - */
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x0C, 0x0C}, /* . */
+};
+
+static void I_CPUChar(u32 *fb, int px, int py, int g)
+{
+    int row, col, i, j;
+    u8 bits;
+
+    for (row = 0; row < 7; row++)
+    {
+        bits = dbg_font[g][row];
+        for (col = 0; col < 5; col++)
+        {
+            if (bits & (0x10 >> col))
+            {
+                for (j = 0; j < 2; j++)
+                    for (i = 0; i < 2; i++)
+                        fb[(py + row*2 + j)*SCREEN_WD + (px + col*2 + i)] = 0xFFFFFFFF;
+            }
+        }
+    }
+}
+
+static void I_CPUText(u32 *fb, const char *buffer, int *px, int *py)
+{
+    int i, k;
+    char c;
+    int x = *px, y = *py;
+
+    for (i = 0; buffer[i]; i++)
+    {
+        c = buffer[i];
+        if (c == '\n')
+        {
+            x = 8;
+            y += 16;
+            continue;
+        }
+        if (c >= 'a' && c <= 'z')
+            c -= 32;
+        for (k = 0; dbg_chars[k]; k++)
+        {
+            if (dbg_chars[k] == c)
+            {
+                if (x + 10 <= SCREEN_WD && y + 14 <= SCREEN_HT)
+                    I_CPUChar(fb, x, y, k);
+                break;
+            }
+        }
+        x += 12;
+    }
+
+    *px = x;
+    *py = y;
+}
+
+/* Define AUDIO_ERR_OVERLAY (e.g. add AUDIO_ERR_OVERLAY=1 to DEFINES) to show
+   the audio error counters on screen. Off by default. */
+#ifdef AUDIO_ERR_OVERLAY
+extern volatile int S_AudioErrorCount;
+extern volatile int S_AudioErr[3];
+
+/* Small CPU-drawn overlay (bottom of the screen) once the audio code has
+   reported any error from the ticker thread. Drawn into the frame that was
+   just rendered, right after the RDP finished with it. */
+static void I_AudioErrOverlay(void)
+{
+    char line[64];
+    u32 *fb = (u32 *)cfb[vid_side];
+    int i, x = 8, y = SCREEN_HT - 22;
+
+    if (S_AudioErrorCount == 0)
+        return;
+
+    for (i = (y - 2)*SCREEN_WD; i < (y + 18)*SCREEN_WD; i++)
+        fb[i] = 0x000000FF;
+    D_vsprintf(line, "AUD M%d P%d N%d", (int *)S_AudioErr);
+    I_CPUText(fb, line, &x, &y);
+    osWritebackDCache(&fb[(SCREEN_HT - 24)*SCREEN_WD], 24*SCREEN_WD*sizeof(u32));
+}
+#endif /* AUDIO_ERR_OVERLAY */
+
+void I_CPUError(char *fmt, ...)
+{
+    char buffer[256];
+    char buffer2[160];
+    int info[16];
+    va_list args;
+    u32 *fb;
+    u32 tsp, tend, *w;
+    int i, n, x, y;
+
+    /* Snapshot of the ticker thread BEFORE it gets stopped: its state and a
+       back trace. The ticker's stack is scanned for words that are return
+       addresses (the word before them is a jal/jalr), nearest call first.
+       If the ticker itself is reporting, scan from our own frame. */
+    info[0] = (int)sys_ticker_thread.state;
+    if (osGetThreadId(NULL) == SYS_THREAD_ID_TICKER)
+        tsp = (u32)&info[0];
+    else
+        tsp = (u32)sys_ticker_thread.context.sp;
+    info[1] = (int)tsp;
+    for (i = 0; i < 12; i++)
+        info[2 + i] = 0;
+    n = 0;
+    tend = (u32)sys_ticker_stack + sizeof(sys_ticker_stack);
+    if (tsp >= (u32)sys_ticker_stack && tsp < tend)
+    {
+        for (w = (u32 *)(tsp & ~3); (u32)w < tend && n < 12; w++)
+        {
+            u32 v = *w;
+            if (v >= 0x80000400 && v < 0x80040000 && !(v & 3))
+            {
+                u32 ins = *(u32 *)(v - 8);
+                if ((ins >> 26) == 3 || (ins & 0xFC00003F) == 9)    /* jal / jalr */
+                    info[2 + n++] = (int)v;
+            }
+        }
+    }
+
+    /* never stop ourselves here: the ticker may be the one reporting */
+    if (osGetThreadId(NULL) != SYS_THREAD_ID_TICKER)
+        osStopThread(&sys_ticker_thread);
+
+    va_start (args, fmt);
+    D_vsprintf (buffer, fmt, args);
+    va_end (args);
+
+    D_vsprintf (buffer2, "TK ST %d SP %08X\n%08X %08X\n%08X %08X\n%08X %08X\n%08X %08X\n%08X %08X\n%08X %08X", info);
+
+    fb = (u32 *)cfb[0];
+    for (i = 0; i < SCREEN_WD*SCREEN_HT; i++)
+        fb[i] = 0x400000FF;     /* dark red, RGBA8888 */
+
+    x = 8;
+    y = 8;
+    I_CPUText(fb, buffer, &x, &y);
+    x = 8;
+    y += 16;
+    I_CPUText(fb, buffer2, &x, &y);
+
+    osWritebackDCacheAll();
+    osViBlack(FALSE);
+    osViSwapBuffer(fb);
+
+    osStopThread(NULL);
+    for (;;) {}
+}
+#endif
+
+#ifdef FREEZE_DEBUG
 /* Debug only: a CPU exception in the main thread (bad pointer, bad jump...)
    stops that thread silently and the game just freezes with audio running.
    This thread waits for libultra's fault event and shows where it happened. */
@@ -267,7 +465,7 @@ static void I_FaultThread(void *arg)
     osRecvMesg(&fault_msgque, &m, OS_MESG_BLOCK);
 
     t = __osFaultedThread;
-    I_Error("CPU FAULT thread %d\npc %08x ra %08x\ncause %08x badv %08x\nsr %08x",
+    I_CPUError("CPU FAULT THREAD %d\nPC %08X\nRA %08X\nCAUSE %08X\nBADV %08X\nSR %08X",
             t->id, (u32)t->context.pc, (u32)t->context.ra,
             (u32)t->context.cause, (u32)t->context.badvaddr, (u32)t->context.sr);
 }
@@ -812,22 +1010,22 @@ void I_ClearFrame(void) // 8000637C
 void I_RecvMesgWD(OSMesgQueue *mq, OSMesg *msg, int where)
 {
 #ifdef FREEZE_DEBUG
-    OSTimer wd_timer;
-    OSMesg wd_msg;
+    /* Polls with the CPU cycle counter instead of osSetTimer, so it does not
+       depend on libultra's timer list. 3 s = 140625000 counts (fits a u32). */
+    u32 wd_start = osGetCount();
 
-    osSetTimer(&wd_timer, (OSTime)46875000 * 3, 0, mq, (OSMesg)0x7777);
-    osRecvMesg(mq, &wd_msg, OS_MESG_BLOCK);
-    osStopTimer(&wd_timer);
-
-    if (wd_msg == (OSMesg)0x7777)
+    while (osRecvMesg(mq, msg, OS_MESG_NOBLOCK) == -1)
     {
-        I_Error("WAIT TIMEOUT %d st %d\nvs %d ds2 %d\nq2 %d q3 %d q4 %d", where,
-                (int)SystemTickerStatus, (int)vsync, (int)drawsync2,
-                sys_msgque_vbi2.validCount, sys_msgque_vbi3.validCount, sys_msgque_vbi4.validCount);
+        if ((u32)(osGetCount() - wd_start) > 140625000)
+        {
+            I_CPUError("WAIT TIMEOUT %d\nST %d VS %d DS %d\nQ2 %d Q3 %d Q4 %d\nSPST %08X DP %08X\nCUR %08X END %08X", where,
+                    (int)SystemTickerStatus, (int)vsync, (int)drawsync2,
+                    sys_msgque_vbi2.validCount, sys_msgque_vbi3.validCount, sys_msgque_vbi4.validCount,
+                    IO_READ(SP_STATUS_REG), IO_READ(DPC_STATUS_REG),
+                    IO_READ(DPC_CURRENT_REG), IO_READ(DPC_END_REG));
+        }
+        osYieldThread();
     }
-
-    if (msg)
-        *msg = wd_msg;
 #else
     osRecvMesg(mq, msg, OS_MESG_BLOCK);
 #endif
@@ -855,40 +1053,26 @@ void I_DrawFrame(void)  // 80006570
 #ifdef FREEZE_DEBUG
     {
         /* Watchdog: if the ticker thread never answers with KICKSTART the
-           game sits on a black/frozen screen forever. After ~3 s dump the
-           pipeline state to an error screen instead (resetting it first so
-           the error screen itself can be drawn). */
-        static OSTimer wd_timer;
-        static int wd_fired = 0;
-        OSMesg wd_msg;
+           game sits on a black/frozen screen forever. After ~3 s show the
+           pipeline state on the CPU-drawn error screen. Polls the CPU cycle
+           counter, no libultra timer involved. */
+        u32 wd_start = osGetCount();
 
-        if (!wd_fired)
+        while (osRecvMesg(&sys_msgque_vbi2, NULL, OS_MESG_NOBLOCK) == -1)
         {
-            osSetTimer(&wd_timer, (OSTime)46875000 * 3, 0, &sys_msgque_vbi2, (OSMesg)0x7777);
-            osRecvMesg(&sys_msgque_vbi2, &wd_msg, OS_MESG_BLOCK);
-            osStopTimer(&wd_timer);
-
-            if (wd_msg == (OSMesg)0x7777)
+            if ((u32)(osGetCount() - wd_start) > 140625000)
             {
-                int st = (int)SystemTickerStatus;
-                int vs = (int)vsync, d2 = (int)drawsync2, d1 = (int)drawsync1;
-                int q3 = sys_msgque_vbi3.validCount, q4 = sys_msgque_vbi4.validCount, q2 = sys_msgque_vbi2.validCount;
-                int cur = (int)osViGetCurrentFramebuffer() == (int)cfb[0] ? 0 : 1;
-                int nxt = (int)osViGetNextFramebuffer() == (int)cfb[0] ? 0 : 1;
-
-                wd_fired = 1;
-                SystemTickerStatus = 0;
-                while (osRecvMesg(&sys_msgque_vbi3, NULL, OS_MESG_NOBLOCK) != -1) {}
-                while (osRecvMesg(&sys_msgque_vbi4, NULL, OS_MESG_NOBLOCK) != -1) {}
-                osJamMesg(&sys_msgque_vbi2, (OSMesg)VID_MSG_KICKSTART, OS_MESG_NOBLOCK);
-
-                I_Error("WATCHDOG st %d vs %d\nds2 %d ds1 %d\nq2 %d q3 %d q4 %d\ncur %d nxt %d", st, vs, d2, d1, q2, q3, q4, cur, nxt);
+                I_CPUError("FRAME TIMEOUT\nST %d VS %d DS %d\nQ2 %d Q3 %d Q4 %d\nSPST %08X DP %08X\nCUR %08X END %08X",
+                        (int)SystemTickerStatus, (int)vsync, (int)drawsync2,
+                        sys_msgque_vbi2.validCount, sys_msgque_vbi3.validCount, sys_msgque_vbi4.validCount,
+                        IO_READ(SP_STATUS_REG), IO_READ(DPC_STATUS_REG),
+                        IO_READ(DPC_CURRENT_REG), IO_READ(DPC_END_REG));
             }
+            osYieldThread();
         }
-        else
-        {
-            osRecvMesg(&sys_msgque_vbi2, NULL, OS_MESG_BLOCK);
-        }
+#ifdef AUDIO_ERR_OVERLAY
+        I_AudioErrOverlay();
+#endif
     }
 #else
     osRecvMesg(&sys_msgque_vbi2, NULL, OS_MESG_BLOCK);//retraceMessageQ

@@ -1326,8 +1326,10 @@ void A_PainShootSkull(mobj_t *actor, angle_t angle) // 8001267C
 	if (!P_PathTraverse(actor->x, actor->y, newmobj->x, newmobj->y, PT_ADDLINES, PIT_PainCheckLine) ||
         !P_TryMove(newmobj, newmobj->x, newmobj->y))
 	{
-		// kill it immediately
-		P_DamageMobj(newmobj, actor, actor, 60); // give more reasonable damage? Was 10000
+		// kill it immediately. With only 60 damage the skull (100 health) survived
+		// inside the wall/void, and P_DamageMobj made it target its own parent, so
+		// the pain elemental and a stuck skull kept fighting each other.
+		P_DamageMobj(newmobj, actor, actor, 10000);
         P_RadiusAttack(newmobj, newmobj, 128);
 		return;
 	}
