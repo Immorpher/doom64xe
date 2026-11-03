@@ -3,7 +3,6 @@
 #include "p_local.h"
 #include "r_local.h"
 
-#define AUDIO_HEAP_SIZE	(0x44800)
 extern u64 audio_heap[AUDIO_HEAP_SIZE / sizeof(u64)];//80325800
 
 extern char _doom64_wmdSegmentRomStart[], _doom64_wmdSegmentRomEnd[];
@@ -15,6 +14,7 @@ extern char _doom64_wddSegmentRomStart[], _doom64_wddSegmentRomEnd[];
 volatile char *S_LastAudioError;
 volatile int S_AudioErrorCount;
 volatile int S_AudioErr[3]; /* MAXRSPCMDS, DMAPTRNULL, DMANOTDONE */
+volatile int S_AudioHeapUsed; /* bytes of audio_heap in use after S_Init (shrink AUDIO_HEAP_SIZE toward this) */
 
 void S_Error_Callback_Routine(char *errstring, int errnum1, int errnum2) // 80029580
 {
@@ -40,9 +40,20 @@ extern char MusVolume;
 extern void wess_set_tweaks2(WessTweakAttr *attr);
 extern void wess_get_tweaks2(WessTweakAttr *attr);
 
+/* Allocate from the audio heap, failing with exact numbers instead of
+   returning NULL (which would crash later inside the loaders). */
+static void *S_AudioHeapAlloc(ALHeap *heap, int size)
+{
+	int left = (int)((u8 *)audio_heap + AUDIO_HEAP_SIZE - (u8 *)heap->cur);
+
+	if (size > left)
+		I_Error("S_Init: Audio heap too small, short by %d bytes", size - left);
+
+	return alHeapAlloc(heap, 1, size);
+}
+
 void S_Init(void) // 80029590
 {
-	int audioHeapEnd;
 	//int loaded;
 	int modulesize;
 	int seqsize, seqtblsize;
@@ -64,7 +75,7 @@ void S_Init(void) // 80029590
 
 	wess_set_error_callback(S_Error_Callback_Routine);
 
-	/* tweak audio */
+	/* tweak audio (must come before anything that sizes or allocates) */
 	wess_get_tweaks(&tweak);
 
 	tweak.mask = TWEAK_DMA_BUFFERS | TWEAK_DMA_MESSAGES | TWEAK_DMA_BUFFER_LENGTH;
@@ -73,11 +84,46 @@ void S_Init(void) // 80029590
 	tweak.dma_buffer_length = 0x600;
 	wess_set_tweaks(&tweak);
 
-	/* init audio */
+	/* base init: ROM DMA queue + WESS shell, so the data below can be read
+	   from ROM before the driver buffers are allocated by wess_init */
+	wess_base_init(_doom64_wddSegmentRomStart);
+
+	// now we load the .wmd image into a temporary ram space
+	modulesize = wess_size_module(_doom64_wmdSegmentRomStart);
+	modulesize = ((modulesize + 15) & ~15);
+	moduleptr = S_AudioHeapAlloc(&sys_aheap, modulesize);
+	//PRINTF_D(WHITE, "modulesize %d", modulesize);
+	//PRINTF_D(WHITE, "moduleptr %x", (int)&moduleptr);
+
+	//loaded = 
+	wess_load_module(_doom64_wmdSegmentRomStart, moduleptr, modulesize);
+	//PRINTF_D(WHITE, "loaded %d", loaded);
+
+	seqtblsize = wess_seq_loader_sizeof(wess_get_master_status(), _doom64_wsdSegmentRomStart);
+	seqtblsize = ((seqtblsize + 15) & ~15);
+	seqtblptr = S_AudioHeapAlloc(&sys_aheap, seqtblsize);
+	//PRINTF_D(WHITE, "seqtblsize %d", seqtblsize);
+	//PRINTF_D(WHITE, "seqtblptr %x", (int)&seqtblptr);
+
+	//this call may result in decompression callbacks
+	wess_seq_loader_init(wess_get_master_status(), _doom64_wsdSegmentRomStart, NoOpenSeqHandle, seqtblptr, seqtblsize);
+
+	seqsize = wess_seq_range_sizeof(0, wess_seq_loader_count());
+	seqsize = ((seqsize + 15) & ~15);
+	seqptr = S_AudioHeapAlloc(&sys_aheap, seqsize);
+
+	//PRINTF_D(WHITE, "seqsize %d", seqsize);
+	//PRINTF_D(WHITE, "seqptr %x", (int)&seqptr);
+
+	//this call may result in decompression callbacks
+	wess_seq_range_load(0, wess_seq_loader_count(), seqptr);
+
+	/* init audio: the driver buffers (voices, DMA, ACMD lists, output
+	   buffers, synth/reverb) are allocated from whatever the data left over */
 	wess_config.heap_ptr = &sys_aheap;
 	wess_config.outputsamplerate = 22050;
 	wess_config.maxACMDSize = 1024 * 3;
-	wess_config.wdd_location = _doom64_wddSegmentRomStart;
+	wess_config.wdd_location = _doom64_wddSegmentRomStart; /* unused by wess_init now, see wess_base_init */
 	wess_config.reverb_id = WESS_REVERB_BIGROOM;
 	wess_config.revtbl_ptr = 0;
 	wess_config.audioframerate = (f32)SYS_FRAMES_PER_SEC;
@@ -87,48 +133,16 @@ void S_Init(void) // 80029590
 	//PRINTF_D(WHITE, "heap_ptr %x", (int)&wess_config.heap_ptr);
 	//PRINTF_D(WHITE, "outputsamplerate %d", wess_config.outputsamplerate);
 	//PRINTF_D(WHITE, "maxACMDSize %d", wess_config.maxACMDSize);
-	//PRINTF_D(WHITE, "wdd_location %x", (int)&wess_config.wdd_location);
 	//PRINTF_D(WHITE, "reverb_id %d", wess_config.reverb_id);
 	//PRINTF_D(WHITE, "revtbl_ptr %d", wess_config.revtbl_ptr);
 	//PRINTF_D(WHITE, "audioframerate %f", (f32)wess_config.audioframerate);
 
-	// now we load the .wmd image into a temporary ram space
-	modulesize = wess_size_module(_doom64_wmdSegmentRomStart);
-	modulesize = ((modulesize + 15) & ~15);
-	moduleptr = alHeapAlloc(&sys_aheap, 1, modulesize);
-	//PRINTF_D(WHITE, "modulesize %d", modulesize);
-	//PRINTF_D(WHITE, "moduleptr %x", (int)&moduleptr);
+	/* exact usage, no probe allocation needed */
+	S_AudioHeapUsed = (int)((u8 *)sys_aheap.cur - (u8 *)audio_heap);
 
-	//loaded = 
-	wess_load_module(_doom64_wmdSegmentRomStart, moduleptr, modulesize);
-	//PRINTF_D(WHITE, "loaded %d", loaded);
+	//PRINTF_D(WHITE, "S_AudioHeapUsed %x", S_AudioHeapUsed);
 
-
-	seqtblsize = wess_seq_loader_sizeof(wess_get_master_status(), _doom64_wsdSegmentRomStart);
-	seqtblsize = ((seqtblsize + 15) & ~15);
-	seqtblptr = alHeapAlloc(&sys_aheap, 1, seqtblsize);
-	//PRINTF_D(WHITE, "seqtblsize %d", seqtblsize);
-	//PRINTF_D(WHITE, "seqtblptr %x", (int)&seqtblptr);
-
-	//this call may result in decompression callbacks
-	wess_seq_loader_init(wess_get_master_status(), _doom64_wsdSegmentRomStart, NoOpenSeqHandle, seqtblptr, seqtblsize);
-
-	seqsize = wess_seq_range_sizeof(0, wess_seq_loader_count());
-	seqtblsize = ((seqsize + 15) & ~15);
-	seqptr = alHeapAlloc(&sys_aheap, 1, seqsize);
-
-	//PRINTF_D(WHITE, "seqsize %d", seqsize);
-	//PRINTF_D(WHITE, "seqptr %x", (int)&seqptr);
-
-	//this call may result in decompression callbacks
-	wess_seq_range_load(0, wess_seq_loader_count(), seqptr);
-
-	audioHeapEnd = (int)alHeapAlloc(&sys_aheap, 1, 4) - (int)&audio_heap;
-	audioHeapEnd += 16;
-
-	//PRINTF_D(WHITE, "audioHeapEnd %x", audioHeapEnd);
-
-	if (audioHeapEnd > AUDIO_HEAP_SIZE)
+	if (S_AudioHeapUsed > AUDIO_HEAP_SIZE)
 		I_Error("S_Init: Audio heap overflow");
 
 	wess_master_sfx_vol_set(SfxVolume);

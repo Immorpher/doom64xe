@@ -54,6 +54,7 @@ extern char         *reverb_status;	//800B40E4
 extern int wess_memfill(void *dst, unsigned char fill, int count);          // 8002E300
 extern int wess_rom_copy(char *src, char *dest, int len);                   // 8002E334
 extern s32 milli_to_param(register s32 paramvalue, register s32 rate);      // 8002E3D0
+extern void wess_base_init(char *wdd_location) COLD;
 extern void wess_init(WessConfig *wessconfig) COLD;                              // 8002E41C
 extern void amCreateAudioMgr(ALSynConfig *config, WessConfig *wessconfig) COLD;  // 8002E610
 extern OSTask * wess_work(void) COLD;                                            // 8002EB2C

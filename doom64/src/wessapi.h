@@ -197,6 +197,17 @@ typedef struct WessConfig {     /* see wess_init function for more info */
 extern void wess_init(WessConfig *wessconfig);
 
     /*
+        wess_base_init - first stage of audio init (call BEFORE wess_init)
+
+        Sets up the ROM DMA queue, the .wdd location and the WESS shell so
+        that wess_size_module / wess_load_module / the sequence loaders can
+        run before wess_init has allocated the driver buffers. This lets the
+        caller size the audio heap from the real data. wdd_location replaces
+        WessConfig.wdd_location, which wess_init no longer reads.
+    */
+extern void wess_base_init(char *wdd_location);
+
+    /*
         wess_rom_copy - U64 rom copy
 
         after wess_init has been called, you can call wess_rom_copy

@@ -85,7 +85,7 @@ int wess_rom_copy(char *src, char *dest, int len) // 8002E334
 	OSMesg dummyMesg;
 	OSIoMesg DMAIoMesgBuf;
 
-	if (init_completed != 0 && len != 0)
+	if (len != 0)
 	{
 		osInvalDCache((void *)dest, (s32)len);
 		osPiStartDma(&DMAIoMesgBuf, OS_MESG_PRI_HIGH, OS_READ, (u32)src, (void *)dest, (u32)len, &wess_dmaMessageQ);
@@ -161,6 +161,23 @@ s32 milli_to_param(register s32 paramvalue, register s32 rate) // 8002E3D0
 #endif
 }
 
+/*
+ * wess_base_init - first stage of audio init.
+ *
+ * Creates the ROM DMA queue, records the .wdd location and starts the WESS
+ * shell. After this call wess_rom_copy (and therefore wess_size_module,
+ * wess_load_module and the sequence loaders) work, so the module/sequence data
+ * can be sized and loaded BEFORE wess_init allocates the driver buffers.
+ */
+void wess_base_init(char *wdd_location)
+{
+	// Create audio DMA thread...
+	osCreateMesgQueue(&wess_dmaMessageQ, wess_dmaMessageBuf, NUM_DMA_MESSAGES);
+
+	N64_wdd_location(wdd_location);
+	wesssys_init();
+}
+
 void wess_init(WessConfig *wessconfig) // 8002E41C
 {
 	ALSynConfig config;
@@ -168,13 +185,8 @@ void wess_init(WessConfig *wessconfig) // 8002E41C
 	s32 *params;//Custom reverb
 	int sections, section_pos;
 
-	// Create audio DMA thread...
-	osCreateMesgQueue(&wess_dmaMessageQ, wess_dmaMessageBuf, NUM_DMA_MESSAGES);
-
 	buf = 0;
 	lastInfo = NULL;
-
-	N64_wdd_location(wessconfig->wdd_location);
 
 	config.dmaproc = __amDmaNew;
 	config.maxPVoices = config.maxVVoices = wess_driver_voices;
@@ -221,7 +233,6 @@ void wess_init(WessConfig *wessconfig) // 8002E41C
 
 	amCreateAudioMgr(&config, wessconfig);
 	SSP_SeqpNew();
-	wesssys_init();
 	init_completed = 1;
 }
 
