@@ -87,35 +87,35 @@ extern unsigned char nextmap;
 #define MI_TXT73	"Sorrow" // Fun level
 
 // Vehemence maps
-#define MI_TXT74	"Gateway Lab"
-#define MI_TXT75	"Blood Canyon"
-#define MI_TXT76	"The Burning Eye"
-#define MI_TXT77	"Cursed Corridors"
-#define MI_TXT78	"Far Removed"
-#define MI_TXT79	"Storage Complex"
-#define MI_TXT80	"Dark Blue Dot"
-#define MI_TXT81	"Surnevo Bownkread"
-#define MI_TXT82	"Wretched Passage"
-#define MI_TXT83	"The Vehemence"
-#define MI_TXT84	"Pain Harvest"
-#define MI_TXT85	"Doom Guy Must Die"
-#define MI_TXT86	"Play With Cyberdemons"
-#define MI_TXT87	"Misty Peak"
-#define MI_TXT88	"Meat Shot"
-#define MI_TXT89	"Immorphium Storage"
-#define MI_TXT90	"The Descent"
-#define MI_TXT91	"Foreboding Pestilence"
-#define MI_TXT92	"Shadows"
-#define MI_TXT93	"Play With Mom"
-#define MI_TXT94	"Blue Castle"
-#define MI_TXT95	"Pumping Station"
-#define MI_TXT96	"The Gasman Cometh"
-#define MI_TXT97	"Ubiquitous"
-#define MI_TXT98	"CyberPac"
-#define MI_TXT99	"The Twilight Scream"
-#define MI_TXT100	"Stormy Maze"
-#define MI_TXT101	"PE Test"
-#define MI_TXT102	"Emergency Escape"
+#define MI_TXT74	"Hexagonal Heat"
+#define MI_TXT75	"Wellspring Catacombs"
+#define MI_TXT76	"Blood Canyon"
+#define MI_TXT77	"Storage Complex"
+#define MI_TXT78	"Wretched Passage"
+#define MI_TXT79	"Tempestas Labyrinthus"
+#define MI_TXT80	"Cursed Corridors"
+#define MI_TXT81	"MeatShot"
+#define MI_TXT82	"The Blue Castle"
+#define MI_TXT83	"Palace of Shadows"
+#define MI_TXT84	"Foreboding Pestilence"
+#define MI_TXT85	"The Descent"
+#define MI_TXT86	"Ubiquitous"
+#define MI_TXT87	"Gateway Lab"
+#define MI_TXT88	"Far Removed"
+#define MI_TXT89	"The Burning Eye"
+#define MI_TXT90	"Immorphium Storage"
+#define MI_TXT91	"Pain Harvest"
+#define MI_TXT92	"Foggy Mountain"
+#define MI_TXT93	"Dark Blue Dot"
+#define MI_TXT94	"The Gasman Cometh"
+#define MI_TXT95	"Twilight Scream"
+#define MI_TXT96	"The Vehemence"
+#define MI_TXT97	"Emergency Escape"
+#define MI_TXT98	"Doomguy Must Die"
+#define MI_TXT99	"SurnevoBownkread"
+#define MI_TXT100	"Lets Play With Mome"
+#define MI_TXT101	"Lets Play With Cyberdemons"
+#define MI_TXT102	"CyberPac"
 
 
 // Bonus Pak Maps
@@ -221,35 +221,35 @@ mapinfo_t MapInfo[] = //8005A478
 
 	// Vehemence levels	
 
-    {MI_TXT74 , 100}, // Gateway Lab
-    {MI_TXT75 , 100}, // Blood Canyon
-    {MI_TXT76 , 100}, // The Burning Eye
-    {MI_TXT77 , 100}, // Cursed Corridors
-    {MI_TXT78 , 100}, // Far Removed
-    {MI_TXT79 , 100}, // Storage Complex
-    {MI_TXT80 , 100}, // Dark Blue Dot
-    {MI_TXT81 , 100}, // Surnevo Bownkread
-    {MI_TXT82 , 100}, // Wretched Passage
-    {MI_TXT83 , 100}, // The Vehemence
-    {MI_TXT84 , 100}, // Pain Harvest
-    {MI_TXT85 , 100}, // Doom Guy Must Die
-    {MI_TXT86 , 100}, // Lets Play With Cyberdemons
-    {MI_TXT87 , 100}, // Misty Peak
-    {MI_TXT88 , 100}, // Meat Shot
-    {MI_TXT89 , 100}, // Immorphium Storage
-    {MI_TXT90 , 100}, // The Descent
-    {MI_TXT91 , 100}, // Foreboding Pestilence
-    {MI_TXT92 , 100}, // Shadows
-    {MI_TXT93 , 100}, // Play With Mom
-    {MI_TXT94 , 100}, // Blue Castle
-    {MI_TXT95 , 100}, // Pumping Station
-    {MI_TXT96 , 100}, // The Gasman Cometh
-    {MI_TXT97 , 100}, // Ubiquitous
-    {MI_TXT98 , 100}, // CyberPac
-    {MI_TXT99 , 100}, // The Twilight Scream
-    {MI_TXT100 , 100}, // Stormy Maze
-    {MI_TXT101 , 100}, // PE Test
-    {MI_TXT102 , 100}, // Emergency Escape
+    {MI_TXT74 , 100}, // Hexagonal Heat
+    {MI_TXT75 , 100}, // Wellspring Catacombs
+    {MI_TXT76 , 100}, // Blood Canyon
+    {MI_TXT77 , 100}, // Storage Complex
+    {MI_TXT78 , 100}, // Wretched Passage
+    {MI_TXT79 , 100}, // Tempestas Labyrinthus
+    {MI_TXT80 , 100}, // Cursed Corridors
+    {MI_TXT81 , 100}, // MeatShot
+    {MI_TXT82 , 100}, // The Blue Castle
+    {MI_TXT83 , 100}, // Palace of Shadows
+    {MI_TXT84 , 100}, // Foreboding Pestilence
+    {MI_TXT85 , 100}, // The Descent
+    {MI_TXT86 , 100}, // Ubiquitous
+    {MI_TXT87 , 100}, // Gateway Lab
+    {MI_TXT88 , 100}, // Far Removed
+    {MI_TXT89 , 100}, // The Burning Eye
+    {MI_TXT90 , 100}, // Immorphium Storage
+    {MI_TXT91 , 100}, // Pain Harvest
+    {MI_TXT92 , 100}, // Foggy Mountain
+    {MI_TXT93 , 100}, // Dark Blue Dot
+    {MI_TXT94 , 100}, // The Gasman Cometh
+    {MI_TXT95 , 100}, // Twilight Scream
+    {MI_TXT96 , 100}, // The Vehemence
+    {MI_TXT97 , 100}, // Emergency Escape
+    {MI_TXT98 , 100}, // Doomguy Must Die
+    {MI_TXT99 , 100}, // SurnevoBownkread
+    {MI_TXT100 , 100}, // Lets Play With Mom
+    {MI_TXT101 , 100}, // Lets Play With Cyberdemons
+    {MI_TXT102 , 100}, // CyberPac
     {T_NULL , 0},
     {T_NULL , 0},
     {T_NULL , 0},
