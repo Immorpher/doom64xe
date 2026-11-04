@@ -2,7 +2,7 @@
 /* ULTRA64 LIBRARIES */
 #include <ultra64.h>
 #include "ultratypes.h"
-#include <libaudio.h>
+#include <n_libaudio_sc.h>
 
 #include "wessseq.h"
 
@@ -12,7 +12,7 @@
 
 #ifndef NOUSEWESSCODE
 
-extern ALVoice     *voice;         //800B40E0
+extern N_ALVoice   *voice;         //800B40E0
 
 void wess_set_mute_release(int millisec);
 f32 WessCents2Ratio(s32 cents);
@@ -321,12 +321,12 @@ void TriggerN64Voice(voice_status *voice_stat) // 80037A64
 
 	//PRINTF_D2(WHITE,0,10,"voice_stat->refindx %d   ", voice_stat->refindx);
 
-	alSynAllocVoice(&alGlobals->drvr, &voice[voice_stat->refindx], &config);
+	n_alSynAllocVoice(&voice[voice_stat->refindx], &config);
 
 	pitch = (f32)WessCents2Ratio((voice_stat->patchinfo->pitch + adjpitch + (voice_stat->keynum - voice_stat->patchmaps->root_key) * 100) - voice_stat->patchmaps->fine_adj);
 	deltatime = voice_stat->patchmaps->attack_time * 1000;
 
-	alSynStartVoiceParams(&alGlobals->drvr, &voice[voice_stat->refindx], (ALWaveTable *)&voice_stat->patchinfo->wave, (f32)pitch, (s16)adjvol, (ALPan)adjpan, (u8)pts->reverb, (ALMicroTime)deltatime);
+	n_alSynStartVoiceParams(&voice[voice_stat->refindx], (ALWaveTable *)&voice_stat->patchinfo->wave, (f32)pitch, (s16)adjvol, (ALPan)adjpan, (u8)pts->reverb, (ALMicroTime)deltatime);
 }
 //-----------------------------------------------------------
 // Driver System
@@ -642,7 +642,7 @@ void N64_PitchMod(track_status *ptk_stat) // 80038424
                     }
 
                     pitch = (f32)WessCents2Ratio((pvs->patchinfo->pitch + adjpitch + (pvs->keynum - pvs->patchmaps->root_key) * 100) - pvs->patchmaps->fine_adj);
-                    alSynSetPitch(&alGlobals->drvr, &voice[pvs->refindx], (f32)pitch);
+                    n_alSynSetPitch(&voice[pvs->refindx], (f32)pitch);
 
                     if (!--vn) break;
 				}
@@ -703,7 +703,7 @@ void N64_VolumeMod(track_status *ptk_stat) // 800386D8
 					adjvol = volume >> 0xd;
 					deltaTime = 1000;
 
-					alSynSetVol(&alGlobals->drvr, &voice[pvs->refindx], (s16)adjvol, (ALMicroTime)deltaTime);
+					n_alSynSetVol(&voice[pvs->refindx], (s16)adjvol, (ALMicroTime)deltaTime);
 
 					if (!--vn) break;
 				}
@@ -746,7 +746,7 @@ void N64_PanMod(track_status *ptk_stat) // 800388FC
 						if (adjpan < 0)    adjpan = 0;
 						if (adjpan > 0x7f)	adjpan = 0x7f;
 
-						alSynSetPan(&alGlobals->drvr, &voice[pvs->refindx], (ALPan)adjpan);
+						n_alSynSetPan(&voice[pvs->refindx], (ALPan)adjpan);
 
 						if (!--vn) break;
 					}
@@ -825,7 +825,7 @@ void N64_ReverbMod(track_status *ptk_stat) // 80038BD8
 			{
 				if ((pvs->flags & VOICE_ACTIVE) && (pvs->track == ptk_stat->refindx))
 				{
-					alSynSetPan(&alGlobals->drvr, &voice[pvs->refindx], (ALPan)thereverbmod);
+					n_alSynSetPan(&voice[pvs->refindx], (ALPan)thereverbmod);
 
 					if (!--vn) break;
 				}
@@ -868,8 +868,8 @@ void N64_voiceparmoff(voice_status *voice_stat) // 80038DE4
 	static track_status	*ptrack;	//800B6A18
 	//PRINTF_D2(WHITE,0,7,"N64_voiceparmoff");
 
-	alSynStopVoice(&alGlobals->drvr, &voice[voice_stat->refindx]);
-	alSynFreeVoice(&alGlobals->drvr, &voice[voice_stat->refindx]);
+	n_alSynStopVoice(&voice[voice_stat->refindx]);
+	n_alSynFreeVoice(&voice[voice_stat->refindx]);
 
 	ptrack = (ptsbase + voice_stat->track);
 	pmsbase->voices_active--;
@@ -892,8 +892,8 @@ void N64_voicemuterelease(voice_status *voice_stat, int muterelease) // 80038EF8
 	//PRINTF_D2(WHITE,0,7,"N64_voicemuterelease");
 
 	deltaTime = muterelease * 1000;
-	alSynSetPriority(&alGlobals->drvr, &voice[voice_stat->refindx], 0); /* make candidate for stealing */
-	alSynSetVol(&alGlobals->drvr, &voice[voice_stat->refindx], 0, deltaTime);
+	n_alSynSetPriority(&voice[voice_stat->refindx], 0); /* make candidate for stealing */
+	n_alSynSetVol(&voice[voice_stat->refindx], 0, deltaTime);
 
 	voice_stat->flags = (voice_stat->flags | VOICE_RELEASE) & ~VOICE_DECAY;
 	voice_stat->pabstime = *pcurabstime + muterelease;
@@ -906,8 +906,8 @@ void N64_voicerelease(voice_status *voice_stat) // 80038FBC
 	//PRINTF_D2(WHITE,0,7,"N64_voicerelease");
 
 	deltaTime = voice_stat->patchmaps->release_time * 1000;
-	alSynSetPriority(&alGlobals->drvr, &voice[voice_stat->refindx], 0); /* make candidate for stealing */
-	alSynSetVol(&alGlobals->drvr, &voice[voice_stat->refindx], 0, deltaTime);
+	n_alSynSetPriority(&voice[voice_stat->refindx], 0); /* make candidate for stealing */
+	n_alSynSetVol(&voice[voice_stat->refindx], 0, deltaTime);
 
 	voice_stat->flags = (voice_stat->flags | VOICE_RELEASE) & ~VOICE_DECAY;
 	voice_stat->pabstime = *pcurabstime + (unsigned long)voice_stat->patchmaps->release_time;
@@ -940,7 +940,7 @@ void N64_voicedecay(voice_status *voice_stat) // 80039084
 	if (enabledecay)
 	{
 		deltaTime = voice_stat->patchmaps->decay_time * 1000;
-		alSynSetVol(&alGlobals->drvr, &voice[voice_stat->refindx], (s16)adjvol, deltaTime);
+		n_alSynSetVol(&voice[voice_stat->refindx], (s16)adjvol, deltaTime);
 	}
 
 	voice_stat->flags &= ~VOICE_DECAY;

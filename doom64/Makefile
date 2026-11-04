@@ -150,11 +150,11 @@ $(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	@$(PRINT) "$(GREEN)Linking ELF file (LTO):  $(BLUE)$@ $(NO_COL)\n"
 	$(V)$(CC) $(LTO_LDFLAGS) -nostdlib -nostartfiles \
 		-Wl,-T,$(BUILD_DIR)/$(LD_SCRIPT) -Wl,-Map,$(BUILD_DIR)/$(TARGET).map -Wl,--no-check-sections \
-		-L$(BUILD_DIR) -o $@ $(O_FILES) -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
+		-L$(BUILD_DIR) -o $@ $(O_FILES) -L/usr/lib/n64 -ln_audio_sc -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
 else
 $(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	@$(PRINT) "$(GREEN)Linking ELF file:  $(BLUE)$@ $(NO_COL)\n"
-	$(V)$(LD) -L $(BUILD_DIR) -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/$(TARGET).map -o $@ $(O_FILES) --no-check-sections -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
+	$(V)$(LD) -L $(BUILD_DIR) -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/$(TARGET).map -o $@ $(O_FILES) --no-check-sections -L/usr/lib/n64 -ln_audio_sc -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
 endif
 
 # Build ROM

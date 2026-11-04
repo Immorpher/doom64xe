@@ -51,29 +51,32 @@ SECTIONS
       *.o(.text.unlikely);
 
       */libultra_rom.a:*.o(.text);
+      */libn_audio_sc.a:*.o(.text);
       */libgcc.a:*.o(.text);
 
       /usr/lib/n64/PR/rspboot.o(.text);
       /usr/lib/n64/PR/gspL3DEX2.fifo.o(.text);
       /usr/lib/n64/PR/gspF3DEX2.NoN.fifo.o(.text);
-      /usr/lib/n64/PR/aspMain.o(.text);
+      /usr/lib/n64/PR/n_aspMain.o(.text);
 
       /* data */
       *.ltrans.o(.data*);
       BUILD_DIR/src*.o(.data*);
 
       */libultra_rom.a:*.o(.data*);
+      */libn_audio_sc.a:*.o(.data*);
       
       /usr/lib/n64/PR/rspboot.o(.data*);
       /usr/lib/n64/PR/gspL3DEX2.fifo.o(.data*);
       /usr/lib/n64/PR/gspF3DEX2.NoN.fifo.o(.data*);
-      /usr/lib/n64/PR/aspMain.o(.data*);
+      /usr/lib/n64/PR/n_aspMain.o(.data*);
 
       /* rodata */
       *.ltrans.o(.*rodata*);
       BUILD_DIR/src*.o(.*rodata*);
 
       */libultra_rom.a:*.o(.*rodata*);
+      */libn_audio_sc.a:*.o(.*rodata*);
       */libgcc.a:*.o(.*rodata*);
    }
    END_SEG(code)
@@ -90,6 +93,10 @@ SECTIONS
       */libultra_rom.a:*.o(COMMON);
       */libultra_rom.a:*.o(.scommon);
       */libultra_rom.a:*.o(.*bss*);
+
+      */libn_audio_sc.a:*.o(COMMON);
+      */libn_audio_sc.a:*.o(.scommon);
+      */libn_audio_sc.a:*.o(.*bss*);
    }
    END_NOLOAD(code)
 

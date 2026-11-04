@@ -25,6 +25,10 @@ If you are running on a Linux distribution supported by the [Modern N64 SDK](htt
 
 If you prefer to run the build inside a container, a Dockerfile is included that builds an image with only the files required to build this project (~460MB). You can then mount the `doom64` directory and run `make-rom.sh`. Alternatively, you can run `build.sh` or `build.ps1` (for Windows users) to do it automatically.
 
+### N-audio
+
+The sound driver uses the SDK's N-audio library (`N_ALVoice`, `n_al*`, `n_aspMain` microcode, `libn_audio_sc.a`) instead of the classic `al*` synth API. It comes from the `libnaudio` package of the Modern N64 SDK, which is separate from `n64sdk`; the Dockerfile installs it. If you use a local SDK install, make sure `libnaudio` is installed too (`/usr/lib/n64/libn_audio_sc.a` and `/usr/include/n64/PR/n_libaudio_sc.h` must exist).
+
 ### Link time optimization (LTO)
 
 The build uses LTO (`-flto=auto`) by default. Two things are needed for it to work:

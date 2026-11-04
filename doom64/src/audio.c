@@ -37,7 +37,7 @@ extern void wesssys_exit(enum RestoreFlag rflag);
 #ifndef NOUSEWESSCODE
 //------------
 AMAudioMgr  __am;           //800B4060
-ALVoice     *voice;         //800B40E0
+N_ALVoice   *voice;         //800B40E0
 char        *reverb_status; //800B40E4
 //------------
 
@@ -61,6 +61,8 @@ u32				buf = 0;			//8005D8BC
 AudioInfo		*lastInfo = 0;		//8005D8C0
 
 u32				init_completed = 0;	//8005D8C4
+
+#define SAMPLES		184	/* n_aspMain processes audio in blocks of 184 samples */
 
 #define NUM_DMA_MESSAGES	8	/* The maximum number of DMAs any one frame can have.*/
 OSMesgQueue     wess_dmaMessageQ;	//800b4108
@@ -269,14 +271,13 @@ void amCreateAudioMgr(ALSynConfig *config, WessConfig *wessconfig) // 8002E610
 		frameSize = frameSize1;
 	}
 
-	if (frameSize & 15)
-		frameSize = (frameSize & ~0xf) + 16;
-
-	minFrameSize = frameSize - 16;
+	/* n_audio: frame size must be a multiple of SAMPLES (184) */
+	frameSize = ((frameSize / SAMPLES) + 1) * SAMPLES;
+	minFrameSize = frameSize - SAMPLES;
 	maxFrameSize = frameSize + wess_driver_extra_samples + 16;
 
-	voice = (ALVoice *)alHeapAlloc(config->heap, 1, wess_driver_voices * sizeof(ALVoice));
-	wess_memfill(voice, 0, wess_driver_voices * sizeof(ALVoice));
+	voice = (N_ALVoice *)alHeapAlloc(config->heap, 1, wess_driver_voices * sizeof(N_ALVoice));
+	wess_memfill(voice, 0, wess_driver_voices * sizeof(N_ALVoice));
 
 	reverb_status = (char *)alHeapAlloc(config->heap, 1, wess_driver_voices);
 	wess_memfill(reverb_status, 0, wess_driver_voices);
@@ -326,7 +327,7 @@ void amCreateAudioMgr(ALSynConfig *config, WessConfig *wessconfig) // 8002E610
 
 	osCreateMesgQueue(&audDMAMessageQ, audDMAMessageBuf, wess_driver_num_dma_messages);
 
-	alInit(&__am.g, config);
+	n_alInit(&__am.g, config);
 }
 
 OSTask * wess_work(void) // 8002EB2C
@@ -349,6 +350,8 @@ OSTask * wess_work(void) // 8002EB2C
 
 	return validTask;
 }
+
+static u8 min_only_one = 1;
 
 OSTask *__amHandleFrameMsg(AudioInfo *info) // 8002EBD8
 {
@@ -373,17 +376,23 @@ OSTask *__amHandleFrameMsg(AudioInfo *info) // 8002EBD8
 	/* this will vary slightly frame to frame, must recalculate every frame */
 	samplesLeft = osAiGetLength() >> 2; /* divide by four, to convert bytes */
 
-	/* to stereo 16 bit samples */
-	info->frameSamples = (((frameSize - samplesLeft) + wess_driver_extra_samples) & ~0xf) + 16;
-
-	/* no longer necessary to have extra samples, because the buffers */
-	/* will be swapped exactly when the buffer runs out */
-	/* info->frameSamples = frameSize; */
-
-	if (info->frameSamples < minFrameSize)
+	/* n_audio only accepts whole 184-sample blocks, so pick between the two
+	   legal sizes: the shorter frame is used once whenever the DAC is running
+	   ahead, which keeps the average at the true samples-per-frame rate */
+	if ((samplesLeft > (SAMPLES + wess_driver_extra_samples)) & min_only_one)
+	{
 		info->frameSamples = minFrameSize;
+		min_only_one = 0;
+	}
+	else if (samplesLeft > (SAMPLES + wess_driver_extra_samples))
+		info->frameSamples = frameSize;
+	else
+	{
+		info->frameSamples = frameSize;
+		min_only_one = 1;
+	}
 
-	cmdp = alAudioFrame(__am.ACMDList[curAcmdList], &cmdLen, audioPtr, info->frameSamples);
+	cmdp = n_alAudioFrame(__am.ACMDList[curAcmdList], &cmdLen, audioPtr, info->frameSamples);
 
 	if (maxRSPCmds < cmdLen)
 	{
@@ -397,8 +406,8 @@ OSTask *__amHandleFrameMsg(AudioInfo *info) // 8002EBD8
 	info->task.t.ucode_boot = (u64 *)rspbootTextStart;
 	info->task.t.ucode_boot_size = ((int)rspbootTextEnd - (int)rspbootTextStart);
 	info->task.t.flags = 0;
-	info->task.t.ucode = (u64 *)aspMainTextStart;
-	info->task.t.ucode_data = (u64 *)aspMainDataStart;
+	info->task.t.ucode = (u64 *)n_aspMainTextStart;
+	info->task.t.ucode_data = (u64 *)n_aspMainDataStart;
 	info->task.t.ucode_data_size = SP_UCODE_DATA_SIZE;
 	info->task.t.yield_data_ptr = NULL;
 	info->task.t.yield_data_size = 0;
@@ -551,7 +560,7 @@ void __clearAudioDMA(void) // 8002EF7C
 void wess_exit(void) // 8002F0CC
 {
 	wesssys_exit(YesRestore);
-	alClose(&__am.g);
+	n_alClose();
 }
 
 #endif // 0

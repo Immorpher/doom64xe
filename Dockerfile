@@ -13,6 +13,7 @@ RUN apt-get update && \
         gcc-mips-n64 \
         makemask \
         n64sdk \
+        libnaudio \
         newlib-mips-n64 \
         root-compatibility-environment && \
     rm -rf /var/lib/apt/lists/*

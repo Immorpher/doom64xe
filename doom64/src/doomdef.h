@@ -5,7 +5,7 @@
 #include "ultratypes.h"
 #include <PR/ramrom.h>	/* needed for argument passing into the app */
 #include <assert.h>
-#include <libaudio.h>
+#include <n_libaudio_sc.h>
 
 #include "i_main.h"
 

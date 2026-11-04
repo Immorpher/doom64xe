@@ -2,7 +2,7 @@
 #define _WESSSEQ_H
 
 #include <ultra64.h>
-#include <libaudio.h>
+#include <n_libaudio_sc.h>
 #include "wessapi.h"
 #include "wessarc.h"
 

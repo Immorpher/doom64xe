@@ -1,7 +1,7 @@
 /* ULTRA64 LIBRARIES */
 #include <ultra64.h>
 #include "ultratypes.h"
-#include <libaudio.h>
+#include <n_libaudio_sc.h>
 
 /* WESS API INCLUDES */
 #include "wessapi.h"	// audio stuff...
