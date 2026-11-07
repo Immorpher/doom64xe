@@ -107,6 +107,13 @@ int EV_SpawnTrapMissile(line_t *line, mobj_t *target, mobjtype_t type) // 8000E0
         x = finecosine[angle];
         y = finesine[angle];
 
+        /* The demos were recorded with traps spawning their missiles at the
+           projector's centre. The offset by the projector's radius changes
+           where darts hit the player (knocking the hectic demo off course),
+           so during demo playback use the original spawn position. */
+        if (demoplayback)
+            x = y = 0;
+
         if(type == MT_PROJ_TRACER)
         {
             th = P_SpawnMissile(mo, target,

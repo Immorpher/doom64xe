@@ -6,6 +6,13 @@ TARGET := $(TARGET_STRING)
 # Preprocessor definitions - add FREEZE_DEBUG=1 to check for freezes
 DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1 FREEZE_DEBUG=1
 
+# make BENCHMARK=1: build a benchmark ROM. It plays the demos, times them and
+# shows the results (see src/bench.c). Do a clean build when switching.
+BENCHMARK ?= 0
+ifeq ($(BENCHMARK),1)
+  DEFINES += BENCHMARK=0
+endif
+
 SRC_DIRS :=
 
 # Whether to hide commands or not

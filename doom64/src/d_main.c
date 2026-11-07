@@ -20,6 +20,14 @@ extern boolean run_hectic_demo;
 
 extern void ST_Init(void);
 
+#ifdef BENCHMARK
+extern void Bench_Run(void);
+extern void Bench_Frame(u32 tick_counts, u32 build_counts);
+extern void Bench_EndDemo(void);
+extern volatile u32 bench_gfx_start;
+extern volatile u32 bench_submit;
+#endif
+
 void D_DoomMain(void) // 800027C0
 {
     int exit;
@@ -38,6 +46,10 @@ void D_DoomMain(void) // 800027C0
     oldticbuttons[0] = 0;
 
     D_SplashScreen();
+
+#ifdef BENCHMARK
+    Bench_Run(); /* plays the demos, shows the results, never returns */
+#endif
 
     while(true)
     {
@@ -181,6 +193,9 @@ int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*dra
 {
 	int		exit;
 	int		buttons;
+#ifdef BENCHMARK
+	u32		bench_t0, bench_t1;
+#endif
 
 	gameaction = ga_nothing;
 	gamevbls = 0;
@@ -212,11 +227,13 @@ int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*dra
         {
             if (demoplayback)
             {
+#ifndef BENCHMARK /* benchmark runs can't be aborted by stray input */
                 if (buttons & (ALL_JPAD|ALL_BUTTONS))
                 {
                     exit = ga_exit;
                     break;
                 }
+#endif
 
                 buttons = *demobuffer++;
                 ticbuttons[0] = buttons;
@@ -238,15 +255,31 @@ int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*dra
 
         if (disabledrawing == false)
         {
+#ifdef BENCHMARK
+            bench_t0 = osGetCount();
+#endif
             exit = ticker();
             if (exit != ga_nothing)
                 break;
 
+#ifdef BENCHMARK
+            bench_t1 = osGetCount();
+            bench_submit = bench_t1;
+#endif
             drawer();
+#ifdef BENCHMARK
+            if (demoplayback)
+                Bench_Frame(bench_t1 - bench_t0, bench_submit - bench_t1);
+#endif
         }
 
 		gamevbls = gametic;
 	}
+
+#ifdef BENCHMARK
+	if (demoplayback)
+		Bench_EndDemo();
+#endif
 
 	I_GetScreenGrab();
 

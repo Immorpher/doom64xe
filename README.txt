@@ -110,6 +110,7 @@ CrashOveride - Modern N64 SDK programmer
 Kovic - Doom 64 tool programmer
 Styd051 - Debugging and map porting
 Maria Kinnun - Additional graphics assets
+Data Bitter - Logo and hardware playtester
 Colinsky - Hardware playtester
 DataBitter - Hardware playtester
 IntersperseAges - Hardware playtester

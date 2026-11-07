@@ -24,6 +24,12 @@ extern char _codeSegmentEnd[];
 
 extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 
+#ifdef BENCHMARK
+extern volatile u32 bench_gfx_start;
+extern void Bench_GfxDone(u32 counts);
+extern volatile u32 bench_submit;
+#endif
+
 /* Nova, this stack size is in bytes */
 #define	BOOT_STACKSIZE	0x200
 
@@ -566,6 +572,9 @@ void I_SystemTicker(void *arg) // 80005730
                                         vidside = 1;
 
                                     SystemTickerStatus |= 1;
+#ifdef BENCHMARK
+                                    bench_gfx_start = osGetCount();
+#endif
 
                                     osWritebackDCacheAll();
                                     osSpTaskLoad(rspTask);
@@ -626,6 +635,9 @@ void I_SystemTicker(void *arg) // 80005730
 
 				    SystemTickerStatus &= ~8;
 				    SystemTickerStatus |= 16;
+#ifdef BENCHMARK
+				    Bench_GfxDone(osGetCount() - bench_gfx_start);
+#endif
 
                     osViSwapBuffer(cfb[vidside]);
 				}
@@ -739,6 +751,9 @@ void I_SystemTicker(void *arg) // 80005730
                                 vidside = 1;
 
                             SystemTickerStatus |= 1;
+#ifdef BENCHMARK
+                            bench_gfx_start = osGetCount();
+#endif
 
                             osWritebackDCacheAll();
                             osSpTaskLoad(rspTask);
@@ -1049,6 +1064,9 @@ void I_DrawFrame(void)  // 80006570
     vid_task->t.data_ptr = (u64 *) Gfx_base[vid_side];
     vid_task->t.data_size = (u32)((((int)((int)GFX1 - (int)GFX2) / sizeof(Gfx)) + GfxIndex) * sizeof(Gfx));
 
+#ifdef BENCHMARK
+    bench_submit = osGetCount();
+#endif
     osSendMesg(&sys_msgque_vbi3,(OSMesg) vid_task, OS_MESG_NOBLOCK);
 #ifdef FREEZE_DEBUG
     {
