@@ -899,13 +899,21 @@ void N64_voicemuterelease(voice_status *voice_stat, int muterelease) // 80038EF8
 	voice_stat->pabstime = *pcurabstime + muterelease;
 }
 
+#ifndef AUDIO_RELEASE_PCT
+#define AUDIO_RELEASE_PCT 25
+#endif
+
 void N64_voicerelease(voice_status *voice_stat) // 80038FBC
 {
 	ALMicroTime deltaTime;
 
 	//PRINTF_D2(WHITE,0,7,"N64_voicerelease");
 
-	deltaTime = voice_stat->patchmaps->release_time * 1000;
+	/* With the n_audio library the release fade came out about four times
+	   longer than the release_time in the sound bank (tested by ear against
+	   the old build and the original game), so the time is scaled down. Build
+	   with AUDIO_RELEASE_PCT=100 for the unscaled behaviour. */
+	deltaTime = (voice_stat->patchmaps->release_time * 10) * AUDIO_RELEASE_PCT;
 	n_alSynSetPriority(&voice[voice_stat->refindx], 0); /* make candidate for stealing */
 	n_alSynSetVol(&voice[voice_stat->refindx], 0, deltaTime);
 

@@ -8,6 +8,12 @@ DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1 FREEZE_DEBUG=1
 
 # make BENCHMARK=1: build a benchmark ROM. It plays the demos, times them and
 # shows the results (see src/bench.c). Do a clean build when switching.
+# Audio tests (leave unset for a normal build):
+#   AUDIO_RELEASE_PCT=n   scale note release times to n% (default 25, see n64cmd.c)
+ifneq ($(AUDIO_RELEASE_PCT),)
+  DEFINES += AUDIO_RELEASE_PCT=$(AUDIO_RELEASE_PCT)
+endif
+
 BENCHMARK ?= 0
 ifeq ($(BENCHMARK),1)
   DEFINES += BENCHMARK=0
