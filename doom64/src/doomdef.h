@@ -1028,6 +1028,8 @@ void S_Init(void) COLD;
 void wess_master_sfx_vol_set(char volume);
 void wess_master_mus_vol_set(char volume);
 void S_StartMusic(int mus_seq);
+int S_LastMusicSeq(void);      /* index of the last sequence in the WSD */
+int S_MusicTestMax(void);      /* highest music test number (MusicID) */
 void S_StopMusic(void);
 void S_PauseSound(void);
 void S_ResumeSound(void);

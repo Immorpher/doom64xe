@@ -714,6 +714,13 @@ static int textalpha;			// 800631FC
 
 void F_StartIntermission(void) // 80002CD0
 {
+    int introtext;
+
+    /* the intro text shown when starting a game (not the secret level or
+       ending texts) plays the newest song in the WSD */
+    introtext = (nextmap == 0 || nextmap == 1 || nextmap == LOSTLEVEL ||
+                 nextmap == BETALEVEL || nextmap == VEHEMENCELEVEL);
+
     if (nextmap == 0)
     {
         text = introcluster4;
@@ -789,7 +796,10 @@ void F_StartIntermission(void) // 80002CD0
     textline = 0;
     textalpha = 0;
 	
-	S_StartMusic(mus_title); // Play menu music for intermission
+	if (introtext)
+		S_StartMusic(S_LastMusicSeq()); // intro text music: the last sequence
+	else
+		S_StartMusic(mus_title); // Play menu music for intermission
 }
 
 /*

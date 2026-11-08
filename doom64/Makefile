@@ -153,9 +153,12 @@ $(BOOT_OBJ): $(BOOT)
 ifeq ($(LTO),1)
 # LTO has to go through the gcc driver so the LTO plugin gets loaded. The
 # driver must not add the default startfiles/libc (we only want libultra + libgcc).
+# -u memcpy: LTO code generation introduces memcpy calls after the linker has
+# already decided which archive members to pull in, so force the libultra
+# member that defines it (string.o) to be linked.
 $(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	@$(PRINT) "$(GREEN)Linking ELF file (LTO):  $(BLUE)$@ $(NO_COL)\n"
-	$(V)$(CC) $(LTO_LDFLAGS) -nostdlib -nostartfiles \
+	$(V)$(CC) $(LTO_LDFLAGS) -nostdlib -nostartfiles -Wl,-u,memcpy \
 		-Wl,-T,$(BUILD_DIR)/$(LD_SCRIPT) -Wl,-Map,$(BUILD_DIR)/$(TARGET).map -Wl,--no-check-sections \
 		-L$(BUILD_DIR) -o $@ $(O_FILES) -L/usr/lib/n64 -ln_audio_sc -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
 else

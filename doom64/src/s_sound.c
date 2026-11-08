@@ -16,6 +16,13 @@ volatile int S_AudioErrorCount;
 volatile int S_AudioErr[3]; /* MAXRSPCMDS, DMAPTRNULL, DMANOTDONE */
 volatile int S_AudioHeapUsed; /* bytes of audio_heap in use after S_Init (shrink AUDIO_HEAP_SIZE toward this) */
 
+/* on-demand music buffers (see S_Init / S_LoadMusic) */
+#define S_MUSIC_SLOTS 2
+static char *S_MusicBuf[S_MUSIC_SLOTS];
+static int S_MusicSlotSeq[S_MUSIC_SLOTS];
+static int S_MusicBufSize;
+static int S_MusicNextSlot;
+
 void S_Error_Callback_Routine(char *errstring, int errnum1, int errnum2) // 80029580
 {
     /* I_Error draws via I_DrawFrame, which needs the ticker thread to kick
@@ -108,7 +115,10 @@ void S_Init(void) // 80029590
 	//this call may result in decompression callbacks
 	wess_seq_loader_init(wess_get_master_status(), _doom64_wsdSegmentRomStart, NoOpenSeqHandle, seqtblptr, seqtblsize);
 
-	seqsize = wess_seq_range_sizeof(0, wess_seq_loader_count());
+	/* Only the sound effect sequences (0..NUMSFX-1) stay in RAM. Music is
+	   loaded from ROM when it is started (see S_StartMusic), into one of
+	   two buffers each big enough for the largest song. */
+	seqsize = wess_seq_range_sizeof(0, NUMSFX);
 	seqsize = ((seqsize + 15) & ~15);
 	seqptr = S_AudioHeapAlloc(&sys_aheap, seqsize);
 
@@ -116,7 +126,27 @@ void S_Init(void) // 80029590
 	//PRINTF_D(WHITE, "seqptr %x", (int)&seqptr);
 
 	//this call may result in decompression callbacks
-	wess_seq_range_load(0, wess_seq_loader_count(), seqptr);
+	wess_seq_range_load(0, NUMSFX, seqptr);
+
+	/* size the music buffers (no music is loaded yet, so every size is valid) */
+	{
+		int i, sz, maxmusic = 0, slot;
+
+		for (i = NUMSFX; i < wess_seq_loader_count(); i++)
+		{
+			sz = wess_seq_sizeof(i);
+			if (sz > maxmusic)
+				maxmusic = sz;
+		}
+		S_MusicBufSize = (maxmusic + 15) & ~15;
+
+		for (slot = 0; slot < S_MUSIC_SLOTS; slot++)
+		{
+			S_MusicSlotSeq[slot] = -1;
+			S_MusicBuf[slot] = (S_MusicBufSize > 0) ? S_AudioHeapAlloc(&sys_aheap, S_MusicBufSize) : NULL;
+		}
+		S_MusicNextSlot = 0;
+	}
 
 	/* init audio: the driver buffers (voices, DMA, ACMD lists, output
 	   buffers, synth/reverb) are allocated from whatever the data left over */
@@ -155,11 +185,81 @@ void S_Init(void) // 80029590
 
 int music_sequence; // 8005b250
 
+/* The WSD header says how many sequences there are, so songs added later are
+   picked up without changing any code. */
+int S_LastMusicSeq(void)
+{
+    return wess_seq_loader_count() - 1;
+}
+
+/* music test number = sequence - (NUMSFX - 1), so the last sequence is: */
+int S_MusicTestMax(void)
+{
+    int max = S_LastMusicSeq() - (NUMSFX - 1);
+
+    return (max < 1) ? 1 : max;
+}
+
+/* Wait (briefly) until the sequencer has really let go of a sequence. A stop
+   only sets a flag; the audio thread acts on it at its next frame, and until
+   then it can still read the sequence's data. */
+static void S_WaitSeqInactive(int seq)
+{
+    u32 start = osGetCount();
+    int st;
+
+    for (;;)
+    {
+        st = wess_seq_status(seq);
+        if (st == SEQUENCE_INACTIVE || st == SEQUENCE_INVALID)
+            break;
+        if ((u32)(osGetCount() - start) > 4687500) /* 100 ms */
+            break;
+        osYieldThread();
+    }
+}
+
+/* Make sure music sequence 'seq' is in RAM. Two buffers are used alternately,
+   so the previous song's data stays untouched while it is being stopped. */
+static int S_LoadMusic(int seq)
+{
+    int slot, old, loaded;
+
+    if (seq < NUMSFX || seq >= wess_seq_loader_count() || S_MusicBufSize == 0)
+        return 0;
+
+    for (slot = 0; slot < S_MUSIC_SLOTS; slot++)
+        if (S_MusicSlotSeq[slot] == seq)
+            return 1; /* still loaded from last time */
+
+    slot = S_MusicNextSlot;
+    old = S_MusicSlotSeq[slot];
+    if (old >= 0)
+    {
+        wess_seq_stop(old);
+        S_WaitSeqInactive(old);
+        wess_seq_free(old);
+        S_MusicSlotSeq[slot] = -1;
+    }
+
+    if (wess_seq_sizeof(seq) > S_MusicBufSize)
+        return 0;
+
+    loaded = wess_seq_load(seq, S_MusicBuf[slot]);
+    if (loaded <= 0 || loaded > S_MusicBufSize)
+        return 0;
+
+    S_MusicSlotSeq[slot] = seq;
+    S_MusicNextSlot = (slot + 1) % S_MUSIC_SLOTS;
+    return 1;
+}
+
 void S_StartMusic(int mus_seq) // 8002983C
 {
     if (disabledrawing == false)
     {
-        wess_seq_trigger(mus_seq);
+        if (S_LoadMusic(mus_seq))
+            wess_seq_trigger(mus_seq);
         music_sequence = mus_seq;
     }
 }

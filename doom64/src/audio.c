@@ -69,6 +69,22 @@ OSMesgQueue     wess_dmaMessageQ;	//800b4108
 OSMesg          wess_dmaMessageBuf[NUM_DMA_MESSAGES];//800b4120
 //------------
 
+extern void I_Error(char *error, ...);
+
+/* alHeapAlloc returns NULL when the heap is full, and the driver would then
+   crash in wess_memfill with a write to address 0. Report it with the exact
+   number of bytes missing instead (raise AUDIO_HEAP_SIZE in i_main.h). */
+static void *wess_heap_alloc(ALHeap *heap, int size)
+{
+	int left = (int)(heap->base + heap->len - heap->cur);
+	int need = (size + 15) & ~15;
+
+	if (need > left)
+		I_Error("Audio heap too small, short by %d bytes (wess_init)", need - left);
+
+	return alHeapAlloc(heap, 1, size);
+}
+
 int wess_memfill(void *dst, unsigned char fill, int count) // 8002E300
 {
     char *d;
@@ -276,13 +292,13 @@ void amCreateAudioMgr(ALSynConfig *config, WessConfig *wessconfig) // 8002E610
 	minFrameSize = frameSize - SAMPLES;
 	maxFrameSize = frameSize + wess_driver_extra_samples + 16;
 
-	voice = (N_ALVoice *)alHeapAlloc(config->heap, 1, wess_driver_voices * sizeof(N_ALVoice));
+	voice = (N_ALVoice *)wess_heap_alloc(config->heap, wess_driver_voices * sizeof(N_ALVoice));
 	wess_memfill(voice, 0, wess_driver_voices * sizeof(N_ALVoice));
 
-	reverb_status = (char *)alHeapAlloc(config->heap, 1, wess_driver_voices);
+	reverb_status = (char *)wess_heap_alloc(config->heap, wess_driver_voices);
 	wess_memfill(reverb_status, 0, wess_driver_voices);
 
-	dmaBuffs = (AMDMABuffer *)alHeapAlloc(config->heap, 1, wess_driver_num_dma_buffers * sizeof(AMDMABuffer));
+	dmaBuffs = (AMDMABuffer *)wess_heap_alloc(config->heap, wess_driver_num_dma_buffers * sizeof(AMDMABuffer));
 	wess_memfill(dmaBuffs, 0, wess_driver_num_dma_buffers * sizeof(AMDMABuffer));
 
 	/* allocate buffers for voices */
@@ -292,17 +308,17 @@ void amCreateAudioMgr(ALSynConfig *config, WessConfig *wessconfig) // 8002E610
 	for (i = 0; i < (wess_driver_num_dma_buffers - 1); i++)
 	{
 		alLink((ALLink *)&dmaBuffs[i + 1], (ALLink *)&dmaBuffs[i]);
-		dmaBuffs[i].ptr = (char *)alHeapAlloc(config->heap, 1, wess_driver_dma_buffer_length);
+		dmaBuffs[i].ptr = (char *)wess_heap_alloc(config->heap, wess_driver_dma_buffer_length);
 		wess_memfill(dmaBuffs[i].ptr, 0, wess_driver_dma_buffer_length);
 	}
 
 	/* last buffer already linked, but still needs buffer */
-	dmaBuffs[i].ptr = alHeapAlloc(config->heap, 1, wess_driver_dma_buffer_length);
+	dmaBuffs[i].ptr = wess_heap_alloc(config->heap, wess_driver_dma_buffer_length);
 	wess_memfill(dmaBuffs[i].ptr, 0, wess_driver_dma_buffer_length);
 
 	for (i = 0; i < NUM_ACMD_LISTS; i++)
 	{
-		__am.ACMDList[i] = (Acmd*)alHeapAlloc(config->heap, 1, wessconfig->maxACMDSize * sizeof(Acmd));
+		__am.ACMDList[i] = (Acmd*)wess_heap_alloc(config->heap, wessconfig->maxACMDSize * sizeof(Acmd));
 		wess_memfill(__am.ACMDList[i], 0, wessconfig->maxACMDSize * sizeof(Acmd));
 	}
 
@@ -311,18 +327,18 @@ void amCreateAudioMgr(ALSynConfig *config, WessConfig *wessconfig) // 8002E610
 	/* initialize the done messages */
 	for (i = 0; i < NUM_OUTPUT_BUFFERS; i++)
 	{
-		__am.audioInfo[i] = (AudioInfo *)alHeapAlloc(config->heap, 1, sizeof(AudioInfo));
+		__am.audioInfo[i] = (AudioInfo *)wess_heap_alloc(config->heap, sizeof(AudioInfo));
 		wess_memfill(__am.audioInfo[i], 0, sizeof(AudioInfo));
 
 		/* allocate output buffer */
-		__am.audioInfo[i]->data = alHeapAlloc(config->heap, 1, maxFrameSize << 2);
+		__am.audioInfo[i]->data = wess_heap_alloc(config->heap, maxFrameSize << 2);
 		wess_memfill(__am.audioInfo[i]->data, 0, maxFrameSize << 2);
 	}
 
-	audDMAIOMesgBuf = alHeapAlloc(config->heap, 1, wess_driver_num_dma_messages * sizeof(OSIoMesg));
+	audDMAIOMesgBuf = wess_heap_alloc(config->heap, wess_driver_num_dma_messages * sizeof(OSIoMesg));
 	wess_memfill(audDMAIOMesgBuf, 0, wess_driver_num_dma_messages * sizeof(OSIoMesg));
 
-	audDMAMessageBuf = alHeapAlloc(config->heap, 1, wess_driver_num_dma_messages * sizeof(OSMesg));
+	audDMAMessageBuf = wess_heap_alloc(config->heap, wess_driver_num_dma_messages * sizeof(OSMesg));
 	wess_memfill(audDMAMessageBuf, 0, wess_driver_num_dma_messages * sizeof(OSMesg));
 
 	osCreateMesgQueue(&audDMAMessageQ, audDMAMessageBuf, wess_driver_num_dma_messages);

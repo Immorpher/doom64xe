@@ -1740,12 +1740,12 @@ int M_MenuTicker(void) // 80007E0C
 					else if (buttons & PAD_RIGHT)
 					{
 						MusicID += 1;
-						if (MusicID < 25)
+						if (MusicID <= S_MusicTestMax())
 						{
 							S_StartSound(NULL, sfx_switch2);
 							return ga_nothing;
 						}
-						MusicID = 24;
+						MusicID = S_MusicTestMax();
 					}
 					else if (buttons & ALL_CBUTTONS)
 					{
