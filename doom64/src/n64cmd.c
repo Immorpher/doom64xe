@@ -691,6 +691,15 @@ void N64_VolumeMod(track_status *ptk_stat) // 800386D8
 			{
                 if ((pvs->flags & VOICE_ACTIVE) && (pvs->track == ptk_stat->refindx))
 				{
+					/* Voices fading out (release) must keep fading: setting their volume
+					   here would bring them back to full volume. */
+					if (pvs->flags & VOICE_RELEASE)
+					{
+						if (!--vn) break;
+						pvs++;
+						continue;
+					}
+
 					if (ptk_stat->sndclass == SNDFX_CLASS)
 					{
 						volume = pvs->velnum * pvs->patchmaps->volume * ptk_stat->volume_cntrl * master_sfx_volume;
@@ -701,6 +710,11 @@ void N64_VolumeMod(track_status *ptk_stat) // 800386D8
 					}
 
 					adjvol = volume >> 0xd;
+
+					/* Voices that finished their decay sustain at the decay level */
+					if (enabledecay && !(pvs->flags & VOICE_DECAY))
+						adjvol = pvs->patchmaps->decay_level * adjvol >> 7;
+
 					deltaTime = 1000;
 
 					n_alSynSetVol(&voice[pvs->refindx], (s16)adjvol, (ALMicroTime)deltaTime);
