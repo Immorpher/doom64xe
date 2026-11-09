@@ -797,7 +797,7 @@ void F_StartIntermission(void) // 80002CD0
     textalpha = 0;
 	
 	if (introtext)
-		S_StartMusic(S_LastMusicSeq()); // intro text music: the last sequence
+		S_StartMusic(MUS_INTROTEXT_SEQ); // intro text music
 	else
 		S_StartMusic(mus_title); // Play menu music for intermission
 }

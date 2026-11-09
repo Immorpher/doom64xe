@@ -131,5 +131,10 @@ typedef enum
     mus_title,
     NUMMUS
 } musenum_t;
+
+/* Sequences (in the WSD) played by the main menu and the intro texts. They are
+   fixed numbers, so adding more songs after them doesn't change them. */
+#define MUS_MENU_SEQ 118
+#define MUS_INTROTEXT_SEQ 117
 #endif
 

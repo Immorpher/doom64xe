@@ -32,7 +32,7 @@ char *ControlText[] =   //8007517C
 };
 
 #define M_TXT00	"Bindings"
-#define M_TXT01	"Volume"
+#define M_TXT01	"Sound"
 #define M_TXT02	"Display"
 #define M_TXT03	"Password"
 #define M_TXT04	"Main Menu"
@@ -70,7 +70,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT36 "SCREENSHOT:"
 #define M_TXT37 "MAP EVERYTHING:"
 #define M_TXT38 "MACRO PEEK:"
-#define M_TXT39 "MUSIC TEST:"
+#define M_TXT39 "Music:"
 #define M_TXT40 "WARP TO FUN:"
 #define M_TXT41 "Controls"
 #define M_TXT42 "Default"
@@ -200,11 +200,12 @@ const menuitem_t Menu_MemoryPak[4] = // Memory Pak Menu
     {  6, 102, 200},    // Return
 };
 
-const menuitem_t Menu_Volume[4] = // Audio menu
+const menuitem_t Menu_Volume[5] = // Audio menu
 {
     {  7, 102, 60 },    // Music Volume
     {  8, 102, 100},    // Sound Volume
-    { 12, 102, 140},    // Default Volume
+    { 39, 102, 140},    // Music (song select)
+    { 12, 102, 170},    // Default Volume
     {  6, 102, 200},    // Return
 };
 
@@ -290,7 +291,7 @@ const menuitem_t Menu_CreateNote[3] = // 8005AB40
     { 44, 110, 130},    // Manage Pak
 };
 
-#define MAXFEATURES 14
+#define MAXFEATURES 13
 const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 {
     { 23, 40, 50},      // WARP TO LEVEL
@@ -304,9 +305,8 @@ const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
     { 53, 40, 130},      // ARTIFACTS
     { 31, 40, 140},      // WALL BLOCKING
     { 35, 40, 150},      // LOCK MONSTERS
-    { 39, 40, 160},      // MUSIC TEST
-    { 48, 40, 170},      // COLORS [GEC] NEW CHEAT CODE
-    { 49, 40, 180},      // FULL BRIGHT [GEC] NEW CHEAT CODE
+    { 48, 40, 160},      // COLORS [GEC] NEW CHEAT CODE
+    { 49, 40, 170},      // FULL BRIGHT [GEC] NEW CHEAT CODE
 };
 
 menudata_t MenuData[8]; // 800A54F0
@@ -683,7 +683,7 @@ int M_RunTitle(void) // 80007630
     cursorpos = 0;
     last_ticon = 0;
 
-    S_StartMusic(mus_title);
+    S_StartMusic(MUS_MENU_SEQ);
 
     exit = MiniLoop(M_FadeInStart, M_MenuClearCall, M_MenuTicker, M_MenuGameDrawer);
     I_WIPE_FadeOutScreen();
@@ -1060,7 +1060,7 @@ int M_MenuTicker(void) // 80007E0C
 					M_SaveMenuData();
 
 					MenuItem = Menu_Volume;
-					itemlines = 4;
+					itemlines = 5;
 					MenuCall = M_VolumeDrawer;
 					cursorpos = 0;
 
@@ -1720,7 +1720,7 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;
 
-			case 39: // MUSIC TEST
+			case 39: // Music (song select in the Volume menu)
 				/* Not available in the release code */
 				/*
 				Reconstructed code in my interpretation
@@ -2448,10 +2448,6 @@ void M_FeaturesDrawer(void) // 800091C0
             case 38: /* MACRO PEEK */
                 text = ((players[0].cheats & CF_MACROPEEK)) ? "ON": "OFF";
                 break;
-            case 39: /* MUSIC TEST */
-                sprintf(textbuff, "%d", MusicID);
-                break;
-
             // [GEC] NEW CHEAT CODES
             case 48: /* COLORS */
                 text = (!(players[0].cheats & CF_NOCOLORS)) ? "ON": "OFF";
@@ -2500,13 +2496,20 @@ void M_VolumeDrawer(void) // 800095B4
 {
     const menuitem_t *item;
     unsigned char i;
+    char textbuff[32];
 
-    ST_DrawString(-1, 20, "Volume", text_alpha | 0xff000000);
+    ST_DrawString(-1, 20, "Sound", text_alpha | 0xff000000);
     item = Menu_Volume;
 
     for(i = 0; i < itemlines; i++)
     {
-        ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
+        if (item->casepos == 39) /* Music: label with the song number one space after the colon */
+        {
+            sprintf(textbuff, "%s %d", MenuText[39], MusicID);
+            ST_DrawString(item->x, item->y, textbuff, text_alpha | 0xff000000);
+        }
+        else
+            ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }
 

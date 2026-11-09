@@ -261,6 +261,8 @@ void S_StartMusic(int mus_seq) // 8002983C
         if (S_LoadMusic(mus_seq))
             wess_seq_trigger(mus_seq);
         music_sequence = mus_seq;
+        if (mus_seq >= NUMSFX)
+            MusicID = mus_seq - (NUMSFX - 1); /* keep the Volume menu's song number in sync */
     }
 }
 

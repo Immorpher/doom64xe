@@ -138,7 +138,7 @@ extern unsigned char nextmap;
 
 mapinfo_t MapInfo[] = //8005A478
 {
-    {MI_TXT00 , 116}, // Bonus Pak Hub
+    {MI_TXT00 , 119}, // Bonus Pak Hub
     {MI_TXT01 , 96}, // Doom 64 - Staging Area
     {MI_TXT02 , 97}, // Terraformer
     {MI_TXT03 , 105}, // Main Engineering
