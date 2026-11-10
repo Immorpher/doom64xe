@@ -523,6 +523,9 @@ void P_CalcHeight (player_t *player) // 80022670
 
 void P_MovePlayer (player_t *player) // 8002282C
 {
+#ifdef FPS60
+	if (demoplayback) /* outside demos, turning is applied every frame (P_HighFpsPlayerThink) */
+#endif
 	player->mo->angle += vblsinframe[0] * player->angleturn;
 
 	if(player->onground)
@@ -537,6 +540,97 @@ void P_MovePlayer (player_t *player) // 8002282C
 		P_SetMobjState (player->mo, S_002);//S_PLAY_RUN1
 }
 
+
+#ifdef FPS60
+/*
+=================
+=
+= P_HighFpsPlayerThink
+=
+= 60 Hz mode (outside demos): the player is still thought on the 30 Hz game
+= tick, with exactly the inputs and frame time the 30 Hz game would use, so
+= movement, jumping and gravity are the same as before. Frames in between only
+= turn the player (so aiming stays responsive) and the camera is interpolated
+= between the last two ticks when drawing (see R_RenderPlayerView).
+=
+=================
+*/
+
+static int hf_edge;      /* buttons pressed since the last tick (so short taps aren't lost) */
+static int hf_lastticon; /* ticon at the last tick */
+
+void P_HighFpsStart (void)
+{
+	hf_minvbls = 1;
+	hf_edge = 0;
+	hf_lastticon = ticon;
+	hf_snap = true;
+}
+
+#define HF_SNAPDIST (128*FRACUNIT) /* a bigger jump in one tick is a teleport, don't interpolate it */
+
+void P_HighFpsPlayerThink (player_t *player)
+{
+	int      savedvbls, savedbuttons, savedold, tickvbls;
+	fixed_t  dx, dy, dz;
+	mobj_t   *mo;
+
+	hf_edge |= ticbuttons[0] & ~oldticbuttons[0];
+
+	if (gamevbls < gametic) /* a game tick */
+	{
+		mo = player->mo;
+
+		tickvbls = ticon - hf_lastticon;
+		if (tickvbls < 1 || tickvbls > 8)
+		{
+			tickvbls = 2;
+			hf_snap = true;
+		}
+		hf_lastticon = ticon;
+
+		savedvbls = vblsinframe[0];
+		savedbuttons = ticbuttons[0];
+		savedold = oldticbuttons[0];
+
+		/* camera of the previous tick, and when this tick's frame started */
+		hf_tickstart = ticon - savedvbls;
+		hf_oldx = mo->x;
+		hf_oldy = mo->y;
+		hf_oldviewz = player->viewz;
+
+		/* think like the 30 Hz game: the time since the last tick and the buttons seen since then */
+		vblsinframe[0] = tickvbls;
+		ticbuttons[0] |= hf_edge;
+		oldticbuttons[0] &= ~hf_edge;
+
+		P_PlayerThink(player);
+
+		vblsinframe[0] = savedvbls;
+		ticbuttons[0] = savedbuttons;
+		oldticbuttons[0] = savedold;
+		hf_edge = 0;
+
+		mo = player->mo;
+		dx = mo->x - hf_oldx;
+		dy = mo->y - hf_oldy;
+		dz = player->viewz - hf_oldviewz;
+		if (hf_snap || dx > HF_SNAPDIST || dx < -HF_SNAPDIST || dy > HF_SNAPDIST || dy < -HF_SNAPDIST ||
+			dz > HF_SNAPDIST || dz < -HF_SNAPDIST)
+		{
+			hf_oldx = mo->x;
+			hf_oldy = mo->y;
+			hf_oldviewz = player->viewz;
+		}
+		hf_snap = false;
+	}
+
+	/* turning happens every frame, scaled by the frame time (angleturn was built on the last tick) */
+	mo = player->mo;
+	if (!gamepaused && player->playerstate == PST_LIVE && !mo->reactiontime)
+		mo->angle += vblsinframe[0] * player->angleturn;
+}
+#endif // FPS60
 
 /*
 =================

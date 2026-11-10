@@ -114,6 +114,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT71 "Load Settings" // Load settings from memory pak slot
 #define M_TXT72 "Save Settings" // Save settings into memory pak slot
 #define M_TXT73 "Vehemence" // Vehemence community map jam
+#define M_TXT74 "Show FPS:" // Frame rate counter
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -131,7 +132,7 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
 	M_TXT65, M_TXT66, M_TXT67, M_TXT68, M_TXT69,
-	M_TXT70, M_TXT71, M_TXT72, M_TXT73
+	M_TXT70, M_TXT71, M_TXT72, M_TXT73, M_TXT74
 	
 };
 
@@ -291,7 +292,7 @@ const menuitem_t Menu_CreateNote[3] = // 8005AB40
     { 44, 110, 130},    // Manage Pak
 };
 
-#define MAXFEATURES 13
+#define MAXFEATURES 14
 const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
 {
     { 23, 40, 50},      // WARP TO LEVEL
@@ -307,6 +308,7 @@ const menuitem_t Menu_Features[MAXFEATURES] = // 8005AB64
     { 35, 40, 150},      // LOCK MONSTERS
     { 48, 40, 160},      // COLORS [GEC] NEW CHEAT CODE
     { 49, 40, 170},      // FULL BRIGHT [GEC] NEW CHEAT CODE
+    { 74, 40, 180},      // SHOW FPS
 };
 
 menudata_t MenuData[8]; // 800A54F0
@@ -356,6 +358,7 @@ boolean ColoredHUD = true; // Hud color
 boolean ShowStats = true; // Automap stats
 boolean SettingsMode = false; // Turn on settings mode when trying to save settings
 char HUDMargin = 20;			// [Immorpher] Margin for HUD
+char ShowFPS = 0;				// Show the frame rate in the upper right corner
 
 int TempConfiguration[13] = // 8005A80C
 {
@@ -1846,6 +1849,15 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;
 
+			case 74: // SHOW FPS
+				if (truebuttons)
+				{
+					ShowFPS ^= 1;
+					S_StartSound(NULL, sfx_switch2);
+					return ga_nothing;
+				}
+				break;
+
 			case 50: // Texture Filter
 				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
 				{
@@ -2455,6 +2467,10 @@ void M_FeaturesDrawer(void) // 800091C0
 
             case 49: /* FULL BRIGHT */
                 text = (!(players[0].cheats & CF_FULLBRIGHT)) ? "OFF": "ON";
+                break;
+
+            case 74: /* SHOW FPS */
+                text = (!ShowFPS) ? "OFF": "ON";
                 break;
 
             case 53: /* ARTIFACTS */

@@ -701,7 +701,11 @@ void I_SystemTicker(void *arg) // 80005730
 
                     if (SystemTickerStatus & 16)
                     {
+#ifdef FPS60
+                        if ((u32)(vsync - drawsync2) < (u32)hf_minvbls) continue;
+#else
                         if ((u32)(vsync - drawsync2) < 2) continue;
+#endif
 
                         current_fbuf = (int)osViGetCurrentFramebuffer();
                         next_fbuf = (int)osViGetNextFramebuffer();

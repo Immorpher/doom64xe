@@ -590,6 +590,12 @@ extern int ticsinframe;                 // 80063138 /* how many tics since last 
 extern int ticon;			            // 8006313C
 extern int lastticon;                   // 80063140
 extern int vblsinframe[MAXPLAYERS];	    // 80063144 /* range from 4 to 8 */
+#ifdef FPS60
+extern int hf_minvbls;                  /* minimum VIs per frame (1 = 60 Hz in game, 2 = original) */
+extern int hf_tickstart;                /* ticon at the start of the frame that ran the last tick */
+extern fixed_t hf_oldx, hf_oldy, hf_oldviewz; /* camera at the previous tick, for interpolation */
+extern boolean hf_snap;                 /* don't interpolate (level start, teleport) */
+#endif
 extern int ticbuttons[MAXPLAYERS];		// 80063148
 extern int oldticbuttons[MAXPLAYERS];	// 8006314C
 
@@ -876,6 +882,7 @@ extern boolean ShowStats; // Show map stats on automap
 extern boolean runintroduction; 	// Introduction text
 extern short LightningFlash;			// Lightning flash value
 extern char HUDMargin;			// Margin for HUD
+extern char ShowFPS;			// Show the frame rate
 
 int M_RunTitle(void); // 80007630
 

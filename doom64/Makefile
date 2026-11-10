@@ -14,6 +14,15 @@ ifneq ($(AUDIO_RELEASE_PCT),)
   DEFINES += AUDIO_RELEASE_PCT=$(AUDIO_RELEASE_PCT)
 endif
 
+# 60 Hz mode is on by default. The game still ticks at 30 Hz (physics and demos
+# are unchanged) but frames can be drawn every VI with the player's camera
+# interpolated between ticks. Demos always run the original 30 Hz way.
+# make FPS60=0: build without it (original 30 Hz frame cap).
+FPS60 ?= 1
+ifeq ($(FPS60),1)
+  DEFINES += FPS60=1
+endif
+
 BENCHMARK ?= 0
 ifeq ($(BENCHMARK),1)
   DEFINES += BENCHMARK=0

@@ -231,6 +231,37 @@ static int debugX, debugY;//80077E5C|uGp00000a4c, 80077E68|uGp00000a58
 static int debugcnt = 0;
 static int debug = 0;
 
+/* Frame rate counter (Features menu: Show FPS). Counts the frames drawn over
+   about half a second and shows them as a whole number in the upper right corner, inside the HUD margin. */
+static void ST_DrawFPS (void)
+{
+    static u32 fps_last = 0;
+    static int fps_frames = 0;
+    static int fps_tenths = 0;
+    u32 now, ms;
+    char buf[16];
+    int len;
+
+    now = osGetCount();
+    fps_frames++;
+
+    ms = (now - fps_last) / 46875; /* osGetCount runs at 46.875 MHz */
+    if (ms >= 500)
+    {
+        if (ms < 2000) /* ignore a window that was stretched by a pause or a level load */
+            fps_tenths = (fps_frames * 10000) / ms;
+
+        fps_last = now;
+        fps_frames = 0;
+    }
+
+    sprintf(buf, "%d", (fps_tenths + 5) / 10); /* whole frames per second, rounded */
+    for (len = 0; buf[len]; len++);
+
+    /* right aligned to the same margin the HUD uses, on the row of the first message */
+    ST_Message(320 - HUDMargin - len*8, HUDMargin-5, buf, 0xffffff80);
+}
+
 void ST_Drawer (void) // 80029DC0
 {
     byte        *src;
@@ -431,6 +462,9 @@ void ST_Drawer (void) // 80029DC0
             ST_Message(8, (ammo*8)+8, buffer[ammo],0x00ff00ff);
         }
     }
+
+    if (ShowFPS)
+        ST_DrawFPS();
 }
 
 #define ST_FONTWHSIZE 8

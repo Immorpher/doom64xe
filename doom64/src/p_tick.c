@@ -309,6 +309,11 @@ int P_Ticker (void)//80021A00
 	}
 
     AM_Control(pl);
+#ifdef FPS60
+    if (!demoplayback)
+        P_HighFpsPlayerThink(pl);
+    else
+#endif
     P_PlayerThink(pl);
 
 	return gameaction; // may have been set to ga_died, ga_completed, or ga_secretexit
@@ -399,6 +404,11 @@ void P_Start (void) // 80021C50
 	P_ActivateLineByTag(999, players[0].mo);
 
 	start_time = ticon;
+
+#ifdef FPS60
+	if (!demoplayback)
+		P_HighFpsStart();
+#endif
 
     MusicID = MapInfo[gamemap].MusicSeq-(NUMSFX-1);
     S_StartMusic(MapInfo[gamemap].MusicSeq);

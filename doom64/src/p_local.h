@@ -95,6 +95,10 @@ void P_DropWeapon (player_t *player);
 */
 
 void	P_PlayerThink (player_t *player);
+#ifdef FPS60
+void	P_HighFpsStart (void);
+void	P_HighFpsPlayerThink (player_t *player);
+#endif
 
 
 /*
