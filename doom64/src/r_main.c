@@ -173,21 +173,6 @@ void R_RenderPlayerView(void) // 80023448
     viewx = cameratarget->x;
     viewy = cameratarget->y;
 
-#ifdef FPS60
-    /* 60 Hz mode: draw the camera between the last two game ticks */
-    if (!demoplayback && !hf_snap && cameratarget == players[0].mo)
-    {
-        fixed_t t = ((ticon - hf_tickstart) << (FRACBITS - 1)); /* VIs since the tick / 2 */
-
-        if (t < 0) t = 0;
-        if (t > FRACUNIT) t = FRACUNIT;
-
-        viewx = hf_oldx + FixedMul(viewx - hf_oldx, t);
-        viewy = hf_oldy + FixedMul(viewy - hf_oldy, t);
-        viewz = hf_oldviewz + FixedMul(viewz - hf_oldviewz, t);
-    }
-#endif
-
     viewz += quakeviewy;
 
 	viewangle = cameratarget->angle + quakeviewx;

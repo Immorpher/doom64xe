@@ -118,11 +118,52 @@ dospecial:
 #define	STOPSPEED		0x1000
 #define	FRICTION		0xd200  //Jag 0xd240
 
+#ifdef FPS60
+/*
+   60 Hz mode: the player's movement runs every frame (outside demos). Momentum is
+   kept in "units per 30 Hz tick", so a frame of v VIs (2 VIs = 1 tick) moves
+   momentum*v/2, and the per frame amounts below are scaled so the player behaves
+   like the 30 Hz game at any frame rate. v is clamped to 1..8; v == 2 is the
+   original calculation exactly.
+
+   friction8[v]: FRICTION^(v/2) as an 8 bit fraction (210 = 0xd2 is the original)
+   thrust8[v]  : thrust multiplier in 1/256ths, 2*(1 - FRICTION^(v/2))/(1 - FRICTION)
+                 (512 = 2.0 is the original). This keeps the top speed the same.
+*/
+static const unsigned char hf_friction8[9] = { 0, 232, 210, 190, 172, 156, 141, 128, 116 };
+static const short hf_thrust8[9] = { 0, 269, 512, 732, 932, 1113, 1277, 1425, 1559 };
+static int hf_framevbls = 2; /* VIs of the frame being moved (2 = original tick) */
+static int hf_vclamp (int v) { return (v < 1) ? 1 : ((v > 8) ? 8 : v); }
+#endif
+
 void P_PlayerXYMovement (mobj_t *mo) // 80021E20
 {
     /* */
 	/* try to slide along a blocked move */
 	/* */
+#ifdef FPS60
+	if (hf_framevbls != 2)
+	{
+		/* move the part of the tick this frame covers; a slide works on the momentum, so scale it for that */
+		fixed_t mx = mo->momx, my = mo->momy;
+
+		mo->momx = (mx * hf_framevbls) >> 1;
+		mo->momy = (my * hf_framevbls) >> 1;
+
+		if (P_TryMove(mo, mo->x + mo->momx, mo->y + mo->momy))
+		{
+			mo->momx = mx;
+			mo->momy = my;
+		}
+		else
+		{
+			P_SlideMove(mo);
+			mo->momx = (mo->momx * 2) / hf_framevbls;
+			mo->momy = (mo->momy * 2) / hf_framevbls;
+		}
+	}
+	else
+#endif
 	if (!P_TryMove(mo, mo->x + mo->momx, mo->y + mo->momy))
 		P_SlideMove(mo);
 
@@ -144,8 +185,18 @@ void P_PlayerXYMovement (mobj_t *mo) // 80021E20
 	}
 	else
 	{
-		mo->momx = (mo->momx>>8)*(FRICTION>>8);
-		mo->momy = (mo->momy>>8)*(FRICTION>>8);
+#ifdef FPS60
+		if (hf_framevbls != 2)
+		{
+			mo->momx = (mo->momx>>8)*hf_friction8[hf_framevbls];
+			mo->momy = (mo->momy>>8)*hf_friction8[hf_framevbls];
+		}
+		else
+#endif
+		{
+			mo->momx = (mo->momx>>8)*(FRICTION>>8);
+			mo->momy = (mo->momy>>8)*(FRICTION>>8);
+		}
 	}
 }
 
@@ -172,6 +223,11 @@ void P_PlayerZMovement (mobj_t *mo) // 80021f38
 	/* */
 	/* adjust height */
 	/* */
+#ifdef FPS60
+	if (hf_framevbls != 2)
+		mo->z += (mo->momz * hf_framevbls) >> 1;
+	else
+#endif
 	mo->z += mo->momz;
 
 	/* */
@@ -192,6 +248,17 @@ void P_PlayerZMovement (mobj_t *mo) // 80021f38
 	}
 	else
 	{
+#ifdef FPS60
+		if (hf_framevbls != 2)
+		{
+			/* gravity per frame, with the first step chosen so a fall matches the 30 Hz one at tick times */
+			if (mo->momz == 0)
+				mo->momz = -((GRAVITY * (2 + 3*hf_framevbls)) >> 4);
+			else
+				mo->momz -= (GRAVITY * hf_framevbls) >> 3;
+		}
+		else
+#endif
 		if (mo->momz == 0)
 			mo->momz = -(GRAVITY/2);
 		else
@@ -223,6 +290,10 @@ void P_PlayerMobjThink (mobj_t *mobj) // 80022060
 	/* */
 	/* momentum movement */
 	/* */
+#ifdef FPS60
+	if (demoplayback) /* otherwise it's done every frame by P_HighFpsPlayerThink */
+#endif
+	{
 	if (mobj->momx || mobj->momy)
 		P_PlayerXYMovement (mobj);
 
@@ -230,6 +301,7 @@ void P_PlayerMobjThink (mobj_t *mobj) // 80022060
 
 	if ( (mobj->z != mobj->floorz) || mobj->momz)
 		P_PlayerZMovement (mobj);
+	}
 
 	/* */
 	/* cycle through states, calling action functions at transitions */
@@ -428,6 +500,20 @@ void P_BuildMove (player_t *player) // 80022154
 void P_Thrust (player_t *player, angle_t angle, fixed_t move) // 800225BC
 {
     angle >>= ANGLETOFINESHIFT;
+#ifdef FPS60
+	if (!demoplayback)
+	{
+		int v = vblsinframe[0];
+		fixed_t amount;
+
+		if (v < 1) v = 1;
+		if (v > 8) v = 8;
+		amount = (hf_thrust8[v] * move) >> 8;
+		player->mo->momx += FixedMul(amount, finecosine[angle]);
+		player->mo->momy += FixedMul(amount, finesine[angle]);
+		return;
+	}
+#endif
 	player->mo->momx += FixedMul(vblsinframe[0] * move, finecosine[angle]);
 	player->mo->momy += FixedMul(vblsinframe[0] * move, finesine[angle]);
 }
@@ -488,6 +574,11 @@ void P_CalcHeight (player_t *player) // 80022670
 	/* */
 	if (player->playerstate == PST_LIVE)
 	{
+#ifdef FPS60
+		if (!demoplayback && vblsinframe[0] != 2)
+			player->viewheight += (player->deltaviewheight * hf_vclamp(vblsinframe[0])) >> 1;
+		else
+#endif
 		player->viewheight += player->deltaviewheight;
 		if (player->viewheight > VIEWHEIGHT)
 		{
@@ -503,6 +594,11 @@ void P_CalcHeight (player_t *player) // 80022670
 
 		if (player->deltaviewheight)
 		{
+#ifdef FPS60
+			if (!demoplayback && vblsinframe[0] != 2)
+				player->deltaviewheight += (FRACUNIT * hf_vclamp(vblsinframe[0])) >> 2;
+			else
+#endif
 			player->deltaviewheight += FRACUNIT/2;
 			if (!player->deltaviewheight)
 				player->deltaviewheight = 1;
@@ -524,8 +620,9 @@ void P_CalcHeight (player_t *player) // 80022670
 void P_MovePlayer (player_t *player) // 8002282C
 {
 #ifdef FPS60
-	if (demoplayback) /* outside demos, turning is applied every frame (P_HighFpsPlayerThink) */
+	if (demoplayback) /* outside demos, turning and thrust are applied every frame (P_HighFpsPlayerThink) */
 #endif
+	{
 	player->mo->angle += vblsinframe[0] * player->angleturn;
 
 	if(player->onground)
@@ -535,6 +632,7 @@ void P_MovePlayer (player_t *player) // 8002282C
         if (player->sidemove)
             P_Thrust (player, player->mo->angle-ANG90, player->sidemove);
     }
+	}
 
 	if ((player->forwardmove || player->sidemove) && player->mo->state == &states[S_001])//S_PLAY
 		P_SetMobjState (player->mo, S_002);//S_PLAY_RUN1
@@ -547,11 +645,11 @@ void P_MovePlayer (player_t *player) // 8002282C
 =
 = P_HighFpsPlayerThink
 =
-= 60 Hz mode (outside demos): the player is still thought on the 30 Hz game
-= tick, with exactly the inputs and frame time the 30 Hz game would use, so
-= movement, jumping and gravity are the same as before. Frames in between only
-= turn the player (so aiming stays responsive) and the camera is interpolated
-= between the last two ticks when drawing (see R_RenderPlayerView).
+= 60 Hz mode (outside demos). The game, weapons and everything about the player
+= that isn't movement still run on the 30 Hz tick, exactly like the 30 Hz game.
+= The player's own movement (momentum, friction, gravity, thrust, turning and
+= the view height) runs every frame, scaled by the frame time, so it's as
+= responsive as the frame rate allows (see the tables above P_PlayerXYMovement).
 =
 =================
 */
@@ -564,40 +662,60 @@ void P_HighFpsStart (void)
 	hf_minvbls = 1;
 	hf_edge = 0;
 	hf_lastticon = ticon;
-	hf_snap = true;
 }
-
-#define HF_SNAPDIST (128*FRACUNIT) /* a bigger jump in one tick is a teleport, don't interpolate it */
 
 void P_HighFpsPlayerThink (player_t *player)
 {
-	int      savedvbls, savedbuttons, savedold, tickvbls;
-	fixed_t  dx, dy, dz;
-	mobj_t   *mo;
+	int      savedvbls, savedbuttons, savedold, tickvbls, v;
+	mobj_t   *mo = player->mo;
 
 	hf_edge |= ticbuttons[0] & ~oldticbuttons[0];
 
+	/* movement, every frame */
+	if (!gamepaused)
+	{
+		hf_framevbls = hf_vclamp(vblsinframe[0]);
+
+		if (mo->momx || mo->momy)
+			P_PlayerXYMovement(mo);
+
+		player->onground = (mo->z <= mo->floorz);
+
+		if (mo->z != mo->floorz || mo->momz)
+			P_PlayerZMovement(mo);
+
+		hf_framevbls = 2;
+
+		if (player->playerstate == PST_LIVE)
+		{
+			/* the move inputs were built on the last tick; reactiontime is held off after a teleport */
+			if (!mo->reactiontime)
+			{
+				mo->angle += vblsinframe[0] * player->angleturn;
+
+				if (player->onground)
+				{
+					if (player->forwardmove)
+						P_Thrust(player, mo->angle, player->forwardmove);
+					if (player->sidemove)
+						P_Thrust(player, mo->angle-ANG90, player->sidemove);
+				}
+			}
+
+			P_CalcHeight(player);
+		}
+	}
+
 	if (gamevbls < gametic) /* a game tick */
 	{
-		mo = player->mo;
-
 		tickvbls = ticon - hf_lastticon;
 		if (tickvbls < 1 || tickvbls > 8)
-		{
 			tickvbls = 2;
-			hf_snap = true;
-		}
 		hf_lastticon = ticon;
 
 		savedvbls = vblsinframe[0];
 		savedbuttons = ticbuttons[0];
 		savedold = oldticbuttons[0];
-
-		/* camera of the previous tick, and when this tick's frame started */
-		hf_tickstart = ticon - savedvbls;
-		hf_oldx = mo->x;
-		hf_oldy = mo->y;
-		hf_oldviewz = player->viewz;
 
 		/* think like the 30 Hz game: the time since the last tick and the buttons seen since then */
 		vblsinframe[0] = tickvbls;
@@ -610,25 +728,7 @@ void P_HighFpsPlayerThink (player_t *player)
 		ticbuttons[0] = savedbuttons;
 		oldticbuttons[0] = savedold;
 		hf_edge = 0;
-
-		mo = player->mo;
-		dx = mo->x - hf_oldx;
-		dy = mo->y - hf_oldy;
-		dz = player->viewz - hf_oldviewz;
-		if (hf_snap || dx > HF_SNAPDIST || dx < -HF_SNAPDIST || dy > HF_SNAPDIST || dy < -HF_SNAPDIST ||
-			dz > HF_SNAPDIST || dz < -HF_SNAPDIST)
-		{
-			hf_oldx = mo->x;
-			hf_oldy = mo->y;
-			hf_oldviewz = player->viewz;
-		}
-		hf_snap = false;
 	}
-
-	/* turning happens every frame, scaled by the frame time (angleturn was built on the last tick) */
-	mo = player->mo;
-	if (!gamepaused && player->playerstate == PST_LIVE && !mo->reactiontime)
-		mo->angle += vblsinframe[0] * player->angleturn;
 }
 #endif // FPS60
 
@@ -871,6 +971,9 @@ void P_PlayerThink (player_t *player) // 80022D60
 		else
 			P_MovePlayer(player);
 
+#ifdef FPS60
+		if (demoplayback) /* otherwise it's done every frame by P_HighFpsPlayerThink */
+#endif
 		P_CalcHeight(player);
 
 		/* */

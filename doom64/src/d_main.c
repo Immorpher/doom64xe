@@ -191,9 +191,6 @@ void M_ClearRandom(void) // 80002980
 
 #ifdef FPS60
 int hf_minvbls = 2;
-int hf_tickstart = 0;
-fixed_t hf_oldx, hf_oldy, hf_oldviewz;
-boolean hf_snap = true;
 #endif
 
 int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*drawer)(void)) // 80002998
@@ -204,7 +201,6 @@ int MiniLoop(void(*start)(void), void(*stop)(int), int(*ticker)(void), void(*dra
 	int		hf_saved_minvbls = hf_minvbls;
 
 	hf_minvbls = 2; /* only the game itself (P_Start) runs at 60 Hz */
-	hf_snap = true;
 #endif
 #ifdef BENCHMARK
 	u32		bench_t0, bench_t1;
