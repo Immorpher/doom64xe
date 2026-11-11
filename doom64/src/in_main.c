@@ -175,13 +175,13 @@ mapinfo_t MapInfo[] = //8005A478
 	
 	// The Lost Levels
 	
-    {MI_TXT34 , 100}, // Plant Ops
-    {MI_TXT35 , 95}, // Evil Sacrifice
-    {MI_TXT36 , 111}, // Cold Grounds
-    {MI_TXT37 , 94}, // Wretched Vats
-    {MI_TXT38 , 105}, // Thy Glory
-    {MI_TXT39 , 98}, // Final Judgement
-    {MI_TXT40 , 101}, // Panic
+    {MI_TXT34 , 120}, // Plant Ops
+    {MI_TXT35 , 121}, // Evil Sacrifice
+    {MI_TXT36 , 123}, // Cold Grounds
+    {MI_TXT37 , 125}, // Wretched Vats
+    {MI_TXT38 , 122}, // Thy Glory
+    {MI_TXT39 , 124}, // Final Judgement
+    {MI_TXT40 , 126}, // Panic
 	
 	// Beta 64
 	
