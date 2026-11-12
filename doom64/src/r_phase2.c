@@ -503,7 +503,7 @@ void R_RenderClouds(void) // 80025878
 
 void R_RenderSkyPic(int lump, int yoffset) // 80025BDC
 {
-    byte *data;
+    spriteN64_t *data;
     byte *src;
     byte *paldata;
     int i;
@@ -516,10 +516,10 @@ void R_RenderSkyPic(int lump, int yoffset) // 80025BDC
     data = W_CacheLumpNum(lump, PU_CACHE);
 
     ang = ((0 - (viewangle >> 22)) & 255);
-    tileh = ((spriteN64_t*)data)->tileheight;
+    tileh = data->tileheight;
 
-    src = data + sizeof(spriteN64_t);
-    paldata = (src + ((spriteN64_t*)data)->cmpsize);
+    src = data->texels;
+    paldata = (src + data->cmpsize);
 
     gDPSetCycleType(GFX1++, G_CYC_1CYCLE);
 
@@ -539,9 +539,9 @@ void R_RenderSkyPic(int lump, int yoffset) // 80025BDC
     gDPPipeSync(GFX1++);
 
     lrs = (((tileh << 8) + 1) >> 1) - 1;
-    yl = (yoffset - ((spriteN64_t*)data)->height);
+    yl = (yoffset - data->height);
 
-    for(i = 0; i < ((spriteN64_t*)data)->tiles; i++)
+    for(i = 0; i < data->tiles; i++)
     {
         yh = (tileh + yl);
 

@@ -1374,6 +1374,7 @@ typedef struct
 	short numpal;
 	short width;
 	short height;
+	byte  texels[];
 } gfxN64_t;
 
 typedef struct
@@ -1382,6 +1383,7 @@ typedef struct
 	short numpal;
 	short wshift;
 	short hshift;
+	byte  texels[];
 } textureN64_t;
 
 typedef struct
@@ -1394,4 +1396,5 @@ typedef struct
 	unsigned short  width;      // 10
 	unsigned short  height;     // 12
 	unsigned short  tileheight; // 14
+	byte            texels[];   // 16
 } spriteN64_t;

@@ -408,7 +408,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomHeight,
                   int topOffset, int bottomOffset, int topColor, int bottomColor) // 80027138
 {
-    byte *data;
+    textureN64_t *data;
     byte *src;
     vertex_t *v1;
     vertex_t *v2;
@@ -446,10 +446,10 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
             //data = W_CacheLumpNum(texture >> 4, PU_CACHE); // error decomp mode
             data = W_CacheLumpNum(texture >> 4, PU_CACHE); /* [GEC] FIXED */
 
-            wshift = ((textureN64_t*)data)->wshift;
-            hshift = ((textureN64_t*)data)->hshift;
+            wshift = data->wshift;
+            hshift = data->hshift;
 
-            src = data + sizeof(textureN64_t);
+            src = data->texels;
 
             // Load Image Data
             gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
@@ -523,7 +523,7 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
 
 void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 80027654
 {
-    byte *data;
+    textureN64_t *data;
     byte *src;
     vertex_t *v1;
     vertex_t *v2;
@@ -545,10 +545,10 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
         //data = W_CacheLumpNum(firsttex + texture, PU_CACHE); // error decomp mode
         data = W_CacheLumpNum(firsttex + texture, PU_CACHE); /* [GEC] FIXED */
 
-        wshift = ((textureN64_t*)data)->wshift;
-        hshift = ((textureN64_t*)data)->hshift;
+        wshift = data->wshift;
+        hshift = data->hshift;
 
-        src = data + sizeof(textureN64_t);
+        src = data->texels;
 
         // Load Image Data
         gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
@@ -631,7 +631,7 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
 
 void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color) // 80027B68
 {
-    byte *data;
+    textureN64_t *data;
     byte *src;
     vertex_t *vrt;
     fixed_t x;
@@ -651,7 +651,7 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
         //data = W_CacheLumpNum(texture >> 4, PU_CACHE); // error decomp mode
         data = W_CacheLumpNum(texture >> 4, PU_CACHE); /* [GEC] FIXED */
 
-        src = data + sizeof(textureN64_t);
+        src = data->texels;
 
         // Load Image Data
         gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
@@ -817,7 +817,7 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
 
 void R_RenderThings(subsector_t *sub) // 80028248
 {
-    byte *data;
+    spriteN64_t *data;
     byte *src;
     byte *paldata;
     vissprite_t *vissprite_p;
@@ -910,34 +910,34 @@ void R_RenderThings(subsector_t *sub) // 80028248
             
             data = W_CacheLumpNum(lump, PU_CACHE);
 
-            compressed = ((spriteN64_t*)data)->compressed;
-            tileh = ((spriteN64_t*)data)->tileheight;
-            width = ((spriteN64_t*)data)->width;
-            height = ((spriteN64_t*)data)->height;
-            tiles = ((spriteN64_t*)data)->tiles << 1;
+            compressed = data->compressed;
+            tileh = data->tileheight;
+            width = data->width;
+            height = data->height;
+            tiles = data->tiles << 1;
 
             spos = width;
             tpos = 0;
 
-            src = data + sizeof(spriteN64_t);
+            src = data->texels;
 
             if (flip)
             {
-                xx = thing->x + (((spriteN64_t*)data)->xoffs * viewsin);
+                xx = thing->x + (data->xoffs * viewsin);
                 xpos1 = (xx - (width * viewsin)) >> FRACBITS;
                 xpos2 = (xx) >> FRACBITS;
 
-                yy = thing->y - (((spriteN64_t*)data)->xoffs * viewcos);
+                yy = thing->y - (data->xoffs * viewcos);
                 zpos1 = -(yy + (width * viewcos)) >> FRACBITS;
                 zpos2 = -(yy) >> FRACBITS;
             }
             else
             {
-                xx = thing->x - (((spriteN64_t*)data)->xoffs * viewsin);
+                xx = thing->x - (data->xoffs * viewsin);
                 xpos2 = (xx + (width * viewsin)) >> FRACBITS;
                 xpos1 = (xx) >> FRACBITS;
 
-                yy = thing->y + (((spriteN64_t*)data)->xoffs * viewcos);
+                yy = thing->y + (data->xoffs * viewcos);
                 zpos2 = -(yy - (width * viewcos)) >> FRACBITS;
                 zpos1 = -(yy) >> FRACBITS;
             }
@@ -948,17 +948,17 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
             if (compressed < 0)
             {
-                width = (((spriteN64_t*)data)->width + 7) & ~7;
+                width = (data->width + 7) & ~7;
                 tilew = tileh * width;
 
-                if (((spriteN64_t*)data)->cmpsize & 1)
+                if (data->cmpsize & 1)
                 {
-                    paldata = (byte *)(W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)) +
+                    paldata = (byte *)(W_CacheLumpNum((lump - (data->cmpsize >> 1)) +
                                              thing->info->palette, PU_CACHE)) + 8;
                 }
                 else
                 {
-                    paldata = (src + ((spriteN64_t*)data)->cmpsize);
+                    paldata = (src + data->cmpsize);
                 }
 
                 // Load Palette Data (256 colors)
@@ -972,7 +972,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
             }
             else
             {
-                width = (((spriteN64_t*)data)->width + 15) & ~15;
+                width = (data->width + 15) & ~15;
                 tilew = tileh * width;
 
                 if (tilew < 0) {
@@ -982,7 +982,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
                 tilew >>= 1;
 
                 // Load Palette Data (16 colors)
-                gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, (src + ((spriteN64_t*)data)->cmpsize));
+                gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, (src + data->cmpsize));
 
                 gDPTileSync(GFX1++);
                 gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
@@ -993,7 +993,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
 			
 			gDPPipeSync(GFX1++);
 
-            ypos = (thing->z >> FRACBITS) + ((spriteN64_t*)data)->yoffs;
+            ypos = (thing->z >> FRACBITS) + data->yoffs;
 
             VTX1[0].v.ob[0] = xpos1;
             VTX1[0].v.ob[1] = ypos;
@@ -1144,7 +1144,7 @@ void R_RenderPSprites(void) // 80028f20
 	int				flagtranslucent;
 
 	boolean         palloaded;
-	byte		    *data;
+	spriteN64_t	    *data;
 	byte		    *paldata;
 	byte		    *src;
 
@@ -1192,16 +1192,16 @@ void R_RenderPSprites(void) // 80028f20
             data = W_CacheLumpNum(lump, PU_CACHE);
 
             tilecnt = 0;
-            tiles = ((spriteN64_t*)data)->tiles;
-            width = ((spriteN64_t*)data)->width;
-            tileh = ((spriteN64_t*)data)->tileheight;
+            tiles = data->tiles;
+            width = data->width;
+            tileh = data->tileheight;
             width2 = (width + 7) & ~7;
             tilew = tileh * width2;
-            height = ((spriteN64_t*)data)->height;
-            src = data + sizeof(spriteN64_t);
+            height = data->height;
+            src = data->texels;
 
-            x = (((psp->sx >> FRACBITS) - ((spriteN64_t*)data)->xoffs) + 160) << 2;
-            y = (((psp->sy >> FRACBITS) - ((spriteN64_t*)data)->yoffs) + 239) << 2;
+            x = (((psp->sx >> FRACBITS) - data->xoffs) + 160) << 2;
+            y = (((psp->sy >> FRACBITS) - data->yoffs) + 239) << 2;
             if (viewplayer->onground)
             {
                 x += (quakeviewx >> 20);
@@ -1243,19 +1243,19 @@ void R_RenderPSprites(void) // 80028f20
             {
                 palloaded = true;
 
-                if (((spriteN64_t*)data)->cmpsize & 1)
+                if (data->cmpsize & 1)
                 {
                 /* Loads the palette from the first frame of the animation,  */
                 /* which uses an odd number to get to the lump */
-                    paldata = W_CacheLumpNum((lump - (((spriteN64_t*)data)->cmpsize >> 1)),
+                    paldata = W_CacheLumpNum((lump - (data->cmpsize >> 1)),
                                              PU_CACHE);
 
-                    paldata += (((spriteN64_t*)paldata)->cmpsize + sizeof(spriteN64_t));
+                    paldata = ((spriteN64_t*)paldata)->texels + ((spriteN64_t*)paldata)->cmpsize;
                 }
                 else
                 {
                 /* Loads the palette if it is included in the image data */
-                    paldata = (src + ((spriteN64_t*)data)->cmpsize);
+                    paldata = (src + data->cmpsize);
                 }
 
                 /* Load Palette Data (256 colors) */

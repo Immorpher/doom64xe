@@ -9,8 +9,8 @@ extern void P_RefreshBrightness(void);
 static sbflash_t flashCards[6];    // 800A8180
 boolean tryopen[6]; // 800A81E0
 
-byte *sfontlump;     // 800A81F8
-byte *statuslump;   // 800A81FC
+spriteN64_t *sfontlump;     // 800A81F8
+spriteN64_t *statuslump;   // 800A81FC
 int symbolslump;    // 800A8204
 
 int err_text_x;     // 800A8208
@@ -130,8 +130,8 @@ const int card_x[6] = {(49 << 2), (60 << 2), (71 << 2), (49 << 2), (60 << 2), (7
 
 void ST_Init(void) // 80029BA0
 {
-  sfontlump = (byte *)W_CacheLumpName("SFONT",PU_STATIC);
-  statuslump = (byte *)W_CacheLumpName("STATUS",PU_STATIC);
+  sfontlump = W_CacheLumpName("SFONT",PU_STATIC);
+  statuslump = W_CacheLumpName("STATUS",PU_STATIC);
   symbolslump = W_GetNumForName("SYMBOLS");
 }
 
@@ -332,7 +332,7 @@ void ST_Drawer (void) // 80029DC0
             gDPSetRenderMode(GFX1++, G_RM_XLU_SURF_CLAMP, G_RM_XLU_SURF2_CLAMP);
         }
 
-        src = statuslump+sizeof(spriteN64_t);
+        src = statuslump->texels;
 
         gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
         gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
@@ -344,7 +344,7 @@ void ST_Drawer (void) // 80029DC0
         gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b, 10, 0, G_TX_RENDERTILE, 0, 0, 0, 0, 0, 0, 0);
         gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, 0, (79 << 2), (15 << 2));
 
-        gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, src + ((spriteN64_t*)statuslump)->cmpsize);
+        gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, src + statuslump->cmpsize);
 
         gDPTileSync(GFX1++);
         gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
@@ -490,7 +490,7 @@ void ST_Message(int x,int y,const char *text,int color) // 8002A36C
         gDPSetCombineMode(GFX1++, G_CC_D64COMB04, G_CC_D64COMB04);
         gDPSetRenderMode(GFX1++, G_RM_XLU_SURF_CLAMP, G_RM_XLU_SURF2_CLAMP);
 
-        src = sfontlump+sizeof(spriteN64_t);
+        src = sfontlump->texels;
 
         gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
 
@@ -831,7 +831,7 @@ void ST_UpdateFlash(void) // 8002AC30
 void ST_DrawSymbol(int xpos, int ypos, int index, int color) // 8002ADEC
 {
     const symboldata_t *symbol;
-    byte *data;
+    gfxN64_t *data;
     int offset;
 
     data = W_CacheLumpNum(symbolslump, PU_CACHE);
@@ -851,10 +851,9 @@ void ST_DrawSymbol(int xpos, int ypos, int index, int color) // 8002ADEC
         gDPSetRenderMode(GFX1++, G_RM_XLU_SURF_CLAMP, G_RM_XLU_SURF2_CLAMP);
 
         // Load Palette Data
-        offset = (((gfxN64_t*)data)->width * ((gfxN64_t*)data)->height);
-        offset = (offset + 7) & ~7;
+        offset = ALIGN(data->width * data->height, 8);
         gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b ,
-                           1, data + offset + sizeof(gfxN64_t));
+                           1, data->texels + offset);
 
         gDPTileSync(GFX1++);
         gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
@@ -871,7 +870,7 @@ void ST_DrawSymbol(int xpos, int ypos, int index, int color) // 8002ADEC
 
     // Load Image Data
     gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b ,
-                       ((gfxN64_t*)data)->width, data + sizeof(gfxN64_t));
+                       data->width, data->texels);
 
     symbol = &symboldata[index];
 

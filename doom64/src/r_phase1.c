@@ -413,7 +413,7 @@ void R_AddLine(seg_t *line) // 80024604
 
 void R_AddSprite(subsector_t *sub) // 80024A98
 {
-    byte *data;
+    spriteN64_t *data;
     mobj_t *thing;
     spritedef_t		*sprdef;
 	spriteframe_t	*sprframe;
@@ -494,15 +494,15 @@ void R_AddSprite(subsector_t *sub) // 80024A98
             visspritehead->next = NULL;
             visspritehead->sector = sub->sector;
 
-            data = (byte *)W_CacheLumpNum(lump, PU_CACHE);
+            data = W_CacheLumpNum(lump, PU_CACHE);
 
             CurSub = sub;
             if (tz < MAXZ)
             {
                 if (thing->flags & (MF_CORPSE|MF_SHOOTABLE))
                 {
-                    x = ((((spriteN64_t*)data)->width >> 1) * viewsin);
-                    y = ((((spriteN64_t*)data)->width >> 1) * viewcos);
+                    x = ((data->width >> 1) * viewsin);
+                    y = ((data->width >> 1) * viewcos);
 
                     pSub = R_PointInSubsector((thing->x - x), (thing->y + y));
                     if ((pSub->drawindex) && (pSub->drawindex < sub->drawindex)) {

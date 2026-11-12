@@ -2736,9 +2736,9 @@ void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
     int width, height;
     int yh, xh, t;
     int offset;
-    byte *data;
+    gfxN64_t *data;
 
-    data = (byte *)W_CacheLumpName(name, PU_CACHE);
+    data = W_CacheLumpName(name, PU_CACHE);
 
     gDPPipeSync(GFX1++);
     gDPSetCycleType(GFX1++, G_CYC_1CYCLE);
@@ -2762,14 +2762,13 @@ void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
 
     gDPSetPrimColorD64(GFX1++, 0, 0, color);
 
-    width = ((gfxN64_t*)data)->width;
-    height = ((gfxN64_t*)data)->height;
+    width = data->width;
+    height = data->height;
 
     // Load Palette Data
-    offset = (width * height);
-    offset = (offset + 7) & ~7;
+    offset = ALIGN(width * height, 8);
     gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b ,
-                        1, data + offset + sizeof(gfxN64_t));
+                        1, data->texels + offset);
 
     gDPTileSync(GFX1++);
     gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
@@ -2779,7 +2778,7 @@ void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
 
     gDPPipeSync(GFX1++);
 
-    xh = (width + 7) & ~7;
+    xh = ALIGN(width, 8);
 
     t = 0;
     while (height != 0)
@@ -2791,7 +2790,7 @@ void M_DrawBackground(int x, int y, int color, char *name) // 80009A68
 
         // Load Image Data
         gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b ,
-                        width, data + sizeof(gfxN64_t));
+                        width, data->texels);
 
          // Clip Rectangle From Image
         gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b,
