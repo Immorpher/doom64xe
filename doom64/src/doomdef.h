@@ -755,6 +755,7 @@ int		W_GetNumForName (char *name);
 
 int		W_LumpLength(int lump);
 void	W_ReadLump(int lump, void *dest) HOT;
+void	W_InvalDCache(void *dest, u32 len); /* DMA destination invalidate that never flushes the whole data cache */
 
 void	*W_CacheLumpNum(int lump, int tag) HOT;
 void	*W_CacheLumpName(char *name, int tag);

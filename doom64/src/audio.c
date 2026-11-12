@@ -105,7 +105,7 @@ int wess_rom_copy(char *src, char *dest, int len) // 8002E334
 
 	if (len != 0)
 	{
-		osInvalDCache((void *)dest, (s32)len);
+		W_InvalDCache((void *)dest, (u32)len);
 		osPiStartDma(&DMAIoMesgBuf, OS_MESG_PRI_HIGH, OS_READ, (u32)src, (void *)dest, (u32)len, &wess_dmaMessageQ);
 		I_RecvMesgWD(&wess_dmaMessageQ, &dummyMesg, 3);
 

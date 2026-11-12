@@ -46,10 +46,38 @@ extern char _doom64_wadSegmentRomStart[], _doom64_wadSegmentRomEnd[];
 ============================================================================
 */
 
+/*
+====================
+=
+= W_InvalDCache
+=
+= osInvalDCache writes back and invalidates the entire 8 KB data cache when
+= it is given 8 KB or more, which throws away the whole working set every
+= time a big graphic or sample is loaded. Doing the range in pieces under
+= that limit only touches the lines that really hold the destination memory.
+=
+====================
+*/
+
+void W_InvalDCache(void *dest, u32 len)
+{
+    byte *p = (byte *)dest;
+
+    while (len > 4096)
+    {
+        osInvalDCache(p, 4096);
+        p += 4096;
+        len -= 4096;
+    }
+
+    if (len)
+        osInvalDCache(p, len);
+}
+
 static void W_GetRomData(u32 offset, void *dest, u32 len)
 {
     OSIoMesg romio_msgbuf;
-    osInvalDCache(dest, len);
+    W_InvalDCache(dest, len);
     osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
             (u32)_doom64_wadSegmentRomStart + offset,
             dest, len, &romcopy_msgque);
@@ -222,7 +250,7 @@ void W_ReadLump (int lump, void *dest) // 8002C260
 	else
 		lumpsize = (l->size);
 
-	osInvalDCache((void *)dest, lumpsize);
+	W_InvalDCache((void *)dest, lumpsize);
 
 	osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
               (u32)_doom64_wadSegmentRomStart + l->filepos,
