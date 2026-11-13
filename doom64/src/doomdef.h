@@ -750,7 +750,8 @@ typedef struct {
 
 void	W_Init (void) COLD;
 
-int     W_CheckNumForName (char *name, int hibit1, int hibit2);
+int     W_CheckNumForName (char *name);
+int     W_CheckNumForSwitch (void);
 int		W_GetNumForName (char *name);
 
 int		W_LumpLength(int lump);

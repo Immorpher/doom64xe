@@ -131,6 +131,39 @@ void W_Init (void) // 8002BEC0
 }
 
 
+/* Packs a lump name into two integers (zero padded, 8 characters max) so a
+   lump can be matched with two compares. */
+static void W_NameKey(const char *name, int *key)
+{
+	char *k = (char *)key;
+	int i;
+
+	key[0] = 0;
+	key[1] = 0;
+
+	for (i = 0; i < 8 && name[i]; i++)
+		k[i] = name[i];
+}
+
+/* The masks drop the high bit of the first character (marks a compressed lump)
+   and, for the switch search, ignore everything after the prefix. Scans from lump 0. */
+static inline int W_ScanKey(const int *key, int mask1, int mask2)
+{
+	lumpinfo_t	*lump_p = lumpinfo;
+	int			i;
+
+	for (i = 0; i < numlumps; i++, lump_p++)
+	{
+		if ((key[0] == (*(int *)&lump_p->name[0] & mask1)) &&
+			(key[1] == (*(int *)&lump_p->name[4] & mask2)))
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 /*
 ====================
 =
@@ -140,47 +173,31 @@ void W_Init (void) // 8002BEC0
 =
 ====================
 */
-//int W_CheckNumForName(char *name, int unk1, int hibit1, int hibit2)    // original
-int W_CheckNumForName(char *name, int hibit1, int hibit2) // 8002C0F4 removed unknown parameter
+
+int W_CheckNumForName(char *name) // 8002C0F4 the two mask parameters were always the same
 {
-	char	name8[12];
-	char	c, *tmp;
-	int		i;
-	lumpinfo_t	*lump_p;
+	int key[2];
 
-	/* make the name into two integers for easy compares */
+	W_NameKey(name, key);
+	return W_ScanKey(key, 0x7fffffff, 0xffffffff);
+}
 
-	*(int *)&name8[4] = 0;
-	*(int *)&name8[0] = 0;
+/*
+====================
+=
+= W_CheckNumForSwitch
+=
+= First lump whose name starts with SWX, or -1 (used by R_InitTextures)
+=
+====================
+*/
 
-	tmp = name8;
-	while ((c = *name) != 0)
-	{
-		*tmp++ = c;
+int W_CheckNumForSwitch(void)
+{
+	int key[2];
 
-		if ((tmp >= name8+8))
-		{
-			break;
-		}
-
-		name++;
-	}
-
-	/* scan backwards so patch lump files take precedence */
-
-	lump_p = lumpinfo;
-	for(i = 0; i < numlumps; i++)
-	{
-		if ((*(int *)&name8[0] == (*(int *)&lump_p->name[0] & hibit1)) &&
-			(*(int *)&name8[4] == (*(int *)&lump_p->name[4] & hibit2)))
-		{
-			return i;
-		}
-
-		lump_p++;
-	}
-
-	return -1;
+	W_NameKey("SWX", key);
+	return W_ScanKey(key, 0x7fffff00, 0);
 }
 
 /*
@@ -197,7 +214,7 @@ int	W_GetNumForName (char *name) // 8002C1B8
 {
 	int	i;
 
-	i = W_CheckNumForName (name, 0x7fffffff, 0xFFFFFFFF);
+	i = W_CheckNumForName (name);
 	if (i != -1)
 		return i;
 
@@ -305,9 +322,44 @@ void *W_CacheLumpNum (int lump, int tag) // 8002C430
 ====================
 */
 
+/* Small cache of recent name lookups: menu and screen backgrounds ask for the
+   same few lumps by name every frame, and each miss is a scan of the whole directory. */
+#define NAMECACHE_SIZE 8
+
+static struct
+{
+	int key[2];
+	int lump1; /* lump number + 1, 0 = empty */
+} namecache[NAMECACHE_SIZE];
+
+static int namecache_next;
+
+static int W_GetNumForNameCached(char *name)
+{
+	int key[2];
+	int i;
+
+	W_NameKey(name, key);
+
+	for (i = 0; i < NAMECACHE_SIZE; i++)
+	{
+		if (namecache[i].lump1 && namecache[i].key[0] == key[0] && namecache[i].key[1] == key[1])
+			return namecache[i].lump1 - 1;
+	}
+
+	i = W_GetNumForName(name);
+
+	namecache[namecache_next].key[0] = key[0];
+	namecache[namecache_next].key[1] = key[1];
+	namecache[namecache_next].lump1 = i + 1;
+	namecache_next = (namecache_next + 1) & (NAMECACHE_SIZE - 1);
+
+	return i;
+}
+
 void *W_CacheLumpName (char *name, int tag) // 8002C57C
 {
-	return W_CacheLumpNum (W_GetNumForName(name), tag);
+	return W_CacheLumpNum (W_GetNumForNameCached(name), tag);
 }
 
 

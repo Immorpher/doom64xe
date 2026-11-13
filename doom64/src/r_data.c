@@ -72,7 +72,7 @@ void R_InitTextures(void) // 8002327C
 	    textures[i] = (i + firsttex) << 4;
 	}
 
-    swx = W_CheckNumForName("SWX", 0x7fffff00, 0);
+    swx = W_CheckNumForSwitch();
     firstswx = (swx - firsttex);
 }
 
