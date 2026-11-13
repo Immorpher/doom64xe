@@ -222,6 +222,8 @@ struct player_s;
 typedef struct mobj_s
 {
 /* info for drawing */
+	/* x, y, z and subsector must stay first: a sector's sound origin is
+	   read through a cast to mobj_t */
 	fixed_t			x,y,z;
 
 	struct subsector_s	*subsector;
@@ -237,35 +239,35 @@ typedef struct mobj_s
 	struct mobj_s   *tracer;        /* Thing being chased/attacked for tracers. */
 
 	angle_t			angle;
-	int			sprite;				/* used to find patch_t and flip value */
-	int			frame;				/* might be ord with FF_FULLBRIGHT */
 	fixed_t			floorz, ceilingz;	/* closest together of contacted secs */
 	fixed_t			radius, height;		/* for movement checking */
 	fixed_t			momx, momy, momz;	/* momentums */
 
 	mobjtype_t		type;
 	mobjinfo_t		*info;				/* &mobjinfo[mobj->type] */
-	int			tics;				/* state tic counter	 */
 	state_t			*state;
-
-	int			health;
-	int			movedir;		/* 0-7 */
-	int			movecount;		/* when 0, select a new dir */
-
-									/* also the originator for missiles */
-	int			reactiontime;	/* if non 0, don't attack yet */
-									/* used by player to freeze a bit after */
-									/* teleporting */
-	int			threshold;		/* if >0, the target will be chased */
-									/* no matter what (even if shot) */
-
-    int             alpha;          /* [D64] alpha value */
 
 	void            *extradata;     /* for latecall functions */
 
 	latecall_t		latecall;		/* set in p_base if more work needed */
 
-	short             tid;            /* [D64] tid value */
+/* small fields grouped together so the struct has no padding holes */
+	s16			sprite;				/* used to find patch_t and flip value */
+	u16			frame;				/* might be ord with FF_FULLBRIGHT */
+	s16			tics;				/* state tic counter	 */
+
+	s16			health;
+	s16			movecount;		/* when 0, select a new dir */
+									/* also the originator for missiles */
+	s16			reactiontime;	/* if non 0, don't attack yet */
+									/* used by player to freeze a bit after */
+									/* teleporting */
+	s16			threshold;		/* if >0, the target will be chased */
+									/* no matter what (even if shot) */
+
+	s16			alpha;			/* [D64] alpha value (signed: fades can dip below 0) */
+	s16			tid;			/* [D64] tid value */
+	u8			movedir;		/* 0-7 */
 } mobj_t;
 
 /* each sector has a degenmobj_t in it's center for sound origin purposes */
