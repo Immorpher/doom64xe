@@ -20,6 +20,26 @@ byte checkcoord[12][4] =				// 8005B110
 	{ 0, 0, 0, 0 }
 };
 
+
+/*
+ * Screen column of a point from its view-space x and depth y:
+ * ((x/y) * 160) + 160, done with the shifts the original used.
+ * The division runs on the FPU (about 30 cycles) instead of ddiv (about 70);
+ * when y is too small for the float result to stay in range the integer
+ * divide is used, so the result never differs by more than float rounding.
+ */
+static INLINE_ALWAYS int R_ScreenCol(fixed_t x, fixed_t y)
+{
+    fixed_t xo;
+
+    if (y >= (4*FRACUNIT))
+        xo = (fixed_t)(((float)x / (float)y) * 65536.0f);
+    else
+        xo = FixedDiv2(x, y);
+
+    return (((xo >> 9) + (xo >> 11))) + 160;
+}
+
 void	R_RenderBSPNode(int bspnum) HOT;
 boolean R_CheckBBox(const fixed_t bspcoord[4]) HOT;
 void	R_Subsector(int num) HOT;
@@ -221,11 +241,8 @@ boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
         vy2 = vx2;
     }
 	
-	fixed_t vxovery1 = FixedDiv2(vx1, vy1);
-	fixed_t vxovery2 = FixedDiv2(vx2, vy2);
-
-	Xstart = (((vxovery1 >> 9) + (vxovery1 >> 11))) + 160;
-	Xend   = (((vxovery2 >> 9) + (vxovery2 >> 11))) + 160;
+	Xstart = R_ScreenCol(vx1, vy1);
+	Xend   = R_ScreenCol(vx2, vy2);
 
     if (Xstart < 0)
         Xstart = 0;
@@ -358,11 +375,8 @@ void R_AddLine(seg_t *line) // 80024604
         y2 = (8*FRACUNIT);
     }
 
-	fixed_t xovery1 = FixedDiv2(x1, y1);
-	fixed_t xovery2 = FixedDiv2(x2, y2);
-
-	Xstart = (((xovery1 >> 9) + (xovery1 >> 11))) + 160;
-	Xend   = (((xovery2 >> 9) + (xovery2 >> 11))) + 160;
+	Xstart = R_ScreenCol(x1, y1);
+	Xend   = R_ScreenCol(x2, y2);
 
     if (Xstart < 0)
         Xstart = 0;
