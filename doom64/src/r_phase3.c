@@ -18,6 +18,106 @@ void R_RenderLaser(mobj_t *thing) HOT;
 void R_RenderPSprites(void) HOT;
 //-----------------------------------//
 
+
+/*
+ * Texture load command cache.
+ *
+ * Loading a texture needs the same 13 commands every time.  Building them is a
+ * large part of the CPU time of a frame, so the commands for each (texture, mirror)
+ * combination are built once into a small static display list and later uses only
+ * emit one gSPDisplayList that calls it.  There is one bank per display list
+ * buffer (vid_side), so an entry is never rewritten while the graphics task that
+ * was built with it can still be running, and an entry that was used in the frame
+ * being built is never replaced (that case falls back to emitting the commands inline).
+ * An entry is only reused if it was built for the same lump address, so a purged
+ * and reloaded texture is rebuilt.
+ */
+#define TEXDL_ENTRIES 64
+#define TEXDL_CMDS    13
+
+typedef struct
+{
+    int      key;     /* (texture << 3) | kind, 0 = empty */
+    byte     *data;   /* lump address the commands were built for */
+    u32      frame;   /* NextFrameIdx of the last use */
+    int      pad;
+    Gfx      dl[TEXDL_CMDS + 1];
+} texdl_t;
+
+static texdl_t texdl[2][TEXDL_ENTRIES];
+
+#define TEXDL_HASH(key) ((((u32)(key)) * 2654435761U) >> 26) /* top 6 bits */
+
+static Gfx *R_TexCmdsWall(Gfx *g, byte *src, int texture, int wshift, int hshift, int cms, int cmt)
+{
+    // Load Image Data
+    gDPSetTextureImage(g++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
+    gDPSetTile(g++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+
+    gDPLoadSync(g++);
+    gDPLoadBlock(g++, G_TX_LOADTILE, 0, 0,
+                 (((1 << wshift) * (1 << hshift)) >> 2) - 1, 0);
+
+    gDPPipeSync(g++);
+    gDPSetTile(g++, G_IM_FMT_CI, G_IM_SIZ_4b,
+               (((1 << wshift) >> 1) + 7) >> 3, 0, G_TX_RENDERTILE, 0,
+               cmt, hshift, 0,
+               cms, wshift, 0);
+
+    gDPSetTileSize(g++, G_TX_RENDERTILE, 0, 0,
+                   ((1 << wshift) - 1) << 2,
+                   ((1 << hshift) - 1) << 2);
+
+    // Load Palette Data
+    gDPSetTextureImage(g++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1,
+                       src + (1 << ((wshift + hshift + 31) & 31)) + ((texture & 15) << 5));
+
+    gDPTileSync(g++);
+    gDPSetTile(g++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+
+    gDPLoadSync(g++);
+    gDPLoadTLUTCmd(g++, G_TX_LOADTILE, 15);
+
+    gDPPipeSync(g++);
+
+    return g;
+}
+
+static Gfx *R_TexCmdsPlane(Gfx *g, byte *src, int texture)
+{
+    // Load Image Data
+    gDPSetTextureImage(g++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
+    gDPSetTile(g++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+
+    gDPLoadSync(g++);
+    gDPLoadBlock(g++, G_TX_LOADTILE, 0, 0,
+                 (((1 << 6) * (1 << 6)) >> 2) - 1, 0);
+
+    gDPPipeSync(g++);
+    gDPSetTile(g++, G_IM_FMT_CI, G_IM_SIZ_4b,
+               (((1 << 6) >> 1) + 7) >> 3, 0, G_TX_RENDERTILE, 0,
+               0, 6, 0,
+               0, 6, 0);
+
+    gDPSetTileSize(g++, G_TX_RENDERTILE, 0, 0,
+                   ((1 << 6) - 1) << 2,
+                   ((1 << 6) - 1) << 2);
+
+    // Load Palette Data
+    gDPSetTextureImage(g++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1,
+                       src + (1 << (6 + 6 - 1)) + ((texture & 15) << 5));
+
+    gDPTileSync(g++);
+    gDPSetTile(g++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+
+    gDPLoadSync(g++);
+    gDPLoadTLUTCmd(g++, G_TX_LOADTILE, 15);
+
+    gDPPipeSync(g++);
+
+    return g;
+}
+
 void R_RenderAll(void) // 80026590
 {
     subsector_t *sub;
@@ -414,6 +514,9 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
     vertex_t *v2;
     int cms, cmt;
     int wshift, hshift;
+    int key;
+    texdl_t *e;
+    Gfx *g;
 	
 	// [GEC] Prevents errors in textures in S coordinates
     int curTextureoffset = (seg->sidedef->textureoffset + seg->offset) & (255 << FRACBITS);
@@ -446,40 +549,36 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
             //data = W_CacheLumpNum(texture >> 4, PU_CACHE); // error decomp mode
             data = W_CacheLumpNum(texture >> 4, PU_CACHE); /* [GEC] FIXED */
 
-            wshift = data->wshift;
-            hshift = data->hshift;
+            key = (texture << 3) | (cms ? 2 : 0) | (cmt ? 1 : 0);
+            e = &texdl[vid_side][TEXDL_HASH(key)];
 
-            src = data->texels;
+            if ((e->key == key) && (e->data == (byte *)data))
+            {
+                e->frame = NextFrameIdx;
+                gSPDisplayList(GFX1++, e->dl);
+            }
+            else
+            {
+                wshift = data->wshift;
+                hshift = data->hshift;
 
-            // Load Image Data
-            gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
-            gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+                src = data->texels;
 
-            gDPLoadSync(GFX1++);
-            gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0,
-                         (((1 << wshift) * (1 << hshift)) >> 2) - 1, 0);
-
-            gDPPipeSync(GFX1++);
-            gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_4b,
-                       (((1 << wshift) >> 1) + 7) >> 3, 0, G_TX_RENDERTILE, 0,
-                       cmt, hshift, 0,
-                       cms, wshift, 0);
-
-            gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, 0,
-                           ((1 << wshift) - 1) << 2,
-                           ((1 << hshift) - 1) << 2);
-
-            // Load Palette Data
-            gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1,
-                               src + (1 << ((wshift + hshift + 31) & 31)) + ((texture & 15) << 5));
-
-            gDPTileSync(GFX1++);
-            gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
-
-            gDPLoadSync(GFX1++);
-            gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 15);
-
-            gDPPipeSync(GFX1++);
+                if (e->frame != NextFrameIdx)
+                {
+                    g = R_TexCmdsWall(e->dl, src, texture, wshift, hshift, cms, cmt);
+                    gSPEndDisplayList(g++);
+                    e->key = key;
+                    e->data = (byte *)data;
+                    e->frame = NextFrameIdx;
+                    gSPDisplayList(GFX1++, e->dl);
+                }
+                else
+                {
+                    /* entry already used by another texture in this frame: emit inline */
+                    GFX1 = R_TexCmdsWall(GFX1, src, texture, wshift, hshift, cms, cmt);
+                }
+            }
 
             globallump = texture;
             globalcm = (cms | cmt);
@@ -638,6 +737,9 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
     fixed_t y;
     int idx, i;
     int v00, v01, v02;
+    int key;
+    texdl_t *e;
+    Gfx *g;
 
     if (texture != globallump)
     {
@@ -651,37 +753,32 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
         //data = W_CacheLumpNum(texture >> 4, PU_CACHE); // error decomp mode
         data = W_CacheLumpNum(texture >> 4, PU_CACHE); /* [GEC] FIXED */
 
-        src = data->texels;
+        key = (texture << 3) | 4;
+        e = &texdl[vid_side][TEXDL_HASH(key)];
 
-        // Load Image Data
-        gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
-        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+        if ((e->key == key) && (e->data == (byte *)data))
+        {
+            e->frame = NextFrameIdx;
+            gSPDisplayList(GFX1++, e->dl);
+        }
+        else
+        {
+            src = data->texels;
 
-        gDPLoadSync(GFX1++);
-        gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0,
-                         (((1 << 6) * (1 << 6)) >> 2) - 1, 0);
-
-        gDPPipeSync(GFX1++);
-        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_4b,
-                       (((1 << 6) >> 1) + 7) >> 3, 0, G_TX_RENDERTILE, 0,
-                       0, 6, 0,
-                       0, 6, 0);
-
-        gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, 0,
-                           ((1 << 6) - 1) << 2,
-                           ((1 << 6) - 1) << 2);
-
-        // Load Palette Data
-        gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1,
-                               src + (1 << (6 + 6 - 1)) + ((texture & 15) << 5));
-
-        gDPTileSync(GFX1++);
-        gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
-
-        gDPLoadSync(GFX1++);
-        gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 15);
-
-        gDPPipeSync(GFX1++);
+            if (e->frame != NextFrameIdx)
+            {
+                g = R_TexCmdsPlane(e->dl, src, texture);
+                gSPEndDisplayList(g++);
+                e->key = key;
+                e->data = (byte *)data;
+                e->frame = NextFrameIdx;
+                gSPDisplayList(GFX1++, e->dl);
+            }
+            else
+            {
+                GFX1 = R_TexCmdsPlane(GFX1, src, texture);
+            }
+        }
 
         globallump = texture;
     }
