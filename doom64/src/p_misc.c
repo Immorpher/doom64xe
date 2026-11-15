@@ -790,6 +790,11 @@ int P_AlertTaggedMobj(int tid, mobj_t *activator) // 8000F6C4
         if(mo->info->seestate == S_000)
             continue;
 
+        /* dead monsters must not be put back into their see state
+           (they would become invulnerable, non-solid "ghosts") */
+        if(mo->health <= 0)
+            continue;
+
         mo->threshold = 0;
         mo->target = activator;
         ok = 1;
