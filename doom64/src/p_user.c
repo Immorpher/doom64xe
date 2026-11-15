@@ -146,14 +146,21 @@ void P_PlayerXYMovement (mobj_t *mo) // 80021E20
 	{
 		/* move the part of the tick this frame covers; a slide works on the momentum, so scale it for that */
 		fixed_t mx = mo->momx, my = mo->momy;
+		fixed_t sx = (mx * hf_framevbls) >> 1;
+		fixed_t sy = (my * hf_framevbls) >> 1;
 
-		mo->momx = (mx * hf_framevbls) >> 1;
-		mo->momy = (my * hf_framevbls) >> 1;
+		mo->momx = sx;
+		mo->momy = sy;
 
-		if (P_TryMove(mo, mo->x + mo->momx, mo->y + mo->momy))
+		if (P_TryMove(mo, mo->x + sx, mo->y + sy))
 		{
-			mo->momx = mx;
-			mo->momy = my;
+			/* a special line crossed by the move (a teleporter) may have cleared the
+			   momentum; only put the full tick momentum back if it was left alone */
+			if (mo->momx == sx && mo->momy == sy)
+			{
+				mo->momx = mx;
+				mo->momy = my;
+			}
 		}
 		else
 		{
