@@ -1156,6 +1156,9 @@ void I_WIPE_MeltScreen(void) // 80006964
 
     I_GetScreenGrab();
 	D_memcpy(fb, &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
+    /* make the draw buffer start from the same picture as the displayed one,
+       so the first translucent melt frames blend over the right image */
+	D_memcpy(&cfb[vid_side][0], &cfb[vid_side ^ 1][0], (SCREEN_WD*SCREEN_HT)*sizeof(u32));
 
     yscroll = 1;
     while( true )
