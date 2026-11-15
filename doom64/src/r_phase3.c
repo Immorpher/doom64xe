@@ -181,7 +181,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     /* */
     /* Render Ceilings */
     /* */
-    if ((frontsector->ceilingpic != -1) && (viewz < frontsector->ceilingheight))
+    if ((frontsector->ceilingpic != -1) && (viewz < frontsector->ceilingheight) && ((textures[frontsector->ceilingpic] >> 4) != blanklump))
     {
         if (frontsector->flags & MS_SCROLLCEILING)
         {
@@ -204,7 +204,8 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     /* */
     /* Render Floors */
     /* */
-    if ((frontsector->floorpic != -1) && (frontsector->floorheight < viewz))
+    if ((frontsector->floorpic != -1) && (frontsector->floorheight < viewz) &&
+        ((frontsector->flags & MS_LIQUIDFLOOR) || ((textures[frontsector->floorpic] >> 4) != blanklump)))
     {
         if (!(frontsector->flags & MS_LIQUIDFLOOR))
         {
