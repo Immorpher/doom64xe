@@ -57,6 +57,8 @@ void R_InitData (void) // 80023180
 ==================
 */
 
+int blanklump = -1; /* lump number of the fully transparent BLANK texture */
+
 void R_InitTextures(void) // 8002327C
 {
 	int swx, i;
@@ -64,6 +66,10 @@ void R_InitTextures(void) // 8002327C
 	firsttex = W_GetNumForName("T_START") + 1;
 	lasttex = W_GetNumForName("T_END") - 1;
 	numtextures = (lasttex - firsttex) + 1;
+
+	blanklump = W_CheckNumForName("BLANK");
+	if (blanklump < firsttex || blanklump > lasttex)
+		blanklump = -1;
 
 	textures = Z_Malloc(numtextures * sizeof(int), PU_STATIC, NULL);
 

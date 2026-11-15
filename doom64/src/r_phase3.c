@@ -32,6 +32,8 @@ void R_RenderPSprites(void) HOT;
  * An entry is only reused if it was built for the same lump address, so a purged
  * and reloaded texture is rebuilt.
  */
+extern int blanklump;
+
 #define TEXDL_ENTRIES 64
 #define TEXDL_CMDS    13
 
@@ -520,6 +522,23 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
 	
 	// [GEC] Prevents errors in textures in S coordinates
     int curTextureoffset = (seg->sidedef->textureoffset + seg->offset) & (255 << FRACBITS);
+
+    /* BLANK is fully transparent, so nothing would be drawn: skip the whole wall */
+    if ((texture >> 4) == blanklump)
+        return;
+
+    /*
+     * Keep the T coordinates inside the signed 16-bit vertex range.  A row offset
+     * plus a tall wall, or a wall far above or below zero, can push (offset << 5)
+     * past +-32768, and if the top and bottom edges land on different sides of
+     * the wrap the texture gets stretched across the wall.  Textures repeat with a
+     * period that divides 1024, so moving the pair by a multiple of 1024 is invisible.
+     */
+    {
+        int offsetheight = bottomOffset - topOffset;
+        topOffset = (topOffset & 1023) - 1024;
+        bottomOffset = topOffset + offsetheight;
+    }
 
     if (texture != 16)
     {
