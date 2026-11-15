@@ -959,6 +959,19 @@ void R_RenderThings(subsector_t *sub) // 80028248
     int v00, v01, v02, v03;
 	short extralight = 0; // hold the sector light level and thunder flashes if present
 
+    // RDP state carried from one sprite to the next, so runs of the same sprite
+    // (puffs, blood) only send the triangles. Reset on every call because walls
+    // and planes reuse TMEM between subsectors.
+    int lastlump = -1;              // lump whose single tile is in TMEM
+    int lastsingle = 0;             // that lump was a single tile (TMEM holds all of it)
+    int lastpalkey = 0x7fffffff;    // palette currently in TMEM (see palkey below)
+    int lastlight = -1;             // prim color currently set
+    int lastalpha = -1;
+    int texset = 0;                 // gSPTexture sent
+    int palkey;
+    int needsync;
+    int reuse;
+
     vissprite_p = sub->vissprite;
     if (vissprite_p)
     {
@@ -1023,8 +1036,15 @@ void R_RenderThings(subsector_t *sub) // 80028248
 				extralight = vissprite_p->sector->lightlevel;
 			}
 
-            gDPSetPrimColorD64(GFX1++, 0, extralight, thing->alpha);
-            
+            needsync = 0;
+            if ((extralight != lastlight) || (thing->alpha != lastalpha))
+            {
+                gDPSetPrimColorD64(GFX1++, 0, extralight, thing->alpha);
+                lastlight = extralight;
+                lastalpha = thing->alpha;
+                needsync = 1;
+            }
+
             data = W_CacheLumpNum(lump, PU_CACHE);
 
             compressed = data->compressed;
@@ -1059,33 +1079,48 @@ void R_RenderThings(subsector_t *sub) // 80028248
                 zpos1 = -(yy) >> FRACBITS;
             }
 
-            gSPTexture(GFX1++, (512 << 6), (512 << 6), 0, 0, 1);
+            if (!texset)
+            {
+                gSPTexture(GFX1++, (512 << 6), (512 << 6), 0, 0, 1);
+                texset = 1;
+            }
 
             gSPVertex(GFX1++, VTX1, (tiles+2), 0);
+
+            // The palette is identified by its lump: shared (external) palettes by the
+            // palette lump, embedded ones by the sprite lump (negative, so they never
+            // collide).
+            if ((compressed < 0) && (data->cmpsize & 1))
+                palkey = (lump - (data->cmpsize >> 1)) + thing->info->palette;
+            else
+                palkey = -(lump + 1);
 
             if (compressed < 0)
             {
                 width = (data->width + 7) & ~7;
                 tilew = tileh * width;
 
-                if (data->cmpsize & 1)
+                if (palkey != lastpalkey)
                 {
-                    paldata = (byte *)(W_CacheLumpNum((lump - (data->cmpsize >> 1)) +
-                                             thing->info->palette, PU_CACHE)) + 8;
+                    if (data->cmpsize & 1)
+                    {
+                        paldata = (byte *)(W_CacheLumpNum(palkey, PU_CACHE)) + 8;
+                    }
+                    else
+                    {
+                        paldata = (src + data->cmpsize);
+                    }
+
+                    // Load Palette Data (256 colors)
+                    gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, paldata);
+
+                    gDPTileSync(GFX1++);
+                    gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+
+                    gDPLoadSync(GFX1++);
+                    gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 255);
+                    needsync = 1;
                 }
-                else
-                {
-                    paldata = (src + data->cmpsize);
-                }
-
-                // Load Palette Data (256 colors)
-                gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, paldata);
-
-                gDPTileSync(GFX1++);
-                gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
-
-                gDPLoadSync(GFX1++);
-                gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 255);
             }
             else
             {
@@ -1098,17 +1133,29 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
                 tilew >>= 1;
 
-                // Load Palette Data (16 colors)
-                gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, (src + data->cmpsize));
+                if (palkey != lastpalkey)
+                {
+                    // Load Palette Data (16 colors)
+                    gDPSetTextureImage(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_16b , 1, (src + data->cmpsize));
 
-                gDPTileSync(GFX1++);
-                gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+                    gDPTileSync(GFX1++);
+                    gDPSetTile(GFX1++, G_IM_FMT_RGBA, G_IM_SIZ_4b, 0, 256, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
 
-                gDPLoadSync(GFX1++);
-                gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 15);
+                    gDPLoadSync(GFX1++);
+                    gDPLoadTLUTCmd(GFX1++, G_TX_LOADTILE, 15);
+                    needsync = 1;
+                }
             }
-			
-			gDPPipeSync(GFX1++);
+            lastpalkey = palkey;
+
+            // Same single-tile image as the previous sprite is still in TMEM
+            reuse = (lump == lastlump) && lastsingle;
+
+            // Previous triangles must finish before anything they read is changed
+            if (needsync || !reuse)
+            {
+                gDPPipeSync(GFX1++);
+            }
 
             ypos = (thing->z >> FRACBITS) + data->yoffs;
 
@@ -1137,6 +1184,8 @@ void R_RenderThings(subsector_t *sub) // 80028248
             {
                 do
                 {
+                    if (!reuse)
+                    {
 					gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
 					gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
 					gDPLoadSync(GFX1++);
@@ -1154,6 +1203,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
 					}
 					
 					gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, tpos << 2, ((width - 1) << 2), (tpos + tileh - 1) << 2);
+                    }
 
                     tpos += tileh;
                     ypos -= tileh;
@@ -1190,6 +1240,9 @@ void R_RenderThings(subsector_t *sub) // 80028248
                     v03 += 2;
                 } while (v02 < (tiles+2));
             }
+
+            lastlump = lump;
+            lastsingle = (data->tiles == 1);
 
             vissprite_p = vissprite_p->next;
 
