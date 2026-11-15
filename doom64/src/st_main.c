@@ -602,6 +602,7 @@ void ST_DrawString(int x, int y, const char *text, int color) // 8002A930
 {
     byte c;
     int xpos, ypos, index;
+    int liney = y; /* top of the current line */
 
     I_CheckGFX();
 
@@ -612,7 +613,15 @@ void ST_DrawString(int x, int y, const char *text, int color) // 8002A930
     while (*text)
     {
         c = *text;
-        ypos = y;
+        ypos = liney;
+
+        if(c == '\n') /* line break: next line, re-center if centered */
+        {
+            liney += 16;
+            text++;
+            xpos = (x <= -1) ? ST_GetCenterTextX((byte*)text) : x;
+            continue;
+        }
 
         if(c >= 'A' && c <= 'Z')
         {
@@ -621,7 +630,7 @@ void ST_DrawString(int x, int y, const char *text, int color) // 8002A930
         else if(c >= 'a' && c <= 'z')
         {
             index = (c - 'a') + 42;
-            ypos = y + 2;
+            ypos = liney + 2;
         }
         else if(c >= '0' && c <= '9')
         {
@@ -630,7 +639,7 @@ void ST_DrawString(int x, int y, const char *text, int color) // 8002A930
         else if (c == '!')
         {
             index = 12;
-            ypos = y - 1;
+            ypos = liney - 1;
         }
         else if (c == '-')
         {
@@ -676,7 +685,7 @@ int ST_GetCenterTextX(byte *text) // 8002AAF4
     int xpos, index;
 
     xpos = 0;
-    while (*text)
+    while (*text && *text != '\n') /* centre one line at a time */
     {
         c = *text;
 
