@@ -983,6 +983,7 @@ void N64_voicenote(track_status *ptk_stat,
 	unsigned int pabstime_tmp;
 	unsigned int priority_tmp;
 	voice_status *voice_tmp;
+	int placed = 0;
 
 	//PRINTF_D2(WHITE,0,15,"N64_voicenote");
 
@@ -1004,6 +1005,7 @@ void N64_voicenote(track_status *ptk_stat,
 			lowtime = pabstime_tmp;
 			N64_voiceon(pvs, ptk_stat, patchmap, patchinfo, keynum, velnum);
 			found_one = 0;
+			placed = 1;
 			break;
 		}
 
@@ -1061,6 +1063,47 @@ void N64_voicenote(track_status *ptk_stat,
 	{
 		N64_voiceparmoff(pvsact);
 		N64_voiceon(pvsact, ptk_stat, patchmap, patchinfo, keynum, velnum);
+		placed = 1;
+	}
+
+	/* Sound effects always get a voice. Music patches have priority 100 and every
+	   sound effect is 99 or lower, so a busy song (many tracks, layered patches and
+	   long releases) can hold all the voices and leave the effects silent. When
+	   nothing else was found, an effect takes a music voice: one that is already
+	   releasing (the one that ends soonest), otherwise the one playing the longest. */
+	if (!placed && ptk_stat->sndclass == SNDFX_CLASS)
+	{
+		voice_status *victim = (voice_status *)0x0;
+
+		pvs = pvsbase;
+		vi = nvss;
+
+		while (vi--)
+		{
+			if ((pvs->flags & VOICE_ACTIVE) && ((ptsbase + pvs->track)->sndclass == MUSIC_CLASS))
+			{
+				if (victim == (voice_status *)0x0)
+				{
+					victim = pvs;
+				}
+				else if ((pvs->flags & VOICE_RELEASE) && !(victim->flags & VOICE_RELEASE))
+				{
+					victim = pvs;
+				}
+				else if (((pvs->flags ^ victim->flags) & VOICE_RELEASE) == 0 && pvs->pabstime < victim->pabstime)
+				{
+					victim = pvs;
+				}
+			}
+
+			pvs++;
+		}
+
+		if (victim != (voice_status *)0x0)
+		{
+			N64_voiceparmoff(victim);
+			N64_voiceon(victim, ptk_stat, patchmap, patchinfo, keynum, velnum);
+		}
 	}
 }
 
