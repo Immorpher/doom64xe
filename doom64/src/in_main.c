@@ -185,37 +185,37 @@ mapinfo_t MapInfo[] = //8005A478
 	
 	// Beta 64
 	
-    {MI_TXT41 , 96}, // Penumbra
-    {MI_TXT42 , 97},  // Hydroplant
-    {MI_TXT43 , 105}, // Signal Processing
-    {MI_TXT44 , 104}, // Disposal Center
-    {MI_TXT45 , 101}, // Refinery
-    {MI_TXT46 , 107}, // Gamma Lab
-    {MI_TXT47 , 108}, // Sector R
-    {MI_TXT48 , 110}, // Ultima Porta
-    {MI_TXT49 , 95}, // Profane Paradise
-    {MI_TXT50 , 98}, // Pain Warren
-    {MI_TXT51 , 99}, // City of the Damned
-    {MI_TXT52 , 102}, // Mines
-    {MI_TXT53 , 93}, // Lair of the Blind
-    {MI_TXT54 , 106}, // The Dungeons
+    {MI_TXT41 , 129}, // Penumbra
+    {MI_TXT42 , 132},  // Hydroplant
+    {MI_TXT43 , 133}, // Signal Processing
+    {MI_TXT44 , 136}, // Disposal Center
+    {MI_TXT45 , 137}, // Refinery
+    {MI_TXT46 , 134}, // Gamma Lab
+    {MI_TXT47 , 135}, // Sector R
+    {MI_TXT48 , 127}, // Ultima Porta
+    {MI_TXT49 , 139}, // Profane Paradise
+    {MI_TXT50 , 146}, // Pain Warren
+    {MI_TXT51 , 148}, // City of the Damned
+    {MI_TXT52 , 143}, // Mines
+    {MI_TXT53 , 151}, // Lair of the Blind
+    {MI_TXT54 , 144}, // The Dungeons
     {MI_TXT55 , 111}, // Abhorred Sanctuary
-    {MI_TXT56 , 97}, // Abaddon Fortress
-    {MI_TXT57 , 103}, // Simplicity
-    {MI_TXT58 , 94}, // Inferni Carceris
-    {MI_TXT59 , 100}, // Umbra
-    {MI_TXT60 , 112}, // Unearthly Spire
-    {MI_TXT61 , 109}, // Putrid Cloister
-    {MI_TXT62 , 101}, // Tartarus 
-    {MI_TXT63 , 108}, // Crimson Court
-    {MI_TXT64 , 98}, // Nowhere to Hide
-    {MI_TXT65 , 106}, // The Nest
+    {MI_TXT56 , 150}, // Abaddon Fortress
+    {MI_TXT57 , 145}, // Simplicity
+    {MI_TXT58 , 149}, // Inferni Carceris
+    {MI_TXT59 , 147}, // Umbra
+    {MI_TXT60 , 153}, // Unearthly Spire
+    {MI_TXT61 , 152}, // Putrid Cloister
+    {MI_TXT62 , 140}, // Tartarus 
+    {MI_TXT63 , 141}, // Crimson Court
+    {MI_TXT64 , 142}, // Nowhere to Hide
+    {MI_TXT65 , 138}, // The Nest
     {MI_TXT66 , 110}, // Hubris
     {MI_TXT67 , 94}, // Folly
     {MI_TXT68 , 99}, // Regret
     {MI_TXT69, 101}, // Rage
-    {MI_TXT70 , 102}, // The Beyond
-    {MI_TXT71 , 103}, // Irradiated
+    {MI_TXT70 , 130}, // The Beyond
+    {MI_TXT71 , 128}, // Irradiated
     {MI_TXT72 , 104}, // Dark Secrets
     {MI_TXT73 , 95}, // Sorrow
 
