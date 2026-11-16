@@ -199,7 +199,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT52 , 143}, // Mines
     {MI_TXT53 , 151}, // Lair of the Blind
     {MI_TXT54 , 144}, // The Dungeons
-    {MI_TXT55 , 111}, // Abhorred Sanctuary
+    {MI_TXT55 , 154}, // Abhorred Sanctuary
     {MI_TXT56 , 150}, // Abaddon Fortress
     {MI_TXT57 , 145}, // Simplicity
     {MI_TXT58 , 149}, // Inferni Carceris
@@ -216,7 +216,7 @@ mapinfo_t MapInfo[] = //8005A478
     {MI_TXT69, 101}, // Rage
     {MI_TXT70 , 130}, // The Beyond
     {MI_TXT71 , 128}, // Irradiated
-    {MI_TXT72 , 104}, // Dark Secrets
+    {MI_TXT72 , 131}, // Dark Secrets
     {MI_TXT73 , 95}, // Sorrow
 
 	// Vehemence levels	
