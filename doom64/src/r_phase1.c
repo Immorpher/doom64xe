@@ -40,6 +40,57 @@ static INLINE_ALWAYS int R_ScreenCol(fixed_t x, fixed_t y)
     return (((xo >> 9) + (xo >> 11))) + 160;
 }
 
+/*
+ * Is any column from a to b (inclusive) still open?
+ *
+ * Columns are the screen position rounded down, but the RDP draws a pixel when
+ * its centre is inside the edge, so something that is only a few columns wide
+ * (or only one) can also cover the column on either side of the rounded range.
+ * Looking one column further out on both sides keeps R_CheckBBox and R_AddLine
+ * from throwing away geometry that is still visible at the edge of a wall in
+ * front of it. That geometry was what left one pixel wide cracks, flickering as
+ * the view moved.
+ */
+/*
+ * The renderer sends every vertex to the RSP as whole world units (x >> FRACBITS), but
+ * the map vertices, especially the ones made when the BSP splits a wall, have a
+ * fraction. Culling with the exact position put the edge of a wall up to a unit away
+ * from where it is drawn, which near the player is several pixels. A column was then
+ * marked as covered that the wall did not cover, and what is behind it was culled.
+ * Cut the positions the same way so culling matches what is drawn.
+ */
+#define R_DRAWNMASK ((fixed_t)0xffff0000)
+
+/*
+ * Columns looked at beyond each side of a range, see below. One column hides the
+ * cracks (two hid no more). They only show against the sky, so it is 1 while the
+ * last frame drew a sky and 0 otherwise, which is the original behaviour.
+ */
+static int colmargin = 1;
+
+static INLINE_ALWAYS boolean R_ColsOpen(int a, int b)
+{
+    byte *p;
+
+    a -= colmargin;
+    b += colmargin;
+
+    if (a < 0)
+        a = 0;
+    if (b > 319)
+        b = 319;
+
+    p = &solidcols[a];
+    while (a <= b)
+    {
+        if (*p == 0)
+            return true;
+        p++;
+        a++;
+    }
+    return false;
+}
+
 void	R_RenderBSPNode(int bspnum) HOT;
 boolean R_CheckBBox(const fixed_t bspcoord[4]) HOT;
 void	R_Subsector(int num) HOT;
@@ -58,6 +109,7 @@ void R_BSP(void) // 80023F30
     subsector_t **sub;
 
     validcount++;
+    colmargin = rendersky ? 1 : 0; /* rendersky still holds the last frame's value here */
     rendersky = false;
 
     numdrawsubsectors = 0;
@@ -177,7 +229,6 @@ boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
 	byte boxpos;
 
 	fixed_t x1, y1, x2, y2;
-	byte *solid_cols;
 	int vx1, vy1, vx2, vy2, delta;
 	int Xstart, Xend;
 
@@ -204,6 +255,12 @@ boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
 	y1 = bspcoord[checkcoord[boxpos][1]];
 	x2 = bspcoord[checkcoord[boxpos][2]];
 	y2 = bspcoord[checkcoord[boxpos][3]];
+
+	/* the walls are drawn at whole units, so test the box where they are drawn */
+	x1 &= R_DRAWNMASK;
+	y1 &= R_DRAWNMASK;
+	x2 &= R_DRAWNMASK;
+	y2 &= R_DRAWNMASK;
 
     vx1 = FixedMul(viewsin, x1 - viewx) - FixedMul(viewcos, y1 - viewy);
     vy1 = FixedMul(viewcos, x1 - viewx) + FixedMul(viewsin, y1 - viewy);
@@ -244,22 +301,7 @@ boolean R_CheckBBox(const fixed_t bspcoord[4]) // 80024170
 	Xstart = R_ScreenCol(vx1, vy1);
 	Xend   = R_ScreenCol(vx2, vy2);
 
-    if (Xstart < 0)
-        Xstart = 0;
-
-    if (Xend >= 320)
-        Xend = 320;
-
-    solid_cols = &solidcols[Xstart];
-    while (Xstart < Xend)
-    {
-        if (*solid_cols == 0)
-            return true;
-        solid_cols++;
-        Xstart++;
-    }
-
-    return false;
+    return R_ColsOpen(Xstart, Xend);
 }
 
 //
@@ -278,7 +320,7 @@ void R_Subsector(int num) // 8002451C
 		I_Error("R_Subsector: ss %i with numss = %i", num, numsubsectors);
 	}
 
-	if (numdrawsubsectors < 1024)
+	if (numdrawsubsectors < MAXSUBSECTORS)
 	{
 	    numdrawsubsectors++;
 
@@ -317,8 +359,8 @@ void R_AddLine(seg_t *line) // 80024604
 	vrt = line->v1;
 	if (vrt->validcount != validcount)
 	{
-        x1 = FixedMul(viewsin, (vrt->x - viewx)) - FixedMul(viewcos,(vrt->y - viewy));
-        y1 = FixedMul(viewcos, (vrt->x - viewx)) + FixedMul(viewsin,(vrt->y - viewy));
+        x1 = FixedMul(viewsin, ((vrt->x & R_DRAWNMASK) - viewx)) - FixedMul(viewcos,((vrt->y & R_DRAWNMASK) - viewy));
+        y1 = FixedMul(viewcos, ((vrt->x & R_DRAWNMASK) - viewx)) + FixedMul(viewsin,((vrt->y & R_DRAWNMASK) - viewy));
 
         vrt->vx = x1;
         vrt->vy = y1;
@@ -334,8 +376,8 @@ void R_AddLine(seg_t *line) // 80024604
 	vrt2 = line->v2;
 	if (vrt2->validcount != validcount)
 	{
-        x2 = FixedMul(viewsin, (vrt2->x - viewx)) - FixedMul(viewcos,(vrt2->y - viewy));
-        y2 = FixedMul(viewcos, (vrt2->x - viewx)) + FixedMul(viewsin,(vrt2->y - viewy));
+        x2 = FixedMul(viewsin, ((vrt2->x & R_DRAWNMASK) - viewx)) - FixedMul(viewcos,((vrt2->y & R_DRAWNMASK) - viewy));
+        y2 = FixedMul(viewcos, ((vrt2->x & R_DRAWNMASK) - viewx)) + FixedMul(viewsin,((vrt2->y & R_DRAWNMASK) - viewy));
 
         vrt2->vx = x2;
         vrt2->vy = y2;
@@ -357,7 +399,14 @@ void R_AddLine(seg_t *line) // 80024604
     if ((y1 < ((8*FRACUNIT)+1)) && (y2 < ((8*FRACUNIT)+1)))
         return;
 
-    if ((((x2 >> FRACBITS) * (y1 >> FRACBITS)) - ((x1 >> FRACBITS) * (y2 >> FRACBITS))) <= 0)
+    /*
+     * Facing test. Cutting the coordinates down to whole units first (as the original
+     * did) throws away up to a thousand units^2 for a wall far away, more than the
+     * whole value for one seen at a shallow angle, so front facing walls were dropped
+     * depending on the exact view position: a one pixel crack that flickered as the
+     * player moved. A 32x32 to 64 bit multiply keeps all the bits.
+     */
+    if ((((long long)x2 * y1) - ((long long)x1 * y2)) <= 0)
         return;
 
     if (y1 < (8*FRACUNIT))
@@ -384,20 +433,13 @@ void R_AddLine(seg_t *line) // 80024604
     if (Xend >= 320)
         Xend = 320;
 
-    if (Xstart != Xend)
+    /* A line inside a single column is kept too, it can still cover a pixel centre */
+    if (Xstart <= Xend)
     {
-        solid_cols = &solidcols[Xstart];
-        count = Xstart;
-        while (count < Xend)
+        if (R_ColsOpen(Xstart, Xend))
         {
-            if (*solid_cols == 0)
-            {
-                line->flags |= 1;
-                line->linedef->flags |= ML_MAPPED;
-                break;
-            }
-            solid_cols++;
-            count++;
+            line->flags |= 1;
+            line->linedef->flags |= ML_MAPPED;
         }
 
         if (frontsector->ceilingpic == -1) {
