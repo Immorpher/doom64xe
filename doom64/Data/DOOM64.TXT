@@ -3,6 +3,22 @@
 # [INTRO n] / [END n]   one text line per file line; blank line = blank text line
 # Lines starting with # are comments. Keep each line short enough to fit the screen.
 
+# [MOCK]  mock texts shown now and then while the player is dead: one text per line,
+# add as many as you like (up to 255, 63 characters each); one is picked at random.
+[MOCK]
+HAHAHAHA!
+YOU SHOULDN'T HAVE DONE THAT.
+TRY AN EASIER LEVEL...
+WOW! LOOK AT THOSE DEMON FEET.
+I PLAY DOOM AND I CAN'T GET UP.
+OUCH! THAT HAD TO HURT.
+LOOK AT ME! I'M FLAT!
+THANKS FOR PLAYING!
+YOU LAZY @&$#!
+HAVE YOU HAD ENOUGH?
+THE DEMONS GAVE YOU THE BOOT!
+THE LEAD DEMON VANQUISHED YOU!
+
 [MAP 0]
 name = Bonus Pak
 music = 119

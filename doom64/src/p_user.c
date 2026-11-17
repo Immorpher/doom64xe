@@ -3,29 +3,10 @@
 #include "doomdef.h"
 #include "p_local.h"
 #include "st_main.h"
+#include "texts.h"
 
 #define MAXMOCKTIME     1800
 int deathmocktics; // 800A56A0
-
-#define MK_TXT01	"HAHAHAHA!"
-#define MK_TXT02	"YOU SHOULDN'T HAVE DONE THAT."
-#define MK_TXT03	"TRY AN EASIER LEVEL..."
-#define MK_TXT04	"WOW! LOOK AT THOSE DEMON FEET."
-#define MK_TXT05	"I PLAY DOOM AND I CAN'T GET UP."
-#define MK_TXT06	"OUCH! THAT HAD TO HURT."
-#define MK_TXT07	"LOOK AT ME! I'M FLAT!"
-#define MK_TXT08	"THANKS FOR PLAYING!"
-#define MK_TXT09	"YOU LAZY @&$#!"
-#define MK_TXT10	"HAVE YOU HAD ENOUGH?"
-#define MK_TXT11	"THE DEMONS GAVE YOU THE BOOT!"
-#define MK_TXT12	"THE LEAD DEMON VANQUISHED YOU!"
-
-char *mockstrings[] =   // 8005A290
-{
-    MK_TXT01, MK_TXT02, MK_TXT03, MK_TXT04,
-	MK_TXT05, MK_TXT06, MK_TXT07, MK_TXT08,
-	MK_TXT09, MK_TXT10, MK_TXT11, MK_TXT12,
-};
 
 fixed_t 		forwardmove[2] = {0xE000, 0x16000}; // 8005B060
 fixed_t 		sidemove[2] = {0xE000, 0x16000};    // 8005B068
@@ -782,9 +763,16 @@ void P_DeathThink (player_t *player) // 80022914
 	/* mocking text */
     if ((ticon - deathmocktics) > MAXMOCKTIME)
     {
-        player->messagetic[MSG_NEW] = MSGTICS;
-        player->message[MSG_NEW] = mockstrings[P_Random() % 12];
-		player->messagecolor[MSG_NEW] = 0xFF000000;
+        /* the random number is always drawn so demos stay in sync however many texts there are */
+        int mock = P_Random();
+        int nmock = TX_MockCount();
+
+        if (nmock > 0)
+        {
+            player->messagetic[MSG_NEW] = MSGTICS;
+            player->message[MSG_NEW] = (char *)TX_Mock(mock % nmock);
+            player->messagecolor[MSG_NEW] = 0xFF000000;
+        }
         deathmocktics = ticon;
     }
 

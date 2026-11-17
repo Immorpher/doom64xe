@@ -1437,22 +1437,22 @@ int M_MenuTicker(void) // 80007E0C
 				{
 					if (buttons & PAD_LEFT)
 					{
-						if (m_actualmap > 0)
+						int newmap = TX_PrevMap(m_actualmap);
+
+						if (newmap >= 0)
 						{
-							m_actualmap -= 1;
+							m_actualmap = newmap;
 							S_StartSound(NULL, sfx_switch2);
 						}
 						return ga_nothing;
 					}
 					else if (buttons & PAD_RIGHT)
 					{
-						m_actualmap += 1;
-						if (m_actualmap > LASTLEVEL)
+						int newmap = TX_NextMap(m_actualmap);	/* next map in DOOM64.TXT, after the last one back to the first */
+
+						if (newmap >= 0)
 						{
-							m_actualmap = LASTLEVEL;
-						}
-						else
-						{
+							m_actualmap = newmap;
 							S_StartSound(NULL, sfx_switch2);
 						}
 						return ga_nothing;
@@ -1463,8 +1463,6 @@ int M_MenuTicker(void) // 80007E0C
 						startmap = m_actualmap;
 						return ga_warped;
 					}
-				} else if (m_actualmap > LASTLEVEL) { // [Immorpher] If at bonus pak reset to hub
-					m_actualmap = 0;
 				}
 				break;
 
