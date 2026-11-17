@@ -212,7 +212,7 @@ const char Game_Name[16] = // 8005A790
     0x31, 0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-boolean disabledrawing = false; // 8005A720
+volatile boolean disabledrawing = false; // 8005A720
 
 volatile s32 vsync = 0;              // 8005A724
 volatile s32 drawsync2 = 0;          // 8005A728
@@ -508,6 +508,27 @@ void I_Main(void *arg) // 80005710
     D_DoomMain();
 }
 
+/*
+ * osContGetReadData leaves the buttons and stick of a controller that answered with an
+ * error (unplugged, not responding) as they were on the last good read, so a button held
+ * when the pad is pulled stays pressed. Clear them instead.
+ */
+static void I_ClearPadErrors(void)
+{
+    int i;
+    OSContPad *pads = (OSContPad *)gamepad_data;
+
+    for (i = 0; i < MAXCONTROLLERS; i++)
+    {
+        if (pads[i].errno)
+        {
+            pads[i].button = 0;
+            pads[i].stick_x = 0;
+            pads[i].stick_y = 0;
+        }
+    }
+}
+
 void I_SystemTicker(void *arg) // 80005730
 {
     int vbi_msg;
@@ -689,6 +710,7 @@ void I_SystemTicker(void *arg) // 80005730
                         if (gamepad_system_busy)
                         {
                             osContGetReadData(gamepad_data);
+                            I_ClearPadErrors();
                             gamepad_system_busy = 0;
                         }
 
@@ -848,6 +870,7 @@ void I_Init(void) // 80005C50
         osContStartReadData(&sys_msgque_joy);
         osRecvMesg(&sys_msgque_joy, NULL, OS_MESG_BLOCK);
         osContGetReadData(gamepad_data);
+        I_ClearPadErrors();
     }
 
     S_Init();

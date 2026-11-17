@@ -1075,7 +1075,7 @@ extern s32 Pak_Memory; // 800A54E4
 extern const char Pak_Table[256]; // 8005A620
 extern const char Game_Name[16]; // 8005A790
 
-extern boolean disabledrawing; // 8005A720
+extern volatile boolean disabledrawing; // 8005A720
 extern volatile s32 vsync;              // 8005A724
 extern volatile s32 drawsync2;          // 8005A728
 extern volatile s32 drawsync1;          // 8005A72C
