@@ -2,6 +2,7 @@
 
 #include "i_main.h"
 #include "doomdef.h"
+#include "texts.h"
 #include "p_spec.h"
 #include "r_local.h"
 
@@ -35,6 +36,7 @@ void D_DoomMain(void) // 800027C0
     I_Init();
     Z_Init();
     W_Init();
+    TX_Init();
     R_Init();
     ST_Init();
 

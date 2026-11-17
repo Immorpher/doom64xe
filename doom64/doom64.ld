@@ -136,6 +136,20 @@ SECTIONS
       "Data/DOOM64.WDD.o"
    }   
    END_SEG(doom64_wdd)
+   _RomSize += SIZEOF(.doom64_wdd);
+
+   /* the segments above are not padded in _RomSize, so start the text on a 16 byte
+      boundary in the ROM and in the address space (DMA needs an aligned start and length) */
+   __romPos = ALIGN(__romPos, 0x10);
+   _RomSize = ALIGN(_RomSize, 0x10);
+
+   /* Data/DOOM64.TXT: level names, music numbers and intro/ending texts (see src/texts.c) */
+   BEGIN_SEG(doom64_txt,_RomSize) {
+      "Data/DOOM64.TXT.o"
+      BYTE(0)          /* always end the text with a NUL */
+      . = ALIGN(0x10);
+   }
+   END_SEG(doom64_txt)
 
    /* Discard everything not specifically mentioned above. */
    /DISCARD/ :

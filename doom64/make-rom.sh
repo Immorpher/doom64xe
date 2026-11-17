@@ -9,11 +9,13 @@ rm ./Data/DOOM64.WAD.o
 rm ./Data/DOOM64.WMD.o
 rm ./Data/DOOM64.WSD.o
 rm ./Data/DOOM64.WDD.o
+rm ./Data/DOOM64.TXT.o
 
 mips-n64-ld -r -b binary ./Data/DOOM64.WAD -o ./Data/DOOM64.WAD.o
 mips-n64-ld -r -b binary ./Data/DOOM64.WMD -o ./Data/DOOM64.WMD.o
 mips-n64-ld -r -b binary ./Data/DOOM64.WSD -o ./Data/DOOM64.WSD.o
 mips-n64-ld -r -b binary ./Data/DOOM64.WDD -o ./Data/DOOM64.WDD.o
+mips-n64-ld -r -b binary ./Data/DOOM64.TXT -o ./Data/DOOM64.TXT.o
 
 mkdir build
 mips-n64-gcc -c -G0 -Os -finline-functions-called-once -ffast-math -falign-functions=32 -g -mabi=32 -ffreestanding -mfix4300 -I/usr/include/n64 -I/usr/include/n64/PR -Iinclude -Ibuild -Ibuild/include -Isrc \

@@ -1,5 +1,6 @@
 /* P_Spec.c */
 #include "doomdef.h"
+#include "texts.h"
 #include "r_local.h"
 #include "p_local.h"
 #include "st_main.h"
@@ -1062,7 +1063,7 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
 			ok = EV_DoCeiling(line, silentCrushAndRaise, CEILSPEED*2);
 			break;
 		case 164: // [Immorpher] custom linedef for hub level name display
-			player->message[MSG_NEW] = MapInfo[line->tag].name;
+			player->message[MSG_NEW] = TX_MapName(line->tag);
 			player->messagetic[MSG_NEW] = MSGTICS;
 			player->messagecolor[MSG_NEW] = 0xFFFFFF00;
 			break;

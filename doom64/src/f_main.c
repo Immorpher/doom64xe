@@ -4,632 +4,10 @@
 #include "p_local.h"
 #include "st_main.h"
 #include "r_local.h"
+#include "texts.h"
 
 extern void P_CheckCheats (void);
 
-#define T_NULL	        ""
-
-// Doom 64 introduction text adapted from Doom 64 Reloaded
-#define C_INTR1_TXT01	"Surviving the poison of evil has"
-#define C_INTR1_TXT02	"pushed sanity to an edge. The"
-#define C_INTR1_TXT03	"doctors' treatments are of little"
-#define C_INTR1_TXT04	"help. Nightmares of so many demons"
-#define C_INTR1_TXT05	"pouring through will not stop."
-#define C_INTR1_TXT06	" "
-#define C_INTR1_TXT07	"The outpost at Phobos was left dead"
-#define C_INTR1_TXT08	"in a nuclear haze. However, hell"
-#define C_INTR1_TXT09	"has reached back in. Something has"
-#define C_INTR1_TXT10	"distorted reality and resurrected"
-#define C_INTR1_TXT11	"decaying carnage back into hideous"
-#define C_INTR1_TXT12	"living tissue."
-#define C_INTR1_TXT13	" "
-#define C_INTR1_TXT14	"The mutations are devastating. The"
-#define C_INTR1_TXT15	"demons have returned even stronger"
-#define C_INTR1_TXT16	"and more vicious than before. As"
-#define C_INTR1_TXT17	"the only one who has survived the"
-#define C_INTR1_TXT18	"horror, the mission is clear..."
-#define C_INTR1_TXT19	" "
-#define C_INTR1_TXT20	"MERCILESS EXTERMINATION!"
-
-// Lost Levels introduction text adapted from Doom 64 CE
-#define C_INTR2_TXT01	"The mother demon's lifeless stench"
-#define C_INTR2_TXT02	"is sharp as a dagger in the mind."
-#define C_INTR2_TXT03	"With their mother dead, the demons"
-#define C_INTR2_TXT04	"have turned to a state of violence"
-#define C_INTR2_TXT05	"and hunger. Nothing can be allowed"
-#define C_INTR2_TXT06	"to refocus their rage towards us."
-#define C_INTR2_TXT07	" "
-#define C_INTR2_TXT08	"Each moment, hell pushes your mind"
-#define C_INTR2_TXT09	"to a more primitive state. It is a"
-#define C_INTR2_TXT10	"struggle not to join the chaos."
-#define C_INTR2_TXT11	"The demonic hordes are endless."
-#define C_INTR2_TXT12	"Loss of coherent thought is making"
-#define C_INTR2_TXT13	"it difficult to find their origin."
-#define C_INTR2_TXT14	" "
-#define C_INTR2_TXT15	"Suddenly, you find yourself back in"
-#define C_INTR2_TXT16	"a vacated UAC base. The last time"
-#define C_INTR2_TXT17	"you were ripped across worlds was by"
-#define C_INTR2_TXT18	"the mother demon. Has sanity broke?"
-#define C_INTR2_TXT19	"You must return to hell. Your path"
-#define C_INTR2_TXT20	"of extermination shall not end!"
-
-// Beta 64 introduction text adapted from Doom 64 CE
-#define C_INTR3_TXT01	"The moon of Io was chosen by the"
-#define C_INTR3_TXT02	"U.A.C. to resume portal testing."
-#define C_INTR3_TXT03	"We were prepared for any demon who"
-#define C_INTR3_TXT04	"entered through the portal. But"
-#define C_INTR3_TXT05	"the demons made a ship of flesh"
-#define C_INTR3_TXT06	"and iron. They attacked from space"
-#define C_INTR3_TXT07	"and I barely stopped the invasion."
-#define C_INTR3_TXT08	" "
-#define C_INTR3_TXT09	"Everyone I knew died. I was meant"
-#define C_INTR3_TXT10	"to go down with the facility. It"
-#define C_INTR3_TXT11	"should be me frozen on the surface"
-#define C_INTR3_TXT12	"of Io. Instead I remained on a"
-#define C_INTR3_TXT13	"research ship observing the moon."
-#define C_INTR3_TXT14	" "
-#define C_INTR3_TXT15	"Unexpectedly, I received a message"
-#define C_INTR3_TXT16	"from Io. It said demons and humans"
-#define C_INTR3_TXT17	"alike have returned back from the"
-#define C_INTR3_TXT18	"dead. My comrades will not be able"
-#define C_INTR3_TXT19	"to rest until I end what the demons"
-#define C_INTR3_TXT20	"are doing... I must return to Io!"
-
-// Bonus Pak Introduction
-#define C_INTR4_TXT01	"Of many worlds, the demons infect."
-#define C_INTR4_TXT02	"Even after death, their mother"
-#define C_INTR4_TXT03	"will resurrect. They bring"
-#define C_INTR4_TXT04	"damnation through decimation. The"
-#define C_INTR4_TXT05	"demons will relentlessly spawn"
-#define C_INTR4_TXT06	"until they bring a new dawn."
-#define C_INTR4_TXT07	" "
-#define C_INTR4_TXT08	"But there are those who forge a"
-#define C_INTR4_TXT09	"trail of destruction. They are"
-#define C_INTR4_TXT10	"the tide that brings retribution."
-#define C_INTR4_TXT11	"Any ordeal they will suffer, as"
-#define C_INTR4_TXT12	"long as their weapons are allowed"
-#define C_INTR4_TXT13	"to thunder."
-#define C_INTR4_TXT14	" "
-#define C_INTR4_TXT15	"The demons will have fear, because"
-#define C_INTR4_TXT16	"you can be anywhere through here."
-#define C_INTR4_TXT17	"Your guns will fume as you bring"
-#define C_INTR4_TXT18	"the demons their doom. Choose any"
-#define C_INTR4_TXT19	"destination, as it is time for"
-#define C_INTR4_TXT20	"merciless extermination!"
-
-
-// Vehemence Introduction
-#define C_INTR5_TXT01	"Let the vehemence commence!"
-
-
-// Absolution texts
-
-#define C_END1_TXT01	"You cackle as the"
-#define C_END1_TXT02	"familiarity of the"
-#define C_END1_TXT03	"situation occurs to you."
-#define C_END1_TXT04	"The gateway to the Demons"
-#define C_END1_TXT05	"domain was too accessible."
-#define C_END1_TXT06	"You realize the demons mock"
-#define C_END1_TXT07	"you with their invitation."
-#define C_END1_TXT08	"It does not matter..."
-#define C_END1_TXT09	"The demons spawn like rats"
-#define C_END1_TXT10	"and you have the grade AAA"
-#define C_END1_TXT11	"U.A.C. poison they crave."
-#define C_END1_TXT12	"Your bloodthirsty scream"
-#define C_END1_TXT13	"shatters the teleport haze."
-#define C_END1_TXT14	"Once again you find yourself"
-#define C_END1_TXT15	"amidst..."
-
-#define C_END2_TXT01	"The vast silence reminds"
-#define C_END2_TXT02	"you of the military morgue."
-#define C_END2_TXT03	" "
-#define C_END2_TXT04	"You knew the installation"
-#define C_END2_TXT05	"had a classified level."
-#define C_END2_TXT06	" "
-#define C_END2_TXT07	"The U.A.C. had some good"
-#define C_END2_TXT08	"reason to hide this place."
-#define C_END2_TXT09	" "
-#define C_END2_TXT10	"You wonder what it"
-#define C_END2_TXT11	"could be..."
-
-#define C_END3_TXT01	"You smile."
-#define C_END3_TXT02	" "
-#define C_END3_TXT03	"What strange place have"
-#define C_END3_TXT04	"you stumbled upon?"
-#define C_END3_TXT05	" "
-#define C_END3_TXT06	"The Demons did not expect"
-#define C_END3_TXT07	"you to survive this far."
-#define C_END3_TXT08	"You feel their demonic"
-#define C_END3_TXT09	"presence waiting for you..."
-#define C_END3_TXT10	" "
-#define C_END3_TXT11	"Let them taste their guts!"
-
-#define C_END4_TXT01	"You wretch as a strange"
-#define C_END4_TXT02	"acrid odor assaults you."
-#define C_END4_TXT03	" "
-#define C_END4_TXT04	"Death and Demon carcass!"
-#define C_END4_TXT05	" "
-#define C_END4_TXT06	"No nightmare could have"
-#define C_END4_TXT07	"prepared you for this."
-#define C_END4_TXT08	" "
-#define C_END4_TXT09	"You realize that this"
-#define C_END4_TXT10	"place was not meant for"
-#define C_END4_TXT11	"living humans."
-
-#define C_END5_TXT01	"Congratulations!"
-#define C_END5_TXT02	"You found..."
-#define C_END5_TXT03	" "
-#define C_END5_TXT04	"HECTIC"
-#define C_END5_TXT05	" "
-#define C_END5_TXT06	"Only the best will reap"
-#define C_END5_TXT07	"its rewards."
-
-#define C_END6_TXT01	"Finally..."
-#define C_END6_TXT02	"The mother of all demons"
-#define C_END6_TXT03	"is dead!"
-#define C_END6_TXT04	" "
-#define C_END6_TXT05	"The blood pours from"
-#define C_END6_TXT06	"your eyes as you stand"
-#define C_END6_TXT07	"in defiance."
-#define C_END6_TXT08	" "
-#define C_END6_TXT09	"As the only marine to"
-#define C_END6_TXT10	"endure the slaughter-"
-#define C_END6_TXT11	"you decide to remain"
-#define C_END6_TXT12	"in Hell and ensure no"
-#define C_END6_TXT13	"demon ever rises again."
-#define C_END6_TXT14	" "
-#define C_END6_TXT15	"The End."
-
-// Lost Levels
-
-#define C_END7_TXT01    "You had not expected to be"
-#define C_END7_TXT02	"torn from Hell so soon after"
-#define C_END7_TXT03	"your fateful decision."
-#define C_END7_TXT04	"Getting back there was your"
-#define C_END7_TXT05	"only concern. The plans of"
-#define C_END7_TXT06	"the Sister Ressurector to"
-#define C_END7_TXT07	"exterminate you have failed."
-#define C_END7_TXT08	" "
-#define C_END7_TXT09	"A grim vision takes hold of"
-#define C_END7_TXT10	"your mind as the demon"
-#define C_END7_TXT11	"carcasses steam in your wake."
-#define C_END7_TXT12	"Stretched before you is a"
-#define C_END7_TXT13	"path of perpetual torment..."
-#define C_END7_TXT14	"A path through DOOM..."
-
-// Beta 64
-
-#define C_END8_TXT01	"The presence of hell is"
-#define C_END8_TXT02	"seeping in the facility like"
-#define C_END8_TXT03	"blood through arteries."
-#define C_END8_TXT04	"It is upturning reality and"
-#define C_END8_TXT05	"infecting the dead."
-#define C_END8_TXT06	" "
-#define C_END8_TXT07	"A stench leaks from the"
-#define C_END8_TXT08	"portal. It is from a place"
-#define C_END8_TXT09	"not for humans. But I have"
-#define C_END8_TXT10	"not felt human for while..."
-#define C_END8_TXT11	" "
-#define C_END8_TXT12	"Our mistakes have damned"
-#define C_END8_TXT13	"this place! I have to go to"
-#define C_END8_TXT14	"their world. Let them bring"
-#define C_END8_TXT15	"their worst. This ends in hell!"
-
-#define C_END9_TXT01	"What kind of madness is this?"
-#define C_END9_TXT02	" "
-#define C_END9_TXT03	"I heard rumors of a secret lab,"
-#define C_END9_TXT04	"but I did not think the U.A.C."
-#define C_END9_TXT05	"would have the audacity."
-#define C_END9_TXT06	"the security operations."
-#define C_END9_TXT07	" "
-#define C_END9_TXT08	"I must find the purpose of this"
-#define C_END9_TXT09	"lab. The U.A.C. must not be"
-#define C_END9_TXT10	"allowed to keep their secrets."
-
-#define C_END10_TXT01	"I wretch as an acrid fog"
-#define C_END10_TXT02	"assaults my eyes. There is no"
-#define C_END10_TXT03	"mistaking the odor of a U.A.C."
-#define C_END10_TXT04	"weapons facility."
-#define C_END10_TXT05	" "
-#define C_END10_TXT06	"Why is it so deep in hell and"
-#define C_END10_TXT07	"what went wrong? It seems to"
-#define C_END10_TXT08	"have been enveloped in this"
-#define C_END10_TXT09	"toxic haze for a long time."
-#define C_END10_TXT10	" "
-#define C_END10_TXT11	"Perhaps they were trying to"
-#define C_END10_TXT12	"get back here. What hellish"
-#define C_END10_TXT13	"weapon technology could be"
-#define C_END10_TXT14	"so important?"
-
-#define C_END11_TXT01	"The death of the demon"
-#define C_END11_TXT02	"shook the ground as the"
-#define C_END11_TXT03	"world faded away. What"
-#define C_END11_TXT04	"has pulled me from reality?"
-#define C_END11_TXT05	" "
-#define C_END11_TXT06	"An entity feels close. I can"
-#define C_END11_TXT07	"feel hate... It hates as much."
-#define C_END11_TXT08	"as I do and it wishes for my"
-#define C_END11_TXT09	"death."
-#define C_END11_TXT10	" "
-#define C_END11_TXT11	"I have been dropped in its"
-#define C_END11_TXT12	"realm. The smell of demon is"
-#define C_END11_TXT13	"everywhere! They wish to"
-#define C_END11_TXT14	"end my suffering. Only if it"
-#define C_END11_TXT15	"would be that simple!"
-
-#define C_END12_TXT01	"The demons have entered more"
-#define C_END12_TXT02	"worlds than we can comprehend."
-#define C_END12_TXT03	"This place does not follow the"
-#define C_END12_TXT04	"laws of nature."
-#define C_END12_TXT05	" "
-#define C_END12_TXT06	"A force beyond human"
-#define C_END12_TXT07	"understanding suspends this"
-#define C_END12_TXT08	"structure in an endless crimson"
-#define C_END12_TXT09	"void. A source of demonic"
-#define C_END12_TXT10	"power resides here."
-#define C_END12_TXT11	" "
-#define C_END12_TXT12	"This is either the edge of my"
-#define C_END12_TXT13	"sanity, or perhaps a key to"
-#define C_END12_TXT14	"fighting the demons..."
-
-#define C_END13_TXT01	"The mother of horrors has"
-#define C_END13_TXT02	"been slain! My comrades can"
-#define C_END13_TXT03	"now rest in peace."
-#define C_END13_TXT04	" "
-#define C_END13_TXT05	"For the first time since"
-#define C_END13_TXT06	"entering hell a sense of"
-#define C_END13_TXT07	"peace permeates. I have"
-#define C_END13_TXT08	"found a purpose to live."
-#define C_END13_TXT09	" "
-#define C_END13_TXT10	"Hell is vast and the demons"
-#define C_END13_TXT11	"scavenge like rats. I shall"
-#define C_END13_TXT12	"hunt down every weapon and"
-#define C_END13_TXT13	"every circuit. I will bring"
-#define C_END13_TXT14	"them into the stone age!"
-
-// Introduction Texts
-
-char *introcluster1[] =   // Doom 64 intro text adapted from Doom 64 Manual and Doom 64 Reloaded
-{
-    C_INTR1_TXT01,
-	C_INTR1_TXT02,
-	C_INTR1_TXT03,
-	C_INTR1_TXT04,
-	C_INTR1_TXT05,
-	C_INTR1_TXT06,
-	C_INTR1_TXT07,
-	C_INTR1_TXT08,
-	C_INTR1_TXT09,
-	C_INTR1_TXT10,
-	C_INTR1_TXT11,
-	C_INTR1_TXT12,
-	C_INTR1_TXT13,
-	C_INTR1_TXT14,
-	C_INTR1_TXT15,
-	C_INTR1_TXT16,
-	C_INTR1_TXT17,
-	C_INTR1_TXT18,
-	C_INTR1_TXT19,
-	C_INTR1_TXT20,
-	T_NULL
-};
-
-char *introcluster2[] =   // Lost Levels intro text adapted from Doom 64 CE
-{
-    C_INTR2_TXT01,
-	C_INTR2_TXT02,
-	C_INTR2_TXT03,
-	C_INTR2_TXT04,
-	C_INTR2_TXT05,
-	C_INTR2_TXT06,
-	C_INTR2_TXT07,
-	C_INTR2_TXT08,
-	C_INTR2_TXT09,
-	C_INTR2_TXT10,
-	C_INTR2_TXT11,
-	C_INTR2_TXT12,
-	C_INTR2_TXT13,
-	C_INTR2_TXT14,
-	C_INTR2_TXT15,
-	C_INTR2_TXT16,
-	C_INTR2_TXT17,
-	C_INTR2_TXT18,
-	C_INTR2_TXT19,
-	C_INTR2_TXT20,
-	T_NULL
-};
-
-char *introcluster3[] =   // Beta 64 intro text adapted from Doom 64 CE
-{
-    C_INTR3_TXT01,
-	C_INTR3_TXT02,
-	C_INTR3_TXT03,
-	C_INTR3_TXT04,
-	C_INTR3_TXT05,
-	C_INTR3_TXT06,
-	C_INTR3_TXT07,
-	C_INTR3_TXT08,
-	C_INTR3_TXT09,
-	C_INTR3_TXT10,
-	C_INTR3_TXT11,
-	C_INTR3_TXT12,
-	C_INTR3_TXT13,
-	C_INTR3_TXT14,
-	C_INTR3_TXT15,
-	C_INTR3_TXT16,
-	C_INTR3_TXT17,
-	C_INTR3_TXT18,
-	C_INTR3_TXT19,
-	C_INTR3_TXT20,
-	T_NULL
-};
-
-char *introcluster4[] =   // Bonus Pak intro text
-{
-    C_INTR4_TXT01,
-	C_INTR4_TXT02,
-	C_INTR4_TXT03,
-	C_INTR4_TXT04,
-	C_INTR4_TXT05,
-	C_INTR4_TXT06,
-	C_INTR4_TXT07,
-	C_INTR4_TXT08,
-	C_INTR4_TXT09,
-	C_INTR4_TXT10,
-	C_INTR4_TXT11,
-	C_INTR4_TXT12,
-	C_INTR4_TXT13,
-	C_INTR4_TXT14,
-	C_INTR4_TXT15,
-	C_INTR4_TXT16,
-	C_INTR4_TXT17,
-	C_INTR4_TXT18,
-	C_INTR4_TXT19,
-	C_INTR4_TXT20,
-	T_NULL
-};
-
-char *introcluster5[] =   // Vehemence intro text
-{
-    C_INTR5_TXT01,
-	T_NULL
-};
-
-// Doom 64 Texts
-
-char *endcluster1[] =   // 8005A2C0
-{
-    C_END1_TXT01,
-	C_END1_TXT02,
-	C_END1_TXT03,
-	C_END1_TXT04,
-	C_END1_TXT05,
-	C_END1_TXT06,
-	C_END1_TXT07,
-	C_END1_TXT08,
-	C_END1_TXT09,
-	C_END1_TXT10,
-	C_END1_TXT11,
-	C_END1_TXT12,
-	C_END1_TXT13,
-	C_END1_TXT14,
-	C_END1_TXT15,
-	T_NULL
-};
-
-char *endcluster2[] =   // 8005A300
-{
-    C_END2_TXT01,
-	C_END2_TXT02,
-	C_END2_TXT03,
-	C_END2_TXT04,
-	C_END2_TXT05,
-	C_END2_TXT06,
-	C_END2_TXT07,
-	C_END2_TXT08,
-	C_END2_TXT09,
-	C_END2_TXT10,
-	C_END2_TXT11,
-	T_NULL
-};
-
-char *endcluster3[] =   // 8005A330
-{
-    C_END3_TXT01,
-	C_END3_TXT02,
-	C_END3_TXT03,
-	C_END3_TXT04,
-	C_END3_TXT05,
-	C_END3_TXT06,
-	C_END3_TXT07,
-	C_END3_TXT08,
-	C_END3_TXT09,
-	C_END3_TXT10,
-	C_END3_TXT11,
-	T_NULL
-};
-
-char *endcluster4[] =   // 8005A360
-{
-    C_END4_TXT01,
-	C_END4_TXT02,
-	C_END4_TXT03,
-	C_END4_TXT04,
-	C_END4_TXT05,
-	C_END4_TXT06,
-	C_END4_TXT07,
-	C_END4_TXT08,
-	C_END4_TXT09,
-	C_END4_TXT10,
-	C_END4_TXT11,
-	T_NULL
-};
-
-char *endcluster5[] =   // 8005A390
-{
-    C_END5_TXT01,
-	C_END5_TXT02,
-	C_END5_TXT03,
-	C_END5_TXT04,
-	C_END5_TXT05,
-	C_END5_TXT06,
-	C_END5_TXT07,
-	T_NULL
-};
-
-char *endcluster6[] =   // 8005A3B0
-{
-    C_END6_TXT01,
-	C_END6_TXT02,
-	C_END6_TXT03,
-	C_END6_TXT04,
-	C_END6_TXT05,
-	C_END6_TXT06,
-	C_END6_TXT07,
-	C_END6_TXT08,
-	C_END6_TXT09,
-	C_END6_TXT10,
-	C_END6_TXT11,
-	C_END6_TXT12,
-	C_END6_TXT13,
-	C_END6_TXT14,
-	C_END6_TXT15,
-	T_NULL
-};
-
-// Lost Levels
-
-char *endcluster7[] =
-{
-    C_END7_TXT01,
-    C_END7_TXT02,
-    C_END7_TXT03,
-    C_END7_TXT04,
-    C_END7_TXT05,
-    C_END7_TXT06,
-    C_END7_TXT07,
-    C_END7_TXT08,
-    C_END7_TXT09,
-    C_END7_TXT10,
-    C_END7_TXT11,
-    C_END7_TXT12,
-    C_END7_TXT13,
-    C_END7_TXT14,
-    T_NULL
-};
-
-// Beta 64
-
-char *endcluster8[] =   // 8005A2C0
-{
-    C_END8_TXT01,
-	C_END8_TXT02,
-	C_END8_TXT03,
-	C_END8_TXT04,
-	C_END8_TXT05,
-	C_END8_TXT06,
-	C_END8_TXT07,
-	C_END8_TXT08,
-	C_END8_TXT09,
-	C_END8_TXT10,
-	C_END8_TXT11,
-	C_END8_TXT12,
-	C_END8_TXT13,
-	C_END8_TXT14,
-	C_END8_TXT15,
-	T_NULL
-};
-
-char *endcluster9[] =   // 8005A300
-{
-    C_END9_TXT01,
-	C_END9_TXT02,
-	C_END9_TXT03,
-	C_END9_TXT04,
-	C_END9_TXT05,
-	C_END9_TXT06,
-	C_END9_TXT07,
-	C_END9_TXT08,
-	C_END9_TXT09,
-	C_END9_TXT10,
-	T_NULL
-};
-
-char *endcluster10[] =   // 8005A330
-{
-    C_END10_TXT01,
-	C_END10_TXT02,
-	C_END10_TXT03,
-	C_END10_TXT04,
-	C_END10_TXT05,
-	C_END10_TXT06,
-	C_END10_TXT07,
-	C_END10_TXT08,
-	C_END10_TXT09,
-	C_END10_TXT10,
-	C_END10_TXT11,
-	C_END10_TXT12,
-	C_END10_TXT13,
-	C_END10_TXT14,
-	T_NULL
-};
-
-char *endcluster11[] =   // 8005A360
-{
-    C_END11_TXT01,
-	C_END11_TXT02,
-	C_END11_TXT03,
-	C_END11_TXT04,
-	C_END11_TXT05,
-	C_END11_TXT06,
-	C_END11_TXT07,
-	C_END11_TXT08,
-	C_END11_TXT09,
-	C_END11_TXT10,
-	C_END11_TXT11,
-	C_END11_TXT12,
-	C_END11_TXT13,
-	C_END11_TXT14,
-	C_END11_TXT15,
-	T_NULL
-};
-
-char *endcluster12[] =   // 8005A390
-{
-    C_END12_TXT01,
-	C_END12_TXT02,
-	C_END12_TXT03,
-	C_END12_TXT04,
-	C_END12_TXT05,
-	C_END12_TXT06,
-	C_END12_TXT08,
-	C_END12_TXT09,
-	C_END12_TXT10,
-	C_END12_TXT11,
-	C_END12_TXT12,
-	C_END12_TXT13,
-	C_END12_TXT14,
-	T_NULL
-};
-
-char *endcluster13[] =   // 8005A3B0
-{
-    C_END13_TXT01,
-	C_END13_TXT02,
-	C_END13_TXT03,
-	C_END13_TXT04,
-	C_END13_TXT05,
-	C_END13_TXT06,
-	C_END13_TXT07,
-	C_END13_TXT08,
-	C_END13_TXT09,
-	C_END13_TXT10,
-	C_END13_TXT11,
-	C_END13_TXT12,
-	C_END13_TXT13,
-	C_END13_TXT14,
-	T_NULL
-};
 
 //
 // Character cast strings F_FINALE.C
@@ -723,72 +101,72 @@ void F_StartIntermission(void) // 80002CD0
 
     if (nextmap == 0)
     {
-        text = introcluster4;
+        text = TX_LoadText("INTRO", 4);
         textypos = 20;
     } else if (nextmap == 1)
     {
-        text = introcluster1;
+        text = TX_LoadText("INTRO", 1);
         textypos = 20;
     } else if (nextmap == LOSTLEVEL)
     {
-        text = introcluster2;
+        text = TX_LoadText("INTRO", 2);
         textypos = 20;
     } else if (nextmap == BETALEVEL)
     {
-        text = introcluster3;
+        text = TX_LoadText("INTRO", 3);
         textypos = 20;
     } else if (nextmap == VEHEMENCELEVEL)
     {
-        text = introcluster5;
+        text = TX_LoadText("INTRO", 5);
         textypos = 20;
     } else if (nextmap == 9)
     {
-        text = endcluster1;
+        text = TX_LoadText("END", 1);
         textypos = 15;
     }
     else if (nextmap == 29)
     {
-        text = endcluster2;
+        text = TX_LoadText("END", 2);
         textypos = 43;
     }
     else if (nextmap == 30)
     {
-        text = endcluster3;
+        text = TX_LoadText("END", 3);
         textypos = 43;
     }
     else if (nextmap == 31)
     {
-        text = endcluster4;
+        text = TX_LoadText("END", 4);
         textypos = 43;
     }
     else if (nextmap == 32)
     {
-        text = endcluster5;
+        text = TX_LoadText("END", 5);
         textypos = 71;
     }
 	else if (nextmap == 49) // Beta 64
     {
-        text = endcluster8;
+        text = TX_LoadText("END", 8);
         textypos = 15;
     }
     else if (nextmap == 72)
     {
-        text = endcluster9;
+        text = TX_LoadText("END", 9);
         textypos = 15;
     }
     else if (nextmap == 71)
     {
-        text = endcluster10;
+        text = TX_LoadText("END", 10);
         textypos = 15;
     }
     else if (nextmap == 57)
     {
-        text = endcluster11;
+        text = TX_LoadText("END", 11);
         textypos = 15;
     }
     else if (nextmap == 70)
     {
-        text = endcluster12;
+        text = TX_LoadText("END", 12);
         textypos = 15;
     }
 
@@ -813,6 +191,7 @@ void F_StartIntermission(void) // 80002CD0
 void F_StopIntermission(int exit) // 80002E14
 {
 	S_StopMusic(); // stop intermission music
+    TX_FreeText();
     gamepaused = false;
     DrawerStatus = 0;
     I_WIPE_FadeOutScreen();
@@ -943,6 +322,7 @@ void F_Start(void) // 8000313C
 	textypos = 15;
 	textline = 0;
 	textalpha = 0;
+	text = TX_LoadText("END", gamemap == 65 ? 13 : gamemap == 39 ? 7 : 6);
 	castnum = 0;
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	casttics = states[mobjinfo[castorder[castnum].type].seestate].tics;
@@ -965,6 +345,7 @@ void F_Start(void) // 8000313C
 
 void F_Stop(int exit) // 80003220
 {
+    TX_FreeText();
     gamepaused = false;
     DrawerStatus = 0;
     S_StopMusic();
@@ -1007,7 +388,7 @@ int F_Ticker(void) // 80003258
             break;
 
         case F_STAGE_DRAWTEXT:
-            if (gamemap == 65 ? *endcluster13[textline] : gamemap == 39 ? *endcluster7[textline] : *endcluster6[textline])
+            if (*text[textline])
             {
                 textalpha += 8;
                 if (textalpha > 255)
@@ -1313,11 +694,11 @@ void F_Drawer(void) // 800039DC
                 else
                     alpha = 0;
 				
-                ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), PACKRGBA(255, alpha, alpha, alpha));
+                ST_DrawString(-1, ypos, text[i], PACKRGBA(255, alpha, alpha, alpha));
                 ypos += 14;
             }
 
-            ST_DrawString(-1, ypos, (gamemap == 65 ? endcluster13[i] : gamemap == 39 ? endcluster7[i] : endcluster6[i]), PACKRGBA(255, textalpha, textalpha, textalpha));
+            ST_DrawString(-1, ypos, text[i], PACKRGBA(255, textalpha, textalpha, textalpha));
             break;
 
         case F_STAGE_CAST:

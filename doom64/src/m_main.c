@@ -1,6 +1,7 @@
 /* m_main.c -- menu routines */
 
 #include "doomdef.h"
+#include "texts.h"
 #include "r_local.h"
 #include "st_main.h"
 
@@ -2423,7 +2424,7 @@ void M_FeaturesDrawer(void) // 800091C0
                 text = (!MercilessMenu) ? "OFF": "ON";
                 break;
             case 23: /* WARP TO LEVEL */
-                sprintf(textbuff, "%s", MapInfo[m_actualmap].name);
+                sprintf(textbuff, "%s", TX_MapName(m_actualmap));
                 break;
             case 24: /* INVULNERABLE */
                 text = (!(players[0].cheats & CF_GODMODE)) ? "OFF": "ON";

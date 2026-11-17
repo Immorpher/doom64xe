@@ -1,4 +1,5 @@
 #include "doomdef.h"
+#include "texts.h"
 #include "p_local.h"
 #include "st_main.h"
 
@@ -410,8 +411,8 @@ void P_Start (void) // 80021C50
 		P_HighFpsStart();
 #endif
 
-    MusicID = MapInfo[gamemap].MusicSeq-(NUMSFX-1);
-    S_StartMusic(MapInfo[gamemap].MusicSeq);
+    MusicID = TX_MapMusic(gamemap)-(NUMSFX-1);
+    S_StartMusic(TX_MapMusic(gamemap));
 }
 
 void P_Stop (int exit) // 80021D58
@@ -440,7 +441,7 @@ void P_Stop (int exit) // 80021D58
     {
         // wait until the music has finished playing.
         // before, it relied on exact map timing (see two conditions above).
-        while (S_SoundStatus(MapInfo[gamemap].MusicSeq) == 1)
+        while (S_SoundStatus(TX_MapMusic(gamemap)) == 1)
         {
             //ST_DebugPrint("Waiting %d", exit);
         }

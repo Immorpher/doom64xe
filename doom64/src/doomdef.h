@@ -757,6 +757,7 @@ int     W_CheckNumForSwitch (void);
 int		W_GetNumForName (char *name);
 
 int		W_LumpLength(int lump);
+void	W_ReadRom(u32 romaddr, void *dest, u32 len);
 void	W_ReadLump(int lump, void *dest) HOT;
 void	W_InvalDCache(void *dest, u32 len); /* DMA destination invalidate that never flushes the whole data cache */
 
@@ -1006,14 +1007,6 @@ struct subsector_s *R_PointInSubsector (fixed_t x, fixed_t y) HOT;
 /*------*/
 /* MISC */
 /*------*/
-typedef struct
-{
-	char *	name;
-	short		MusicSeq;
-} mapinfo_t;
-
-extern mapinfo_t MapInfo[];
-
 extern unsigned const char rndtable[256];
 int M_Random (void) HOT;
 int P_Random (void) HOT;

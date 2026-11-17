@@ -1,0 +1,762 @@
+# Doom 64 XE text lump (TEXTS)
+# [MAP n]  name = level name,  music = music sequence number
+# [INTRO n] / [END n]   one text line per file line; blank line = blank text line
+# Lines starting with # are comments. Keep each line short enough to fit the screen.
+
+[MAP 0]
+name = Bonus Pak
+music = 119
+
+[MAP 1]
+name = Staging Area
+music = 96
+
+[MAP 2]
+name = The Terraformer
+music = 97
+
+[MAP 3]
+name = Main Engineering
+music = 105
+
+[MAP 4]
+name = Holding Area
+music = 104
+
+[MAP 5]
+name = Tech Center
+music = 101
+
+[MAP 6]
+name = Alpha Quadrant
+music = 107
+
+[MAP 7]
+name = Research Lab
+music = 108
+
+[MAP 8]
+name = Final Outpost
+music = 110
+
+[MAP 9]
+name = Even Simpler
+music = 95
+
+[MAP 10]
+name = The Bleeding
+music = 98
+
+[MAP 11]
+name = Terror Core
+music = 99
+
+[MAP 12]
+name = Altar of Pain
+music = 102
+
+[MAP 13]
+name = Dark Citadel
+music = 93
+
+[MAP 14]
+name = Eye of the Storm
+music = 106
+
+[MAP 15]
+name = Dark Entries
+music = 111
+
+[MAP 16]
+name = Blood Keep
+music = 97
+
+[MAP 17]
+name = Watch Your Step
+music = 103
+
+[MAP 18]
+name = Spawned Fear
+music = 94
+
+[MAP 19]
+name = The Spiral
+music = 100
+
+[MAP 20]
+name = Breakdown
+music = 112
+
+[MAP 21]
+name = Pitfalls
+music = 109
+
+[MAP 22]
+name = Burnt Offerings
+music = 101
+
+[MAP 23]
+name = Unholy Temple
+music = 108
+
+[MAP 24]
+name = No Escape
+music = 98
+
+[MAP 25]
+name = Cat And Mouse
+music = 97
+
+[MAP 26]
+name = HardCore
+music = 98
+
+[MAP 27]
+name = Playground
+music = 94
+
+[MAP 28]
+name = The Absolution
+music = 99
+
+[MAP 29]
+name = Outpost Omega
+music = 101
+
+[MAP 30]
+name = The Lair
+music = 102
+
+[MAP 31]
+name = In The Void
+music = 103
+
+[MAP 32]
+name = Hectic
+music = 104
+
+[MAP 33]
+name = Title
+music = 115
+
+[MAP 34]
+name = Plant Ops
+music = 120
+
+[MAP 35]
+name = Evil Sacrifice
+music = 121
+
+[MAP 36]
+name = Cold Grounds
+music = 123
+
+[MAP 37]
+name = Wretched Vats
+music = 125
+
+[MAP 38]
+name = Thy Glory
+music = 122
+
+[MAP 39]
+name = Final Judgement
+music = 124
+
+[MAP 40]
+name = Panic
+music = 126
+
+[MAP 41]
+name = Penumbra
+music = 129
+
+[MAP 42]
+name = Hydroplant
+music = 132
+
+[MAP 43]
+name = Signal Processing
+music = 133
+
+[MAP 44]
+name = Disposal Center
+music = 136
+
+[MAP 45]
+name = Refinery
+music = 137
+
+[MAP 46]
+name = Gamma Lab
+music = 134
+
+[MAP 47]
+name = Sector R
+music = 135
+
+[MAP 48]
+name = Ultima Porta
+music = 127
+
+[MAP 49]
+name = Profane Paradise
+music = 139
+
+[MAP 50]
+name = Pain Warren
+music = 146
+
+[MAP 51]
+name = City of the Damned
+music = 148
+
+[MAP 52]
+name = Mines
+music = 143
+
+[MAP 53]
+name = Lair of the Blind
+music = 151
+
+[MAP 54]
+name = The Dungeons
+music = 144
+
+[MAP 55]
+name = Abhorred Sanctuary
+music = 154
+
+[MAP 56]
+name = Abaddon Fortress
+music = 150
+
+[MAP 57]
+name = Simplicity
+music = 145
+
+[MAP 58]
+name = Inferni Carceris
+music = 149
+
+[MAP 59]
+name = Umbra
+music = 147
+
+[MAP 60]
+name = Unearthly Spire
+music = 153
+
+[MAP 61]
+name = Putrid Cloister
+music = 152
+
+[MAP 62]
+name = Tartarus
+music = 140
+
+[MAP 63]
+name = Crimson Court
+music = 141
+
+[MAP 64]
+name = Nowhere to Hide
+music = 142
+
+[MAP 65]
+name = The Nest
+music = 138
+
+[MAP 66]
+name = Hubris
+music = 110
+
+[MAP 67]
+name = Folly
+music = 94
+
+[MAP 68]
+name = Regret
+music = 99
+
+[MAP 69]
+name = Rage
+music = 101
+
+[MAP 70]
+name = The Beyond
+music = 130
+
+[MAP 71]
+name = Irradiated
+music = 128
+
+[MAP 72]
+name = Dark Secrets
+music = 131
+
+[MAP 73]
+name = Sorrow
+music = 95
+
+[MAP 74]
+name = Hexagonal Heat
+music = 100
+
+[MAP 75]
+name = Wellspring Catacombs
+music = 100
+
+[MAP 76]
+name = Blood Canyon
+music = 100
+
+[MAP 77]
+name = Storage Complex
+music = 100
+
+[MAP 78]
+name = Wretched Passage
+music = 100
+
+[MAP 79]
+name = Tempestas Labyrinthus
+music = 100
+
+[MAP 80]
+name = Cursed Corridors
+music = 100
+
+[MAP 81]
+name = MeatShot
+music = 100
+
+[MAP 82]
+name = The Blue Castle
+music = 100
+
+[MAP 83]
+name = Palace of Shadows
+music = 100
+
+[MAP 84]
+name = Foreboding Pestilence
+music = 100
+
+[MAP 85]
+name = The Descent
+music = 100
+
+[MAP 86]
+name = Ubiquitous
+music = 100
+
+[MAP 87]
+name = Gateway Lab
+music = 100
+
+[MAP 88]
+name = Far Removed
+music = 100
+
+[MAP 89]
+name = The Burning Eye
+music = 100
+
+[MAP 90]
+name = Immorphium Storage
+music = 100
+
+[MAP 91]
+name = Pain Harvest
+music = 100
+
+[MAP 92]
+name = Foggy Mountain
+music = 100
+
+[MAP 93]
+name = Dark Blue Dot
+music = 100
+
+[MAP 94]
+name = The Gasman Cometh
+music = 100
+
+[MAP 95]
+name = Twilight Scream
+music = 100
+
+[MAP 96]
+name = The Vehemence
+music = 100
+
+[MAP 97]
+name = Emergency Escape
+music = 100
+
+[MAP 98]
+name = Doomguy Must Die
+music = 100
+
+[MAP 99]
+name = SurnevoBownkread
+music = 100
+
+[MAP 100]
+name = Lets Play With Mome
+music = 100
+
+[MAP 101]
+name = Lets Play With Cyberdemons
+music = 100
+
+[MAP 102]
+name = CyberPac
+music = 100
+
+[MAP 128]
+name = The Fortress
+music = 98
+
+[MAP 129]
+name = Anguish
+music = 106
+
+[MAP 130]
+name = Wretched
+music = 99
+
+[MAP 131]
+name = Entryway
+music = 104
+
+[MAP 132]
+name = Visions of Hostility
+music = 97
+
+[MAP 133]
+name = Secondary Engineering
+music = 108
+
+[MAP 134]
+name = Doomed Sixty Four
+music = 115
+
+[MAP 135]
+name = Fabrication Labs
+music = 105
+
+[MAP 136]
+name = Switchless
+music = 94
+
+[MAP 137]
+name = Devolving Being
+music = 101
+
+[MAP 138]
+name = Outer Outpost
+music = 96
+
+[MAP 139]
+name = Doomsday Keep
+music = 111
+
+[MAP 140]
+name = Dark Retrospect
+music = 107
+
+[MAP 141]
+name = Diverged Fates
+music = 93
+
+[MAP 142]
+name = Alpha Void
+music = 103
+
+[MAP 143]
+name = Technological Terror
+music = 110
+
+[INTRO 1]
+Surviving the poison of evil has
+pushed sanity to an edge. The
+doctors' treatments are of little
+help. Nightmares of so many demons
+pouring through will not stop.
+
+The outpost at Phobos was left dead
+in a nuclear haze. However, hell
+has reached back in. Something has
+distorted reality and resurrected
+decaying carnage back into hideous
+living tissue.
+
+The mutations are devastating. The
+demons have returned even stronger
+and more vicious than before. As
+the only one who has survived the
+horror, the mission is clear...
+
+MERCILESS EXTERMINATION!
+
+[INTRO 2]
+The mother demon's lifeless stench
+is sharp as a dagger in the mind.
+With their mother dead, the demons
+have turned to a state of violence
+and hunger. Nothing can be allowed
+to refocus their rage towards us.
+
+Each moment, hell pushes your mind
+to a more primitive state. It is a
+struggle not to join the chaos.
+The demonic hordes are endless.
+Loss of coherent thought is making
+it difficult to find their origin.
+
+Suddenly, you find yourself back in
+a vacated UAC base. The last time
+you were ripped across worlds was by
+the mother demon. Has sanity broke?
+You must return to hell. Your path
+of extermination shall not end!
+
+[INTRO 3]
+The moon of Io was chosen by the
+U.A.C. to resume portal testing.
+We were prepared for any demon who
+entered through the portal. But
+the demons made a ship of flesh
+and iron. They attacked from space
+and I barely stopped the invasion.
+
+Everyone I knew died. I was meant
+to go down with the facility. It
+should be me frozen on the surface
+of Io. Instead I remained on a
+research ship observing the moon.
+
+Unexpectedly, I received a message
+from Io. It said demons and humans
+alike have returned back from the
+dead. My comrades will not be able
+to rest until I end what the demons
+are doing... I must return to Io!
+
+[INTRO 4]
+Of many worlds, the demons infect.
+Even after death, their mother
+will resurrect. They bring
+damnation through decimation. The
+demons will relentlessly spawn
+until they bring a new dawn.
+
+But there are those who forge a
+trail of destruction. They are
+the tide that brings retribution.
+Any ordeal they will suffer, as
+long as their weapons are allowed
+to thunder.
+
+The demons will have fear, because
+you can be anywhere through here.
+Your guns will fume as you bring
+the demons their doom. Choose any
+destination, as it is time for
+merciless extermination!
+
+[INTRO 5]
+Let the vehemence commence!
+
+[END 1]
+You cackle as the
+familiarity of the
+situation occurs to you.
+The gateway to the Demons
+domain was too accessible.
+You realize the demons mock
+you with their invitation.
+It does not matter...
+The demons spawn like rats
+and you have the grade AAA
+U.A.C. poison they crave.
+Your bloodthirsty scream
+shatters the teleport haze.
+Once again you find yourself
+amidst...
+
+[END 2]
+The vast silence reminds
+you of the military morgue.
+
+You knew the installation
+had a classified level.
+
+The U.A.C. had some good
+reason to hide this place.
+
+You wonder what it
+could be...
+
+[END 3]
+You smile.
+
+What strange place have
+you stumbled upon?
+
+The Demons did not expect
+you to survive this far.
+You feel their demonic
+presence waiting for you...
+
+Let them taste their guts!
+
+[END 4]
+You wretch as a strange
+acrid odor assaults you.
+
+Death and Demon carcass!
+
+No nightmare could have
+prepared you for this.
+
+You realize that this
+place was not meant for
+living humans.
+
+[END 5]
+Congratulations!
+You found...
+
+HECTIC
+
+Only the best will reap
+its rewards.
+
+[END 6]
+Finally...
+The mother of all demons
+is dead!
+
+The blood pours from
+your eyes as you stand
+in defiance.
+
+As the only marine to
+endure the slaughter-
+you decide to remain
+in Hell and ensure no
+demon ever rises again.
+
+The End.
+
+[END 7]
+You had not expected to be
+torn from Hell so soon after
+your fateful decision.
+Getting back there was your
+only concern. The plans of
+the Sister Ressurector to
+exterminate you have failed.
+
+A grim vision takes hold of
+your mind as the demon
+carcasses steam in your wake.
+Stretched before you is a
+path of perpetual torment...
+A path through DOOM...
+
+[END 8]
+The presence of hell is
+seeping in the facility like
+blood through arteries.
+It is upturning reality and
+infecting the dead.
+
+A stench leaks from the
+portal. It is from a place
+not for humans. But I have
+not felt human for while...
+
+Our mistakes have damned
+this place! I have to go to
+their world. Let them bring
+their worst. This ends in hell!
+
+[END 9]
+What kind of madness is this?
+
+I heard rumors of a secret lab,
+but I did not think the U.A.C.
+would have the audacity.
+the security operations.
+
+I must find the purpose of this
+lab. The U.A.C. must not be
+allowed to keep their secrets.
+
+[END 10]
+I wretch as an acrid fog
+assaults my eyes. There is no
+mistaking the odor of a U.A.C.
+weapons facility.
+
+Why is it so deep in hell and
+what went wrong? It seems to
+have been enveloped in this
+toxic haze for a long time.
+
+Perhaps they were trying to
+get back here. What hellish
+weapon technology could be
+so important?
+
+[END 11]
+The death of the demon
+shook the ground as the
+world faded away. What
+has pulled me from reality?
+
+An entity feels close. I can
+feel hate... It hates as much.
+as I do and it wishes for my
+death.
+
+I have been dropped in its
+realm. The smell of demon is
+everywhere! They wish to
+end my suffering. Only if it
+would be that simple!
+
+[END 12]
+The demons have entered more
+worlds than we can comprehend.
+This place does not follow the
+laws of nature.
+
+A force beyond human
+structure in an endless crimson
+void. A source of demonic
+power resides here.
+
+This is either the edge of my
+sanity, or perhaps a key to
+fighting the demons...
+
+[END 13]
+The mother of horrors has
+been slain! My comrades can
+now rest in peace.
+
+For the first time since
+entering hell a sense of
+peace permeates. I have
+found a purpose to live.
+
+Hell is vast and the demons
+scavenge like rats. I shall
+hunt down every weapon and
+every circuit. I will bring
+them into the stone age!

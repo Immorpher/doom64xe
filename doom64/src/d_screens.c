@@ -2,6 +2,7 @@
 
 #include "i_main.h"
 #include "doomdef.h"
+#include "texts.h"
 #include "r_local.h"
 #include "st_main.h"
 
@@ -193,7 +194,7 @@ void D_DrawLoadScreen(int textalpha)
 	M_DrawBackground(63, 25, textalpha>>1, EpisodeGraphic());
 
 	ST_DrawString(-1, 100, "Entering", PACKRGBA(textalpha,0,0,textalpha));
-	ST_DrawString(-1, 120, MapInfo[gamemap].name, PACKRGBA(textalpha,0,0,textalpha));
+	ST_DrawString(-1, 120, TX_MapName(gamemap), PACKRGBA(textalpha,0,0,textalpha));
 
     I_DrawFrame();
 }

@@ -84,6 +84,16 @@ static void W_GetRomData(u32 offset, void *dest, u32 len)
     I_RecvMesgWD(&romcopy_msgque, NULL, 1);
 }
 
+/* reads len bytes from the ROM at the given cartridge address (len and dest must be DMA friendly) */
+void W_ReadRom(u32 romaddr, void *dest, u32 len)
+{
+    OSIoMesg romio_msgbuf;
+    W_InvalDCache(dest, len);
+    osPiStartDma(&romio_msgbuf, OS_MESG_PRI_NORMAL, OS_READ,
+            romaddr, dest, len, &romcopy_msgque);
+    I_RecvMesgWD(&romcopy_msgque, NULL, 1);
+}
+
 /*
 ====================
 =

@@ -1,6 +1,7 @@
 /* am_main.c -- automap */
 
 #include "doomdef.h"
+#include "texts.h"
 #include "p_local.h"
 extern void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color);
 
@@ -492,7 +493,7 @@ void AM_Drawer (void) // 800009AC
         }
         if (!msgticking)
         {
-            sprintf(buf, "MAP %d: %s", gamemap, MapInfo[gamemap].name);
+            sprintf(buf, "MAP %d: %s", gamemap, TX_MapName(gamemap));
             ST_Message(HUDMargin, HUDMargin-5, buf, 0xffffff80);
         }
     }

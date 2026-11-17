@@ -4,298 +4,18 @@
 #include "doomdef.h"
 #include "st_main.h"
 #include "r_local.h"
+#include "texts.h"
 
 extern unsigned char nextmap;
 
-#define T_NULL	    ""
-
-#define MI_TXT00	"Bonus Pak" // bonus hub!
-#define MI_TXT01	"Staging Area"
-#define MI_TXT02	"The Terraformer"
-#define MI_TXT03	"Main Engineering"
-#define MI_TXT04	"Holding Area"
-#define MI_TXT05	"Tech Center"
-#define MI_TXT06	"Alpha Quadrant"
-#define MI_TXT07	"Research Lab"
-#define MI_TXT08	"Final Outpost"
-#define MI_TXT09	"Even Simpler"
-#define MI_TXT10	"The Bleeding"
-#define MI_TXT11	"Terror Core"
-#define MI_TXT12	"Altar of Pain"
-#define MI_TXT13	"Dark Citadel"
-#define MI_TXT14	"Eye of the Storm"
-#define MI_TXT15	"Dark Entries"
-#define MI_TXT16	"Blood Keep"
-#define MI_TXT17	"Watch Your Step"
-#define MI_TXT18	"Spawned Fear"
-#define MI_TXT19	"The Spiral"
-#define MI_TXT20	"Breakdown"
-#define MI_TXT21	"Pitfalls"
-#define MI_TXT22	"Burnt Offerings"
-#define MI_TXT23	"Unholy Temple"
-#define MI_TXT24	"No Escape"
-#define MI_TXT25	"Cat And Mouse"
-#define MI_TXT26	"HardCore"
-#define MI_TXT27	"Playground"
-#define MI_TXT28	"The Absolution"
-#define MI_TXT29	"Outpost Omega"
-#define MI_TXT30	"The Lair"
-#define MI_TXT31	"In The Void"
-#define MI_TXT32	"Hectic"
-#define MI_TXT33	"Title"
-#define MI_TXT34	"Plant Ops" // Lost levels
-#define MI_TXT35	"Evil Sacrifice"
-#define MI_TXT36	"Cold Grounds"
-#define MI_TXT37	"Wretched Vats"
-#define MI_TXT38	"Thy Glory"
-#define MI_TXT39	"Final Judgement"
-#define MI_TXT40	"Panic"
 
 // Beta 64
-#define MI_TXT41	"Penumbra"
-#define MI_TXT42	"Hydroplant"
-#define MI_TXT43	"Signal Processing"
-#define MI_TXT44	"Disposal Center"
-#define MI_TXT45	"Refinery"
-#define MI_TXT46	"Gamma Lab"
-#define MI_TXT47	"Sector R"
-#define MI_TXT48	"Ultima Porta"
-#define MI_TXT49	"Profane Paradise"
-#define MI_TXT50	"Pain Warren"
-#define MI_TXT51	"City of the Damned"
-#define MI_TXT52	"Mines"
-#define MI_TXT53	"Lair of the Blind"
-#define MI_TXT54	"The Dungeons"
-#define MI_TXT55	"Abhorred Sanctuary"
-#define MI_TXT56	"Abaddon Fortress"
-#define MI_TXT57	"Simplicity"
-#define MI_TXT58	"Inferni Carceris"
-#define MI_TXT59	"Umbra"
-#define MI_TXT60	"Unearthly Spire"
-#define MI_TXT61	"Putrid Cloister"
-#define MI_TXT62	"Tartarus"
-#define MI_TXT63	"Crimson Court"
-#define MI_TXT64	"Nowhere to Hide"
-#define MI_TXT65	"The Nest"
-#define MI_TXT66	"Hubris" // Fun level
-#define MI_TXT67	"Folly" // Fun level
-#define MI_TXT68	"Regret" // Fun level
-#define MI_TXT69	"Rage" // Fun level
-#define MI_TXT70	"The Beyond" // Secret level
-#define MI_TXT71	"Irradiated" // Secret level
-#define MI_TXT72	"Dark Secrets" // Secret level
-#define MI_TXT73	"Sorrow" // Fun level
 
 // Vehemence maps
-#define MI_TXT74	"Hexagonal Heat"
-#define MI_TXT75	"Wellspring Catacombs"
-#define MI_TXT76	"Blood Canyon"
-#define MI_TXT77	"Storage Complex"
-#define MI_TXT78	"Wretched Passage"
-#define MI_TXT79	"Tempestas Labyrinthus"
-#define MI_TXT80	"Cursed Corridors"
-#define MI_TXT81	"MeatShot"
-#define MI_TXT82	"The Blue Castle"
-#define MI_TXT83	"Palace of Shadows"
-#define MI_TXT84	"Foreboding Pestilence"
-#define MI_TXT85	"The Descent"
-#define MI_TXT86	"Ubiquitous"
-#define MI_TXT87	"Gateway Lab"
-#define MI_TXT88	"Far Removed"
-#define MI_TXT89	"The Burning Eye"
-#define MI_TXT90	"Immorphium Storage"
-#define MI_TXT91	"Pain Harvest"
-#define MI_TXT92	"Foggy Mountain"
-#define MI_TXT93	"Dark Blue Dot"
-#define MI_TXT94	"The Gasman Cometh"
-#define MI_TXT95	"Twilight Scream"
-#define MI_TXT96	"The Vehemence"
-#define MI_TXT97	"Emergency Escape"
-#define MI_TXT98	"Doomguy Must Die"
-#define MI_TXT99	"SurnevoBownkread"
-#define MI_TXT100	"Lets Play With Mome"
-#define MI_TXT101	"Lets Play With Cyberdemons"
-#define MI_TXT102	"CyberPac"
 
 
 // Bonus Pak Maps
-#define MI_TXT128	"The Fortress"
-#define MI_TXT129	"Anguish"
-#define MI_TXT130	"Wretched"
-#define MI_TXT131	"Entryway"
-#define MI_TXT132	"Visions of Hostility"
-#define MI_TXT133	"Secondary Engineering"
-#define MI_TXT134	"Doomed Sixty Four"
-#define MI_TXT135	"Fabrication Labs"
-#define MI_TXT136	"Switchless"
-#define MI_TXT137	"Devolving Being"
-#define MI_TXT138	"Outer Outpost"
-#define MI_TXT139	"Doomsday Keep"
-#define MI_TXT140	"Dark Retrospect"
-#define MI_TXT141	"Diverged Fates"
-#define MI_TXT142	"Alpha Void"
-#define MI_TXT143	"Technological Terror"
 
-mapinfo_t MapInfo[] = //8005A478
-{
-    {MI_TXT00 , 119}, // Bonus Pak Hub
-    {MI_TXT01 , 96}, // Doom 64 - Staging Area
-    {MI_TXT02 , 97}, // Terraformer
-    {MI_TXT03 , 105}, // Main Engineering
-    {MI_TXT04 , 104},
-    {MI_TXT05 , 101},
-    {MI_TXT06 , 107}, // Alpha Quadrant
-    {MI_TXT07 , 108}, // Research Lab
-    {MI_TXT08 , 110}, // Final Outpost
-    {MI_TXT09 , 95}, // Even Simpler
-    {MI_TXT10 , 98},
-    {MI_TXT11 , 99},
-    {MI_TXT12 , 102}, // Altar of Pain
-    {MI_TXT13 , 93},
-    {MI_TXT14 , 106},
-    {MI_TXT15 , 111},
-    {MI_TXT16 , 97}, // Blood Keep
-    {MI_TXT17 , 103},
-    {MI_TXT18 , 94},
-    {MI_TXT19 , 100}, // The Spiral
-    {MI_TXT20 , 112},
-    {MI_TXT21 , 109},
-    {MI_TXT22 , 101},
-    {MI_TXT23 , 108}, // Unholy Temple
-    {MI_TXT24 , 98}, // No Escape
-    {MI_TXT25 , 97},
-    {MI_TXT26 , 98},
-    {MI_TXT27 , 94},
-    {MI_TXT28 , 99}, // The Absolution
-    {MI_TXT29 , 101}, // Outpost Omega
-    {MI_TXT30 , 102}, // The Lair
-    {MI_TXT31 , 103}, // In The Void
-    {MI_TXT32 , 104}, // Hectic
-    {MI_TXT33 , 115}, // Title
-	
-	// The Lost Levels
-	
-    {MI_TXT34 , 120}, // Plant Ops
-    {MI_TXT35 , 121}, // Evil Sacrifice
-    {MI_TXT36 , 123}, // Cold Grounds
-    {MI_TXT37 , 125}, // Wretched Vats
-    {MI_TXT38 , 122}, // Thy Glory
-    {MI_TXT39 , 124}, // Final Judgement
-    {MI_TXT40 , 126}, // Panic
-	
-	// Beta 64
-	
-    {MI_TXT41 , 129}, // Penumbra
-    {MI_TXT42 , 132},  // Hydroplant
-    {MI_TXT43 , 133}, // Signal Processing
-    {MI_TXT44 , 136}, // Disposal Center
-    {MI_TXT45 , 137}, // Refinery
-    {MI_TXT46 , 134}, // Gamma Lab
-    {MI_TXT47 , 135}, // Sector R
-    {MI_TXT48 , 127}, // Ultima Porta
-    {MI_TXT49 , 139}, // Profane Paradise
-    {MI_TXT50 , 146}, // Pain Warren
-    {MI_TXT51 , 148}, // City of the Damned
-    {MI_TXT52 , 143}, // Mines
-    {MI_TXT53 , 151}, // Lair of the Blind
-    {MI_TXT54 , 144}, // The Dungeons
-    {MI_TXT55 , 154}, // Abhorred Sanctuary
-    {MI_TXT56 , 150}, // Abaddon Fortress
-    {MI_TXT57 , 145}, // Simplicity
-    {MI_TXT58 , 149}, // Inferni Carceris
-    {MI_TXT59 , 147}, // Umbra
-    {MI_TXT60 , 153}, // Unearthly Spire
-    {MI_TXT61 , 152}, // Putrid Cloister
-    {MI_TXT62 , 140}, // Tartarus 
-    {MI_TXT63 , 141}, // Crimson Court
-    {MI_TXT64 , 142}, // Nowhere to Hide
-    {MI_TXT65 , 138}, // The Nest
-    {MI_TXT66 , 110}, // Hubris
-    {MI_TXT67 , 94}, // Folly
-    {MI_TXT68 , 99}, // Regret
-    {MI_TXT69, 101}, // Rage
-    {MI_TXT70 , 130}, // The Beyond
-    {MI_TXT71 , 128}, // Irradiated
-    {MI_TXT72 , 131}, // Dark Secrets
-    {MI_TXT73 , 95}, // Sorrow
-
-	// Vehemence levels	
-
-    {MI_TXT74 , 100}, // Hexagonal Heat
-    {MI_TXT75 , 100}, // Wellspring Catacombs
-    {MI_TXT76 , 100}, // Blood Canyon
-    {MI_TXT77 , 100}, // Storage Complex
-    {MI_TXT78 , 100}, // Wretched Passage
-    {MI_TXT79 , 100}, // Tempestas Labyrinthus
-    {MI_TXT80 , 100}, // Cursed Corridors
-    {MI_TXT81 , 100}, // MeatShot
-    {MI_TXT82 , 100}, // The Blue Castle
-    {MI_TXT83 , 100}, // Palace of Shadows
-    {MI_TXT84 , 100}, // Foreboding Pestilence
-    {MI_TXT85 , 100}, // The Descent
-    {MI_TXT86 , 100}, // Ubiquitous
-    {MI_TXT87 , 100}, // Gateway Lab
-    {MI_TXT88 , 100}, // Far Removed
-    {MI_TXT89 , 100}, // The Burning Eye
-    {MI_TXT90 , 100}, // Immorphium Storage
-    {MI_TXT91 , 100}, // Pain Harvest
-    {MI_TXT92 , 100}, // Foggy Mountain
-    {MI_TXT93 , 100}, // Dark Blue Dot
-    {MI_TXT94 , 100}, // The Gasman Cometh
-    {MI_TXT95 , 100}, // Twilight Scream
-    {MI_TXT96 , 100}, // The Vehemence
-    {MI_TXT97 , 100}, // Emergency Escape
-    {MI_TXT98 , 100}, // Doomguy Must Die
-    {MI_TXT99 , 100}, // SurnevoBownkread
-    {MI_TXT100 , 100}, // Lets Play With Mom
-    {MI_TXT101 , 100}, // Lets Play With Cyberdemons
-    {MI_TXT102 , 100}, // CyberPac
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-    {T_NULL , 0},
-	
-	// Bonus Pak levels	
-
-    {MI_TXT128 , 98}, // The Fortress
-    {MI_TXT129 , 106}, // Anguish
-    {MI_TXT130 , 99}, // Wretched
-    {MI_TXT131 , 104}, // Entryway
-    {MI_TXT132 , 97}, // Visions of Hostility
-    {MI_TXT133 , 108}, // Secondary Engineering
-    {MI_TXT134 , 115}, // Doomed Sixty Four
-    {MI_TXT135 , 105}, // Fabrication Labs
-    {MI_TXT136 , 94}, // Switchless
-    {MI_TXT137 , 101}, // Devolving Being
-    {MI_TXT138 , 96}, // Outer Outpost
-    {MI_TXT139 , 111}, // Doomsday Keep
-    {MI_TXT140 , 107}, // Dark Retrospect
-    {MI_TXT141 , 93}, // Diverged Fates
-    {MI_TXT142 , 103}, // Alpha Void
-    {MI_TXT143 , 110}, // Technological Terror
-    {T_NULL , 0}
-};
 
 typedef struct pstats_s
 {
@@ -500,7 +220,7 @@ void IN_Drawer(void) // 80005164
 
 	M_DrawBackground(63, 25, 128, EpisodeGraphic());
 
-	ST_DrawString(-1, 20, MapInfo[gamemap].name, PACKRGBA(255, 255, 255, text_alpha));
+	ST_DrawString(-1, 20, TX_MapName(gamemap), PACKRGBA(255, 255, 255, text_alpha));
 
 	ST_DrawString(-1, 36, "Finished", PACKRGBA(255, 255, 255, text_alpha));
 
@@ -538,7 +258,7 @@ void IN_Drawer(void) // 80005164
 	else if (nextstage > 4)
 	{
         ST_DrawString(-1, 145, "Approaching", PACKRGBA(255, 255, 255, text_alpha));
-        ST_DrawString(-1, 161, MapInfo[nextmap].name, PACKRGBA(255, 255, 255, text_alpha));
+        ST_DrawString(-1, 161, TX_MapName(nextmap), PACKRGBA(255, 255, 255, text_alpha));
 
         pbuff = password;
 		for (i = 0; i < 16; i++)
