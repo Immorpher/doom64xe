@@ -24,7 +24,7 @@
 #define TX_MAXMAPS	256
 #define TX_MAXLINES	64
 #define TX_MAXMOCKS	255	/* P_Random only gives 0..255 */
-#define TX_MAXMOCK	63	/* longest mock text */
+#define TX_MAXMOCK	255	/* longest mock text */
 
 static char tx_empty[] = "";
 static char tx_blank[] = " ";
@@ -86,6 +86,24 @@ static void TX_Copy(char *d, const char *s)
 {
 	while ((*d++ = *s++))
 		;
+}
+
+/* turns every backslash-n typed in the text file into a real new line (in place) */
+static void TX_Unescape(char *s)
+{
+	char *w = s;
+
+	while (*s)
+	{
+		if (s[0] == '\\' && s[1] == 'n')
+		{
+			*w++ = '\n';
+			s += 2;
+		}
+		else
+			*w++ = *s++;
+	}
+	*w = 0;
 }
 
 static char *TX_Trim(char *s)
@@ -163,6 +181,7 @@ void TX_Init(void)
 			v = TX_Trim(line);
 			if (*v && *v != '#' && nmock < TX_MAXMOCKS)
 			{
+				TX_Unescape(v);
 				if (TX_Len(v) > TX_MAXMOCK)
 					v[TX_MAXMOCK] = 0;
 				mocks[nmock++] = v;

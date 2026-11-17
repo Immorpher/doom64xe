@@ -5,7 +5,7 @@
 #include "st_main.h"
 #include "texts.h"
 
-#define MAXMOCKTIME     1800
+#define MAXMOCKTIME     900
 int deathmocktics; // 800A56A0
 
 fixed_t 		forwardmove[2] = {0xE000, 0x16000}; // 8005B060

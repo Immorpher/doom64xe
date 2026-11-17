@@ -82,7 +82,7 @@ void IN_Start(void) // 80004AF0
 void IN_Stop(int exit) // 80004DB0
 {
 
-    if ((nextmap > 0) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap)) // No memory pak on fun levels
+    if ((nextmap > 0) && (nextmap < LASTLEVEL) && !FUNLEVEL(gamemap) && !FINLEVEL(gamemap)) // No memory pak on fun levels or after final levels (the finale follows)
     {
         if (EnableMemPak) {
             MiniLoop(M_SavePakStart,M_SavePakStop,M_SavePakTicker,M_SavePakDrawer);
