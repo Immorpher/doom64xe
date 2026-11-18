@@ -1010,6 +1010,7 @@ struct subsector_s *R_PointInSubsector (fixed_t x, fixed_t y) HOT;
 extern unsigned const char rndtable[256];
 int M_Random (void) HOT;
 int P_Random (void) HOT;
+int I_Random (void); // [Immorpher] cosmetic randomizer, does not touch the demo random sequence
 void M_ClearRandom (void);
 void M_ClearBox (fixed_t *box) HOT;
 void M_AddToBox (fixed_t *box, fixed_t x, fixed_t y) HOT;

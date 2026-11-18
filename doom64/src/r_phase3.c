@@ -3,6 +3,7 @@
 
 #include "doomdef.h"
 #include "r_local.h"
+#include "r_flash.h"
 
 //-----------------------------------//
 void R_RenderWorld(subsector_t *sub) HOT;
@@ -511,6 +512,7 @@ void R_WallPrep(seg_t *seg) // 80026A44
 void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomHeight,
                   int topOffset, int bottomOffset, int topColor, int bottomColor) // 80027138
 {
+    int fl_extra = 0, fl_x = 0, fl_y = 0, fl_z = 0, fl_t = 0, fl_h = 0; // flash vertex (see R_FlashWallPoint)
     textureN64_t *data;
     byte *src;
     vertex_t *v1;
@@ -606,11 +608,26 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
 
         gSPTexture(GFX1++, (1024 << 6)-1, (1024 << 6)-1, 0, G_TX_RENDERTILE, G_ON);
 
-        gSPVertex(GFX1++, VTX1, 4, 0);
-        gSP1Quadrangle(GFX1++, 0, 1, 2, 3, 1);
-
         v1 = seg->v1;
         v2 = seg->v2;
+
+        // a flash near the middle of a wall: add a vertex at the nearest point so it glows there
+        fl_extra = 0;
+        if (flash_count)
+            fl_extra = R_FlashWallPoint(v1->x >> FRACBITS, v1->y >> FRACBITS, v2->x >> FRACBITS, v2->y >> FRACBITS,
+                                        topHeight, bottomHeight, &fl_x, &fl_y, &fl_z, &fl_t, &fl_h);
+
+        if (fl_extra)
+        {
+            gSPVertex(GFX1++, VTX1, 5, 0);
+            gSP2Triangles(GFX1++, 4, 0, 1, 1, 4, 1, 2, 1);
+            gSP2Triangles(GFX1++, 4, 2, 3, 1, 4, 3, 0, 1);
+        }
+        else
+        {
+            gSPVertex(GFX1++, VTX1, 4, 0);
+            gSP1Quadrangle(GFX1++, 0, 1, 2, 3, 1);
+        }
 
         // x coordinates
         VTX1[0].v.ob[0] = VTX1[3].v.ob[0] = (signed short)(v1->x >> FRACBITS);
@@ -633,10 +650,34 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
         VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = (bottomOffset << 5);
 
         // vertex color
-        *(int*)VTX1[0].v.cn = *(int*)VTX1[1].v.cn = topColor;
-        *(int*)VTX1[2].v.cn = *(int*)VTX1[3].v.cn = bottomColor;
+        if (flash_count) // lit by a flash: color each corner by its distance
+        {
+            int x1 = v1->x >> FRACBITS, y1 = v1->y >> FRACBITS;
+            int x2 = v2->x >> FRACBITS, y2 = v2->y >> FRACBITS;
 
-        VTX1 += 4;
+            *(int*)VTX1[0].v.cn = R_FlashColor(topColor, x1, y1, topHeight);
+            *(int*)VTX1[1].v.cn = R_FlashColor(topColor, x2, y2, topHeight);
+            *(int*)VTX1[2].v.cn = R_FlashColor(bottomColor, x2, y2, bottomHeight);
+            *(int*)VTX1[3].v.cn = R_FlashColor(bottomColor, x1, y1, bottomHeight);
+        }
+        else
+        {
+            *(int*)VTX1[0].v.cn = *(int*)VTX1[1].v.cn = topColor;
+            *(int*)VTX1[2].v.cn = *(int*)VTX1[3].v.cn = bottomColor;
+        }
+
+        if (fl_extra)
+        {
+            VTX1[4].v.ob[0] = (signed short)fl_x;
+            VTX1[4].v.ob[1] = (signed short)fl_z;
+            VTX1[4].v.ob[2] = (signed short)-fl_y;
+            VTX1[4].v.tc[0] = VTX1[0].v.tc[0] + (((VTX1[1].v.tc[0] - VTX1[0].v.tc[0]) * fl_t) >> 8);
+            VTX1[4].v.tc[1] = VTX1[0].v.tc[1] + (((VTX1[3].v.tc[1] - VTX1[0].v.tc[1]) * fl_h) >> 8);
+            *(int*)VTX1[4].v.cn = R_FlashColor(R_LerpColor(topColor, bottomColor, fl_h), fl_x, fl_y, fl_z);
+            VTX1 += 5;
+        }
+        else
+            VTX1 += 4;
     }
 }
 
@@ -750,6 +791,7 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
 
 void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color) // 80027B68
 {
+    int fl_extra = 0, fl_x = 0, fl_y = 0; // flash vertex (see R_FlashPlanePoint)
     textureN64_t *data;
     byte *src;
     vertex_t *vrt;
@@ -809,7 +851,10 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
     VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
     VTX1[0].v.tc[0] = ((((vrt->x + xpos) & 0x3f0000U) >> FRACBITS) << 5);
     VTX1[0].v.tc[1] =-((((vrt->y + ypos) & 0x3f0000U) >> FRACBITS) << 5);
-    *(int *)VTX1[0].v.cn = color;
+    if (flash_count)
+        *(int *)VTX1[0].v.cn = R_FlashColor(color, vrt->x >> FRACBITS, vrt->y >> FRACBITS, zpos);
+    else
+        *(int *)VTX1[0].v.cn = color;
 
     x = ((vrt->x + xpos) >> FRACBITS) & -64;
     y = ((vrt->y + ypos) >> FRACBITS) & -64;
@@ -819,6 +864,37 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
     if (numverts >= 32)
         numverts = 32;
 
+    // a flash over a big polygon: add a vertex at the nearest point so the light shows there
+    fl_extra = 0;
+    if (flash_count && numverts < 32)
+        fl_extra = R_FlashPlanePoint(leaf, numverts, zpos, &fl_x, &fl_y);
+
+    if (fl_extra)
+    {
+        // fan of triangles around the extra vertex (index numverts)
+        gSPVertex(GFX1++, VTX1, numverts + 1, 0);
+        VTX1++;
+
+        for (i = 0; i < numverts; i += 2)
+        {
+            if (i + 1 < numverts)
+            {
+                gSP2Triangles(GFX1++, numverts, i, i + 1, 0,
+                                      numverts, i + 1, (i + 2) % numverts, 0);
+            }
+            else
+            {
+                gSP1Triangle(GFX1++, numverts, i, (i + 1) % numverts, 0);
+            }
+        }
+
+        idx = numverts; // no regular triangles below
+        leaf++;
+        numverts--;
+        idx = numverts;
+    }
+    else
+    {
     gSPVertex(GFX1++, VTX1, numverts, 0);
     VTX1++;
 
@@ -834,6 +910,7 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
 
     leaf++;
     numverts--;
+    }
 
     if (idx < numverts)
     {
@@ -926,9 +1003,23 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
         VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
         VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
         VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
-        *(int *)VTX1[0].v.cn = color;
+        if (flash_count)
+            *(int *)VTX1[0].v.cn = R_FlashColor(color, vrt->x >> FRACBITS, vrt->y >> FRACBITS, zpos);
+        else
+            *(int *)VTX1[0].v.cn = color;
         VTX1++;
         leaf++;
+    }
+
+    if (fl_extra)
+    {
+        VTX1[0].v.ob[0] = fl_x;
+        VTX1[0].v.ob[1] = zpos;
+        VTX1[0].v.ob[2] =-fl_y;
+        VTX1[0].v.tc[0] = (((((fl_x << FRACBITS) + xpos) >> FRACBITS) - x) << 5);
+        VTX1[0].v.tc[1] =-(((((fl_y << FRACBITS) + ypos) >> FRACBITS) - y) << 5);
+        *(int *)VTX1[0].v.cn = R_FlashColor(color, fl_x, fl_y, zpos);
+        VTX1++;
     }
 }
 
@@ -1025,6 +1116,10 @@ void R_RenderThings(subsector_t *sub) // 80028248
             else
             {
                 color = lights[vissprite_p->sector->colors[2]].rgba;
+
+                if (flash_count) // lit by a flash, measured at the middle of the sprite
+                    color = R_FlashColor(color, thing->x >> FRACBITS, thing->y >> FRACBITS,
+                                         (thing->z + (thing->height >> 1)) >> FRACBITS);
             }
 			
 			// Flash sky exposed SPRITES when there is lightning

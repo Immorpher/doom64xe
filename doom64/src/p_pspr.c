@@ -2,6 +2,7 @@
 
 #include "doomdef.h"
 #include "p_local.h"
+#include "r_flash.h"
 
 extern void P_Thrust (player_t *player, angle_t angle, fixed_t move);
 
@@ -188,6 +189,49 @@ void P_NoiseAlert (player_t *player) // 8001B3A4
 ==================
 */
 
+/* starts a short colored light in front of the player while a weapon flash is showing */
+static void P_WeaponFlash(player_t *player)
+{
+	mobj_t *mo = player->mo;
+	int angle = mo->angle >> ANGLETOFINESHIFT;
+	int x = (mo->x + FixedMul(finecosine[angle], 32 * FRACUNIT)) >> FRACBITS;
+	int y = (mo->y + FixedMul(finesine[angle], 32 * FRACUNIT)) >> FRACBITS;
+	int z = (player->viewz >> FRACBITS) - 8;
+	int r = 255, g = 200, b = 110, radius = 320, tics = 6; /* warm gun flash */
+	int k;
+
+	if (FlashLevel >= 7) /* "Flash Level" menu option at 0: no light flashes at all */
+		return;
+
+	switch (player->readyweapon)
+	{
+	case wp_plasma:
+		r = 110; g = 170; b = 255; radius = 360; tics = 4;
+		break;
+	case wp_laser:
+		r = 255; g = 90; b = 80; radius = 360; tics = 5;
+		break;
+	case wp_bfg:
+		r = 120; g = 255; b = 140; radius = 512; tics = 10;
+		break;
+	case wp_missile:
+		radius = 384; tics = 7;
+		break;
+	default:
+		break;
+	}
+
+	/* cosmetic flicker: each flash starts at a random brightness (I_Random never
+	   touches the demo random sequence) */
+	k = 170 + (I_Random() % 86); /* 170..255 */
+	k = k * (7 - FlashLevel) / 7; /* "Flash Level" menu option: 7 is full strength, lower is weaker */
+	r = r * k / 255;
+	g = g * k / 255;
+	b = b * k / 255;
+
+	R_FlashAdd(mo, x, y, z, radius, r, g, b, tics);
+}
+
 void P_SetPsprite (player_t *player, int position, statenum_t stnum) // 8001B3FC
 {
 	pspdef_t *psp;
@@ -205,6 +249,9 @@ void P_SetPsprite (player_t *player, int position, statenum_t stnum) // 8001B3FC
 		state = &states[stnum];
 		psp->state = state;
 		psp->tics = state->tics;  /* could be 0 */
+
+		if (position == ps_flashalpha)
+			P_WeaponFlash(player); /* light up the surroundings (drawing only) */
 
 		/* call action routine */
 		if (state->action)
@@ -806,6 +853,7 @@ void A_PlasmaAnimate(player_t *player, pspdef_t *psp) // 8001BED8
 void A_FirePlasma (player_t *player, pspdef_t *psp) // 8001BF2C
 {
 	player->ammo[weaponinfo[player->readyweapon].ammo]--;
+	P_WeaponFlash(player); /* plasma has no flash state, so start its light here */
 	P_SetPsprite (player,ps_flash,S_000);
 	P_SpawnPlayerMissile (player->mo, MT_PROJ_PLASMA);
 }

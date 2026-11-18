@@ -1,4 +1,5 @@
 #include "doomdef.h"
+#include "r_flash.h"
 #include "texts.h"
 #include "p_local.h"
 #include "st_main.h"
@@ -286,6 +287,7 @@ int P_Ticker (void)//80021A00
 	if ((!gamepaused) && (gamevbls < gametic))
 	{
 	    P_RunThinkers();
+		R_FlashTick();
 		P_CheckSights();
 		P_RunMobjBase();
 #ifdef FREEZE_DEBUG
@@ -384,6 +386,7 @@ void P_Start (void) // 80021C50
 	validcount = 1;
 
 	AM_Start();
+	R_FlashClear();
 	M_ClearRandom();
 
 	/* do a nice little fade in effect */
