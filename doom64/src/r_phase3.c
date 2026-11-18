@@ -5,6 +5,13 @@
 #include "r_local.h"
 #include "r_flash.h"
 
+/* Lightning brightens sky exposed sectors by moving their colors toward white (like the
+   weapon flashes, so it multiplies with the texture instead of adding to it). LightningFlash
+   runs 0..30 at full Flash Level and already follows that option. The sky itself is untouched. */
+#define LIGHTNING_COLOR_BOOST 3 /* LightningFlash * this = how far toward white, out of 256 */
+static int lightning_k; /* current sector's boost, 0 = none */
+#define R_LIT(c) (lightning_k ? R_LightenColor((c), lightning_k) : (c))
+
 //-----------------------------------//
 void R_RenderWorld(subsector_t *sub) HOT;
 
@@ -149,12 +156,10 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     I_CheckGFX();
 	
 	// Flash sky exposed sectors when there is lightning
+	extralight = frontsector->lightlevel;
+	lightning_k = 0;
 	if (LightningFlash != 0 && (frontsector->ceilingpic == -1 || frontsector->ceilingpic == 87 || frontsector->ceilingpic == 96 || frontsector->ceilingpic == 64 || frontsector->ceilingpic == 396 || frontsector->ceilingpic == 294 || frontsector->ceilingpic == 320)) {
-		extralight = frontsector->lightlevel + (LightningFlash>>1);
-		if (extralight > 255)
-			extralight = 255; // dont exceed brightness
-	} else {
-		extralight = frontsector->lightlevel;
+		lightning_k = LightningFlash * LIGHTNING_COLOR_BOOST; // lightning lights the sector colors
 	}
 
 
@@ -199,7 +204,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
         R_RenderPlane(lf, numverts, frontsector->ceilingheight >> FRACBITS,
                         textures[frontsector->ceilingpic],
                         xoffset, yoffset,
-                        lights[frontsector->colors[0]].rgba);
+                        R_LIT(lights[frontsector->colors[0]].rgba));
     }
 
     /* */
@@ -225,7 +230,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
             R_RenderPlane(lf, numverts, frontsector->floorheight >> FRACBITS,
                             textures[frontsector->floorpic],
                             xoffset, yoffset,
-                            lights[frontsector->colors[1]].rgba);
+                            R_LIT(lights[frontsector->colors[1]].rgba));
         }
         else
         {
@@ -248,7 +253,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
             R_RenderPlane(lf, numverts, frontsector->floorheight >> FRACBITS,
                             textures[frontsector->floorpic + 1],
                             xoffset, yoffset,
-                            lights[frontsector->colors[1]].rgba);
+                            R_LIT(lights[frontsector->colors[1]].rgba));
 
             //--------------------------------------------------------------
             gDPSetPrimColor(GFX1++, 0, frontsector->lightlevel, 0, 0, 0, 160);
@@ -257,7 +262,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
             R_RenderPlane(lf, numverts, frontsector->floorheight >> FRACBITS,
                             textures[frontsector->floorpic],
                             -yoffset, xoffset,
-                            lights[frontsector->colors[1]].rgba);
+                            R_LIT(lights[frontsector->colors[1]].rgba));
 
             gDPPipeSync(GFX1++);
             gDPSetRenderMode(GFX1++, G_RM_FOG_SHADE_A, G_RM_TEX_EDGE2);
@@ -307,9 +312,9 @@ void R_WallPrep(seg_t *seg) // 80026A44
     f_ceilingheight = frontsector->ceilingheight >> FRACBITS;
     f_floorheight = frontsector->floorheight >> FRACBITS;
 
-    thingcolor = lights[frontsector->colors[2]].rgba;
-    upcolor = lights[frontsector->colors[3]].rgba;
-    lowcolor = lights[frontsector->colors[4]].rgba;
+    thingcolor = R_LIT(lights[frontsector->colors[2]].rgba);
+    upcolor = R_LIT(lights[frontsector->colors[3]].rgba);
+    lowcolor = R_LIT(lights[frontsector->colors[4]].rgba);
 
     if (li->flags & ML_BLENDING)
     {
@@ -1117,19 +1122,17 @@ void R_RenderThings(subsector_t *sub) // 80028248
             {
                 color = lights[vissprite_p->sector->colors[2]].rgba;
 
+                // lightning lights sprites standing in sky exposed sectors
+                if (LightningFlash != 0 && vissprite_p->sector->ceilingpic == -1)
+                    color = R_LightenColor(color, LightningFlash * LIGHTNING_COLOR_BOOST);
+
                 if (flash_count) // lit by a flash, measured at the middle of the sprite
                     color = R_FlashColor(color, thing->x >> FRACBITS, thing->y >> FRACBITS,
                                          (thing->z + (thing->height >> 1)) >> FRACBITS);
             }
 			
 			// Flash sky exposed SPRITES when there is lightning
-			if (LightningFlash != 0 && vissprite_p->sector->ceilingpic == -1) {
-				extralight = vissprite_p->sector->lightlevel + (LightningFlash>>1);
-				if (extralight > 255)
-					extralight = 255; // dont exceed brightness
-			} else {
-				extralight = vissprite_p->sector->lightlevel;
-			}
+			extralight = vissprite_p->sector->lightlevel;
 
             needsync = 0;
             if ((extralight != lastlight) || (thing->alpha != lastalpha))
@@ -1413,6 +1416,7 @@ void R_RenderPSprites(void) // 80028f20
 	byte		    *paldata;
 	byte		    *src;
 
+	unsigned int    color; // lightning lit weapon color
 	int             tilecnt;
 	int             tiles;
 	int             tileh;
@@ -1481,16 +1485,13 @@ void R_RenderPSprites(void) // 80028f20
 			{
 				
 				// Flash sky exposed player when there is lightning
-				if (LightningFlash != 0 && frontsector->ceilingpic == -1) {
-					extralight = frontsector->lightlevel + (LightningFlash>>1);
-					if (extralight > 255)
-						extralight = 255; // dont exceed brightness
-				} else {
-					extralight = frontsector->lightlevel;
-				}
-				
-			    gDPSetPrimColorD64(GFX1, 0, extralight,
-                          lights[frontsector->colors[2]].rgba & ~255); // remove alpha value
+				extralight = frontsector->lightlevel;
+
+				color = lights[frontsector->colors[2]].rgba & ~255; // remove alpha value
+				if (LightningFlash != 0 && frontsector->ceilingpic == -1)
+					color = R_LightenColor(color, LightningFlash * LIGHTNING_COLOR_BOOST);
+
+			    gDPSetPrimColorD64(GFX1, 0, extralight, color);
 			}
 
 			// apply alpha value

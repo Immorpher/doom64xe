@@ -24,5 +24,6 @@ int R_FlashWallPoint(int x1, int y1, int x2, int y2, int top, int bottom,
                      int *px, int *py, int *pz, int *tfrac, int *hfrac);	/* fractions 0..256 */
 int R_FlashPlanePoint(void *leaf, int numverts, int zpos, int *px, int *py);
 unsigned int R_LerpColor(unsigned int a, unsigned int b, int k256);
+unsigned int R_LightenColor(unsigned int color, int k256);	/* moves every color channel k256/256 of the way to white, alpha kept */
 
 #endif

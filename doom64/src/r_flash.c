@@ -317,3 +317,21 @@ int R_FlashPlanePoint(void *leafptr, int numverts, int zpos, int *px, int *py)
 	}
 	return found;
 }
+
+unsigned int R_LightenColor(unsigned int color, int k256)
+{
+	int cr, cg, cb;
+
+	if (k256 > 256)
+		k256 = 256;
+
+	cr = color >> 24;
+	cg = (color >> 16) & 255;
+	cb = (color >> 8) & 255;
+
+	cr += ((255 - cr) * k256) >> 8;
+	cg += ((255 - cg) * k256) >> 8;
+	cb += ((255 - cb) * k256) >> 8;
+
+	return ((unsigned int)cr << 24) | ((unsigned int)cg << 16) | ((unsigned int)cb << 8) | (color & 255);
+}
