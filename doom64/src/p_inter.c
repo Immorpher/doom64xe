@@ -751,6 +751,11 @@ void P_DamageMobj (mobj_t *target, mobj_t *inflictor, mobj_t *source, int damage
 	if (target->health <= 0)
 		return;
 
+	/* health is a 16 bit value, so huge damage (instant kill, MAXINT) used to wrap around
+	   and could leave the target alive or with a wild health value */
+	if (damage > 30000)
+		damage = 30000;
+
 	if (target->flags & MF_SKULLFLY)
 	{
 		target->momx = target->momy = target->momz = 0;
@@ -824,7 +829,11 @@ void P_DamageMobj (mobj_t *target, mobj_t *inflictor, mobj_t *source, int damage
 			player->health = 0;
 		player->attacker = source;
 
-        player->damagecount += (damage/*>>1*/);	/* add damage after armor / invuln */
+        /* add damage after armor / invuln, kept inside the 16 bit counter */
+        if (player->damagecount + damage > 255)
+            player->damagecount = 255;
+        else
+            player->damagecount += (damage/*>>1*/);
 	}
 
 	/* */

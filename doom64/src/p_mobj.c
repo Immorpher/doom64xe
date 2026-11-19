@@ -556,7 +556,9 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
 	th->target = source;		/* where it came from */
 
 	/* light from the launch, at the muzzle (drawing only) */
+	if (type != MT_PROJ_DART) /* darts don't flash */
 	R_FlashPreset(source, x >> FRACBITS, y >> FRACBITS, z >> FRACBITS,
+	              (type == MT_PROJ_TRACER) ? FLASH_TRACER :
 	              (type == MT_PROJ_BABY) ? FLASH_PLASMA : (type == MT_PROJ_LASER) ? FLASH_LASER :
 	              (type == MT_PROJ_BFG) ? FLASH_BFG :
 	              (type == MT_PROJ_BRUISER2) ? FLASH_BARON : (type == MT_PROJ_BRUISER1) ? FLASH_KNIGHT :
@@ -737,6 +739,7 @@ void P_ExplodeMissile (mobj_t *mo) // 800198B8
 	}
 
 	/* light from the impact (drawing only) */
+	if (mo->type != MT_PROJ_DART) /* darts don't flash */
 	{
 		int kind;
 
@@ -754,6 +757,10 @@ void P_ExplodeMissile (mobj_t *mo) // 800198B8
 			break;
 		case MT_PROJ_LASER:
 			kind = FLASH_LASER;
+			break;
+		case MT_PROJ_TRACER:
+		case MT_PROJ_RECT:
+			kind = FLASH_TRACER;
 			break;
 		case MT_PROJ_BRUISER2:
 			kind = FLASH_BARON;

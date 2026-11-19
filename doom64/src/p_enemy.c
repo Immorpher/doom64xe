@@ -1472,6 +1472,9 @@ void A_RectMissile(mobj_t* actor) // 80012B1C
         }
     }
 
+    /* one flash from between her arms (drawing only) */
+    R_FlashPreset(actor, actor->x >> FRACBITS, actor->y >> FRACBITS, (actor->z + (104*FRACUNIT)) >> FRACBITS, FLASH_MOTHER, FLASHPRI_ATTACK);
+
     // Arm 1
 
     an = (actor->angle/*-ANG90*/) >> ANGLETOFINESHIFT;
