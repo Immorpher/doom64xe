@@ -10,7 +10,15 @@ void R_FlashClear(void);
 void R_FlashTick(void);		/* once per game tic */
 
 /* Starts (or refreshes) the flash belonging to "owner". x, y, z are map units. */
-void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int b, int tics);
+void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int b, int tics, int priority);
+
+/* ready made flashes for gameplay events. priority: when all slots are busy a flash only
+   replaces one of equal or lower priority (player 3, explosions 2, enemy attacks 1). */
+enum { FLASH_ENEMYGUN, FLASH_FIRE, FLASH_PLASMA, FLASH_ROCKET, FLASH_BARREL, FLASH_BFG, FLASH_LASER, FLASH_BLAST, FLASH_NIGHTMARE, FLASH_SPARK, FLASH_BARON, FLASH_KNIGHT };
+#define FLASHPRI_ATTACK		1
+#define FLASHPRI_EXPLOSION	2
+#define FLASHPRI_PLAYER		3
+void R_FlashPreset(void *owner, int x, int y, int z, int kind, int priority);
 
 /* Lights one vertex: returns color (0xRRGGBBAA) brightened toward white
    (multiplicatively, so it can never exceed the texture's own colors). */

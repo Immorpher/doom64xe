@@ -3,6 +3,7 @@
 #include "doomdef.h"
 #include "p_local.h"
 #include "sounds.h"
+#include "r_flash.h"
 
 void G_PlayerReborn (int player);
 void G_PlayerReload (int player);
@@ -436,6 +437,10 @@ void P_SpawnPuff (fixed_t x, fixed_t y, fixed_t z) // 80019218
 /* don't make punches spark on the wall */
 	if (attackrange == MELEERANGE)
 		P_SetMobjState (th, S_490);
+
+	/* chainsaw wall sparks glow (drawing only) */
+	if (attackrange == MELEERANGE + 1)
+		R_FlashPreset(th, x >> FRACBITS, y >> FRACBITS, z >> FRACBITS, FLASH_SPARK, FLASHPRI_ATTACK);
 }
 
 
@@ -549,6 +554,13 @@ mobj_t *P_SpawnMissile (mobj_t *source, mobj_t *dest, fixed_t xoffs, fixed_t yof
 	if (th->info->seesound)
 		S_StartSound (source, th->info->seesound);
 	th->target = source;		/* where it came from */
+
+	/* light from the launch, at the muzzle (drawing only) */
+	R_FlashPreset(source, x >> FRACBITS, y >> FRACBITS, z >> FRACBITS,
+	              (type == MT_PROJ_BABY) ? FLASH_PLASMA : (type == MT_PROJ_LASER) ? FLASH_LASER :
+	              (type == MT_PROJ_BFG) ? FLASH_BFG :
+	              (type == MT_PROJ_BRUISER2) ? FLASH_BARON : (type == MT_PROJ_BRUISER1) ? FLASH_KNIGHT :
+	              (type == MT_PROJ_IMP2 || (source->flags & MF_NIGHTMARE)) ? FLASH_NIGHTMARE : FLASH_FIRE, FLASHPRI_ATTACK);
 
 	if ((type == MT_PROJ_BABY) || (type == MT_PROJ_DART)) /* no aim projectile */
 	{
@@ -722,5 +734,38 @@ void P_ExplodeMissile (mobj_t *mo) // 800198B8
 	{
 		S_StopSound(mo, 0);
 		S_StartSound(mo, mo->info->deathsound);
+	}
+
+	/* light from the impact (drawing only) */
+	{
+		int kind;
+
+		switch (mo->type)
+		{
+		case MT_PROJ_ROCKET:
+			kind = FLASH_ROCKET;
+			break;
+		case MT_PROJ_BFG:
+			kind = FLASH_BFG;
+			break;
+		case MT_PROJ_PLASMA:
+		case MT_PROJ_BABY:
+			kind = FLASH_PLASMA;
+			break;
+		case MT_PROJ_LASER:
+			kind = FLASH_LASER;
+			break;
+		case MT_PROJ_BRUISER2:
+			kind = FLASH_BARON;
+			break;
+		case MT_PROJ_BRUISER1:
+			kind = FLASH_KNIGHT;
+			break;
+		default:
+			kind = (mo->type == MT_PROJ_IMP2 || (mo->flags & MF_NIGHTMARE)) ? FLASH_NIGHTMARE : FLASH_FIRE;
+			break;
+		}
+		R_FlashPreset(mo, mo->x >> FRACBITS, mo->y >> FRACBITS, (mo->z + (mo->height >> 1)) >> FRACBITS,
+		              kind, FLASHPRI_EXPLOSION);
 	}
 }

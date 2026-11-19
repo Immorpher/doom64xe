@@ -229,7 +229,7 @@ static void P_WeaponFlash(player_t *player)
 	g = g * k / 255;
 	b = b * k / 255;
 
-	R_FlashAdd(mo, x, y, z, radius, r, g, b, tics);
+	R_FlashAdd(mo, x, y, z, radius, r, g, b, tics, FLASHPRI_PLAYER);
 }
 
 void P_SetPsprite (player_t *player, int position, statenum_t stnum) // 8001B3FC

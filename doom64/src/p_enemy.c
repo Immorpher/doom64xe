@@ -2,6 +2,7 @@
 
 #include "doomdef.h"
 #include "p_local.h"
+#include "r_flash.h"
 
 void A_Fall (mobj_t *actor);
 
@@ -715,6 +716,7 @@ void A_PosAttack (mobj_t *actor) // 80011954
 	angle = actor->angle;
 
 	S_StartSound (actor, sfx_pistol);
+	R_FlashPreset(actor, actor->x >> FRACBITS, actor->y >> FRACBITS, (actor->z + (actor->height * 3 >> 2)) >> FRACBITS, FLASH_ENEMYGUN, FLASHPRI_ATTACK); /* gun flash (drawing only) */
 
     rnd1 = P_Random();
     rnd2 = P_Random();
@@ -741,6 +743,7 @@ void A_SPosAttack (mobj_t *actor) // 800119FC
 		return;
 
 	S_StartSound (actor, sfx_shotgun);
+	R_FlashPreset(actor, actor->x >> FRACBITS, actor->y >> FRACBITS, (actor->z + (actor->height * 3 >> 2)) >> FRACBITS, FLASH_ENEMYGUN, FLASHPRI_ATTACK); /* gun flash (drawing only) */
 	A_FaceTarget (actor);
 	bangle = actor->angle;
 
@@ -771,6 +774,7 @@ void A_PlayAttack(mobj_t* actor) // 80011b1C
 		return;
 
 	S_StartSound(actor, sfx_pistol);
+	R_FlashPreset(actor, actor->x >> FRACBITS, actor->y >> FRACBITS, (actor->z + (actor->height * 3 >> 2)) >> FRACBITS, FLASH_ENEMYGUN, FLASHPRI_ATTACK); /* gun flash (drawing only) */
 	A_FaceTarget(actor);
 	bangle = actor->angle;
 
@@ -1653,6 +1657,7 @@ void A_BarrelExplode(mobj_t* actor) // 80013070
 
     S_StartSound(actor, actor->info->deathsound);
     P_SpawnMobj(actor->x, actor->y, actor->z + (actor->info->height >> 1), MT_EXPLOSION1);
+    R_FlashPreset(actor, actor->x >> FRACBITS, actor->y >> FRACBITS, (actor->z + (actor->info->height >> 1)) >> FRACBITS, FLASH_BARREL, FLASHPRI_EXPLOSION); // barrel blast light (drawing only)
     P_RadiusAttack(actor, actor->target, 128);//A_Explode(actor);
 
     A_OnDeathTrigger(actor);

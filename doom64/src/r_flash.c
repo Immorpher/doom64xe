@@ -23,6 +23,7 @@ typedef struct
 	int radius2;
 	int r, g, b;		/* flash color */
 	int life;		/* tics left */
+	int priority;		/* see FLASHPRI_* */
 	int maxlife;
 } flash_t;
 
@@ -62,17 +63,20 @@ void R_FlashTick(void)
 	R_FlashCount();
 }
 
-void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int b, int tics)
+void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int b, int tics, int priority)
 {
-	int i, slot = -1, oldest = 0x7fffffff;
+	int i, slot = -1;
 	flash_t *f;
 
-	/* same owner first, then a free slot, then the flash with the least time left */
+	/* the same owner's flash first, then a free slot, then the weakest flash
+	   (lowest priority, least time left) if it is not more important than this one */
 	for (i = 0; i < MAXFLASHES; i++)
 	{
 		if (flashes[i].life > 0 && flashes[i].owner == owner)
 		{
 			slot = i;
+			if (flashes[i].priority > priority)
+				priority = flashes[i].priority;
 			break;
 		}
 	}
@@ -85,12 +89,12 @@ void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int 
 				slot = i;
 				break;
 			}
-			if (flashes[i].life < oldest)
-			{
-				oldest = flashes[i].life;
+			if (slot < 0 || flashes[i].priority < flashes[slot].priority ||
+			    (flashes[i].priority == flashes[slot].priority && flashes[i].life < flashes[slot].life))
 				slot = i;
-			}
 		}
+		if (flashes[slot].life > 0 && flashes[slot].priority > priority)
+			return; /* everything running is more important */
 	}
 
 	f = &flashes[slot];
@@ -105,7 +109,55 @@ void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int 
 	f->b = b;
 	f->life = tics;
 	f->maxlife = tics;
+	f->priority = priority;
 	R_FlashCount();
+}
+
+typedef struct
+{
+	int r, g, b;
+	int radius;
+	int tics;
+} flashpreset_t;
+
+static const flashpreset_t flashpresets[] =
+{
+	{255, 200, 110, 256, 4},	/* FLASH_ENEMYGUN: pistol and shotgun shots */
+	{255, 140,  60, 288, 5},	/* FLASH_FIRE: fireball launches and impacts */
+	{110, 170, 255, 288, 5},	/* FLASH_PLASMA */
+	{255, 170,  80, 448, 9},	/* FLASH_ROCKET: rocket blast */
+	{255, 150,  60, 448, 10},	/* FLASH_BARREL */
+	{120, 255, 140, 512, 10},	/* FLASH_BFG */
+	{255,  90,  80, 320, 5},	/* FLASH_LASER */
+	{255, 190, 100, 352, 7},	/* FLASH_BLAST: other explosions */
+	{190,  80, 255, 288, 5},	/* FLASH_NIGHTMARE: purple nightmare fireballs */
+	{255, 160,  60, 160, 4},	/* FLASH_SPARK: chainsaw wall sparks */
+	{255,  50,  40, 288, 5},	/* FLASH_BARON: red baron fireballs */
+	{ 70, 255,  90, 288, 5}		/* FLASH_KNIGHT: green hell knight fireballs */
+};
+
+/* Starts a flash from a gameplay event at map position x, y, z. It follows the Flash Level
+   option, flickers with I_Random and is skipped when it is too far away to be seen. */
+void R_FlashPreset(void *owner, int x, int y, int z, int kind, int priority)
+{
+	const flashpreset_t *p = &flashpresets[kind];
+	long long dx, dy, reach;
+	int k;
+
+	if (FlashLevel >= 7)
+		return;
+
+	/* distance from the camera the person is looking through */
+	dx = x - (viewx >> FRACBITS);
+	dy = y - (viewy >> FRACBITS);
+	reach = p->radius + 768;
+	if (dx * dx + dy * dy > reach * reach)
+		return;
+
+	k = 170 + (I_Random() % 86); /* 170..255 */
+	k = k * (7 - FlashLevel) / 7;
+
+	R_FlashAdd(owner, x, y, z, p->radius, p->r * k / 255, p->g * k / 255, p->b * k / 255, p->tics, priority);
 }
 
 unsigned int R_FlashColor(unsigned int color, int x, int y, int z)
@@ -231,6 +283,14 @@ int R_FlashWallPoint(int x1, int y1, int x2, int y2, int top, int bottom,
 			*px = (int)cx;
 			*py = (int)cy;
 			*pz = cz;
+			/* the vertex position is a whole map unit, so measure how far along the wall
+			   that rounded point really is: its texture coordinate must match it, or the
+			   texture would shift around the vertex */
+			num = ((long long)(*px - x1)) * (x2 - x1) + ((long long)(*py - y1)) * (y2 - y1);
+			if (num < 0)
+				num = 0;
+			else if (num > len2)
+				num = len2;
 			*tfrac = len2 > 0 ? (int)(num * 256 / len2) : 0;
 			*hfrac = top != bottom ? (top - cz) * 256 / (top - bottom) : 0;
 		}

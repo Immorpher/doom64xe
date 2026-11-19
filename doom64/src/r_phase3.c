@@ -8,6 +8,9 @@
 /* Lightning brightens sky exposed sectors by moving their colors toward white (like the
    weapon flashes, so it multiplies with the texture instead of adding to it). LightningFlash
    runs 0..30 at full Flash Level and already follows that option. The sky itself is untouched. */
+#define FLASH_WALL_SPLIT 0 // 1: walls near a flash get an extra vertex at the nearest point (can warp textures); 0: corner lighting only
+#define FLASH_MIN_DEPTH 16 // walls nearer than this (map units, along the view direction) get no extra flash vertex
+#define R_DRAWNMASK ((fixed_t)0xffff0000) // same rounding the culling uses
 #define LIGHTNING_COLOR_BOOST 3 /* LightningFlash * this = how far toward white, out of 256 */
 static int lightning_k; /* current sector's boost, 0 = none */
 #define R_LIT(c) (lightning_k ? R_LightenColor((c), lightning_k) : (c))
@@ -618,9 +621,18 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
 
         // a flash near the middle of a wall: add a vertex at the nearest point so it glows there
         fl_extra = 0;
-        if (flash_count)
-            fl_extra = R_FlashWallPoint(v1->x >> FRACBITS, v1->y >> FRACBITS, v2->x >> FRACBITS, v2->y >> FRACBITS,
-                                        topHeight, bottomHeight, &fl_x, &fl_y, &fl_z, &fl_t, &fl_h);
+        if (FLASH_WALL_SPLIT && flash_count)
+        {
+            // Only when the whole wall is in front of the camera: a corner behind it already
+            // projects badly (no near plane clipping), and splitting the wall around the new
+            // vertex would warp the texture there. Such walls keep the corner-only lighting.
+            long long d1 = ((long long)((v1->x & R_DRAWNMASK) - viewx) * viewcos + (long long)((v1->y & R_DRAWNMASK) - viewy) * viewsin) >> 32;
+            long long d2 = ((long long)((v2->x & R_DRAWNMASK) - viewx) * viewcos + (long long)((v2->y & R_DRAWNMASK) - viewy) * viewsin) >> 32;
+
+            if (d1 >= FLASH_MIN_DEPTH && d2 >= FLASH_MIN_DEPTH)
+                fl_extra = R_FlashWallPoint(v1->x >> FRACBITS, v1->y >> FRACBITS, v2->x >> FRACBITS, v2->y >> FRACBITS,
+                                            topHeight, bottomHeight, &fl_x, &fl_y, &fl_z, &fl_t, &fl_h);
+        }
 
         if (fl_extra)
         {
