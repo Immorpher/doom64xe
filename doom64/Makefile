@@ -8,21 +8,6 @@ DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1 FREEZE_DEBUG=1
 
 # make BENCHMARK=1: build a benchmark ROM. It plays the demos, times them and
 # shows the results (see src/bench.c). Do a clean build when switching.
-# Audio tests (leave unset for a normal build):
-#   AUDIO_RELEASE_PCT=n   scale note release times to n% (default 25, see n64cmd.c)
-ifneq ($(AUDIO_RELEASE_PCT),)
-  DEFINES += AUDIO_RELEASE_PCT=$(AUDIO_RELEASE_PCT)
-endif
-
-# 60 Hz mode is on by default. The game still ticks at 30 Hz (physics and demos
-# are unchanged) but frames can be drawn every VI with the player's camera
-# interpolated between ticks. Demos always run the original 30 Hz way.
-# make FPS60=0: build without it (original 30 Hz frame cap).
-FPS60 ?= 1
-ifeq ($(FPS60),1)
-  DEFINES += FPS60=1
-endif
-
 BENCHMARK ?= 0
 ifeq ($(BENCHMARK),1)
   DEFINES += BENCHMARK=0
@@ -175,11 +160,11 @@ $(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	@$(PRINT) "$(GREEN)Linking ELF file (LTO):  $(BLUE)$@ $(NO_COL)\n"
 	$(V)$(CC) $(LTO_LDFLAGS) -nostdlib -nostartfiles -Wl,-u,memcpy \
 		-Wl,-T,$(BUILD_DIR)/$(LD_SCRIPT) -Wl,-Map,$(BUILD_DIR)/$(TARGET).map -Wl,--no-check-sections \
-		-L$(BUILD_DIR) -o $@ $(O_FILES) -L/usr/lib/n64 -ln_audio_sc -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
+		-L$(BUILD_DIR) -o $@ $(O_FILES) -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
 else
 $(ELF): $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	@$(PRINT) "$(GREEN)Linking ELF file:  $(BLUE)$@ $(NO_COL)\n"
-	$(V)$(LD) -L $(BUILD_DIR) -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/$(TARGET).map -o $@ $(O_FILES) --no-check-sections -L/usr/lib/n64 -ln_audio_sc -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
+	$(V)$(LD) -L $(BUILD_DIR) -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/$(TARGET).map -o $@ $(O_FILES) --no-check-sections -L/usr/lib/n64 -lultra_rom -L$(N64_LIBGCCDIR) -lgcc
 endif
 
 # Build ROM

@@ -2,7 +2,7 @@
 #define _WESSARC_H
 
 #include <ultra64.h>
-#include <n_libaudio_sc.h>
+#include <libaudio.h>
 
 //#define NOUSEWESSCODE
 

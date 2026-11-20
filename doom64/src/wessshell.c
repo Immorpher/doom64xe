@@ -1,7 +1,7 @@
 /* ULTRA64 LIBRARIES */
 #include <ultra64.h>
 #include "ultratypes.h"
-#include <n_libaudio_sc.h>
+#include <libaudio.h>
 
 #include "wessarc.h"
 #include "wessshell.h"
@@ -16,7 +16,7 @@ void SSP_SeqpNew(void) // 8002F100
 	wessnode.callTime = 0;
 	wessnode.samplesLeft = 0;
 	wessnode.clientData = wessstate;
-	n_alSynAddPlayer(&wessnode);
+	alSynAddPlayer(&alGlobals->drvr, &wessnode);
 }
 
 ALMicroTime __wessVoiceHandler(void *node) // 8002F154
