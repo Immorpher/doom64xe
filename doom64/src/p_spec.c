@@ -1063,7 +1063,7 @@ boolean P_UseSpecialLine (line_t *line, mobj_t *thing) // 800204BC
 			ok = EV_DoCeiling(line, silentCrushAndRaise, CEILSPEED*2);
 			break;
 		case 164: // [Immorpher] custom linedef for hub level name display
-			player->message[MSG_NEW] = TX_MapName(line->tag);
+			player->message[MSG_NEW] = (char *)TX_MapName(line->tag);
 			player->messagetic[MSG_NEW] = MSGTICS;
 			player->messagecolor[MSG_NEW] = 0xFFFFFF00;
 			break;

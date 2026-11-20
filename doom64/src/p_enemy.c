@@ -1634,7 +1634,7 @@ void A_TargetCamera(mobj_t* actor) // 80012FEC
 {
     mobj_t* mo;
 
-    actor->threshold = MAXINT;
+    actor->threshold = -1; /* threshold is 16 bit, so the old MAXINT stored exactly this */
 
     for(mo = mobjhead.next; mo != &mobjhead; mo = mo->next)
     {

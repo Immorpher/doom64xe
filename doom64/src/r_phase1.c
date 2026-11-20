@@ -350,7 +350,7 @@ void R_AddLine(seg_t *line) // 80024604
 {
 	sector_t    *backsector;
 	vertex_t    *vrt, *vrt2;
-	int         x1, y1, x2, y2, count;
+	int         x1, y1, x2, y2;
 	int        Xstart, Xend, delta;
 	byte        *solid_cols;
 
