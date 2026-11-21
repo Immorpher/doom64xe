@@ -667,7 +667,7 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
         VTX1[2].v.tc[1] = VTX1[3].v.tc[1] = (bottomOffset << 5);
 
         // vertex color
-        if (flash_count) // lit by a flash: color each corner by its distance
+        if (flash_count && R_FlashWallHit(v1->x >> FRACBITS, v1->y >> FRACBITS, v2->x >> FRACBITS, v2->y >> FRACBITS, topHeight, bottomHeight)) // lit by a flash: color each corner by its distance
         {
             int x1 = v1->x >> FRACBITS, y1 = v1->y >> FRACBITS;
             int x2 = v2->x >> FRACBITS, y2 = v2->y >> FRACBITS;
@@ -809,6 +809,7 @@ void R_RenderSwitch(seg_t *seg, int texture, int topOffset, int color) // 800276
 void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, int ypos, int color) // 80027B68
 {
     int fl_extra = 0, fl_x = 0, fl_y = 0; // flash vertex (see R_FlashPlanePoint)
+    int fl; // a flash reaches this polygon
     textureN64_t *data;
     byte *src;
     vertex_t *vrt;
@@ -862,13 +863,15 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
         globallump = texture;
     }
 
+    fl = flash_count ? R_FlashPlaneHit(leaf, (numverts > 32) ? 32 : numverts, zpos) : 0;
+
     vrt = leaf->vertex;
     VTX1[0].v.ob[0] = (vrt->x >> FRACBITS);
     VTX1[0].v.ob[1] = zpos;
     VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
     VTX1[0].v.tc[0] = ((((vrt->x + xpos) & 0x3f0000U) >> FRACBITS) << 5);
     VTX1[0].v.tc[1] =-((((vrt->y + ypos) & 0x3f0000U) >> FRACBITS) << 5);
-    if (flash_count)
+    if (fl)
         *(int *)VTX1[0].v.cn = R_FlashColor(color, vrt->x >> FRACBITS, vrt->y >> FRACBITS, zpos);
     else
         *(int *)VTX1[0].v.cn = color;
@@ -883,7 +886,7 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
 
     // a flash over a big polygon: add a vertex at the nearest point so the light shows there
     fl_extra = 0;
-    if (flash_count && numverts < 32)
+    if (fl && numverts < 32)
         fl_extra = R_FlashPlanePoint(leaf, numverts, zpos, &fl_x, &fl_y);
 
     if (fl_extra)
@@ -1020,7 +1023,7 @@ void R_RenderPlane(leaf_t *leaf, int numverts, int zpos, int texture, int xpos, 
         VTX1[0].v.ob[2] =-(vrt->y >> FRACBITS);
         VTX1[0].v.tc[0] = ((((vrt->x + xpos) >> FRACBITS) - x) << 5);
         VTX1[0].v.tc[1] =-((((vrt->y + ypos) >> FRACBITS) - y) << 5);
-        if (flash_count)
+        if (fl)
             *(int *)VTX1[0].v.cn = R_FlashColor(color, vrt->x >> FRACBITS, vrt->y >> FRACBITS, zpos);
         else
             *(int *)VTX1[0].v.cn = color;

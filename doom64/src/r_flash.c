@@ -25,6 +25,7 @@ typedef struct
 	int life;		/* tics left */
 	int priority;		/* see FLASHPRI_* */
 	int maxlife;
+	int scale;		/* 16.16 factor that turns (radius2 - d2) >> 4 into brightness, includes the age fade */
 } flash_t;
 
 static flash_t flashes[MAXFLASHES];
@@ -37,6 +38,18 @@ void R_FlashClear(void)
 	for (i = 0; i < MAXFLASHES; i++)
 		flashes[i].life = 0;
 	flash_count = 0;
+}
+
+/* Folds the age fade and 1 / radius2 into one number, so lighting a vertex needs no divides. */
+static void R_FlashScale(flash_t *f)
+{
+	int agek, r4;
+
+	agek = (f->maxlife > 0) ? (f->life * 256 / f->maxlife) : 256;	/* 0..256 */
+	r4 = f->radius2 >> 4;
+	if (r4 < 1)
+		r4 = 1;
+	f->scale = (agek << 16) / r4;
 }
 
 static void R_FlashCount(void)
@@ -58,7 +71,11 @@ void R_FlashTick(void)
 	for (i = 0; i < MAXFLASHES; i++)
 	{
 		if (flashes[i].life > 0)
+		{
 			flashes[i].life--;
+			if (flashes[i].life > 0)
+				R_FlashScale(&flashes[i]);
+		}
 	}
 	R_FlashCount();
 }
@@ -110,6 +127,7 @@ void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int 
 	f->life = tics;
 	f->maxlife = tics;
 	f->priority = priority;
+	R_FlashScale(f);
 	R_FlashCount();
 }
 
@@ -163,6 +181,54 @@ void R_FlashPreset(void *owner, int x, int y, int z, int kind, int priority)
 	R_FlashAdd(owner, x, y, z, p->radius, p->r * k / 255, p->g * k / 255, p->b * k / 255, p->tics, priority);
 }
 
+/* Does any flash reach this box? Lets the renderer skip lighting walls and floors that are out of reach. */
+int R_FlashBoxHit(int minx, int maxx, int miny, int maxy, int minz, int maxz)
+{
+	int i;
+	flash_t *f;
+
+	for (i = 0; i < MAXFLASHES; i++)
+	{
+		f = &flashes[i];
+		if (f->life <= 0)
+			continue;
+		if (maxx <= f->x - f->radius || minx >= f->x + f->radius)
+			continue;
+		if (maxy <= f->y - f->radius || miny >= f->y + f->radius)
+			continue;
+		if (maxz <= f->z - f->radius || minz >= f->z + f->radius)
+			continue;
+		return 1;
+	}
+	return 0;
+}
+
+int R_FlashWallHit(int x1, int y1, int x2, int y2, int top, int bottom)
+{
+	return R_FlashBoxHit(x1 < x2 ? x1 : x2, x1 < x2 ? x2 : x1,
+	                     y1 < y2 ? y1 : y2, y1 < y2 ? y2 : y1,
+	                     top < bottom ? top : bottom, top < bottom ? bottom : top);
+}
+
+int R_FlashPlaneHit(void *leafptr, int numverts, int zpos)
+{
+	leaf_t *leaf = (leaf_t *)leafptr;
+	int j, x, y, minx, maxx, miny, maxy;
+
+	minx = maxx = leaf[0].vertex->x >> FRACBITS;
+	miny = maxy = leaf[0].vertex->y >> FRACBITS;
+	for (j = 1; j < numverts; j++)
+	{
+		x = leaf[j].vertex->x >> FRACBITS;
+		y = leaf[j].vertex->y >> FRACBITS;
+		if (x < minx) minx = x;
+		if (x > maxx) maxx = x;
+		if (y < miny) miny = y;
+		if (y > maxy) maxy = y;
+	}
+	return R_FlashBoxHit(minx, maxx, miny, maxy, zpos, zpos);
+}
+
 unsigned int R_FlashColor(unsigned int color, int x, int y, int z)
 {
 	int i, dx, dy, dz, d2, k;
@@ -190,8 +256,8 @@ unsigned int R_FlashColor(unsigned int color, int x, int y, int z)
 		if (d2 >= f->radius2)
 			continue;
 
-		/* 0..256: falls off with distance squared, fades out with age */
-		k = (((f->radius2 - d2) * 256) / f->radius2) * f->life / f->maxlife;
+		/* 0..256: falls off with distance squared, fades out with age (no divides) */
+		k = (((f->radius2 - d2) >> 4) * f->scale) >> 16;
 
 		ar += (k * f->r) >> 8;
 		ag += (k * f->g) >> 8;

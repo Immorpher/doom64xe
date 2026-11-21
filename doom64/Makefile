@@ -6,6 +6,15 @@ TARGET := $(TARGET_STRING)
 # Preprocessor definitions - add FREEZE_DEBUG=1 to check for freezes
 DEFINES := _FINALROM=1 NDEBUG=1 F3DEX_GBI_2=1 FREEZE_DEBUG=1
 
+# 60 Hz mode is on by default. The game still ticks at 30 Hz (physics and demos
+# are unchanged) but frames can be drawn every VI with the player's camera
+# interpolated between ticks. Demos always run the original 30 Hz way.
+# make FPS60=0: build without it (original 30 Hz frame cap).
+FPS60 ?= 1
+ifeq ($(FPS60),1)
+  DEFINES += FPS60=1
+endif
+
 # make BENCHMARK=1: build a benchmark ROM. It plays the demos, times them and
 # shows the results (see src/bench.c). Do a clean build when switching.
 BENCHMARK ?= 0

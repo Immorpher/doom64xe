@@ -24,6 +24,12 @@ void R_FlashPreset(void *owner, int x, int y, int z, int kind, int priority);
    (multiplicatively, so it can never exceed the texture's own colors). */
 unsigned int R_FlashColor(unsigned int color, int x, int y, int z);
 
+/* Quick tests: does any flash reach a wall / a floor or ceiling polygon? If not, the
+   renderer skips the per-vertex lighting for it. */
+int R_FlashBoxHit(int minx, int maxx, int miny, int maxy, int minz, int maxz);
+int R_FlashWallHit(int x1, int y1, int x2, int y2, int top, int bottom);
+int R_FlashPlaneHit(void *leaf, int numverts, int zpos);
+
 /* Surfaces are lit through their vertices only, so a flash sitting in the middle of a
    big polygon would light nothing. These find the point of a wall or floor/ceiling
    nearest to the closest flash that reaches it; the caller adds a vertex there. */
