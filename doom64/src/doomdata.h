@@ -6,11 +6,9 @@
 #ifndef __DOOMDATA__
 #define __DOOMDATA__
 
-#ifndef __BYTEBOOL__
-#define __BYTEBOOL__
-typedef enum {false, true} boolean;
+#include <stdbool.h>
 typedef unsigned char byte;
-#endif
+typedef bool boolean;	/* 1 byte (was a 4 byte enum): stored values must be 0 or 1 */
 
 /*
 ===============================================================================
