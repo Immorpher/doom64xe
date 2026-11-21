@@ -14,7 +14,7 @@ void R_FlashAdd(void *owner, int x, int y, int z, int radius, int r, int g, int 
 
 /* ready made flashes for gameplay events. priority: when all slots are busy a flash only
    replaces one of equal or lower priority (player 3, explosions 2, enemy attacks 1). */
-enum { FLASH_ENEMYGUN, FLASH_FIRE, FLASH_PLASMA, FLASH_ROCKET, FLASH_BARREL, FLASH_BFG, FLASH_LASER, FLASH_BLAST, FLASH_NIGHTMARE, FLASH_SPARK, FLASH_BARON, FLASH_KNIGHT, FLASH_TRACER, FLASH_MOTHER };
+enum { FLASH_ENEMYGUN, FLASH_FIRE, FLASH_PLASMA, FLASH_ROCKET, FLASH_BARREL, FLASH_BFG, FLASH_LASER, FLASH_BLAST, FLASH_NIGHTMARE, FLASH_SPARK, FLASH_BARON, FLASH_KNIGHT, FLASH_TRACER, FLASH_MOTHER, FLASH_PAIN };
 #define FLASHPRI_ATTACK		1
 #define FLASHPRI_EXPLOSION	2
 #define FLASHPRI_PLAYER		3

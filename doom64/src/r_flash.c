@@ -135,7 +135,8 @@ static const flashpreset_t flashpresets[] =
 	{255,  50,  40, 288, 5},	/* FLASH_BARON: red baron fireballs */
 	{ 70, 255,  90, 288, 5},	/* FLASH_KNIGHT: green hell knight fireballs */
 	{255,  40,  40, 288, 5},	/* FLASH_TRACER: red tracking fireballs */
-	{230,  30,  60, 384, 6}		/* FLASH_MOTHER: Mother Demon tracer volley */
+	{230,  30,  60, 384, 6},	/* FLASH_MOTHER: Mother Demon tracer volley */
+	{255, 225,  70, 288, 5}		/* FLASH_PAIN: Pain Elemental spitting skulls */
 };
 
 /* Starts a flash from a gameplay event at map position x, y, z. It follows the Flash Level

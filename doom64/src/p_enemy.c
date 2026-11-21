@@ -1357,6 +1357,8 @@ void A_PainAttack(mobj_t *actor) // 80012804
 		return;
 
 	A_FaceTarget(actor);
+	/* one yellow flash for both skulls (drawing only) */
+	R_FlashPreset(actor, actor->x >> FRACBITS, actor->y >> FRACBITS, (actor->z + (actor->height >> 1)) >> FRACBITS, FLASH_PAIN, FLASHPRI_ATTACK);
 	A_PainShootSkull(actor, actor->angle-0x15550000);
 	A_PainShootSkull(actor, actor->angle+0x15550000);
 }
