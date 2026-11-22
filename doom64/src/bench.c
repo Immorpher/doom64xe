@@ -13,6 +13,10 @@
  *   G  graphics task, start to finish   - RSP+RDP wall time (includes the
  *                                         time audio takes the RSP from it)
  *   MC slowest frame of T+B, MG slowest G
+ *   RC RDP clock counter, RP RDP pipe busy, RT RDP texture-load busy: average
+ *      microseconds per graphics task, from the RDP hardware counters. The RDP
+ *      cannot take longer than G, so G minus RC is about how long the RSP ran
+ *      before the RDP started. All lines "ALL" only (average over every demo).
  *   S  frames (T+B) plus graphics tasks (G) that took over 2 VIs (33366 us)
  */
 #ifdef BENCHMARK
@@ -31,11 +35,25 @@ extern int DefaultConfiguration[6][13];
 volatile u32 bench_gfx_start;
 volatile u32 bench_submit;
 
+/* DPC_STATUS clear bits for the tmem, pipe, command and clock counters */
+#define BENCH_DP_CLR_COUNTERS (DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR | DPC_CLR_CLOCK_CTR)
+
+/* RCP clock is 62.5 MHz: counts -> microseconds */
+#define BENCH_RCP_US(c) (((c) * 16) / 1000)
+
+/* Called when a graphics task starts: stamp the time and zero the RDP counters. */
+void Bench_GfxStart(void)
+{
+    osDpSetStatus(BENCH_DP_CLR_COUNTERS);
+    bench_gfx_start = osGetCount();
+}
+
 typedef struct
 {
     u32 frames;
     u32 tick, build, gfx;      /* sums, microseconds */
     u32 gfxtasks;              /* number of graphics tasks timed */
+    u32 rdpclock, rdppipe, rdptmem; /* RDP counters, sums, microseconds */
     u32 maxcpu, maxgfx;
     u32 slow;
     u32 check;
@@ -80,10 +98,18 @@ void Bench_GfxDone(u32 counts)
 {
     bench_t *b = &bench[bench_cur < BENCH_DEMOS ? bench_cur : BENCH_DEMOS - 1];
     u32 g;
+    u32 dp[4];
 
     if (counts > 46875000) /* over a second: not a real frame */
         return;
     g = Bench_US(counts);
+    osDpGetCounters(dp); /* clock, buffer busy, pipe busy, tmem busy */
+    if (dp[0] < 6250000) /* under 100 ms of RCP clocks: sane */
+    {
+        b->rdpclock += BENCH_RCP_US(dp[0]);
+        b->rdppipe += BENCH_RCP_US(dp[2]);
+        b->rdptmem += BENCH_RCP_US(dp[3]);
+    }
     b->gfx += g;
     b->gfxtasks++;
     if (g > b->maxgfx) b->maxgfx = g;
@@ -193,6 +219,7 @@ static void Bench_Show(void)
         all.frames += b->frames;
         all.tick += b->tick; all.build += b->build; all.gfx += b->gfx;
         all.gfxtasks += b->gfxtasks;
+        all.rdpclock += b->rdpclock; all.rdppipe += b->rdppipe; all.rdptmem += b->rdptmem;
         all.slow += b->slow;
         if (b->maxcpu > all.maxcpu) all.maxcpu = b->maxcpu;
         if (b->maxgfx > all.maxgfx) all.maxgfx = b->maxgfx;
@@ -211,7 +238,15 @@ static void Bench_Show(void)
 
         info[0] = all.maxcpu; info[1] = all.maxgfx;
         D_vsprintf(line, " MC%d MG%d", info);
-        Bench_Text(fb, line, 8, y);
+        Bench_Text(fb, line, 8, y); y += 16;
+
+        {
+            u32 ng = all.gfxtasks ? all.gfxtasks : 1;
+
+            info[0] = all.rdpclock / ng; info[1] = all.rdppipe / ng; info[2] = all.rdptmem / ng;
+            D_vsprintf(line, " RC%d RP%d RT%d", info);
+            Bench_Text(fb, line, 8, y);
+        }
     }
 
     osWritebackDCacheAll();

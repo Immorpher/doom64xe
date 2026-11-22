@@ -27,6 +27,7 @@ extern u32 cfb[2][SCREEN_WD*SCREEN_HT]; // 8036A000
 #ifdef BENCHMARK
 extern volatile u32 bench_gfx_start;
 extern void Bench_GfxDone(u32 counts);
+extern void Bench_GfxStart(void);
 extern volatile u32 bench_submit;
 #endif
 
@@ -594,7 +595,7 @@ void I_SystemTicker(void *arg) // 80005730
 
                                     SystemTickerStatus |= 1;
 #ifdef BENCHMARK
-                                    bench_gfx_start = osGetCount();
+                                    Bench_GfxStart();
 #endif
 
                                     osWritebackDCacheAll();
@@ -778,7 +779,7 @@ void I_SystemTicker(void *arg) // 80005730
 
                             SystemTickerStatus |= 1;
 #ifdef BENCHMARK
-                            bench_gfx_start = osGetCount();
+                            Bench_GfxStart();
 #endif
 
                             osWritebackDCacheAll();

@@ -131,9 +131,38 @@ static Gfx *R_TexCmdsPlane(Gfx *g, byte *src, int texture)
     return g;
 }
 
+/* RDP cycle mode currently set for the world: 1 = 1-cycle opaque, 0 = normal 2-cycle */
+static int world1c;
+
+static void R_World1C(void)
+{
+    if (!world1c)
+    {
+        gDPPipeSync(GFX1++);
+        gDPSetCycleType(GFX1++, G_CYC_1CYCLE);
+        gDPSetCombineMode(GFX1++, G_CC_D64COMB20, G_CC_D64COMB20);
+        gDPSetRenderMode(GFX1++, G_RM_FOG_TEX_EDGE_1C, G_RM_FOG_TEX_EDGE_1C);
+        world1c = 1;
+    }
+}
+
+static void R_World2C(void)
+{
+    if (world1c)
+    {
+        gDPPipeSync(GFX1++);
+        gDPSetCycleType(GFX1++, G_CYC_2CYCLE);
+        gDPSetCombineMode(GFX1++, G_CC_D64COMB07, G_CC_D64COMB08);
+        gDPSetRenderMode(GFX1++, G_RM_FOG_SHADE_A, G_RM_TEX_EDGE2);
+        world1c = 0;
+    }
+}
+
 void R_RenderAll(void) // 80026590
 {
     subsector_t *sub;
+
+    world1c = 0; /* R_Render3D starts the world in 2-cycle mode */
 
     while (endsubsector--, (endsubsector >= solidsubsectors))
     {
@@ -143,6 +172,8 @@ void R_RenderAll(void) // 80026590
 
         sub->drawindex = 0x7fff;
     }
+
+    R_World2C(); /* weapon sprites etc. expect 2-cycle */
 }
 
 void R_RenderWorld(subsector_t *sub) // 80026638
@@ -168,6 +199,11 @@ void R_RenderWorld(subsector_t *sub) // 80026638
 
 	gDPSetPrimColor(GFX1++, 0, extralight, 0, 0, 0, 255);
 
+	/* 1-cycle is only identical to the 2-cycle combiner when PRIM_LOD_FRAC is 0 */
+	if (extralight == 0)
+		R_World1C();
+	else
+		R_World2C();
 
     numverts = sub->numverts;
 
@@ -237,6 +273,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
         }
         else
         {
+            R_World2C();
             gDPPipeSync(GFX1++);
             gDPSetRenderMode(GFX1++, G_RM_FOG_SHADE_A, G_RM_XLU_SURF2);
 
@@ -1086,6 +1123,7 @@ void R_RenderThings(subsector_t *sub) // 80028248
     vissprite_p = sub->vissprite;
     if (vissprite_p)
     {
+        R_World2C();
         gDPPipeSync(GFX1++);
 
         if (vissprite_p->thing->flags & MF_RENDERLASER)
