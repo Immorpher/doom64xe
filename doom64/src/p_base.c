@@ -26,8 +26,6 @@ boolean PB_CheckPosition(void);
 boolean PB_BoxCrossLine(line_t *ld);
 boolean PB_CheckLine(line_t *ld);
 boolean PB_CheckThing(mobj_t *thing);
-boolean PB_BlockLinesIterator(int x, int y);
-boolean PB_BlockThingsIterator(int x, int y);
 
 /*
 =================
@@ -551,9 +549,9 @@ boolean PB_CheckPosition(void) // 8000D750
 	{
 		for (by = yl; by <= yh; by++)
         {
-			if (!PB_BlockLinesIterator(bx, by))
+			if (!P_BlockLinesIterator(bx, by, PB_CheckLine))
 				return false;
-			if (!PB_BlockThingsIterator(bx, by))
+			if (!P_BlockThingsIterator(bx, by, PB_CheckThing))
 				return false;
 		}
 	}
@@ -629,6 +627,9 @@ boolean PB_CheckLine(line_t *ld) // 8000DA44
 	fixed_t lowfloor;
 	sector_t	*front, *back;
 
+	if (!PB_BoxCrossLine(ld))
+		return true;
+
 	/*
 	=
 	= The moving thing's destination position will cross the given line.
@@ -684,41 +685,6 @@ boolean PB_CheckLine(line_t *ld) // 8000DA44
 		testdropoffz = lowfloor;
 
 	return true;
-}
-
-/*
-==================
-=
-= PB_BlockLinesIterator
-=
-==================
-*/
-
-boolean PB_BlockLinesIterator(int x, int y) // 8000DB70
-{
-	int     offset;
-	short  *list;
-	line_t *ld;
-
-	offset = y*bmapwidth+x;
-
-	offset = *(blockmap + offset);
-
-	for (list = blockmaplump + offset; *list != -1; list++)
-	{
-		ld = &lines[*list];
-		if (ld->validcount == validcount)
-			continue; // line has already been checked
-		ld->validcount = validcount;
-
-		if (PB_BoxCrossLine(ld))
-		{
-			if (!PB_CheckLine(ld))
-				return false;
-		}
-	}
-
-	return true; // everything was checked
 }
 
 /*
@@ -797,29 +763,4 @@ boolean PB_CheckThing(mobj_t *thing) // 8000DC70
 	}
 
 	return !(thing->flags & MF_SOLID);
-}
-
-
-/*
-==================
-=
-= PB_BlockThingsIterator
-=
-==================
-*/
-
-boolean PB_BlockThingsIterator(int x, int y) // 8000DDD4
-{
-	mobj_t *mobj;
-	
-	if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
-		return true;
-
-	for (mobj = blocklinks[y*bmapwidth+x]; mobj; mobj = mobj->bnext)
-	{
-		if (!PB_CheckThing(mobj))
-			return false;
-	}
-
-	return true;
 }

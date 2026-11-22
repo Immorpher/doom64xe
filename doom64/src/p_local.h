@@ -292,8 +292,6 @@ void	PM_CheckPosition(void) HOT;
 boolean PM_BoxCrossLine(line_t *ld) HOT;
 boolean PIT_CheckLine(line_t *ld) HOT;
 boolean PIT_CheckThing(mobj_t *thing) HOT;
-boolean PM_BlockLinesIterator(int x, int y) HOT;
-boolean PM_BlockThingsIterator(int x, int y) HOT;
 
 
 /*

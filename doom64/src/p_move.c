@@ -399,7 +399,7 @@ void PM_CheckPosition (void) // 80019F50
 	{
 		for (by = yl; by <= yh; by++)
 		{
-			if (!PM_BlockThingsIterator(bx, by))
+			if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
 			{
 				trymove2 = false;
 				return;
@@ -428,7 +428,7 @@ void PM_CheckPosition (void) // 80019F50
 	{
 		for (by = yl; by <= yh; by++)
 		{
-			if (!PM_BlockLinesIterator(bx, by))
+			if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
 			{
 				trymove2 = false;
 				return;
@@ -506,6 +506,9 @@ boolean PIT_CheckLine (line_t *ld) // 8001A3DC
 	fixed_t		pm_opentop, pm_openbottom;
 	fixed_t		pm_lowfloor;
 	sector_t	*front, *back;
+
+	if (!PM_BoxCrossLine(ld))
+		return true;
 
 	// a line has been hit
 
@@ -672,79 +675,4 @@ boolean PIT_CheckThing(mobj_t *thing) // 8001A560
 	}
 
 	return !(thing->flags & MF_SOLID);
-}
-
-/*
-===============================================================================
-
-BLOCK MAP ITERATORS
-
-For each line/thing in the given mapblock, call the passed function.
-If the function returns false, exit with false without checking anything else.
-
-===============================================================================
-*/
-
-/*
-==================
-=
-= PM_BlockLinesIterator
-= Exclusive Psx Doom / Doom 64
-=
-= The validcount flags are used to avoid checking lines
-= that are marked in multiple mapblocks, so increment validcount before
-= the first call to PM_BlockLinesIterator, then make one or more calls to it
-=
-==================
-*/
-
-boolean PM_BlockLinesIterator(int x, int y) // 8001A710
-{
-	int     offset;
-	short  *list;
-	line_t *ld;
-
-	offset = (y*bmapwidth)+x;
-	offset = *(blockmap + offset);
-
-	for (list = blockmaplump + offset; *list != -1; list++)
-	{
-		ld = &lines[*list];
-		if (ld->validcount == validcount)
-			continue; /* line has already been checked */
-		ld->validcount = validcount;
-
-		if (PM_BoxCrossLine(ld))
-		{
-			if (!PIT_CheckLine(ld))
-				return false;
-		}
-	}
-
-	return true; /* everything was checked */
-}
-
-/*
-==================
-=
-= PM_BlockThingsIterator
-= Exclusive Psx Doom / Doom 64
-=
-==================
-*/
-
-boolean PM_BlockThingsIterator(int x, int y) // 8001A810
-{
-	mobj_t *mobj;
-	
-	if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
-		return true;
-
-	for (mobj = blocklinks[y * bmapwidth + x]; mobj; mobj = mobj->bnext)
-	{
-		if (!PIT_CheckThing(mobj))
-			return false;
-	}
-
-	return true;
 }
