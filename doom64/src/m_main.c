@@ -116,6 +116,7 @@ char *ControlText[] =   //8007517C
 #define M_TXT72 "Save Settings" // Save settings into memory pak slot
 #define M_TXT73 "Vehemence" // Vehemence community map jam
 #define M_TXT74 "Show FPS:" // Frame rate counter
+#define M_TXT75 "Vertical Look:" // Analog stick vertical look
 
 const char *MenuText[] =   // 8005ABA0
 {
@@ -133,7 +134,8 @@ const char *MenuText[] =   // 8005ABA0
     M_TXT55, M_TXT56, M_TXT57, M_TXT58, M_TXT59,
 	M_TXT60, M_TXT61, M_TXT62, M_TXT63, M_TXT64,
 	M_TXT65, M_TXT66, M_TXT67, M_TXT68, M_TXT69,
-	M_TXT70, M_TXT71, M_TXT72, M_TXT73, M_TXT74
+	M_TXT70, M_TXT71, M_TXT72, M_TXT73, M_TXT74,
+	M_TXT75
 	
 };
 
@@ -211,13 +213,14 @@ const menuitem_t Menu_Volume[5] = // Audio menu
     {  6, 102, 200},    // Return
 };
 
-const menuitem_t Menu_Controls[6] = // Controls menu
+const menuitem_t Menu_Controls[7] = // Controls menu
 {
     {  0, 102, 60 },    // Control bindings
     { 68, 102, 80 },    // Autorun
     { 43, 102, 100 },    // Sensitivity
     { 65, 102, 140},    // Deadzone
-    { 42, 102, 160},    // Defaults
+    { 75, 102, 160},    // Vertical Look
+    { 42, 102, 180},    // Defaults
     {  6, 102, 200},    // Return
 };
 
@@ -353,6 +356,7 @@ boolean BrightBoost = 0; // Brightness boost from the "gamma correct" video mode
 boolean MercilessMenu = false; // Current menu setting for merciless mode, not necessarily enabled in menu
 char TextureFilter = 0; // To have 3-point, nearest, or a combination of filters
 char Autorun = 0; //  To have autorun on, off, or toggle
+boolean VerticalLook = false; // Stick up/down looks up and down (with look spring) instead of moving
 byte SavedConfig[16]; // For the controller configuration
 char BloodStyle = 3; // Blood style: red, green, dust, combo
 boolean ColoredHUD = true; // Hud color
@@ -443,7 +447,8 @@ void M_EncodeConfig(void)
 
 
 	SavedConfig[3] = (PlayDeadzone>>1) & 0x7; //0-7 - 3 bits
-	SavedConfig[3] += (((HUDMargin-5)/5) & 0x3) << 3; //0-3 - 2 bits (1 bit free!)
+	SavedConfig[3] += (((HUDMargin-5)/5) & 0x3) << 3; //0-3 - 2 bits
+	SavedConfig[3] += (VerticalLook & 0x1) << 5; // 1 bit
     SavedConfig[3] += (BloodStyle & 0x3) << 6; //0-3 - 2 bits
 
     SavedConfig[4] = MusVolume & 0x7F; //0-127 - 7 bits
@@ -553,6 +558,7 @@ void M_DecodeConfig()
 	
     PlayDeadzone = (SavedConfig[3] & 0x7)<<1;
     HUDMargin = ((SavedConfig[3] >> 3) & 0x3)*5 + 5;
+    VerticalLook = (SavedConfig[3] >> 5) & 0x1;
     BloodStyle = (SavedConfig[3] >> 6) & 0x3;
 
     MusVolume = SavedConfig[4] & 0x7F;
@@ -1765,7 +1771,7 @@ int M_MenuTicker(void) // 80007E0C
 					M_SaveMenuData();
 
 					MenuItem = Menu_Controls;
-					itemlines = 6;
+					itemlines = 7;
 					MenuCall = M_ControlsDrawer;
 					cursorpos = 0;
 
@@ -1782,6 +1788,7 @@ int M_MenuTicker(void) // 80007E0C
 					S_StartSound(NULL, sfx_switch2);
 					M_SENSITIVITY = 27;
 					PlayDeadzone = 10;
+					VerticalLook = false;
 				}
 				break;
 
@@ -2132,6 +2139,15 @@ int M_MenuTicker(void) // 80007E0C
 				}
 				break;
 				
+			case 75: // Vertical Look
+				if (truebuttons || ((buttons ^ oldbuttons) && (buttons & (ALL_FORWARD | ALL_BACK))))
+				{
+					S_StartSound(NULL, sfx_switch2);
+					VerticalLook ^= true;
+					return ga_nothing;
+				}
+				break;
+
 			case 68: // Autorun
 				if ((buttons ^ oldbuttons) && (buttons & ALL_FORWARD))
 				{
@@ -2589,6 +2605,9 @@ void M_ControlsDrawer(void) // 80009738
             ST_DrawString(item->x + 100, item->y, text, text_alpha | 0xff000000);
         }
 		
+        if (casepos == 75) // Vertical Look
+            ST_DrawString(item->x + 140, item->y, VerticalLook ? "On" : "Off", text_alpha | 0xff000000);
+
         ST_DrawString(item->x, item->y, MenuText[item->casepos], text_alpha | 0xff000000);
         item++;
     }

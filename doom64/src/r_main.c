@@ -162,7 +162,7 @@ void R_RenderPlayerView(void) // 80023448
     if (cameratarget == players[0].mo)
     {
         viewz = players[0].viewz;
-        pitch = players[0].recoilpitch >> ANGLETOFINESHIFT;
+        pitch = ((angle_t)players[0].recoilpitch + players[0].lookpitch) >> ANGLETOFINESHIFT; /* weapon recoil plus vertical look */
     }
     else
     {
@@ -174,6 +174,11 @@ void R_RenderPlayerView(void) // 80023448
     viewy = cameratarget->y;
 
     viewz += quakeviewy;
+
+    /* skies follow the view pitch: rows the sky moves down when looking up (1 row per 1/1024 turn,
+       the same rate the horizontal scroll has), and the pitch itself for the cloud plane */
+    SkyPitchFine = pitch & FINEMASK;
+    SkyPitchShift = ((int)((unsigned)pitch << ANGLETOFINESHIFT)) >> 22;
 
 	viewangle = cameratarget->angle + quakeviewx;
 	viewcos = finecosine[viewangle >> ANGLETOFINESHIFT];

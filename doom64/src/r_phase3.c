@@ -158,6 +158,8 @@ static void R_World2C(void)
     }
 }
 
+#define R_PlaneVisibleT R_PlaneVisible
+
 void R_RenderAll(void) // 80026590
 {
     subsector_t *sub;
@@ -226,7 +228,8 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     /* */
     /* Render Ceilings */
     /* */
-    if ((frontsector->ceilingpic != -1) && (viewz < frontsector->ceilingheight) && ((textures[frontsector->ceilingpic] >> 4) != blanklump))
+    if ((frontsector->ceilingpic != -1) && (viewz < frontsector->ceilingheight) && ((textures[frontsector->ceilingpic] >> 4) != blanklump) &&
+        R_PlaneVisibleT(sub, frontsector->ceilingheight))
     {
         if (frontsector->flags & MS_SCROLLCEILING)
         {
@@ -250,7 +253,8 @@ void R_RenderWorld(subsector_t *sub) // 80026638
     /* Render Floors */
     /* */
     if ((frontsector->floorpic != -1) && (frontsector->floorheight < viewz) &&
-        ((frontsector->flags & MS_LIQUIDFLOOR) || ((textures[frontsector->floorpic] >> 4) != blanklump)))
+        ((frontsector->flags & MS_LIQUIDFLOOR) || ((textures[frontsector->floorpic] >> 4) != blanklump)) &&
+        R_PlaneVisibleT(sub, frontsector->floorheight))
     {
         if (!(frontsector->flags & MS_LIQUIDFLOOR))
         {
@@ -308,6 +312,7 @@ void R_RenderWorld(subsector_t *sub) // 80026638
             gDPSetRenderMode(GFX1++, G_RM_FOG_SHADE_A, G_RM_TEX_EDGE2);
         }
     }
+
 
     /* */
     /* Render Things */
@@ -574,6 +579,12 @@ void R_RenderWall(seg_t *seg, int flags, int texture, int topHeight, int bottomH
     /* BLANK is fully transparent, so nothing would be drawn: skip the whole wall */
     if ((texture >> 4) == blanklump)
         return;
+
+    /* vertical look: a piece above or below the screen would only be cut away by the RSP */
+    if (!R_WallPieceVisible(seg, topHeight, bottomHeight))
+    {
+        return;
+    }
 
     /*
      * Keep the T coordinates inside the signed 16-bit vertex range.  A row offset

@@ -323,6 +323,8 @@ void P_PlayerMobjThink (mobj_t *mobj) // 80022060
 */
 
 
+#define LOOK_MAXANGLE ((int)((ANG90 / 3) * 2)) /* largest look up or down: 60 degrees */
+
 void P_BuildMove (player_t *player) // 80022154
 {
 	int         speed, sensitivity;
@@ -369,7 +371,7 @@ void P_BuildMove (player_t *player) // 80022154
     {
         player->forwardmove = -forwardmove[speed];
     }
-    else
+    else if (!VerticalLook || demoplayback)
     {
         /* Analyze analog stick movement (up / down) */
         sensitivity = (int)((buttons) << 24) >> 24;
@@ -378,6 +380,45 @@ void P_BuildMove (player_t *player) // 80022154
         {
             player->forwardmove += (forwardmove[1] * sensitivity) / 80;
         }
+    }
+
+    /*
+     * Vertical look with a look spring: the stick up / down sets how far the view is
+     * tilted, and it comes back to level when the stick is released. lookpitch is an
+     * angle (positive is up) used for the view in R_RenderPlayerView, lookslope its
+     * tangent for aiming. Both stay 0 in demos and with the option off, so nothing
+     * else changes.
+     */
+    {
+        int target = 0;
+        int cur;
+
+        if (VerticalLook && !demoplayback)
+        {
+            int stick = (int)((buttons) << 24) >> 24;
+
+            if (stick >= PlayDeadzone || stick <= -PlayDeadzone)
+            {
+                target = (LOOK_MAXANGLE / 80) * stick;
+                if (target > LOOK_MAXANGLE)
+                    target = LOOK_MAXANGLE;
+                else if (target < -LOOK_MAXANGLE)
+                    target = -LOOK_MAXANGLE;
+            }
+        }
+
+        cur = (int)player->lookpitch;
+        cur += (target - cur) / 2;
+
+        if (target == 0 && cur < 0x00100000 && cur > -0x00100000) /* under 0.1 degree */
+            cur = 0;
+
+        player->lookpitch = (angle_t)cur;
+
+        if (cur == 0)
+            player->lookslope = 0;
+        else
+            player->lookslope = FixedDiv(finesine[(angle_t)cur >> ANGLETOFINESHIFT], finecosine[(angle_t)cur >> ANGLETOFINESHIFT]);
     }
 
 	/*  */
@@ -732,6 +773,8 @@ void P_DeathThink (player_t *player) // 80022914
 {
 	angle_t		angle, delta;
 
+	player->lookpitch = 0;
+	player->lookslope = 0;
 	P_MovePsprites (player);
 
 	/* fall to the ground */

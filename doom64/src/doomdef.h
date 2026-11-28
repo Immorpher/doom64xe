@@ -505,6 +505,8 @@ typedef struct player_s
 	fixed_t		deltaviewheight;		/* squat speed */
 	fixed_t		bob;					/* bounded/scaled total momentum */
 	fixed_t     recoilpitch;            /* [D64] new*/
+	angle_t     lookpitch;              /* vertical look: view tilt, positive is up, 0 = level (see VerticalLook) */
+	fixed_t     lookslope;              /* tangent of lookpitch, for aiming */
 
 	short			health;					/* only used between levels, mo->health */
 										/* is used during levels	 */
@@ -875,7 +877,10 @@ extern boolean FeaturesUnlocked;    // 8005A7D0
 extern boolean MercilessMode; // Returning merciless difficulty from Doom 64 Merciless Edition!
 extern boolean MercilessMenu; // Current menu setting for merciless mode, not necessarily enabled in menu
 extern char TextureFilter; // Texture/sky 3-point filtering
+extern int sectorstamp; /* bumped whenever a sector plane may have moved (see r_phase1.c) */
+
 extern char Autorun; // Autorun mode for digital inputs
+extern boolean VerticalLook; // Analog stick up/down looks up and down instead of walking (look spring)
 extern boolean BrightBoost; // Brightness boost from the "gamma correct" video mode
 extern char BloodStyle;	// Blood color option
 extern boolean ColoredHUD; // Colored HUD option
@@ -1077,7 +1082,7 @@ extern s32 FilesUsed;          // 8005A740
 
 #define MAX_GFX 5120
 #define MAX_VTX 3072
-#define MAX_MTX 4
+#define MAX_MTX 5 /* 3 view matrices + vertical look projection (+1 spare) */
 
 extern Gfx *GFX1;	// 800A4A00
 extern Gfx *GFX2;	// 800A4A04

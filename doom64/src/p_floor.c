@@ -11,6 +11,8 @@
 
 
 
+int sectorstamp = 1;
+
 /*================================================================== */
 /* */
 /*	Move a plane (floor or ceiling) and check for crushing */
@@ -23,6 +25,7 @@ result_e	T_MovePlane(sector_t *sector,fixed_t speed,
 	fixed_t	lastpos;
 	result_e result;
 
+	sectorstamp++;
 	result = ok;
 
 	switch(floorOrCeiling)
@@ -449,6 +452,7 @@ void T_MoveSplitPlane(splitmove_t *split) // 80014098
     boolean cdone;
     boolean fdone;
 
+    sectorstamp++;
     sector = split->sector;
     lastceilpos = sector->ceilingheight;
     lastflrpos = sector->floorheight;

@@ -79,13 +79,15 @@ int         SkyCloudColor;      // 800A816C
 int         SkyVoidColor;       // 800A8170
 int         SkyFlags;           // 800A8174
 short		LightningFlash; // new lighting flash to brighten sectors
+int         SkyPitchShift;  /* view pitch in screen rows, up is positive (set by R_RenderPlayerView) */
+int         SkyPitchFine;   /* view pitch as a finesine index */
 
 void R_RenderSpaceSky(void) HOT;
 void R_RenderCloudSky(void) HOT;
 void R_RenderVoidSky(void) HOT;
 void R_RenderEvilSky(void) HOT;
 void R_RenderClouds(void) HOT;
-void R_RenderSkyPic(int lump, int yoffset) HOT;
+void R_RenderSkyPic(int lump, int yoffset, int repeat) HOT;
 void R_RenderFireSky(void) HOT;
 void R_CloudThunder(void) HOT;
 
@@ -373,7 +375,7 @@ void R_RenderSpaceSky(void) // 80025440
     gDPSetRenderMode(GFX1++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
     gDPSetPrimColor(GFX1++, 0, (lights[255].rgba >> 8), 0, 0, 0, 255);
 
-    R_RenderSkyPic(SkyPicSpace, 128);
+    R_RenderSkyPic(SkyPicSpace, 128, 1);
 
 	if (SkyFlags & SKF_THUNDER)
 	R_CloudThunder();
@@ -385,7 +387,7 @@ void R_RenderSpaceSky(void) // 80025440
         gDPSetCombineMode(GFX1++, G_CC_D64COMB10, G_CC_D64COMB10);
         gDPSetRenderMode(GFX1++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
 
-        R_RenderSkyPic(SkyPicMount, 170);
+        R_RenderSkyPic(SkyPicMount, 170, 0);
     }
 }
 
@@ -404,7 +406,7 @@ void R_RenderCloudSky(void) // 800255B8
         gDPSetCombineMode(GFX1++, G_CC_D64COMB10, G_CC_D64COMB10);
         gDPSetRenderMode(GFX1++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
 
-        R_RenderSkyPic(SkyPicMount, 170);
+        R_RenderSkyPic(SkyPicMount, 170, 0);
     }
 }
 
@@ -431,8 +433,8 @@ void R_RenderEvilSky(void) // 80025738
     gDPSetCombineMode(GFX1++, G_CC_D64COMB09, G_CC_D64COMB09);
     gDPSetRenderMode(GFX1++,G_RM_OPA_SURF,G_RM_OPA_SURF2);
 
-    R_RenderSkyPic(SkyPicSpace, 128);
-    R_RenderSkyPic(SkyPicSpace, 240);
+    R_RenderSkyPic(SkyPicSpace, 128, 2);
+    R_RenderSkyPic(SkyPicSpace, 240, 2);
 
     if (Skyfadeback)
     {
@@ -453,6 +455,7 @@ void R_RenderEvilSky(void) // 80025738
 void R_RenderClouds(void) // 80025878
 {
     int x, y;
+    int cloudverts;
 
     gDPSetCycleType(GFX1++, G_CYC_2CYCLE);
     gDPSetTexturePersp(GFX1++, G_TP_PERSP);
@@ -471,17 +474,82 @@ void R_RenderClouds(void) // 80025878
     x = SkyCloudOffsetX - (viewangle >> ANGLETOFINESHIFT);
     y = SkyCloudOffsetY;
 
-    D_memcpy(VTX1, SkyCloudVertex, sizeof(Vtx)*4);
+    if (SkyPitchShift == 0)
+    {
+        D_memcpy(VTX1, SkyCloudVertex, sizeof(Vtx)*4);
 
-    VTX1[0].v.tc[0] = x;
-    VTX1[1].v.tc[0] = x + (64 << 6);
-    VTX1[2].v.tc[0] = x + (64 << 6);
-    VTX1[3].v.tc[0] = x;
+        VTX1[0].v.tc[0] = x;
+        VTX1[1].v.tc[0] = x + (64 << 6);
+        VTX1[2].v.tc[0] = x + (64 << 6);
+        VTX1[3].v.tc[0] = x;
 
-    VTX1[0].v.tc[1] = y;
-    VTX1[1].v.tc[1] = y;
-    VTX1[2].v.tc[1] = y + (128 << 6);
-    VTX1[3].v.tc[1] = y + (128 << 6);
+        VTX1[0].v.tc[1] = y;
+        VTX1[1].v.tc[1] = y;
+        VTX1[2].v.tc[1] = y + (128 << 6);
+        VTX1[3].v.tc[1] = y + (128 << 6);
+        cloudverts = 4;
+    }
+    else
+    {
+        /*
+         * Vertical look. The cloud plane is a slanted plane above the player: it is d forward and
+         * h up with h = 120 - 6 * (d - 160) / 7, shown from d = 160 (top of the screen) to d = 300 (the
+         * horizon). Turn it by the view pitch so it stays where it is in the world, and extend it
+         * over the top (d down to -64) to fill the screen when looking up. Three rows of
+         * two points: the two original edges and the new top, the colours and the texture
+         * coordinates keep their slope along the plane. Drawn four times bigger than the original
+         * to keep the rounding of the turned points small, which does not change how it looks.
+         */
+        static const short rowd[3] = { -64, 160, 300 };
+        static const short rowh[3] = { 312, 120, 0 };
+        const int vs = finesine[SkyPitchFine];
+        const int vc = finecosine[SkyPitchFine];
+        int row;
+        int up, kv, voff;
+
+        /*
+         * The texture runs along the plane about 3.25 times denser than across it (the plane is seen
+         * at a slant from the level view, which hides that). Looking up it is seen face on, so the
+         * rows are stretched back to the same density as the columns, gradually with the angle
+         * until 60 degrees up, but only part of the way: 1.0 at level and 0.48 at 60 degrees (square would be 0.307).
+         */
+        up = (SkyPitchFine > FINEANGLES / 2) ? (SkyPitchFine - FINEANGLES) : SkyPitchFine;
+        if (up < 0)
+            up = 0;
+        if (up > (FINEANGLES / 6))
+            up = FINEANGLES / 6;
+        kv = 65536 - (((65536 - 31475) * up) / (FINEANGLES / 6));
+
+        /*
+         * Looking up, the view moves from the clouds in front of the player to the ones above, so
+         * the texture also runs down the screen with the angle: 0.09375 repeats of the 64 texel texture
+         * at 60 degrees up. It depends on the angle alone, so it runs back as the view returns.
+         */
+        voff = (384 * up) / (FINEANGLES / 6);
+
+        for (row = 0; row < 3; row++)
+        {
+            int dd = rowd[row] * 4;
+            int hh = rowh[row] * 4;
+            short py = (short)(((vc * hh) - (vs * dd)) >> 16);
+            short pz = (short)(-(((vc * dd) + (vs * hh)) >> 16));
+            short tv = (short)(y + (int)((((long long)((rowd[row] - 160) * 8192) / 140) * kv) >> 16) - voff);
+            Vtx *l = &VTX1[row * 2];
+            Vtx *r = &VTX1[row * 2 + 1];
+            int cl, cr;
+
+            if (row < 2) { cl = *(int*)SkyCloudVertex[0].v.cn; cr = *(int*)SkyCloudVertex[1].v.cn; }
+            else         { cl = *(int*)SkyCloudVertex[3].v.cn; cr = *(int*)SkyCloudVertex[2].v.cn; }
+
+            l->v.ob[0] = -330 * 4; l->v.ob[1] = py; l->v.ob[2] = pz; l->v.flag = 0;
+            r->v.ob[0] =  330 * 4; r->v.ob[1] = py; r->v.ob[2] = pz; r->v.flag = 0;
+            l->v.tc[0] = x - 205;           l->v.tc[1] = tv;
+            r->v.tc[0] = x + (64 << 6) + 205; r->v.tc[1] = tv;
+            *(int*)l->v.cn = cl;
+            *(int*)r->v.cn = cr;
+        }
+        cloudverts = 6;
+    }
 
     gDPSetTextureImage(GFX1++, G_IM_FMT_I, G_IM_SIZ_16b , 1, (SkyCloudData+8));
     gDPSetTile(GFX1++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 6, 0, 0, 6, 0);
@@ -494,14 +562,32 @@ void R_RenderClouds(void) // 80025878
     gDPSetTileSize(GFX1++, G_TX_RENDERTILE, 0, 0, (63 << 2), (63 << 2));
     gSPTexture(GFX1++, (768 << 6), (512 << 6), 0, G_TX_RENDERTILE, G_ON);
 
-    gSPVertex(GFX1++, VTX1, 4, 0);
-    gSP1Triangle(GFX1++, 0, 2, 1, 0);
-    gSP1Triangle(GFX1++, 0, 3, 2, 0);
+    gSPVertex(GFX1++, VTX1, cloudverts, 0);
+    if (cloudverts == 4)
+    {
+        gSP1Triangle(GFX1++, 0, 2, 1, 0);
+        gSP1Triangle(GFX1++, 0, 3, 2, 0);
+    }
+    else
+    {
+        gSP1Triangle(GFX1++, 0, 3, 1, 0);
+        gSP1Triangle(GFX1++, 0, 2, 3, 0);
+        gSP1Triangle(GFX1++, 2, 5, 3, 0);
+        gSP1Triangle(GFX1++, 2, 4, 5, 0);
+    }
 
-    VTX1 += 4;
+    VTX1 += cloudverts;
 }
 
-void R_RenderSkyPic(int lump, int yoffset) // 80025BDC
+/*
+ * Draws a sky picture, 256 wide and repeating sideways as the view turns. yoffset is the screen
+ * row of its bottom edge. With vertical look it moves by the view pitch, one row for every 1/1024
+ * of a turn, so it scrolls up and down at the rate it scrolls sideways. repeat: 0 for a picture
+ * drawn once that moves off the screen (the mountains in front of a sky), 1 for one that repeats
+ * above it, so looking up fills the screen with copies, and 2 for one that repeats above and below
+ * (the sky of the maps where the ground below the horizon is sky too).
+ */
+void R_RenderSkyPic(int lump, int yoffset, int repeat) // 80025BDC
 {
     spriteN64_t *data;
     byte *src;
@@ -512,6 +598,7 @@ void R_RenderSkyPic(int lump, int yoffset) // 80025BDC
     int yl, yh;
     int ang;
     int lrs;
+    int base, top, bot, limit;
 
     data = W_CacheLumpNum(lump, PU_CACHE);
 
@@ -539,29 +626,63 @@ void R_RenderSkyPic(int lump, int yoffset) // 80025BDC
     gDPPipeSync(GFX1++);
 
     lrs = (((tileh << 8) + 1) >> 1) - 1;
-    yl = (yoffset - data->height);
 
-    for(i = 0; i < data->tiles; i++)
+    /* where the bottom copy goes; copies above it follow when the picture repeats */
+    base = (yoffset - data->height) + SkyPitchShift;
+    limit = base;   /* the copy that was the original one is the last copy to draw going up */
+    if (repeat && SkyPitchShift != 0 && data->height > 0 && (SkyPitchShift > 0 || repeat == 2))
     {
-        yh = (tileh + yl);
+        while (base > 0)
+            base -= data->height;
+        if (repeat == 2)
+            limit = SCREEN_HT - 1;  /* and on down to the bottom of the screen */
+    }
+    else
+    {
+        repeat = 0;
+    }
 
-        gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
-        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 8, 0);
+    for (;;)
+    {
+        src = data->texels;
+        yl = base;
 
-        gDPLoadSync(GFX1++);
-        gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0, lrs, 0);
+        for(i = 0; i < data->tiles; i++)
+        {
+            yh = (tileh + yl);
 
-        gDPPipeSync(GFX1++);
-        gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b, 32, 0, G_TX_RENDERTILE, 0, 0, 0, 0, 0, 8, 0);
-        gDPSetTileSize(GFX1++, 0, 0, 0, ((256-1) << 2), ((tileh - 1) << 2));
+            /* only the part that is on the screen */
+            top = (yl < 0) ? 0 : yl;
+            bot = (yh > SCREEN_HT) ? SCREEN_HT : yh;
 
-        gSPTextureRectangle(GFX1++, (0 << 2), (yl << 2),
-                                    (320 << 2), (yh << 2),
-                                    G_TX_RENDERTILE,
-                                    (ang << 5), (0 << 5),
-                                    (1 << 10), (1 << 10));
-        src += (tileh << 8);
-        yl = yh;
+            if (top < bot)
+            {
+                gDPSetTextureImage(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b , 1, src);
+                gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 8, 0);
+
+                gDPLoadSync(GFX1++);
+                gDPLoadBlock(GFX1++, G_TX_LOADTILE, 0, 0, lrs, 0);
+
+                gDPPipeSync(GFX1++);
+                gDPSetTile(GFX1++, G_IM_FMT_CI, G_IM_SIZ_8b, 32, 0, G_TX_RENDERTILE, 0, 0, 0, 0, 0, 8, 0);
+                gDPSetTileSize(GFX1++, 0, 0, 0, ((256-1) << 2), ((tileh - 1) << 2));
+
+                gSPTextureRectangle(GFX1++, (0 << 2), (top << 2),
+                                            (320 << 2), (bot << 2),
+                                            G_TX_RENDERTILE,
+                                            (ang << 5), ((top - yl) << 5),
+                                            (1 << 10), (1 << 10));
+            }
+            src += (tileh << 8);
+            yl = yh;
+        }
+
+        /* repeat: copies from the top of the screen down to the one the picture is really at */
+        if (!repeat)
+            break;
+        base += data->height;
+        if (base > limit)
+            break;
     }
 }
 
@@ -572,6 +693,18 @@ void R_RenderFireSky(void) // 80025F68
     int width, height, rand;
     int pixel, randIdx;
     int ang, t;
+    int shift = SkyPitchShift;
+
+    if (shift > 0)
+    {
+        /* looking up: the fire moves down and nothing repeats above it, so black above it. The
+           frame is not cleared, anything left there would show the last frame. */
+        gDPSetCycleType(GFX1++, G_CYC_FILL);
+        gDPSetRenderMode(GFX1++, G_RM_NOOP, G_RM_NOOP2);
+        gDPSetFillColor(GFX1++, GPACK_RGBA5551(0,0,0,1) << 16 | GPACK_RGBA5551(0,0,0,1));
+        gDPFillRectangle(GFX1++, 0, 0, SCREEN_WD-1, ((shift > SCREEN_HT) ? SCREEN_HT : shift) - 1);
+        gDPPipeSync(GFX1++);
+    }
 
     gDPSetCycleType(GFX1++, G_CYC_2CYCLE);
     gDPSetTexturePersp(GFX1++, G_TP_PERSP);
@@ -676,6 +809,13 @@ void R_RenderFireSky(void) // 80025F68
     VTX1[2].v.tc[0] = t + 0x2800;
     VTX1[3].v.tc[0] = t;
 
+    /* vertical look: the quad is 160 units away, so one unit of height is one screen row.
+       It moves down when looking up. */
+    VTX1[0].v.ob[1] -= shift;
+    VTX1[1].v.ob[1] -= shift;
+    VTX1[2].v.ob[1] -= shift;
+    VTX1[3].v.ob[1] -= shift;
+
     gDPSetTextureImage(GFX1++, G_IM_FMT_I, G_IM_SIZ_16b , 1, buff);
     gDPSetTile(GFX1++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, 0, 0, 0, 0, 6, 0);
 
@@ -700,7 +840,7 @@ void R_RenderFireSky(void) // 80025F68
         gDPSetCombineMode(GFX1++, G_CC_D64COMB10, G_CC_D64COMB10);
         gDPSetRenderMode(GFX1++, G_RM_TEX_EDGE, G_RM_TEX_EDGE2);
 
-        R_RenderSkyPic(SkyPicMount, 170);
+        R_RenderSkyPic(SkyPicMount, 170, 0);
     }
 
 }

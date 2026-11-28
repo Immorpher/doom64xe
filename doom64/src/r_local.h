@@ -57,6 +57,7 @@ typedef struct
 	fixed_t x, y;
 	fixed_t vx, vy;
 	int     validcount;
+	int     bstep, bvalid;  /* bearing of the vertex while the view is tilted (r_phase1.c) */
 } vertex_t;
 
 struct line_s;
@@ -288,7 +289,11 @@ void	R_RenderBSPNode (int bspnum) HOT;
 typedef void(*skyfunc_t)();
 extern fixed_t  FogNear;            // 800A8120
 extern int      FogColor;           // 800A8124
+boolean R_WallPieceVisible(seg_t *seg, int top, int bottom);
+boolean R_PlaneVisible(subsector_t *sub, fixed_t planeheight); // floor or ceiling can be on screen (vertical look)
 extern skyfunc_t       R_RenderSKY;        // 800A8130
+extern int             SkyPitchShift;      // view pitch in screen rows (1024 per turn), up is positive
+extern int             SkyPitchFine;       // view pitch as a finesine index
 extern int      Skyfadeback;        // 800A814C
 
 void R_SetupSky(void);

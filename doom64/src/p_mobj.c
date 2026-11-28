@@ -683,7 +683,7 @@ void P_SpawnPlayerMissile (mobj_t *source, mobjtype_t type) // 80019668
 		if (!linetarget)
 		{
 			an = source->angle;
-			slope = 0;
+			slope = source->player ? source->player->lookslope : 0; /* shoot where the player looks */
 		}
 	}
 

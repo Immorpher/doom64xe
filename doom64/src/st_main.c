@@ -260,6 +260,7 @@ static void ST_DrawFPS (void)
 
     /* right aligned to the same margin the HUD uses, on the row of the first message */
     ST_Message(320 - HUDMargin - len*8, HUDMargin-5, buf, 0xffffff80);
+
 }
 
 void ST_Drawer (void) // 80029DC0

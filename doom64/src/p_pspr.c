@@ -886,6 +886,10 @@ void P_BulletSlope(mobj_t*	mo) // 8001BF88
 			bulletslope = P_AimLineAttack(mo, an, 0, 16 * 64 * FRACUNIT);
 		}
 	}
+
+	/* nothing to autoaim at: shoot where the player is looking */
+	if (!linetarget && mo->player)
+		bulletslope = mo->player->lookslope;
 }
 
 /*
