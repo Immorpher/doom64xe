@@ -1131,9 +1131,21 @@ void R_RenderThings(subsector_t *sub) // 80028248
     int needsync;
     int reuse;
 
+    int tilts = 0, tiltc = 65536;   /* vertical look: the sprites lean with the view by half the pitch: looking up the top leans toward the player */
+    int zbase, lx, lz, yv;
+
     vissprite_p = sub->vissprite;
     if (vissprite_p)
     {
+        if (SkyPitchFine)
+        {
+            int p = (SkyPitchFine > FINEANGLES / 2) ? (SkyPitchFine - FINEANGLES) : SkyPitchFine;
+
+            p /= 2;
+            tilts = finesine[p & FINEMASK];
+            tiltc = finecosine[p & FINEMASK];
+        }
+
         R_World2C();
         gDPPipeSync(GFX1++);
 
@@ -1321,13 +1333,20 @@ void R_RenderThings(subsector_t *sub) // 80028248
 
             ypos = (thing->z >> FRACBITS) + data->yoffs;
 
-            VTX1[0].v.ob[0] = xpos1;
-            VTX1[0].v.ob[1] = ypos;
-            VTX1[0].v.ob[2] = zpos1;
+            zbase = thing->z >> FRACBITS;   /* the sprite leans about its feet, as a standing thing would */
+#define SPRITE_TILT(yp) \
+            if (tilts) { int h = (yp) - zbase; lx = -(int)(((long long)h * tilts * viewcos) >> 32); \
+                         lz = -(int)(((long long)h * tilts * viewsin) >> 32); yv = zbase + ((h * tiltc) >> 16); } \
+            else { lx = lz = 0; yv = (yp); }
+            SPRITE_TILT(ypos)
 
-            VTX1[1].v.ob[0] = xpos2;
-            VTX1[1].v.ob[1] = ypos;
-            VTX1[1].v.ob[2] = zpos2;
+            VTX1[0].v.ob[0] = xpos1 + lx;
+            VTX1[0].v.ob[1] = yv;
+            VTX1[0].v.ob[2] = zpos1 - lz;
+
+            VTX1[1].v.ob[0] = xpos2 + lx;
+            VTX1[1].v.ob[1] = yv;
+            VTX1[1].v.ob[2] = zpos2 - lz;
 
             VTX1[flip].v.tc[0] = 0;
             VTX1[flip^1].v.tc[0] = (spos << 6);
@@ -1373,13 +1392,15 @@ void R_RenderThings(subsector_t *sub) // 80028248
                     gSP2Triangles(GFX1++, v00, v01, v02, 0, // 1, 3, 2
                                           v00, v02, v03, 0); // 1, 2, 0
 
-                    VTX1[0].v.ob[0] = xpos1;
-                    VTX1[0].v.ob[1] = ypos;
-                    VTX1[0].v.ob[2] = zpos1;
+                    SPRITE_TILT(ypos)
 
-                    VTX1[1].v.ob[0] = xpos2;
-                    VTX1[1].v.ob[1] = ypos;
-                    VTX1[1].v.ob[2] = zpos2;
+                    VTX1[0].v.ob[0] = xpos1 + lx;
+                    VTX1[0].v.ob[1] = yv;
+                    VTX1[0].v.ob[2] = zpos1 - lz;
+
+                    VTX1[1].v.ob[0] = xpos2 + lx;
+                    VTX1[1].v.ob[1] = yv;
+                    VTX1[1].v.ob[2] = zpos2 - lz;
 
                     VTX1[flip].v.tc[0] = 0;
                     VTX1[flip^1].v.tc[0] = (spos << 6);

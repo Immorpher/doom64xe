@@ -607,7 +607,7 @@ static void R_AddLinePitch(seg_t *line, fixed_t x1, fixed_t y1, fixed_t x2, fixe
         line->flags |= 1;
         line->linedef->flags |= ML_MAPPED;
 
-        if (frontsector->ceilingpic == -1)
+        if (frontsector->ceilingpic == -1 || frontsector->floorpic == -1) /* a sky floor shows it too */
             rendersky = true;
     }
 
@@ -1062,7 +1062,7 @@ void R_Subsector(int num) // 8002451C
 		frontsector = sub->sector;
 
 		/* tilted view: a sky overhead can be seen with no wall in view at all */
-		if (rp_active && frontsector->ceilingpic == -1)
+		if (rp_active && (frontsector->ceilingpic == -1 || frontsector->floorpic == -1)) /* or a sky floor below */
 			rendersky = true;
 
 		line = &segs[sub->firstline];
@@ -1181,7 +1181,7 @@ void R_AddLine(seg_t *line) // 80024604
             line->linedef->flags |= ML_MAPPED;
         }
 
-        if (frontsector->ceilingpic == -1) {
+        if (frontsector->ceilingpic == -1 || frontsector->floorpic == -1) {
             rendersky = true;
         }
 

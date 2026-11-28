@@ -172,6 +172,56 @@ boolean PTR_ShootTraverse(intercept_t* in) // 800177A8
     {
         li = in->d.line;
 
+        /* Looking up or down: the shot can leave the sector through its floor or ceiling before it reaches this
+           line. The sector it is in is the one on the side of the line the shot started from. */
+        if(aimslope)
+        {
+            sector_t *sec = P_PointOnLineSide(trace.x, trace.y, li) ? li->backsector : li->frontsector;
+
+            if(sec)
+            {
+                fixed_t zc = shootz + FixedMul(aimslope, FixedMul(attackrange, in->frac));
+                fixed_t plane = 0;
+                boolean hitplane = false;
+                boolean isceil = false;
+
+                if(zc < sec->floorheight)
+                {
+                    plane = sec->floorheight;
+                    hitplane = true;
+                }
+                else if(zc > sec->ceilingheight)
+                {
+                    plane = sec->ceilingheight;
+                    hitplane = true;
+                    isceil = true;
+                }
+
+                if(hitplane)
+                {
+                    /* where along the shot it is at that height, then a bit closer, like a wall hit */
+                    long long num = ((long long)(plane - shootz)) << FRACBITS;
+                    fixed_t dp = (fixed_t)(num / aimslope);
+
+                    frac = FixedDiv(dp, attackrange) - FixedDiv(4*FRACUNIT, attackrange);
+                    if(frac < 0)
+                        frac = 0;
+                    if(frac > in->frac)
+                        frac = in->frac;
+
+                    if(isceil && sec->ceilingpic == -1)
+                        return false;       // don't shoot the sky!
+
+                    x = trace.x + FixedMul(trace.dx, frac);
+                    y = trace.y + FixedMul(trace.dy, frac);
+                    z = isceil ? (plane - 4*FRACUNIT) : (plane + 2*FRACUNIT);
+
+                    P_SpawnPuff(x, y, z);
+                    return false;           // the shot ends in the floor or ceiling
+                }
+            }
+        }
+
         if(li->special && (li->special & MLU_SHOOT))
         {
             P_UseSpecialLine(li, shootthing);

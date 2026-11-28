@@ -511,21 +511,21 @@ void R_RenderClouds(void) // 80025878
          * The texture runs along the plane about 3.25 times denser than across it (the plane is seen
          * at a slant from the level view, which hides that). Looking up it is seen face on, so the
          * rows are stretched back to the same density as the columns, gradually with the angle
-         * until 60 degrees up, but only part of the way: 1.0 at level and 0.48 at 60 degrees (square would be 0.307).
+         * until 60 degrees up, but only half way: 1.0 at level and 0.65 at 60 degrees (square would be 0.307).
          */
         up = (SkyPitchFine > FINEANGLES / 2) ? (SkyPitchFine - FINEANGLES) : SkyPitchFine;
         if (up < 0)
             up = 0;
         if (up > (FINEANGLES / 6))
             up = FINEANGLES / 6;
-        kv = 65536 - (((65536 - 31475) * up) / (FINEANGLES / 6));
+        kv = 65536 - (((65536 - 42841) * up) / (FINEANGLES / 6));
 
         /*
          * Looking up, the view moves from the clouds in front of the player to the ones above, so
-         * the texture also runs down the screen with the angle: 0.09375 repeats of the 64 texel texture
+         * the texture also runs down the screen with the angle: 0.1875 repeats of the 64 texel texture
          * at 60 degrees up. It depends on the angle alone, so it runs back as the view returns.
          */
-        voff = (384 * up) / (FINEANGLES / 6);
+        voff = (768 * up) / (FINEANGLES / 6);
 
         for (row = 0; row < 3; row++)
         {

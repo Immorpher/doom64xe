@@ -643,6 +643,7 @@ void P_SpawnPlayerMissile (mobj_t *source, mobjtype_t type) // 80019668
 	int         speed;
 	fixed_t     missileheight;
     int         offset;
+	fixed_t     dist, zrel;
 
     // [d64] adjust offset and height based on missile
     if(type == MT_PROJ_ROCKET)
@@ -687,11 +688,45 @@ void P_SpawnPlayerMissile (mobj_t *source, mobjtype_t type) // 80019668
 		}
 	}
 
+	/* Vertical look: the shot starts a little way in front of the player (offset, so that it clears the
+	   player) and flies along the slope it was aimed with. Starting at the fixed height missileheight
+	   put it off the line of sight, further the more the player looks up or down (and below the floor
+	   when looking down). So it starts on the line of aim from the usual muzzle point instead, which is
+	   missileheight above the feet at the player: offset * slope higher or lower out where it starts. */
+	dist = offset << FRACBITS;
+	zrel = missileheight;
+	if (offset && slope)
+	{
+		fixed_t minz = (source->floorz - source->z) + (2 * FRACUNIT);
+		fixed_t maxz = (source->ceilingz - source->z) - mobjinfo[type].height;
+
+		zrel = missileheight + FixedMul(dist, slope);
+
+		/* against a floor or ceiling it starts nearer to the player, along the same line, but not
+		   inside the player */
+		if (zrel < minz)
+		{
+			if (slope < 0)
+				dist = FixedDiv(minz - missileheight, slope);
+			zrel = minz;
+		}
+		else if (zrel > maxz)
+		{
+			if (slope > 0)
+				dist = FixedDiv(maxz - missileheight, slope);
+			zrel = maxz;
+		}
+		if (dist < (16 * FRACUNIT))
+			dist = 16 * FRACUNIT;
+		if (dist > (offset << FRACBITS))
+			dist = offset << FRACBITS;
+	}
+
 	x = source->x;
 	y = source->y;
 	z = source->z;
 
-	th = P_SpawnMobj (x,y,z+missileheight, type);
+	th = P_SpawnMobj (x,y,z+zrel, type);
 	if (th->info->seesound)
 		S_StartSound (source, th->info->seesound);
 	th->target = source;
@@ -703,8 +738,8 @@ void P_SpawnPlayerMissile (mobj_t *source, mobjtype_t type) // 80019668
 	th->momy = speed * finesine[an>>ANGLETOFINESHIFT];
 	th->momz = speed * slope;
 
-	x = source->x + (offset * finecosine[an>>ANGLETOFINESHIFT]);
-    y = source->y + (offset * finesine[an>>ANGLETOFINESHIFT]);
+	x = source->x + FixedMul(dist, finecosine[an>>ANGLETOFINESHIFT]);
+    y = source->y + FixedMul(dist, finesine[an>>ANGLETOFINESHIFT]);
 
 	// [d64]: checking against very close lines?
     if((shotline && aimfrac <= 0xC80) || !P_TryMove(th, x, y))
